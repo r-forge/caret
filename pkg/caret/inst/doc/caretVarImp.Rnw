@@ -151,7 +151,7 @@ variable to the model are available
         returns the number of times that each variable is involved in a subset (in the final, pruned model).  
         Prior to June 2008, \texttt{varImp} used an internal function to estimate
         importance for MARS models. Currently, it is a wrapper around the 
-       \texttt{evimp} function in the \pkg{earth} package.
+       \texttt{evimp} function in the \texttt{earth} package.
    
   \item {\bf Nearest shrunken centroids}: The difference between the class
         centroids and the overall centroid is used to measure the
