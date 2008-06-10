@@ -1,6 +1,6 @@
 Package: caretNWS
 Version: 0.19
-Date: 2008-06-11
+Date: 2008-06-10
 Title: Classification and Regression Training in Parallel Using NetworkSpaces
 Author: Max Kuhn, Steve Weston
 Description: Augment some caret functions using parallel processing
