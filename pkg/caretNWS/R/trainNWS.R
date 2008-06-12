@@ -60,7 +60,7 @@ trainNWS <- function(x, y,
    {
       isFactor <- lapply(trainData, is.factor)
       isCharacter <- lapply(trainData, is.character)
-      if(any(isFactor)   | any(isCharacter))
+      if(any(unlist(isFactor))   | any(unlist(isCharacter)))
          stop("All predictors must be numeric for this model")
    }
 

@@ -38,34 +38,37 @@ A variety of models are currently available. The table below enumerates the mode
 
 \tabular{lccc}{
 \bold{Model} \tab \bold{\code{method} Value} \tab \bold{Package} \tab \bold{Tuning Parameter(s)} \cr
-Recursive partitioning \tab \code{rpart} \tab \pkg{rpart} \tab \code{maxdepth} \cr
-\tab \code{ctree} \tab \pkg{party} \tab \code{maxdepth} \cr
+Recursive partitioning \tab \code{rpart} \tab \pkg{rpart} \tab \code{maxdepth} \cr  
+\tab \code{ctree} \tab \pkg{party} \tab \code{mincriterion} \cr   
 Boosted Trees \tab \code{gbm} \tab \pkg{gbm} \tab \code{interaction depth}, \cr
 \tab \tab \tab \code{n.trees}, \code{shrinkage}  \cr
 \tab \code{blackboost} \tab \pkg{mboost} \tab \code{maxdepth}, \code{mstop}\cr
-\tab \code{ada} \tab \pkg{ada} \tab \code{maxdepth}, \code{iter}, \code{nu}\cr
-Boosted regression models \tab \code{glmboost} \tab \pkg{mboost} \tab \code{mstop}\cr
-\tab \code{gamboost} \tab \pkg{mboost} \tab  \code{mstop}\cr
+\tab \code{ada} \tab \pkg{ada} \tab \code{maxdepth}, \code{iter}, \code{nu}\cr            
+Boosted regression models \tab \code{glmboost} \tab \pkg{mboost} \tab \code{mstop}\cr   
+\tab \code{gamboost} \tab \pkg{mboost} \tab  \code{mstop}\cr    
 Random forests \tab  \code{rf} \tab \pkg{randomForest} \tab \code{mtry} \cr
-\tab \code{cforest} \tab \pkg{party} \tab \code{mtry} \cr
-Bagged Trees \tab \code{treebag} \tab \pkg{ipred} \tab None \cr
+\tab \code{cforest} \tab \pkg{party} \tab \code{mtry} \cr   
+Bagged Trees \tab \code{treebag} \tab \pkg{ipred} \tab None \cr 
 Neural networks \tab  \code{nnet} \tab \pkg{nnet} \tab \code{decay}, \code{size} \cr
 Partial least squares \tab \code{pls} \tab \pkg{pls}, \pkg{caret} \tab \code{ncomp} \cr
-Support Vector Machines (RBF)  \tab \code{svmradial} \tab \pkg{kernlab} \tab \code{sigma}, \code{C}\cr
-Support Vector Machines (polynomial)  \tab \code{svmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}, \code{C}\cr
-Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr
-Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nk} \cr
-Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nk} \cr
-Linear discriminant analysis \tab \code{lda} \tab \pkg{MASS} \tab  None\cr
-Logistic/multinomial regression \tab \code{multinom} \tab \pkg{nnet} \tab \code{decay}\cr
+Support Vector Machines (RBF)  \tab \code{svmradial} \tab \pkg{kernlab} \tab \code{sigma}, \code{C}\cr 
+Support Vector Machines (polynomial)  \tab \code{svmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}, \code{C}\cr 
+Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
+Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nprune} \cr
+Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr  
+Elastic Net \tab \code{enet} \tab \pkg{elasticnet} \tab \code{lambda}, \code{fraction} \cr
+The Lasso \tab \code{enet} \tab \pkg{elasticnet} \tab \code{fraction} \cr
+Linear discriminant analysis \tab \code{lda} \tab \pkg{MASS} \tab  None\cr 
+Stepwise Diagonal Discriminant Analysis \tab \code{sddaLDA}, \code{sddaQDA} \tab \pkg{SDDA} \tab None \cr
+Logistic/multinomial regression \tab \code{multinom} \tab \pkg{nnet} \tab \code{decay}\cr 
 Regularized discriminant analysis \tab \code{rda} \tab \pkg{klaR} \tab \code{lambda}, \code{gamma} \cr
-Flexible discriminant analysis (MARS) \tab \code{fda} \tab \pkg{mda}, \pkg{earth} \tab \code{degree}, \code{nk} \cr
-Bagged FDA \tab \code{bagFDA} \tab \pkg{caret},  \pkg{earth} \tab \code{degree}, \code{nk} \cr
-k nearest neighbors \tab \code{knn3} \tab \pkg{caret} \tab \code{k} \cr
-Nearest shrunken centroids \tab \code{pam} \tab \pkg{pamr} \tab \code{threshold} \cr
+Flexible discriminant analysis (MARS) \tab \code{fda} \tab \pkg{mda}, \pkg{earth} \tab \code{degree}, \code{nprune} \cr
+Bagged FDA \tab \code{bagFDA} \tab \pkg{caret},  \pkg{earth} \tab \code{degree}, \code{nprune} \cr  
+k nearest neighbors \tab \code{knn3} \tab \pkg{caret} \tab \code{k} \cr 
+Nearest shrunken centroids \tab \code{pam} \tab \pkg{pamr} \tab \code{threshold} \cr  
 Naive Bayes \tab \code{nb} \tab \pkg{klaR} \tab \code{usekernel} \cr
 Generalized partial least squares\tab \code{gpls} \tab \pkg{gpls} \tab \code{K.prov} \cr
-Learned vector quantization \tab \code{lvq} \tab \pkg{class} \tab  \code{k}
+Learned vector quantization \tab \code{lvq} \tab \pkg{class} \tab  \code{k} 
 }
 
 By default, the function \code{\link[caret]{createGrid}} is used to define the candidate values of the tuning parameters. The user can also specify their own. To do this, a data fame is created with columns for each tuning parameter in the model. The column names must be the same as those listed in the table above with a leading dot. For example, \code{ncomp} would have the column heading \code{.ncomp}. This data frame can then be passed to \code{\link[caret]{createGrid}}.
