@@ -211,7 +211,20 @@ trainLSF <- function(x, y,
          })     
    }   
    cat("\n")
-   resampleList <- jobMonitor(allJobResults, buffer = trControl$buffer, pause = trControl$pause)  
+   resampleList <- jobMonitor(allJobResults, buffer = trControl$buffer, pause = trControl$pause)
+
+   # Using LSF, unlist caret, every resample comes back with a group values of "Resample1"
+   # so we need to fix this
+
+
+   for(m in seq(along = resampleList))
+     {
+       resampleList[[m]]$group <- paste(
+                                        as.character(resampleList[[m]]$group),
+                                        "worker",
+                                        m)
+     }
+   
    results <- do.call(rbind, resampleList)             
    
    paramNames <- substring(names(tuneGrid), 2)

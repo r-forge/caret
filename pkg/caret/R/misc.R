@@ -137,7 +137,7 @@ modelLookup <- function(model = NULL)
                            "nprune", "degree", 
                            "nprune", "degree",                    
                            "nprune", "degree",
-                           "lambda", "fraction",
+                           "fraction","lambda", 
                            "fraction",
                            "parameter",
                            "parameter"
@@ -175,7 +175,7 @@ modelLookup <- function(model = NULL)
                            "#Retained Terms", "Product Degree",
                            "#Retained Terms", "Product Degree",                  
                            "#Retained Terms", "Product Degree",
-                           "Lambda", "Fraction of Full Solution",
+                           "Fraction of Full Solution","Weight Decay",
                            "Fraction of Full Solution",
                            "none",
                            "none"
@@ -214,7 +214,7 @@ modelLookup <- function(model = NULL)
                            FALSE,   FALSE, 
                            FALSE,   FALSE,                 
                            FALSE,   FALSE,
-                           FALSE,   TRUE,
+                           TRUE,    FALSE,
                            TRUE,
                            FALSE,              # sdda
                            FALSE
@@ -500,7 +500,7 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                    seqParam[[i]] <- data.frame(.mstop = subStops[subStops != loop$.mstop[i]])
                  }        
              },
-             enet =, lasso = 
+             enet = 
              {
                grid <- grid[order(grid$.lambda, grid$.fraction, decreasing = TRUE),, drop = FALSE]
                
@@ -517,6 +517,12 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                    loop$.fraction[loop$.lambda == uniqueLambda[i]] <- subFrac[which.max(subFrac)]
                    seqParam[[i]] <- data.frame(.fraction = subFrac[-which.max(subFrac)])
                  }         
+             },
+             lasso = 
+             {
+               grid <- grid[order(grid$.fraction, decreasing = TRUE),, drop = FALSE]
+               loop <- grid[1,,drop = FALSE]
+               seqParam <- list(grid[-1,,drop = FALSE])
              }     
              )
       out <- list(scheme = "seq", loop = loop, seqParam = seqParam, model = modelInfo, constant = constant, vary = vary)
