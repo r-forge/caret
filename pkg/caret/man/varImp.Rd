@@ -13,6 +13,7 @@
 \alias{varImp.mvr}
 \alias{varImp.bagEarth}
 \alias{varImp.RandomForest}
+\alias{varImp.enet}
 
 \title{Calculation of variable importance for regression and classification models}
 
@@ -34,6 +35,7 @@ A generic method for calculating variable importance for objects produced by
 \method{varImp}{mvr}(object, ...)
 \method{varImp}{bagEarth}(object, ...)
 \method{varImp}{RandomForest}(object, normalize = TRUE, ...)
+\method{varImp}{RandomForest}(object, s = NULL, ...)
 }
 
 \arguments{
@@ -52,6 +54,7 @@ A generic method for calculating variable importance for objects produced by
      either \code{gcv}, \code{nsubsets}, or \code{rss}}
   \item{normalize}{a logical; should the OOB mean importance values be divided
     by their standard deviations?}
+ \item{s}{the value of the L1 regularization term, specified as a fraction}
 }
 
 \value{
@@ -68,6 +71,8 @@ Otherwise:
 
    \item Linear Models: the absolute value of the t--statistic
    for each model parameter is used.
+
+   \item ElasticNet and Lasso: the absolute value of the coefficients (this assumes that the predictors were normalized)
    
    \item Random Forest: \code{varImp.randomForest} and
    \code{varImp.RandomForest} are wrappers around the importance functions from the
