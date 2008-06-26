@@ -94,7 +94,7 @@ S3method(varImp, lm)
 S3method(varImp, mvr)
 S3method(varImp, earth)
 S3method(varImp, RandomForest)
-S3method(varImp, enet)
+
 
 
 S3method(plot,  train)
