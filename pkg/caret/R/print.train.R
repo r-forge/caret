@@ -150,7 +150,7 @@
                  lm =, nnet =, multinom =, pls =, earth =, 
                  bagEarth =, bagFDA = print(summary(x$finalModel)),
                  
-                 rpart =, ctree =, cforest =,
+                 rpart =, ctree =, ctree2=, cforest =,
                  glmboost =, gamboost =, blackboost =,
                  ada =, randomForest =,
                  svmradial =, svmpoly =, enet =, lasso =,

@@ -172,6 +172,7 @@
                         .nu = .1),
                       cforest = cforestTune(data, len),
                       ctree = data.frame(.mincriterion = seq(from = .99, to = 0.01, length = len)),
+                      ctree2 = data.frame(.maxdepth = 1:len),
                       enet = expand.grid(
                         .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1)),
                         .fraction = seq(0.05, 1, length = len)),

@@ -18,7 +18,7 @@ byComplexity <- function(x, model)
              # complexity faster than number of splits
              x[order(x$n.trees, x$interaction.depth, x$shrinkage),] 
            },
-           rf =, rfNWS =, rfLSF =, gpls =, pls =, PLS =, pam =, cforest =, nb =, rpart =
+           rf =, rfNWS =, rfLSF =, gpls =, pls =, PLS =, pam =, cforest =, nb =, rpart =, ctree2 =
            {
              x[order(x[,1]),]
            },
