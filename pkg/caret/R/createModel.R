@@ -483,6 +483,34 @@
                        out <- do.call("ctree", modelArgs)
                        out        
                      },
+
+                     ctree2 = 
+                     {
+                       library(party)
+                       
+                       theDots <- list(...)
+                       
+                       if(any(names(theDots) == "control"))
+                         {
+                           theDots$control$maxdepth <- tuneValue$.maxdepth
+                           theDots$control$mincriterion <- 0
+                           ctl <- theDots$control
+                           theDots$control <- NULL
+                           
+                         } else ctl <- ctree_control(
+                                                     maxdepth = tuneValue$.maxdepth,
+                                                     mincriterion = 0)          
+                       
+                       modelArgs <- c(
+                                      list(
+                                           formula = modFormula,
+                                           data = data,
+                                           control = ctl),
+                                      theDots)
+                       
+                       out <- do.call("ctree", modelArgs)
+                       out        
+                     },                     
                      
                      cforest = 
                      {
@@ -545,7 +573,7 @@
 
   # for models using S4 classes, you can't easily append data, so 
   # exclude these and we'll use other methods to get this information
-  if(!(method %in% c("svmradial", "svmpoly", "ctree", "cforest")))
+  if(!(method %in% c("svmradial", "svmpoly", "ctree", "ctree2", "cforest")))
     {
       modelFit$xNames <- xNames
       modelFit$problemType <- type

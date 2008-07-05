@@ -13,7 +13,7 @@
 \alias{varImp.mvr}
 \alias{varImp.bagEarth}
 \alias{varImp.RandomForest}
-\alias{varImp.enet}
+
 
 \title{Calculation of variable importance for regression and classification models}
 
@@ -35,7 +35,6 @@ A generic method for calculating variable importance for objects produced by
 \method{varImp}{mvr}(object, ...)
 \method{varImp}{bagEarth}(object, ...)
 \method{varImp}{RandomForest}(object, normalize = TRUE, ...)
-\method{varImp}{RandomForest}(object, s = NULL, ...)
 }
 
 \arguments{
@@ -45,16 +44,14 @@ A generic method for calculating variable importance for objects produced by
   \item{nonpara}{should nonparametric methods be used to assess the relationship
   between the features and response (only used with \code{useModel = FALSE} and
   only passed to  \code{filterVarImp}).}  
-  \item{scale}{should the importances be scaled to 0 and 100?} 
+  \item{scale}{should the importance values be scaled to 0 and 100?} 
   \item{\dots}{parameters to pass to the specific \code{varImp} methods}
   \item{numTrees}{the number of iterations (trees) to use in a boosted tree model}        
   \item{threshold}{the shrinkage threshold (\code{pamr} models only)}        
    \item{data}{the training set predictors (\code{pamr} models only)}        
    \item{value}{the statistic that will be used to calculate importance:
      either \code{gcv}, \code{nsubsets}, or \code{rss}}
-  \item{normalize}{a logical; should the OOB mean importance values be divided
-    by their standard deviations?}
- \item{s}{the value of the L1 regularization term, specified as a fraction}
+   \item{normalize}{a logical: should the importance values be divided by their standard deviations}
 }
 
 \value{
@@ -72,8 +69,6 @@ Otherwise:
    \item Linear Models: the absolute value of the t--statistic
    for each model parameter is used.
 
-   \item ElasticNet and Lasso: the absolute value of the coefficients (this assumes that the predictors were normalized)
-   
    \item Random Forest: \code{varImp.randomForest} and
    \code{varImp.RandomForest} are wrappers around the importance functions from the
    \pkg{randomForest} and \pkg{party} packages, respectively.
@@ -134,4 +129,5 @@ Otherwise:
 \author{Max Kuhn}
 
 \keyword{ models }
+
 

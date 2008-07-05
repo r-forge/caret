@@ -71,6 +71,7 @@ modelLookup <- function(model = NULL)
                            "lm",
                            "lda",
                            "ctree",
+                           "ctree2",
                            "cforest",
                            "ada", "ada", "ada",
                            "glmboost", "glmboost",
@@ -109,6 +110,7 @@ modelLookup <- function(model = NULL)
                            "parameter",
                            "parameter",         
                            "mincriterion",
+                           "maxdepth",
                            "mtry",
                            "iter", "maxdepth", "nu",
                            "mstop", "prune",
@@ -147,6 +149,7 @@ modelLookup <- function(model = NULL)
                            "none",
                            "none",         
                            "P-Value Threshold",
+                           "Max Tree Depth",
                            "#Randomly Selected Predictors",
                            "#Trees", "Max Tree Depth", "Learning Rate",
                            "# Boosting Iterations", "AIC Prune?",
@@ -187,6 +190,7 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            TRUE,
                            FALSE,
+                           FALSE,
                            FALSE,   FALSE,   FALSE,
                            TRUE,    FALSE,
                            TRUE,    FALSE,   
@@ -223,6 +227,7 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            FALSE,
+                           TRUE,
                            TRUE,
                            TRUE,
                            FALSE,   FALSE,   FALSE,
@@ -265,6 +270,7 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            TRUE,
+                           TRUE,
                            TRUE,    TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
@@ -303,6 +309,7 @@ modelLookup <- function(model = NULL)
                            FALSE,            #   lm
                            TRUE,             #   lda
                            TRUE,             #   ctree (1)
+                           TRUE,             #   ctree2
                            TRUE,             #   cforest (1)
                            TRUE, TRUE,       #   ada (3)
                            TRUE, TRUE,       #   glmboost (2)
