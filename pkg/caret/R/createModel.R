@@ -40,7 +40,7 @@
   if(method %in% c("glmboost", "blackboost", "gamboost", "earth", "earthTest",
                    "bagFDA", "bagEarth", "lda", "enet", "lasso",
                    "lvq", "pls", "plsTest", "gbm", "pam", "rf",
-                   "ada", "knn", "PLS", "rfNWS", "rfLSF",
+                   "ada", "knn", "PLS", "rfNWS", "rfLSF", "pcaNNet",
                    "mars", "rda",  "gpls", "svmpoly", "svmradial",
                    "sddaLDA", "sddaQDA", "glmnet"))
     {
@@ -146,7 +146,12 @@
                      {      
                        library(nnet)      
                        nnet(modFormula, data,  size = tuneValue$.size, decay = tuneValue$.decay, ...)
-                     },           
+                     },
+                     pcaNNet =
+                     {      
+                       library(nnet)      
+                       pcaNNet(trainX, trainY, size = tuneValue$.size, decay = tuneValue$.decay, ...)
+                     },                       
                      gpls = 
                      {      
                        library(gpls)      

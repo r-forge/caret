@@ -152,7 +152,7 @@
                  
                  rpart =, ctree =, ctree2=, cforest =,
                  glmboost =, gamboost =, blackboost =,
-                 ada =, randomForest =,
+                 ada =, randomForest =, pcaNNet =,
                  svmradial =, svmpoly =, enet =, lasso =,
                  lda =, rda =, pamr =, gpls = print(x$finalModel),
                  fda = 

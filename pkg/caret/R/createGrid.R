@@ -128,7 +128,7 @@
       tuneSeq
     }
   trainGrid <- switch(method,
-                      nnet =  expand.grid(
+                      nnet =, pcaNNet = expand.grid(
                         .size = ((1:len) * 2) - 1, 
                         .decay = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                       rda = expand.grid(
