@@ -63,7 +63,7 @@ probFunction <- function(method, modelFit, newdata)
                         out
                       },
 
-                      nnet =
+                      nnet =, pcaNNet =
                       {
                         library(nnet)
                         out <- predict(modelFit, newdata)

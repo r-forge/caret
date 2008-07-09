@@ -77,7 +77,8 @@ modelLookup <- function(model = NULL)
                            "glmboost", "glmboost",
                            "gamboost", "gamboost",
                            "blackboost", "blackboost",
-                           "nnet", "nnet", 
+                           "nnet", "nnet",
+                           "pcaNNet", "pcaNNet",
                            "multinom", 
                            "rda", "rda", 
                            "gbm", "gbm", "gbm",
@@ -116,6 +117,7 @@ modelLookup <- function(model = NULL)
                            "mstop", "prune",
                            "mstop", "prune", 
                            "mstop", "maxdepth",                    
+                           "size", "decay",
                            "size", "decay", 
                            "decay", 
                            "gamma", "lambda", 
@@ -155,6 +157,7 @@ modelLookup <- function(model = NULL)
                            "# Boosting Iterations", "AIC Prune?",
                            "# Boosting Iterations", "AIC Prune?",    
                            "#Trees", "Max Tree Depth",                        
+                           "#Hidden Units", "Weight Decay",
                            "#Hidden Units", "Weight Decay", 
                            "Weight Decay", 
                            "Gamma", "Lambda", 
@@ -195,6 +198,7 @@ modelLookup <- function(model = NULL)
                            TRUE,    FALSE,
                            TRUE,    FALSE,   
                            TRUE,    FALSE,                        
+                           FALSE,   FALSE,
                            FALSE,   FALSE, 
                            FALSE, 
                            FALSE,   FALSE, 
@@ -231,6 +235,7 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            FALSE,   FALSE,   FALSE,
+                           TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
@@ -275,7 +280,8 @@ modelLookup <- function(model = NULL)
                            TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
-                           TRUE,    TRUE, 
+                           TRUE,    TRUE,
+                           TRUE,    TRUE,
                            TRUE, 
                            TRUE,    TRUE, 
                            TRUE,    TRUE,    TRUE,        
@@ -316,6 +322,7 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,       #   gamboost (2)
                            TRUE, TRUE,       #   blackboost (2)
                            TRUE, TRUE,       #   nnet (2)
+                           TRUE, TRUE,       #   pcaNNet (2)
                            TRUE,             #   multinom (1) 
                            TRUE, TRUE,       #   rda (2)
                            TRUE, TRUE, TRUE, #   gbm (3)         
