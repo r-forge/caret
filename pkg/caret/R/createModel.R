@@ -39,7 +39,7 @@
   # probabilites, so we will use the svm(x, y) interface
   if(method %in% c("glmboost", "blackboost", "gamboost", "earth", "earthTest",
                    "bagFDA", "bagEarth", "lda", "enet", "lasso",
-                   "lvq", "pls", "plsTest", "gbm", "pam", "rf",
+                   "lvq", "pls", "plsTest", "gbm", "pam", "rf", "logitBoost",
                    "ada", "knn", "PLS", "rfNWS", "rfLSF", "pcaNNet",
                    "mars", "rda",  "gpls", "svmpoly", "svmradial",
                    "sddaLDA", "sddaQDA", "glmnet"))
@@ -569,7 +569,12 @@
                      {
                        library(SDDA)
                        sdda(as.matrix(trainX), trainY, method = "qda", ...)
-                     }                 
+                     },
+                     logitBoost =
+                     {
+                       library(caTools)
+                       LogitBoost(as.matrix(trainX), trainY, nIter = tuneValue$.nIter)
+                     }
                      )
   
   

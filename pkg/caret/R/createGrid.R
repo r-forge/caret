@@ -180,6 +180,7 @@
                       glmnet = expand.grid(
                         .alpha = seq(0.1, 1, length = len),
                         .lambda = seq(.1, 1, length = 3 * len)),
+                      logitBoost = data.frame(.nIter =  floor((1:len) * 50)),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA = data.frame(.parameter = "none"))
   trainGrid
 }
