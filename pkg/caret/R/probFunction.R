@@ -170,6 +170,14 @@ probFunction <- function(method, modelFit, newdata)
                       {
                         library(SDDA)
                         predict(modelFit, as.matrix(newdata), type = "prob")
+                      },
+                      logitBoost =
+                      {
+                        library(caTools)
+                        out <- predict(modelFit, newdata, type = "raw")
+                        # I've seen them not be on [0, 1]
+                        out <- t(apply(out, 1, function(x) x/sum(x)))
+                        out
                       }
                       )
 

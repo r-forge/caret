@@ -77,6 +77,7 @@ modelLookup <- function(model = NULL)
                            "glmboost", "glmboost",
                            "gamboost", "gamboost",
                            "blackboost", "blackboost",
+                           "logitBoost",
                            "nnet", "nnet",
                            "pcaNNet", "pcaNNet",
                            "multinom", 
@@ -116,7 +117,8 @@ modelLookup <- function(model = NULL)
                            "iter", "maxdepth", "nu",
                            "mstop", "prune",
                            "mstop", "prune", 
-                           "mstop", "maxdepth",                    
+                           "mstop", "maxdepth",
+                           "nIter",
                            "size", "decay",
                            "size", "decay", 
                            "decay", 
@@ -156,7 +158,8 @@ modelLookup <- function(model = NULL)
                            "#Trees", "Max Tree Depth", "Learning Rate",
                            "# Boosting Iterations", "AIC Prune?",
                            "# Boosting Iterations", "AIC Prune?",    
-                           "#Trees", "Max Tree Depth",                        
+                           "#Trees", "Max Tree Depth",
+                           "# Boosting Iterations",
                            "#Hidden Units", "Weight Decay",
                            "#Hidden Units", "Weight Decay", 
                            "Weight Decay", 
@@ -197,7 +200,8 @@ modelLookup <- function(model = NULL)
                            FALSE,   FALSE,   FALSE,
                            TRUE,    FALSE,
                            TRUE,    FALSE,   
-                           TRUE,    FALSE,                        
+                           TRUE,    FALSE,
+                           TRUE, 
                            FALSE,   FALSE,
                            FALSE,   FALSE, 
                            FALSE, 
@@ -238,6 +242,7 @@ modelLookup <- function(model = NULL)
                            TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
+                           FALSE,
                            TRUE,    TRUE,
                            TRUE,    TRUE, 
                            FALSE, 
@@ -274,12 +279,13 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            TRUE,
                            TRUE,
-                           TRUE,
+                           TRUE,#check these
                            TRUE,
                            TRUE,    TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
+                           TRUE,
                            TRUE,    TRUE,
                            TRUE,    TRUE,
                            TRUE, 
@@ -321,6 +327,7 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,       #   glmboost (2)
                            TRUE, TRUE,       #   gamboost (2)
                            TRUE, TRUE,       #   blackboost (2)
+                           TRUE,             #   LogitBoost (1),
                            TRUE, TRUE,       #   nnet (2)
                            TRUE, TRUE,       #   pcaNNet (2)
                            TRUE,             #   multinom (1) 
@@ -426,6 +433,12 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
       # object      
       
       switch(model,
+             logitBoost = 
+             {
+               grid <- grid[order(grid$.nIter, decreasing = TRUE),, drop = FALSE]
+               loop <- grid[1,,drop = FALSE]
+               seqParam <- list(grid[-1,,drop = FALSE])
+             },             
              pls = 
              {
                grid <- grid[order(grid$.ncomp, decreasing = TRUE),, drop = FALSE]
