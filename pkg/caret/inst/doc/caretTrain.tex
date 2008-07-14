@@ -9,6 +9,7 @@
 \usepackage{fancyvrb}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{longtable}
 \usepackage{algorithm2e}
 \usepackage[
          colorlinks=true,
@@ -185,15 +186,15 @@ summary of leave group out cross-validation (30 reps) sample sizes:
 
 LGOCV resampled training results across tuning parameters:
 
-  sigma    C    Accuracy  Kappa   Accuracy SD  Kappa SD  Selected
-  0.00571  0.1  0.574     0.0346  0.0128       0.0323            
-  0.00571  1    0.829     0.649   0.0438       0.091     *       
-  0.00571  10   0.814     0.621   0.0467       0.0951            
-  0.00571  100  0.777     0.553   0.0472       0.0933            
+  sigma   C    Accuracy  Kappa  Accuracy SD  Kappa SD  Selected
+  0.0145  0.1  0.606     0.113  0.0283       0.0703            
+  0.0145  1    0.837     0.665  0.0422       0.0865    *       
+  0.0145  10   0.796     0.587  0.0514       0.104             
+  0.0145  100  0.794     0.585  0.0527       0.107             
 
 Accuracy was used to select the optimal model using the largest value.
 
-The final values used in the model were C = 1 and sigma = 0.00570685013628034.
+The final values used in the model were C = 1 and sigma = 0.0144604755048034.
 \end{Soutput}
 \end{Schunk}
 \end{small}
@@ -309,15 +310,17 @@ The function \texttt{trainControl}, generates parameters that control how models
 
 
 
-\begin{table}[hp]
-   \begin{center}
-      \caption{Models used in \texttt{train}}
 
-      \label{T:methods}
-      \begin{tabular}{lllll}
-      Model & \texttt{method} Value & Package & Tuning Parameters  \\
-      \hline
-      
+\begin{longtable}{lllll}
+\caption{Models used in \texttt{train}} \\ \label{T:methods}
+{\bf Model} & {\bf \texttt{method} Value} & {\bf Package} & {\bf Tuning Parameters}\\
+\hline \\
+\endhead
+\\
+\multicolumn{5}{l}{{{\small \em (continued on next page\ldots)}}} \\
+\endfoot
+\hline
+\endlastfoot
       Recursive partitioning &
          \texttt{rpart} & 
             \texttt{rpart}       & 
@@ -350,7 +353,12 @@ The function \texttt{trainControl}, generates parameters that control how models
       &      
          \texttt{gamboost} & 
             \texttt{mboost}       &          
-            \texttt{mstop}\\               
+            \texttt{mstop}\\      
+ 
+      &      
+         \texttt{logitboost} & 
+            \texttt{caTools}       &          
+            \texttt{nIter}\\                
                  
       Random forests & 
          \texttt{rf} & 
@@ -381,16 +389,14 @@ The function \texttt{trainControl}, generates parameters that control how models
          \texttt{svmradial} & 
             \texttt{kernlab}       & 
             \texttt{sigma}, \texttt{C} \\            
-      \:\: (RBF kernel) \\   
+      \:\: (RBF kernel) & & &\\   
       
       Support Vector Machines  &
          \texttt{svmpoly} & 
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree}, \texttt{C} \\            
-      \:\: (polynomial kernel) \\         
-      
+      \:\: (polynomial kernel) & & &\\         
       \\
-      
       Linear least squares &
          \texttt{lm} & 
             \texttt{stats}       & 
@@ -400,7 +406,7 @@ The function \texttt{trainControl}, generates parameters that control how models
          \texttt{earth}, \texttt{mars} & 
             \texttt{earth}       & 
             \texttt{degree}, \texttt{nprune} \\            
-      \:\: regression splines \\
+      \:\: regression splines & & &\\
             
       Bagged MARS &
          \texttt{bagEarth} & 
@@ -415,7 +421,19 @@ The function \texttt{trainControl}, generates parameters that control how models
       The Lasso &
          \texttt{lasso} & 
             \texttt{elasticnet}      & 
-            \texttt{fraction} \\          
+            \texttt{fraction} \\       
+            
+      Relevance Vector Machines  &
+         \texttt{rvmradial} & 
+            \texttt{kernlab}       & 
+            \texttt{sigma} \\            
+      \:\: (RBF kernel) & & &\\   
+      
+      Relevance Vector Machines  &
+         \texttt{rvmpoly} & 
+            \texttt{kernlab}       & 
+            \texttt{scale}, \texttt{degree} \\            
+      \:\: (polynomial kernel) & & &\\               
 
       \\       
              
@@ -426,10 +444,10 @@ The function \texttt{trainControl}, generates parameters that control how models
             None\\                     
 
       Stepwise Diagonal &
-        \texttt{sddaLDA}, \texttt{sddaQDA} &
+        \texttt{sddaLDA}, &
         \texttt{SDDA} &
         None \\
-      \:\: Discriminant Analysis \\
+      \:\: Discriminant Analysis & \texttt{sddaQDA} & &\\
             
       Logistic/multinomial  &
          \texttt{multinom} & 
@@ -440,8 +458,8 @@ The function \texttt{trainControl}, generates parameters that control how models
       Regularized discriminant  &
          \texttt{rda} & 
             \texttt{klaR}       & 
-            \texttt{lambda}, \texttt{gamma} & \\
-      \: \: analysis \\
+            \texttt{lambda}, \texttt{gamma} & \\*
+      \: \: analysis \\*
       
       Flexible discriminant  &
          \texttt{fda} & 
@@ -452,8 +470,15 @@ The function \texttt{trainControl}, generates parameters that control how models
       Bagged FDA &
          \texttt{bagFDA} & 
             \texttt{caret},  \texttt{earth}       & 
-            \texttt{degree}, \texttt{nprune} \\         
-                   
+            \texttt{degree}, \texttt{nprune} \\      
+            
+      Least Squares Support Vector  &
+         \texttt{lssvmradial} & 
+            \texttt{kernlab}       & 
+            \texttt{sigma} \\            
+      \:\:  Machines (RBF kernel) & & &\\   
+      
+                
       $k$ nearest neighbors &
          \texttt{knn3} & 
             \texttt{caret}       & 
@@ -478,10 +503,9 @@ The function \texttt{trainControl}, generates parameters that control how models
       Learned vector quantization &
          \texttt{lvq} & 
             \texttt{class}       &          
-            \texttt{k} \\                             
-      \end{tabular}      
-   \end{center}
-\end{table}  
+            \texttt{k} \\            
+\label{label-name}
+\end{longtable}
 
 \begin{figure}[p]
    \begin{center}		
@@ -648,7 +672,7 @@ The function \texttt{confusionMatrix} can also be used to summarize the results 
 > sensitivity(mbrrPredictions$pred, mbrrPredictions$obs)
 \end{Sinput}
 \begin{Soutput}
-[1] 0.7933333
+[1] 0.82
 \end{Soutput}
 \begin{Sinput}
 > confusionMatrix(mbrrPredictions$pred, mbrrPredictions$obs)
@@ -658,20 +682,20 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction Active Inactive
-  Active      119       27
-  Inactive     31       87
-                                       
-            Accuracy : 0.7803          
-              95% CI : (0.7255, 0.8287)
- No Information Rate : 0.5682          
- P-Value [Acc > NIR] : 4.063e-13       
-                                       
-               Kappa : 0.5542          
-                                       
-         Sensitivity : 0.7933          
-         Specificity : 0.7632          
-      Pos Pred Value : 0.8151          
-      Neg Pred Value : 0.7373          
+  Active      123       24
+  Inactive     27       90
+                                      
+            Accuracy : 0.8068         
+              95% CI : (0.754, 0.8526)
+ No Information Rate : 0.5682         
+ P-Value [Acc > NIR] : 2.152e-16      
+                                      
+               Kappa : 0.6076         
+                                      
+         Sensitivity : 0.82           
+         Specificity : 0.7895         
+      Pos Pred Value : 0.8367         
+      Neg Pred Value : 0.7692         
 \end{Soutput}
 \end{Schunk}
 \end{small}

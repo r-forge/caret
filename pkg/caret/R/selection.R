@@ -25,14 +25,23 @@ byComplexity <- function(x, model)
            svmradial =
            {
              # If the cost is high, the decision boundary will work hard to
-             # adapt. Also, if C is fixed, larger values of sigma yeild more
+             # adapt. Also, if C is fixed, smaller values of sigma yeild more
              # complex boundaries
-             x[order(x$C, x$sigma),]
+             x[order(x$C, -x$sigma),]
            },
-           svmpoly =
+           svmpoly = 
            {
              x[order(x$degree, x$C, x$scale),]
            },
+           rvmradial=, lssvmradial =
+           {
+  
+             x[order(-x$sigma),]
+           },
+           rvmpoly =, lssvmpoly =
+           {
+             x[order(x$degree, x$scale),]
+           },           
            nnet =, pcaNNet =
            {
              x[order(x$size, -x$decay),]
