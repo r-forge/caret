@@ -56,6 +56,9 @@ Neural networks \tab  \code{nnet} \tab \pkg{nnet} \tab \code{decay}, \code{size}
 Partial least squares \tab \code{pls} \tab \pkg{pls}, \pkg{caret} \tab \code{ncomp} \cr
 Support Vector Machines (RBF)  \tab \code{svmradial} \tab \pkg{kernlab} \tab \code{sigma}, \code{C}\cr 
 Support Vector Machines (polynomial)  \tab \code{svmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}, \code{C}\cr 
+Relevance Vector Machines (RBF)  \tab \code{rvmradial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
+Relevance Vector Machines (polynomial)  \tab \code{rvmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
+Least Squares Support Vector Machines (RBF)  \tab \code{lssvmradial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
 Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
 Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nprune} \cr
 Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr  

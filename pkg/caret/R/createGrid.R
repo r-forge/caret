@@ -27,12 +27,17 @@
       tuneSeq
     }
   
-  rbfTune <- function(data, len)
+  rbfTune <- function(data, len, center = TRUE)
     {
       library(kernlab)
-      scaleRange <- sigest(.outcome ~ ., data, na.action = na.omit, scale = FALSE)
-      out <- unique(seq(from = min(scaleRange), to = min(scaleRange), length = len))
-      if(length(out) == 0 | any(is.infinite(out))) out <- 10 ^((1:len) - 3)
+      # this was changed to follow what kernlab does inside of ksvm and rvm:
+      sigmaEstimate <- try(
+                           sigest(.outcome ~ ., data, na.action = na.omit, scaled = FALSE),
+                           silent = TRUE)
+      if(!(class(sigmaEstimate) == "try-error"))
+        {
+          out <- if(center) sum(sigmaEstimate)/2 else sigmaEstimate[2]
+        } else out <- 10 ^((1:len) - 3)
       out
     }
   
@@ -155,8 +160,15 @@
                         .C = 10 ^((1:len) - 2)),   
                       svmpoly = expand.grid(
                         .degree = seq(1, min(len, 3)),      
-                        .scale = 10 ^((1:len) - 3),
-                        .C = 10 ^((1:len) - 2)),     
+                        .scale = 10 ^((1:len) - 4),
+                        .C = 10 ^((1:len) - 2)),
+                      # For 4 different data sets, I've seen that the default sigma
+                      # causes numerical issue in chol.default (leading minor is not
+                      # positive definite), so we'll use the high value form sigest
+                      rvmradial =, lssvmradial = data.frame(.sigma = rbfTune(data, len, FALSE)),   
+                      rvmpoly =, lssvmpoly = expand.grid(
+                        .degree = seq(1, min(len, 3)),      
+                        .scale = 10 ^((1:len) - 4)),
                       glmboost = data.frame(
                         .mstop = floor((1:len) * 50), 
                         .prune = "no"),  

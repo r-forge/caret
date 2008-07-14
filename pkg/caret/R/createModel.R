@@ -42,6 +42,8 @@
                    "lvq", "pls", "plsTest", "gbm", "pam", "rf", "logitBoost",
                    "ada", "knn", "PLS", "rfNWS", "rfLSF", "pcaNNet",
                    "mars", "rda",  "gpls", "svmpoly", "svmradial",
+                   "lssvmpoly", "lssvmradial",
+                   "rvmradial", "rvmpoly",
                    "sddaLDA", "sddaQDA", "glmnet"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
@@ -135,13 +137,70 @@
                            out <- ksvm(
                                        as.matrix(trainX),
                                        trainY,
-                                       type = "eps-svr",
                                        kernel = rbfdot(sigma = tuneValue$.sigma),
                                        C = tuneValue$.C,
                                        ...)
                          }
                        out         
-                     },                          
+                     },
+                     rvmpoly = 
+                     {
+                       library(kernlab)
+                       # As of version 0.9-5 of kernlab, there was a small inconsistency
+                       # between methods on how to specific kernels. Unlike ksvm, we specify
+                       # them here via kpar (same for polynomial kernels)
+
+                       out <- rvm(
+                                  as.matrix(trainX),
+                                  trainY,
+                                  kernel = polydot,
+                                  kpar = list(
+                                    degree = tuneValue$.degree,
+                                    scale = tuneValue$.scale,
+                                    offset = 1),
+                                  ...)
+                       out            
+                     },
+                     rvmradial = 
+                     {      
+                       library(kernlab)      
+
+                       out <- rvm(
+                                  as.matrix(trainX),
+                                  trainY,
+                                  kernel = rbfdot,
+                                  kpar = list(sigma = tuneValue$.sigma),
+                                  ...)
+
+                       out         
+                     },
+                     lssvmpoly = 
+                     {
+                       library(kernlab)
+
+                       out <- lssvm(
+                                    as.matrix(trainX),
+                                    trainY,
+                                    kernel = polydot(
+                                      degree = tuneValue$.degree,
+                                      scale = tuneValue$.scale,
+                                      offset = 1),
+                                    ...)
+
+                       out            
+                     },
+                     lssvmradial = 
+                     {      
+                       library(kernlab)      
+
+                       out <- lssvm(
+                                    as.matrix(trainX),
+                                    trainY,
+                                    kernel = rbfdot(sigma = tuneValue$.sigma),
+                                    ...)
+
+                       out         
+                     },                     
                      nnet =
                      {      
                        library(nnet)      
@@ -583,7 +642,10 @@
 
   # for models using S4 classes, you can't easily append data, so 
   # exclude these and we'll use other methods to get this information
-  if(!(method %in% c("svmradial", "svmpoly", "ctree", "ctree2", "cforest")))
+  if(!(method %in% c("svmradial", "svmpoly",
+                     "rvmradial", "rvmpoly",
+                     "lssvmradial", "lssvmpoly",
+                     "ctree", "ctree2", "cforest")))
     {
       modelFit$xNames <- xNames
       modelFit$problemType <- type

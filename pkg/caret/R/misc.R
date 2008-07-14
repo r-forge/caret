@@ -87,7 +87,11 @@ modelLookup <- function(model = NULL)
                            "rfLSF",
                            "rf", 
                            "svmpoly", "svmpoly", "svmpoly", 
-                           "svmradial", "svmradial",          
+                           "svmradial", "svmradial",
+                           "rvmpoly", "rvmpoly", 
+                           "rvmradial",
+                           "lssvmpoly", "lssvmpoly", 
+                           "lssvmradial",                          
                            "gpls", 
                            "lvq", 
                            "rpart", 
@@ -128,7 +132,11 @@ modelLookup <- function(model = NULL)
                            "mtry",         
                            "mtry", 
                            "C", "degree", "scale",  
-                           "C", "sigma",           
+                           "C", "sigma",
+                           "degree", "scale",  
+                           "sigma",
+                           "degree", "scale",  
+                           "sigma",                            
                            "K.prov", 
                            "k", 
                            "maxdepth", 
@@ -169,7 +177,11 @@ modelLookup <- function(model = NULL)
                            "#Randomly Selected Predictors",         
                            "#Randomly Selected Predictors", 
                            "Cost", "Polynomial Degree", "Scale",  
-                           "Cost", "Sigma",          
+                           "Cost", "Sigma",
+                           "Polynomial Degree", "Scale",  
+                           "Sigma",
+                           "Polynomial Degree", "Scale",  
+                           "Sigma",                             
                            "#Components", 
                            "#Prototypes", 
                            "Max Tree Depth", 
@@ -211,7 +223,11 @@ modelLookup <- function(model = NULL)
                            FALSE,         
                            FALSE, 
                            FALSE,   FALSE,   FALSE,  
-                           FALSE,   FALSE,           
+                           FALSE,   FALSE,          
+                           FALSE,   FALSE,   # rvm
+                           FALSE,
+                           FALSE,   FALSE,   # lssvm
+                           FALSE,                                
                            FALSE, 
                            FALSE, 
                            TRUE, 
@@ -252,7 +268,11 @@ modelLookup <- function(model = NULL)
                            TRUE,         
                            TRUE,         
                            TRUE,    TRUE,    TRUE, 
-                           TRUE,    TRUE,          
+                           TRUE,    TRUE,
+                           TRUE,    TRUE, 
+                           TRUE,
+                           FALSE,   FALSE,    #lssvm
+                           FALSE,                            
                            FALSE, 
                            FALSE, 
                            TRUE, 
@@ -295,7 +315,11 @@ modelLookup <- function(model = NULL)
                            TRUE,           
                            TRUE, 
                            TRUE,    TRUE,    TRUE, 
-                           TRUE,    TRUE,          
+                           TRUE,    TRUE,
+                           FALSE,   FALSE,
+                           FALSE,
+                           TRUE,    TRUE,   # lssvm
+                           TRUE,                           
                            TRUE, 
                            TRUE, 
                            TRUE, 
@@ -323,7 +347,7 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   ctree (1)
                            TRUE,             #   ctree2
                            TRUE,             #   cforest (1)
-                           TRUE, TRUE,       #   ada (3)
+                           TRUE, TRUE, TRUE, #   ada (3)
                            TRUE, TRUE,       #   glmboost (2)
                            TRUE, TRUE,       #   gamboost (2)
                            TRUE, TRUE,       #   blackboost (2)
@@ -337,8 +361,12 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   rfLSF (1)         
                            TRUE,             #   rf (1) 
                            TRUE, TRUE, TRUE, #   svmpoly (3) 
-                           TRUE, TRUE,       #   svmradial (2)         
-                           TRUE, TRUE,       #   gpls (1) 
+                           TRUE, TRUE,       #   svmradial (2)
+                           FALSE,FALSE,      #   rvmpoly (2) 
+                           FALSE,            #   rvmradial (1)
+                           FALSE,FALSE,      #   lssvmpoly (2) # not implemented 
+                           FALSE,            #   lssvmradial (1)                           
+                           TRUE,             #   gpls (1) 
                            FALSE,            #   lvq (1) 
                            TRUE,             #   rpart (1) 
                            TRUE,             #   pls (1) 

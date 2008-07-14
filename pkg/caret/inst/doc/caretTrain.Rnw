@@ -9,6 +9,7 @@
 \usepackage{fancyvrb}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{longtable}
 \usepackage{algorithm2e}
 \usepackage[
          colorlinks=true,
@@ -275,15 +276,17 @@ pdf(paste(getwd(), "/resampHist.pdf", sep = ""), width = 7, height = 3.5)
 dev.off()
 @
 
-\begin{table}[hp]
-   \begin{center}
-      \caption{Models used in \texttt{train}}
 
-      \label{T:methods}
-      \begin{tabular}{lllll}
-      Model & \texttt{method} Value & Package & Tuning Parameters  \\
-      \hline
-      
+\begin{longtable}{lllll}
+\caption{Models used in \texttt{train}} \\ \label{T:methods}
+{\bf Model} & {\bf \texttt{method} Value} & {\bf Package} & {\bf Tuning Parameters}\\
+\hline \\
+\endhead
+\\
+\multicolumn{5}{l}{{{\small \em (continued on next page\ldots)}}} \\
+\endfoot
+\hline
+\endlastfoot
       Recursive partitioning &
          \texttt{rpart} & 
             \texttt{rpart}       & 
@@ -352,16 +355,14 @@ dev.off()
          \texttt{svmradial} & 
             \texttt{kernlab}       & 
             \texttt{sigma}, \texttt{C} \\            
-      \:\: (RBF kernel) \\   
+      \:\: (RBF kernel) & & &\\   
       
       Support Vector Machines  &
          \texttt{svmpoly} & 
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree}, \texttt{C} \\            
-      \:\: (polynomial kernel) \\         
-      
+      \:\: (polynomial kernel) & & &\\         
       \\
-      
       Linear least squares &
          \texttt{lm} & 
             \texttt{stats}       & 
@@ -371,7 +372,7 @@ dev.off()
          \texttt{earth}, \texttt{mars} & 
             \texttt{earth}       & 
             \texttt{degree}, \texttt{nprune} \\            
-      \:\: regression splines \\
+      \:\: regression splines & & &\\
             
       Bagged MARS &
          \texttt{bagEarth} & 
@@ -386,7 +387,19 @@ dev.off()
       The Lasso &
          \texttt{lasso} & 
             \texttt{elasticnet}      & 
-            \texttt{fraction} \\          
+            \texttt{fraction} \\       
+            
+      Relevance Vector Machines  &
+         \texttt{rvmradial} & 
+            \texttt{kernlab}       & 
+            \texttt{sigma} \\            
+      \:\: (RBF kernel) & & &\\   
+      
+      Relevance Vector Machines  &
+         \texttt{rvmpoly} & 
+            \texttt{kernlab}       & 
+            \texttt{scale}, \texttt{degree} \\            
+      \:\: (polynomial kernel) & & &\\               
 
       \\       
              
@@ -397,10 +410,10 @@ dev.off()
             None\\                     
 
       Stepwise Diagonal &
-        \texttt{sddaLDA}, \texttt{sddaQDA} &
+        \texttt{sddaLDA}, &
         \texttt{SDDA} &
         None \\
-      \:\: Discriminant Analysis \\
+      \:\: Discriminant Analysis & \texttt{sddaQDA} & &\\
             
       Logistic/multinomial  &
          \texttt{multinom} & 
@@ -411,8 +424,8 @@ dev.off()
       Regularized discriminant  &
          \texttt{rda} & 
             \texttt{klaR}       & 
-            \texttt{lambda}, \texttt{gamma} & \\
-      \: \: analysis \\
+            \texttt{lambda}, \texttt{gamma} & \\*
+      \: \: analysis \\*
       
       Flexible discriminant  &
          \texttt{fda} & 
@@ -423,8 +436,15 @@ dev.off()
       Bagged FDA &
          \texttt{bagFDA} & 
             \texttt{caret},  \texttt{earth}       & 
-            \texttt{degree}, \texttt{nprune} \\         
-                   
+            \texttt{degree}, \texttt{nprune} \\      
+            
+      Least Squares Support Vector  &
+         \texttt{lssvmradial} & 
+            \texttt{kernlab}       & 
+            \texttt{sigma} \\            
+      \:\:  Machines (RBF kernel) & & &\\   
+      
+                
       $k$ nearest neighbors &
          \texttt{knn3} & 
             \texttt{caret}       & 
@@ -449,10 +469,9 @@ dev.off()
       Learned vector quantization &
          \texttt{lvq} & 
             \texttt{class}       &          
-            \texttt{k} \\                             
-      \end{tabular}      
-   \end{center}
-\end{table}  
+            \texttt{k} \\            
+\label{label-name}
+\end{longtable}
 
 \begin{figure}[p]
    \begin{center}		
