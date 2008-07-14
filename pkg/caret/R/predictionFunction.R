@@ -414,8 +414,34 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            {
                              library(SDDA)
                              predict(modelFit, as.matrix(newdata), type = "class")
+                           },
+
+                           logitBoost =,
+                           {
+                             library(caTools)
+
+                             out <- predict(modelFit, newdata, type="class")
+                             
+                             if(!is.null(param))
+                               {
+                                 tmp <- data.frame(
+                                                   matrix(NA, nrow = nrow(newdata), ncol = nrow(param)),
+                                                   stringsAsFactors = FALSE)
+                                 
+                                 for(j in seq(along = param$.nIter))
+                                   {
+                                     tmp[,j] <- as.character(
+                                                             predict(
+                                                                     modelFit,
+                                                                     newdata,
+                                                                     nIter = param$.nIter[j]))
+                                   }
+                                 out <- cbind(out, tmp)
+                                 attr(out, "values") <- c(modelFit$tuneValue$.nIter, param$.nIter)
+                                 
+                               }
+                             out
                            }
-                           
                            )
   predictedValue
 }

@@ -316,7 +316,12 @@ dev.off()
       &      
          \texttt{gamboost} & 
             \texttt{mboost}       &          
-            \texttt{mstop}\\               
+            \texttt{mstop}\\      
+ 
+      &      
+         \texttt{logitboost} & 
+            \texttt{caTools}       &          
+            \texttt{nIter}\\                
                  
       Random forests & 
          \texttt{rf} & 
