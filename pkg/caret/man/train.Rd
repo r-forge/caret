@@ -59,6 +59,8 @@ Support Vector Machines (polynomial)  \tab \code{svmpoly} \tab \pkg{kernlab} \ta
 Relevance Vector Machines (RBF)  \tab \code{rvmradial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
 Relevance Vector Machines (polynomial)  \tab \code{rvmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
 Least Squares Support Vector Machines (RBF)  \tab \code{lssvmradial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
+Gaussian Processes (RBF)  \tab \code{guassprRadial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
+Gaussian Processes (polynomial)  \tab \code{guassprPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
 Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
 Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nprune} \cr
 Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr  

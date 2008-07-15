@@ -18,27 +18,28 @@ byComplexity <- function(x, model)
              # complexity faster than number of splits
              x[order(x$n.trees, x$interaction.depth, x$shrinkage),] 
            },
-           rf =, rfNWS =, rfLSF =, gpls =, pls =, PLS =, pam =, cforest =, nb =, rpart =, ctree2 =, logitBoost=
+           rf =, rfNWS =, rfLSF =, gpls =, pls =, PLS =, pam =, cforest =,
+           nb =, rpart =, ctree2 =, logitBoost=
            {
              x[order(x[,1]),]
            },
-           svmradial =
+           svmradial =, svmRadial =
            {
              # If the cost is high, the decision boundary will work hard to
              # adapt. Also, if C is fixed, smaller values of sigma yeild more
              # complex boundaries
              x[order(x$C, -x$sigma),]
            },
-           svmpoly = 
+           svmpoly =, svmPoly =
            {
              x[order(x$degree, x$C, x$scale),]
            },
-           rvmradial=, lssvmradial =
+           rvmRadial=, lssvmRadial =, gaussprRadial =
            {
   
              x[order(-x$sigma),]
            },
-           rvmpoly =, lssvmpoly =
+           rvmPoly =, lssvmPoly =, gaussprPoly =
            {
              x[order(x$degree, x$scale),]
            },           

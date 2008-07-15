@@ -155,18 +155,19 @@
                       bagEarth =, bagFDA =, earth =,
                       earthTest =, mars =,
                       fda = expand.grid(.degree = 1, .nprune = marsSeq(data, len)),    
-                      svmradial = expand.grid(
+                      svmradial =, svmRadial = expand.grid(
                         .sigma = rbfTune(data, len),
                         .C = 10 ^((1:len) - 2)),   
-                      svmpoly = expand.grid(
+                      svmpoly =, svmPoly = expand.grid(
                         .degree = seq(1, min(len, 3)),      
                         .scale = 10 ^((1:len) - 4),
                         .C = 10 ^((1:len) - 2)),
-                      # For 4 different data sets, I've seen that the default sigma
+                      # For 4 different data sets using rvm, I've seen that the default sigma
                       # causes numerical issue in chol.default (leading minor is not
                       # positive definite), so we'll use the high value form sigest
-                      rvmradial =, lssvmradial = data.frame(.sigma = rbfTune(data, len, FALSE)),   
-                      rvmpoly =, lssvmpoly = expand.grid(
+                      rvmRadial = data.frame(.sigma = rbfTune(data, len, FALSE)),
+                      lssvmRadial =, gaussprRadial = data.frame(.sigma = rbfTune(data, len)),  
+                      rvmPoly =, lssvmPoly =, gaussprPoly = expand.grid(
                         .degree = seq(1, min(len, 3)),      
                         .scale = 10 ^((1:len) - 4)),
                       glmboost = data.frame(

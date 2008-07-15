@@ -85,13 +85,18 @@ modelLookup <- function(model = NULL)
                            "gbm", "gbm", "gbm",
                            "rfNWS",
                            "rfLSF",
-                           "rf", 
+                           "rf",
+                           # to keep backwards compat, we have double svm entries
                            "svmpoly", "svmpoly", "svmpoly", 
-                           "svmradial", "svmradial",
-                           "rvmpoly", "rvmpoly", 
-                           "rvmradial",
-                           "lssvmpoly", "lssvmpoly", 
-                           "lssvmradial",                          
+                           "svmradial", "svmradial",                           
+                           "svmPoly", "svmPoly", "svmPoly", 
+                           "svmRadial", "svmRadial",
+                           "rvmPoly", "rvmPoly", 
+                           "rvmRadial",
+                           "lssvmPoly", "lssvmPoly", 
+                           "lssvmRadial",
+                           "gaussprPoly", "gaussprPoly", 
+                           "gaussprRadial",                              
                            "gpls", 
                            "lvq", 
                            "rpart", 
@@ -133,10 +138,14 @@ modelLookup <- function(model = NULL)
                            "mtry", 
                            "C", "degree", "scale",  
                            "C", "sigma",
+                           "C", "degree", "scale",  
+                           "C", "sigma",
                            "degree", "scale",  
                            "sigma",
                            "degree", "scale",  
-                           "sigma",                            
+                           "sigma",
+                           "degree", "scale",  
+                           "sigma", 
                            "K.prov", 
                            "k", 
                            "maxdepth", 
@@ -178,10 +187,14 @@ modelLookup <- function(model = NULL)
                            "#Randomly Selected Predictors", 
                            "Cost", "Polynomial Degree", "Scale",  
                            "Cost", "Sigma",
+                           "Cost", "Polynomial Degree", "Scale",  
+                           "Cost", "Sigma",
                            "Polynomial Degree", "Scale",  
                            "Sigma",
                            "Polynomial Degree", "Scale",  
-                           "Sigma",                             
+                           "Sigma",
+                           "Polynomial Degree", "Scale",  
+                           "Sigma",  
                            "#Components", 
                            "#Prototypes", 
                            "Max Tree Depth", 
@@ -221,13 +234,17 @@ modelLookup <- function(model = NULL)
                            TRUE,    FALSE,   FALSE,         
                            FALSE,
                            FALSE,         
-                           FALSE, 
+                           FALSE,
+                           FALSE,   FALSE,   FALSE, #svmPoly  
+                           FALSE,   FALSE,                              
                            FALSE,   FALSE,   FALSE,  
                            FALSE,   FALSE,          
                            FALSE,   FALSE,   # rvm
                            FALSE,
                            FALSE,   FALSE,   # lssvm
-                           FALSE,                                
+                           FALSE,
+                           FALSE,   FALSE,   # gausspr
+                           FALSE,
                            FALSE, 
                            FALSE, 
                            TRUE, 
@@ -269,10 +286,14 @@ modelLookup <- function(model = NULL)
                            TRUE,         
                            TRUE,    TRUE,    TRUE, 
                            TRUE,    TRUE,
+                           TRUE,    TRUE,    TRUE, 
+                           TRUE,    TRUE,
                            TRUE,    TRUE, 
                            TRUE,
                            FALSE,   FALSE,    #lssvm
-                           FALSE,                            
+                           FALSE,
+                           TRUE,    TRUE, 
+                           TRUE,               # guasspr
                            FALSE, 
                            FALSE, 
                            TRUE, 
@@ -314,12 +335,16 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,           
                            TRUE, 
+                           TRUE,    TRUE,    TRUE, #svmPoly 
+                           TRUE,    TRUE,
                            TRUE,    TRUE,    TRUE, 
                            TRUE,    TRUE,
                            FALSE,   FALSE,
                            FALSE,
                            TRUE,    TRUE,   # lssvm
-                           TRUE,                           
+                           TRUE,
+                           TRUE,    TRUE, 
+                           TRUE,
                            TRUE, 
                            TRUE, 
                            TRUE, 
@@ -360,12 +385,16 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   rfNWS (1)
                            TRUE,             #   rfLSF (1)         
                            TRUE,             #   rf (1) 
+                           TRUE, TRUE, TRUE, #   svmPoly (3) 
+                           TRUE, TRUE,       #   svmRadial (2)
                            TRUE, TRUE, TRUE, #   svmpoly (3) 
                            TRUE, TRUE,       #   svmradial (2)
-                           FALSE,FALSE,      #   rvmpoly (2) 
-                           FALSE,            #   rvmradial (1)
-                           FALSE,FALSE,      #   lssvmpoly (2) # not implemented 
-                           FALSE,            #   lssvmradial (1)                           
+                           FALSE,FALSE,      #   rvmPoly (2) 
+                           FALSE,            #   rvmRadial (1)
+                           FALSE,FALSE,      #   lssvmPoly (2) # not implemented in kernlab
+                           FALSE,            #   lssvmRadial (1)
+                           TRUE, TRUE,       #   gausspr(2) Poly
+                           TRUE,             #   gausspr(1) radial
                            TRUE,             #   gpls (1) 
                            FALSE,            #   lvq (1) 
                            TRUE,             #   rpart (1) 
