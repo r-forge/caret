@@ -13,11 +13,16 @@ extractProb <- function(
       stop("only classification models that produce probabilities are allowed")
    
    if(object[[1]]$method %in% c("svmradial", "svmpoly",
-                                "rvmradial", "rvmpoly",
+                                "svmRadial", "svmPoly",
+                                "rvmRadial", "rvmPoly",
+                                "gaussprRadial", "gaussprPoly",
                                 "ctree", "ctree2", "cforest"))
    {
       obsLevels <- switch(object[[1]]$method,
-         svmradial =, svmpoly =, rvmradial =, rvmpoly =
+                          svmradial =, svmpoly =,
+                          svmRadial =, svmPoly =,
+                          rvmRadial =, rvmPoly =,
+                          gaussprRadial =, gaussprPoly =
          {
             library(kernlab)
             lev(object[[1]]$finalModel)

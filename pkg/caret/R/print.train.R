@@ -153,8 +153,10 @@
                  glmboost =, gamboost =, blackboost =,
                  ada =, randomForest =, pcaNNet =,
                  svmradial =, svmpoly =,
-                 rvmradial =, rvmpoly =,
-                 lssvmradial =, lssvmpoly =,
+                 svmRadial =, svmPoly =,
+                 rvmRadial =, rvmPoly =,
+                 lssvmRadial =, lssvmPoly =,
+                 gaussprRadial =, gaussprPoly =,
                  enet =, lasso =,
                  lda =, rda =, pamr =, gpls = print(x$finalModel),
                  fda = 

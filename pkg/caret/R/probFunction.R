@@ -5,11 +5,19 @@ probFunction <- function(method, modelFit, newdata)
     stop("no probability method for this model")
   
   
-  if(method %in% c("svmradial", "svmpoly", "ctree", "ctree2",  "cforest"))
+  if(method %in% c(
+                   "svmradial", "svmpoly",
+                   "svmRadial", "svmPoly",
+                   "gaussprRadial", "gaussprPoly",
+                   "lssvmRadial",
+                   "ctree", "ctree2",  "cforest"))
     {
       
       obsLevels <- switch(method,
-                          svmradial =, svmpoly =
+                          svmradial =, svmpoly =,
+                          svmRadial =, svmPoly =,
+                          gaussprRadial =, gaussprPoly =,
+                          lssvmRadial =
                           {
                             library(kernlab)
                             lev(modelFit)
@@ -44,7 +52,10 @@ probFunction <- function(method, modelFit, newdata)
                         
                       },
                       
-                      svmradial =, svmpoly =
+                      svmradial =, svmpoly =,
+                      svmRadial =, svmPoly =,
+                      lssvmRadial =,
+                      gaussprRadial =, gaussprPoly =
                       {
                         library(kernlab)
                         

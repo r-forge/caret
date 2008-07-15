@@ -13,14 +13,18 @@ extractPrediction <- function(
    trainY <- object[[1]]$trainingData$.outcome  
 
    if(object[[1]]$method %in% c("svmradial", "svmpoly",
-                                "rvmradial", "rvmpoly",
-                                "lssvmradial", "lssvmpoly",
+                                "svmRadial", "svmPoly",
+                                "rvmRadial", "rvmPoly",
+                                "lssvmRadial", "lssvmPoly",
+                                "gaussprRadial", "gaussprPoly",
                                 "ctree", "ctree2", "cforest"))
    {
       obsLevels <- switch(object[[1]]$method,
                           svmradial =, svmpoly =,
-                          rvmradial =, rvmpoly =,
-                          lssvmradial =, lssvmpoly =
+                          svmRadial =, svmPoly =,
+                          rvmRadial =, rvmPoly =,
+                          gaussprRadial =, gaussprPoly =,
+                          lssvmRadial =, lssvmPoly =
          {
             library(kernlab)
             lev(object[[1]]$finalModel)

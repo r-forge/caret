@@ -62,8 +62,11 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                              out
                            },
                            
-                           svmradial =, svmpoly =, rvmradial =, rvmpoly =,
-                           lssvmradial =, lssvmpoly =
+                           svmradial =, svmpoly =,
+                           svmRadial =, svmPoly =,
+                           rvmRadial =, rvmPoly =,
+                           lssvmRadial =, lssvmPoly =,
+                           gaussprRadial =, gaussprPoly =
                            {
                              library(kernlab)
                              if(is.character(lev(modelFit)))

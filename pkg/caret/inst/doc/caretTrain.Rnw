@@ -9,7 +9,7 @@
 \usepackage{fancyvrb}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
-\usepackage{longtable}
+\usepackage{longtable} 
 \usepackage{algorithm2e}
 \usepackage[
          colorlinks=true,
@@ -156,7 +156,7 @@ The first two arguments to \texttt{train} are the predictor and outcome data obj
 
 \begin{small}
 <<mdrrModel1>>=
-svmFit <- train(trainDescr, trainMDRR, method = "svmradial", tuneLength = 4, trControl = fitControl)
+svmFit <- train(trainDescr, trainMDRR, method = "svmRadial", tuneLength = 4, trControl = fitControl)
 svmFit
 @
 \end{small}
@@ -283,11 +283,11 @@ dev.off()
 \hline \\
 \endhead
 \\
-\multicolumn{5}{l}{{{\small \em (continued on next page\ldots)}}} \\
+\multicolumn{5}{l}{{{\small \em (continued on next page)}}} \\
 \endfoot
 \hline
 \endlastfoot
-      Recursive partitioning &
+      Recursive Partitioning &
          \texttt{rpart} & 
             \texttt{rpart}       & 
             \texttt{maxdepth} \\  
@@ -326,7 +326,7 @@ dev.off()
             \texttt{caTools}       &          
             \texttt{nIter}\\                
                  
-      Random forests & 
+      Random Forests & 
          \texttt{rf} & 
             \texttt{randomForest}       & 
             \texttt{mtry} \\
@@ -341,38 +341,49 @@ dev.off()
             \texttt{ipred}       & 
             None \\                         
                         
-      Neural networks &               
+      Neural Networks &               
          \texttt{nnet} & 
             \texttt{nnet}       &       
             \texttt{decay}, \texttt{size} \\      
       
-      Partial least squares &
+      Partial Least Squares &
          \texttt{pls} & 
             \texttt{pls}, \texttt{caret}       & 
             \texttt{ncomp} \\      
       
       Support Vector Machines  &
-         \texttt{svmradial} & 
+         \texttt{svmRadial} & 
             \texttt{kernlab}       & 
             \texttt{sigma}, \texttt{C} \\            
       \:\: (RBF kernel) & & &\\   
       
       Support Vector Machines  &
-         \texttt{svmpoly} & 
+         \texttt{svmPoly} & 
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree}, \texttt{C} \\            
-      \:\: (polynomial kernel) & & &\\         
+      \:\: (polynomial kernel) & & &\\  
+     Gaussian Processes  &
+         \texttt{gaussprRadial} & 
+            \texttt{kernlab}       & 
+            \texttt{sigma} \\            
+      \:\: (RBF kernel) & & &\\   
+      
+      Gaussian Processes  &
+         \texttt{gaussprPoly} & 
+            \texttt{kernlab}       & 
+            \texttt{scale}, \texttt{degree} \\            
+      \:\: (polynomial kernel) & & &\\          
       \\
-      Linear least squares &
+      Linear Least Squares &
          \texttt{lm} & 
             \texttt{stats}       & 
             None \\         
       
-      Multivariate adaptive  &
+      Multivariate Adaptive  &
          \texttt{earth}, \texttt{mars} & 
             \texttt{earth}       & 
             \texttt{degree}, \texttt{nprune} \\            
-      \:\: regression splines & & &\\
+      \:\: Regression Splines & & &\\
             
       Bagged MARS &
          \texttt{bagEarth} & 
@@ -390,13 +401,13 @@ dev.off()
             \texttt{fraction} \\       
             
       Relevance Vector Machines  &
-         \texttt{rvmradial} & 
+         \texttt{rvmRadial} & 
             \texttt{kernlab}       & 
             \texttt{sigma} \\            
       \:\: (RBF kernel) & & &\\   
       
       Relevance Vector Machines  &
-         \texttt{rvmpoly} & 
+         \texttt{rvmPoly} & 
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree} \\            
       \:\: (polynomial kernel) & & &\\               
@@ -404,7 +415,7 @@ dev.off()
       \\       
              
 
-      Linear discriminant analysis &
+      Linear Discriminant Analysis &
          \texttt{lda} & 
             \texttt{MASS}       &          
             None\\                     
@@ -415,23 +426,23 @@ dev.off()
         None \\
       \:\: Discriminant Analysis & \texttt{sddaQDA} & &\\
             
-      Logistic/multinomial  &
+      Logistic/Multinomial  &
          \texttt{multinom} & 
             \texttt{nnet}       & 
             \texttt{decay}& \\   
-      \: \: regression \\ 
+      \: \: Regression \\ 
                      
-      Regularized discriminant  &
+      Regularized Discriminant  &
          \texttt{rda} & 
             \texttt{klaR}       & 
             \texttt{lambda}, \texttt{gamma} & \\*
-      \: \: analysis \\*
+      \: \: Analysis \\*
       
-      Flexible discriminant  &
+      Flexible Discriminant  &
          \texttt{fda} & 
             \texttt{mda}, \texttt{earth}       & 
             \texttt{degree}, \texttt{nprune} & \\
-      \: \: analysis (MARS basis)\\      
+      \: \: Analysis (MARS basis)\\      
       
       Bagged FDA &
          \texttt{bagFDA} & 
@@ -439,18 +450,18 @@ dev.off()
             \texttt{degree}, \texttt{nprune} \\      
             
       Least Squares Support Vector  &
-         \texttt{lssvmradial} & 
+         \texttt{lssvmRadial} & 
             \texttt{kernlab}       & 
             \texttt{sigma} \\            
       \:\:  Machines (RBF kernel) & & &\\   
       
                 
-      $k$ nearest neighbors &
+      $k$ Nearest Neighbors &
          \texttt{knn3} & 
             \texttt{caret}       & 
             \texttt{k} \\   
                   
-      Nearest shrunken centroids &
+      Nearest Shrunken Centroids &
          \texttt{pam} & 
             \texttt{pamr}       & 
             \texttt{threshold} \\  
@@ -460,13 +471,13 @@ dev.off()
             \texttt{klaR}       & 
             \texttt{usekernel} \\
         
-      Generalized partial &
+      Generalized Partial &
          \texttt{gpls} & 
             \texttt{gpls}       & 
             \texttt{K.prov} \\
-      \:\: least squares \\
+      \:\: Least Squares \\
       
-      Learned vector quantization &
+      Learned Vector Quantization &
          \texttt{lvq} & 
             \texttt{class}       &          
             \texttt{k} \\            
