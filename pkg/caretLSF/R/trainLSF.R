@@ -212,11 +212,18 @@ trainLSF <- function(x, y,
    }   
    cat("\n")
    resampleList <- jobMonitor(allJobResults, buffer = trControl$buffer, pause = trControl$pause)
+   
+   # finds jobs that came back with non data frames
+   outClass <- unlist(lapply(resampleList, function(x) class(x)[1]))
+   if(any(outClass != "data.frame"))
+     {
+       isBad <- which(outClass != "data.frame")
+       resampleList[isBad] <- NULL
+     }
 
+  
    # Using LSF, unlist caret, every resample comes back with a group values of "Resample1"
    # so we need to fix this
-
-
    for(m in seq(along = resampleList))
      {
        resampleList[[m]]$group <- paste(
@@ -232,6 +239,16 @@ trainLSF <- function(x, y,
    {     
       perResample <- caret:::poolByResample(results, tuneGrid, foo)
       performance <- caret:::summarize(perResample, tuneGrid, foo)
+
+      # There are some cases where every resampled model
+      # failed for the tuning parameter(s). Catch these.
+      goodResults <- complete.cases(performance)
+      if(any(!goodResults))
+        {
+          if(trControl$verboseIter) cat(paste("These were", sum(!goodResults), "combinations with invalid results\n\n")) 
+          performance <- performance[goodResults,]
+        }
+      
       pNames <- names(performance)
       pNames[pNames %in% names(tuneGrid)] <- paramNames
       names(performance) <- pNames
