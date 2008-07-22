@@ -643,11 +643,14 @@ poolByResample <- function(x, grid, func)
     {
       subGrid <- grid[i,,drop = FALSE]
       subX <- merge(subGrid, x)
-      tmp <- by(subX, list(group = subX$group), foo)
-      resultsPerGroup <- t(sapply(tmp, function(u)u))
-      resultsPerGroup <- merge(subGrid, resultsPerGroup)
-      
-      out <- if(i == 1) resultsPerGroup else rbind(out, resultsPerGroup)
+      if(nrow(subX) > 0)
+        {
+          tmp <- by(subX, list(group = subX$group), foo)
+          resultsPerGroup <- t(sapply(tmp, function(u)u))
+          resultsPerGroup <- merge(subGrid, resultsPerGroup)
+          
+          out <- if(!exists("out")) resultsPerGroup else rbind(out, resultsPerGroup)
+        }
     }
   out
 }
