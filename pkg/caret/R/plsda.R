@@ -62,14 +62,15 @@ predict.plsda <- function(object, newdata = NULL, ncomp = NULL, type = "class", 
                  }
              })
     } else {
-                                        # Bayes rule
+       # Bayes rule
 
       library(klaR)
       tmp <- vector(mode = "list", length = length(ncomp))
       for(i in seq(along = ncomp))
         {
+
           tmp[[i]] <- predict(object$probModel[[ ncomp[i] ]],
-                              as.data.frame(tmpPred[,,i]))
+                              as.data.frame(tmpPred[,-length(object$obsLevels),i]))
         }
 
       if(type == "class")
@@ -100,7 +101,6 @@ predict.plsda <- function(object, newdata = NULL, ncomp = NULL, type = "class", 
     }
   out
 }
-
 
 
 plsda.default <- function(x, y, ncomp = 2, probMethod = "softmax", prior = NULL, ...)
@@ -174,9 +174,11 @@ plsda.default <- function(x, y, ncomp = 2, probMethod = "softmax", prior = NULL,
           probModel
         }
       train <- predict(out, as.matrix(tmpData$x), ncomp = 1:ncomp)
+      # Get the raw model predictions, but leave one behind since the
+      # final class probs sum to one
+      train <- train[, -length(obsLevels),, drop = FALSE]
+      
       out$probModel <- apply(train, 3, makeModels, y = oldY, pri = prior)
-      # should we be dropping one score column?
-
     } else out$probModel <- NULL 
   
   #out$call <- funcCall
