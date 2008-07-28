@@ -107,6 +107,8 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  out
                                }
 
+                             if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
+
                              if(modelFit$problemType == "Classification")
                                {
                                  out <- as.character(predict(modelFit, newdata, type="class"))
