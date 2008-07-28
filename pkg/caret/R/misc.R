@@ -827,3 +827,33 @@ iterPrint <- function(x, iter)
     }
   cat("\n")
 }
+
+getClassLevels <- function(x)
+  {
+    if(x$method %in% c("svmradial", "svmpoly",
+                       "svmRadial", "svmPoly",
+                       "rvmRadial", "rvmPoly",
+                       "gaussprRadial", "gaussprPoly",
+                       "ctree", "ctree2", "cforest"))
+      {
+        obsLevels <- switch(x$method,
+                            svmradial =, svmpoly =,
+                            svmRadial =, svmPoly =,
+                            rvmRadial =, rvmPoly =,
+                            gaussprRadial =, gaussprPoly =
+                            {
+                              library(kernlab)
+                              lev(x$finalModel)
+                            },
+                            
+                            ctree =, cforest =
+                            {
+                              library(party)
+                              levels(x$finalModel@data@get("response")[,1])
+                            })
+      } else {
+        obsLevels <- x$finalModel$obsLevels
+      }
+    obsLevels
+  }
+
