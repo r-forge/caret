@@ -2,7 +2,7 @@ predict.list <- function(object, ...)
   {
 
     out <- lapply(object, predict, ... = ...)
-    if(is.null(names(object))) names(out) <- names(object)
+    if(!is.null(names(object))) names(out) <- names(object)
     out
   }
 
