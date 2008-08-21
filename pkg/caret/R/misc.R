@@ -114,7 +114,9 @@ modelLookup <- function(model = NULL)
                            "enet", "enet",
                            "lasso",
                            "sddaLDA",
-                           "sddaQDA"
+                           "sddaQDA",
+                           "J48",
+                           "M5Rules"
                            ),
                          parameter = c(
                            "parameter",      
@@ -163,7 +165,9 @@ modelLookup <- function(model = NULL)
                            "fraction","lambda", 
                            "fraction",
                            "parameter",
-                           "parameter"
+                           "parameter",
+                           "C",
+                           "pruned"
                            ),
                          label = I(c(
                            "none",      
@@ -212,7 +216,9 @@ modelLookup <- function(model = NULL)
                            "Fraction of Full Solution","Weight Decay",
                            "Fraction of Full Solution",
                            "none",
-                           "none"
+                           "none",
+                           "Confidence Threshold",
+                           "Pruned"
                            
                            )),
                          seq = c(
@@ -262,6 +268,8 @@ modelLookup <- function(model = NULL)
                            TRUE,    FALSE,
                            TRUE,
                            FALSE,              # sdda
+                           FALSE,
+                           FALSE,
                            FALSE
                            ),
                          forReg = c(
@@ -311,8 +319,9 @@ modelLookup <- function(model = NULL)
                            TRUE,    TRUE,
                            TRUE,
                            FALSE,
-                           FALSE
-                           
+                           FALSE,
+                           FALSE,
+                           TRUE
                            ),               
                          forClass =          
                          c(
@@ -362,8 +371,9 @@ modelLookup <- function(model = NULL)
                            FALSE,   FALSE,
                            FALSE,
                            TRUE,
-                           TRUE
-                           
+                           TRUE,
+                           TRUE,
+                           FALSE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -412,7 +422,9 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE,     #   enet (2)
                            FALSE,            #   lasso (1)
                            TRUE,             #   sdda for lda (1)
-                           TRUE              #   sdda for qda (1)
+                           TRUE,             #   sdda for qda (1)
+                           TRUE,             #   J48 (1)
+                           FALSE             #   M5Rules(1)
                            ),
                          stringsAsFactors  = FALSE               
                          )         

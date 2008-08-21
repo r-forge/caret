@@ -677,7 +677,55 @@
                      {
                        library(caTools)
                        LogitBoost(as.matrix(trainX), trainY, nIter = tuneValue$.nIter)
-                     }
+                     },
+                     J48 = 
+                     {
+                       library(RWeka)
+                       
+                       theDots <- list(...)
+                       
+                       if(any(names(theDots) == "control"))
+                         {
+                           theDots$control$C <- tuneValue$.C 
+                           ctl <- theDots$control
+                           theDots$control <- NULL
+                           
+                         } else ctl <- Weka_control(C = tuneValue$.C) 
+                       
+                       modelArgs <- c(
+                                      list(
+                                           formula = modFormula,
+                                           data = data,
+                                           control = ctl),
+                                      theDots)
+                       
+                       out <- do.call("J48", modelArgs) 
+                       out      
+                     },
+                     M5Rules = 
+                     {
+                       library(RWeka)
+                       
+                       theDots <- list(...)
+                       
+                       if(any(names(theDots) == "control"))
+                         {
+                           theDots$control$N <- ifelse(tuneValue$.pruned == "No", TRUE, FALSE)
+                           ctl <- theDots$control
+                           theDots$control <- NULL
+                           
+                         } else ctl <- Weka_control(N = ifelse(tuneValue$.pruned == "No", TRUE, FALSE)) 
+                       
+                       modelArgs <- c(
+                                      list(
+                                           formula = modFormula,
+                                           data = data,
+                                           control = ctl),
+                                      theDots)
+                       
+                       out <- do.call("M5Rules", modelArgs) 
+                       out      
+                     }                       
                      )
   
   

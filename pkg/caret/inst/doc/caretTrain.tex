@@ -310,7 +310,6 @@ The function \texttt{trainControl}, generates parameters that control how models
 
 
 
-
 \begin{longtable}{lllll}
 \caption{Models used in \texttt{train}} \\ \label{T:methods}
 {\bf Model} & {\bf \texttt{method} Value} & {\bf Package} & {\bf Tuning Parameters}\\
@@ -321,6 +320,7 @@ The function \texttt{trainControl}, generates parameters that control how models
 \endfoot
 \hline
 \endlastfoot
+\multicolumn{5}{c}{{{ \em ``Dual--Use Models''}}} \\ 
       Recursive Partitioning &
          \texttt{rpart} & 
             \texttt{rpart}       & 
@@ -354,12 +354,7 @@ The function \texttt{trainControl}, generates parameters that control how models
          \texttt{gamboost} & 
             \texttt{mboost}       &          
             \texttt{mstop}\\      
- 
-      &      
-         \texttt{logitboost} & 
-            \texttt{caTools}       &          
-            \texttt{nIter}\\                
-                 
+                               
       Random Forests & 
          \texttt{rf} & 
             \texttt{randomForest}       & 
@@ -406,8 +401,11 @@ The function \texttt{trainControl}, generates parameters that control how models
          \texttt{gaussprPoly} & 
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree} \\            
-      \:\: (polynomial kernel) & & &\\          
+      \:\: (polynomial kernel) & & &\\  
+    
       \\
+\multicolumn{5}{c}{{{ \em Regression Models}}} \\      
+    
       Linear Least Squares &
          \texttt{lm} & 
             \texttt{stats}       & 
@@ -422,7 +420,12 @@ The function \texttt{trainControl}, generates parameters that control how models
       Bagged MARS &
          \texttt{bagEarth} & 
             \texttt{caret},  \texttt{earth}      & 
-            \texttt{degree}, \texttt{nprune} \\          
+            \texttt{degree}, \texttt{nprune} \\    
+            
+      M5 Prime &
+         \texttt{M5P} & 
+            \texttt{RWeka}    & 
+            \texttt{pruned}  \\             
       
       Elastic Net &
          \texttt{enet} & 
@@ -448,7 +451,7 @@ The function \texttt{trainControl}, generates parameters that control how models
 
       \\       
              
-
+\multicolumn{5}{c}{{{\em Classification Models}}} \\ 
       Linear Discriminant Analysis &
          \texttt{lda} & 
             \texttt{MASS}       &          
@@ -481,7 +484,18 @@ The function \texttt{trainControl}, generates parameters that control how models
       Bagged FDA &
          \texttt{bagFDA} & 
             \texttt{caret},  \texttt{earth}       & 
-            \texttt{degree}, \texttt{nprune} \\      
+            \texttt{degree}, \texttt{nprune} \\   
+            
+ 
+      LogitBoost &      
+         \texttt{logitboost} & 
+            \texttt{caTools}       &          
+            \texttt{nIter}\\              
+            
+      C4.5 decision trees &
+         \texttt{J48} & 
+            \texttt{RWeka}    & 
+            \texttt{C}  \\  
             
       Least Squares Support Vector  &
          \texttt{lssvmRadial} & 

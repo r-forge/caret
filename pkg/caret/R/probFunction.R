@@ -189,6 +189,14 @@ probFunction <- function(method, modelFit, newdata)
                         # I've seen them not be on [0, 1]
                         out <- t(apply(out, 1, function(x) x/sum(x)))
                         out
+                      },
+                      J48 =
+                      {
+                        library(RWeka)
+                        out <- predict(modelFit,
+                                       newdata,
+                                       type = "probability")
+                        out
                       }
                       )
 

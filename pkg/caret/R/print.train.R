@@ -158,7 +158,7 @@
                  lssvmRadial =, lssvmPoly =,
                  gaussprRadial =, gaussprPoly =,
                  enet =, lasso =,
-                 lda =, rda =, pamr =, gpls = print(x$finalModel),
+                 lda =, rda =, pamr =, gpls =, J48 = print(x$finalModel),
                  fda = 
                  {
                    print(x$finalModel)

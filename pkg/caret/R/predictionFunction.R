@@ -311,7 +311,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            },
                            
                            
-                           lm =
+                           lm =, M5Rules =
                            {
                              out <- predict(modelFit, newdata)
                              out
@@ -446,6 +446,12 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  attr(out, "values") <- c(modelFit$tuneValue$.nIter, param$.nIter)
                                  
                                }
+                             out
+                           },
+                           J48 =
+                           {
+                             library(RWeka)
+                             out <- as.character(predict(modelFit , newdata))
                              out
                            }
                            )
