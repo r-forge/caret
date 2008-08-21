@@ -19,10 +19,14 @@ byComplexity <- function(x, model)
              x[order(x$n.trees, x$interaction.depth, x$shrinkage),] 
            },
            rf =, rfNWS =, rfLSF =, gpls =, pls =, PLS =, pam =, cforest =,
-           nb =, rpart =, ctree2 =, logitBoost=
+           nb =, rpart =, ctree2 =, logitBoost=, J48 =
            {
              x[order(x[,1]),]
            },
+           M5Rules =
+           {
+             x[order(x[,1], decreasing = TRUE),]
+           },           
            svmradial =, svmRadial =
            {
              # If the cost is high, the decision boundary will work hard to

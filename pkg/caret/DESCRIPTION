@@ -8,5 +8,5 @@ Maintainer: Max Kuhn <Max.Kuhn@pfizer.com>
 Depends: R (>= 2.5.1), lattice
 Suggests: gbm, pls, mlbench, rpart, ellipse, ipred, klaR, randomForest, gpls, pamr,
   kernlab, mda, mgcv, nnet, class, MASS, mboost, earth (>= 2.0-0), party, ada, affy, proxy, e1071,
-  grid, elasticnet, SDDA, caTools
+  grid, elasticnet, SDDA, caTools, RWeka
 License: GPL-2

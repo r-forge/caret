@@ -63,7 +63,8 @@ Gaussian Processes (RBF)  \tab \code{guassprRadial} \tab \pkg{kernlab} \tab \cod
 Gaussian Processes (polynomial)  \tab \code{guassprPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
 Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
 Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nprune} \cr
-Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr  
+Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr 
+M5 Prime \tab \code{M5P} \tab \pkg{RWeka} \tab \code{pruned} \cr 
 Elastic Net \tab \code{enet} \tab \pkg{elasticnet} \tab \code{lambda}, \code{fraction} \cr
 The Lasso \tab \code{enet} \tab \pkg{elasticnet} \tab \code{fraction} \cr
 Linear discriminant analysis \tab \code{lda} \tab \pkg{MASS} \tab  None\cr 
@@ -72,6 +73,7 @@ Logistic/multinomial regression \tab \code{multinom} \tab \pkg{nnet} \tab \code{
 Regularized discriminant analysis \tab \code{rda} \tab \pkg{klaR} \tab \code{lambda}, \code{gamma} \cr
 Flexible discriminant analysis (MARS) \tab \code{fda} \tab \pkg{mda}, \pkg{earth} \tab \code{degree}, \code{nprune} \cr
 Bagged FDA \tab \code{bagFDA} \tab \pkg{caret},  \pkg{earth} \tab \code{degree}, \code{nprune} \cr  
+C4.5 decision trees \tab \code{J48} \tab \pkg{RWeka} \tab \code{C}\cr
 k nearest neighbors \tab \code{knn3} \tab \pkg{caret} \tab \code{k} \cr 
 Nearest shrunken centroids \tab \code{pam} \tab \pkg{pamr} \tab \code{threshold} \cr  
 Naive Bayes \tab \code{nb} \tab \pkg{klaR} \tab \code{usekernel} \cr
