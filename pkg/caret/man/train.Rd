@@ -10,15 +10,15 @@
 train(x, ...)
 
 \method{train}{default}(x, y, method = "rf",  ..., 
-   metric = ifelse(is.factor(y), "Accuracy", "RMSE"),   
-   trControl = trainControl(), tuneGrid = NULL, 
-   tuneLength = 3)
+      metric = ifelse(is.factor(y), "Accuracy", "RMSE"),   
+      trControl = trainControl(), tuneGrid = NULL, 
+      tuneLength = 3)
 }
 \arguments{
   \item{x}{a data frame containing training data where samples are in rows and features are in columns.}
   \item{y}{a numeric or factor vector containing the outcome for each sample.}
   \item{method}{a string specifying which classification or regression model to use. Possible values are: \code{lm}, \code{rda}, \code{lda}, \code{gbm}, \code{rf},  \code{nnet}, \code{multinom}, \code{gpls}, \code{lvq}, \code{rpart}, \code{knn}, \code{pls}, \code{pam}, \code{nb},  \code{earth}, \code{treebag},
-\code{svmpoly}, \code{svmradial}, \code{fda}, \code{bagEarth}, \code{bagFDA}, \code{glmboost}, \code{gamboost}, \code{blackboost},  \code{ada}, \code{ctree}, \code{cforest}, \code{sddaLDA}, \code{sddaQDA}, \code{enet} and \code{lasso}. See the Details section below.}  
+\code{svmpoly}, \code{svmradial}, \code{fda}, \code{bagEarth}, \code{bagFDA}, \code{glmboost}, \code{gamboost}, \code{blackboost},  \code{ada}, \code{ctree}, \code{cforest}, \code{sddaLDA}, \code{sddaQDA},  \code{LogitBoost},  \code{J48}, \code{M5Rules}, \code{enet} and \code{lasso}. See the Details section below.}  
   \item{\ldots}{ arguments passed to the classification or regression routine (such as \code{\link[randomForest]{randomForest}}). Errors will occur if values
          for tuning parameters are passed here.}  
   \item{metric}{a string that specifies what summary metric will be used to select the optimal model. Possible values are "RMSE" and "Rsquared" for 
@@ -64,7 +64,7 @@ Gaussian Processes (polynomial)  \tab \code{guassprPoly} \tab \pkg{kernlab} \tab
 Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
 Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nprune} \cr
 Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr 
-M5 Prime \tab \code{M5P} \tab \pkg{RWeka} \tab \code{pruned} \cr 
+M5 Rules \tab \code{M5Rules} \tab \pkg{RWeka} \tab \code{pruned} \cr 
 Elastic Net \tab \code{enet} \tab \pkg{elasticnet} \tab \code{lambda}, \code{fraction} \cr
 The Lasso \tab \code{enet} \tab \pkg{elasticnet} \tab \code{fraction} \cr
 Linear discriminant analysis \tab \code{lda} \tab \pkg{MASS} \tab  None\cr 
@@ -102,14 +102,15 @@ The vignette entitled "caret Manual -- Model Building" has more details and exam
    \item{finalModel}{an fit object using the best parameters}
    \item{trainingData}{a data frame}
    \item{resample}{A data frame with columns for each performance
-     metric. Each row corresponds to each resample. If leave-group-out
+     metric. Each row corresponds to each resample. If leave-one-out
      cross-validation or out-of-bag estimation methods are requested,
-     this will be \code{NULL}}
+     this will be \code{NULL}. The \code{returnResamp} argument of \code{\link{trainControl}}
+     controls how much of the resampled results are saved.}
 }
 
 \author{Max Kuhn}
 
-\seealso{\code{\link{createGrid}}, \code{\link{createFolds}}}
+\seealso{\code{\link{trainControl}}, \code{\link{createGrid}}, \code{\link{createFolds}}}
 \examples{
 data(iris)
 TrainData <- iris[,1:4]
