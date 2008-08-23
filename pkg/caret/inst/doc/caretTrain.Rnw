@@ -389,8 +389,8 @@ dev.off()
             \texttt{caret},  \texttt{earth}      & 
             \texttt{degree}, \texttt{nprune} \\    
             
-      M5 Prime &
-         \texttt{M5P} & 
+      M5 Rules &
+         \texttt{M5Rules} & 
             \texttt{RWeka}    & 
             \texttt{pruned}  \\             
       

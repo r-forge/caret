@@ -203,9 +203,22 @@ train.default <- function(x, y,
   names(bestTune) <- paste(".", names(bestTune), sep = "") 
   
   if(trControl$method != "oob")
-    {           
-      byResample <- merge(bestTune, perResample)        
-      byResample <- byResample[,!(names(perResample) %in% names(tuneGrid))]                     
+    {
+      
+      byResample <- switch(trControl$returnResamp,
+                           none = NULL,
+                           all =
+                           {
+                             out <- perResample
+                             colnames(out) <- gsub("^\\.", "", colnames(out))
+                             out
+                           },
+                           final =
+                           {
+                             out <- merge(bestTune, perResample)        
+                             out <- out[,!(names(perResample) %in% names(tuneGrid))]
+                             out
+                           })                        
     } else {
       byResample <- NULL        
     } 

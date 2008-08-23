@@ -229,13 +229,26 @@ trainNWS <- function(x, y,
    bestTune <- performance[bestIter, trainInfo$model$parameter, drop = FALSE]
     names(bestTune) <- paste(".", names(bestTune), sep = "")
     
-   if(trControl$method != "oob")
-   {
-      byResample <- merge(bestTune, perResample)
-      byResample <- byResample[,!(names(perResample) %in% names(tuneGrid))]
-   } else {
-      byResample <- NULL
-   }
+  if(trControl$method != "oob")
+    {
+      
+      byResample <- switch(trControl$returnResamp,
+                           none = NULL,
+                           all =
+                           {
+                             out <- perResample
+                             colnames(out) <- gsub("^\\.", "", colnames(out))
+                             out
+                           },
+                           final =
+                           {
+                             out <- merge(bestTune, perResample)        
+                             out <- out[,!(names(perResample) %in% names(tuneGrid))]
+                             out
+                           })                        
+    } else {
+      byResample <- NULL        
+    }
 
    # reorder rows of performance
    orderList <- list()
