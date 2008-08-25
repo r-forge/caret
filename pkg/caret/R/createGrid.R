@@ -196,6 +196,8 @@
                       logitBoost = data.frame(.nIter =  floor((1:len) * 50)),
                       J48 = data.frame(.C = 0.25),
                       M5Rules = data.frame(.pruned = c("Yes", "No")),
+                      LMT = data.frame(.iter = (1:len) * 20),
+                      JRip = data.frame(.NumOpt = 1:len),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA = data.frame(.parameter = "none"))
   trainGrid
 }

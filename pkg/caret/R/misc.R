@@ -116,7 +116,9 @@ modelLookup <- function(model = NULL)
                            "sddaLDA",
                            "sddaQDA",
                            "J48",
-                           "M5Rules"
+                           "M5Rules",
+                           "LMT",
+                           "JRip"
                            ),
                          parameter = c(
                            "parameter",      
@@ -167,7 +169,9 @@ modelLookup <- function(model = NULL)
                            "parameter",
                            "parameter",
                            "C",
-                           "pruned"
+                           "pruned",
+                           "iter",
+                           "NumOpt"
                            ),
                          label = I(c(
                            "none",      
@@ -218,7 +222,9 @@ modelLookup <- function(model = NULL)
                            "none",
                            "none",
                            "Confidence Threshold",
-                           "Pruned"
+                           "Pruned",
+                           "# Iteratons",
+                           "# Optimizations"
                            
                            )),
                          seq = c(
@@ -268,6 +274,8 @@ modelLookup <- function(model = NULL)
                            TRUE,    FALSE,
                            TRUE,
                            FALSE,              # sdda
+                           FALSE,
+                           FALSE,
                            FALSE,
                            FALSE,
                            FALSE
@@ -321,7 +329,9 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,
                            FALSE,
-                           TRUE
+                           TRUE,
+                           FALSE,
+                           FALSE
                            ),               
                          forClass =          
                          c(
@@ -373,7 +383,9 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            TRUE,
-                           FALSE
+                           FALSE,
+                           TRUE,
+                           TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -424,7 +436,10 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   sdda for lda (1)
                            TRUE,             #   sdda for qda (1)
                            TRUE,             #   J48 (1)
-                           FALSE             #   M5Rules(1)
+                           FALSE,            #   M5Rules(1)
+                           TRUE,             #   LMT(1)
+                           TRUE              #   JRip(1)
+
                            ),
                          stringsAsFactors  = FALSE               
                          )         

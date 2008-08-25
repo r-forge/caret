@@ -725,7 +725,55 @@
                        
                        out <- do.call("M5Rules", modelArgs) 
                        out      
-                     }                       
+                     },
+                     LMT = 
+                     {
+                       library(RWeka)
+                       
+                       theDots <- list(...)
+                       
+                       if(any(names(theDots) == "control"))
+                         {
+                           theDots$control$I <- tuneValue$.iter
+                           ctl <- theDots$control
+                           theDots$control <- NULL
+                           
+                         } else ctl <- Weka_control(I = tuneValue$.iter) 
+                       
+                       modelArgs <- c(
+                                      list(
+                                           formula = modFormula,
+                                           data = data,
+                                           control = ctl),
+                                      theDots)
+                       
+                       out <- do.call("LMT", modelArgs) 
+                       out      
+                     },  
+                     JRip = 
+                     {
+                       library(RWeka)
+                       
+                       theDots <- list(...)
+                       
+                       if(any(names(theDots) == "control"))
+                         {
+                           theDots$control$N <- tuneValue$.NumOpt
+                           ctl <- theDots$control
+                           theDots$control <- NULL
+                           
+                         } else ctl <- Weka_control(N = tuneValue$.NumOpt) 
+                       
+                       modelArgs <- c(
+                                      list(
+                                           formula = modFormula,
+                                           data = data,
+                                           control = ctl),
+                                      theDots)
+                       
+                       out <- do.call("JRip", modelArgs) 
+                       out      
+                     }                      
                      )
   
   
