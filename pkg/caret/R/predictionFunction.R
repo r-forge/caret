@@ -311,7 +311,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            },
                            
                            
-                           lm =, M5Rules =
+                           lm =
                            {
                              out <- predict(modelFit, newdata)
                              out
@@ -448,7 +448,12 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                }
                              out
                            },
-                           J48 =
+                           M5Rules =
+                           {
+                             library(RWeka)
+                             predict(modelFit , newdata)
+                           },
+                           J48 =, LMT =, JRip = 
                            {
                              library(RWeka)
                              out <- as.character(predict(modelFit , newdata))
