@@ -272,3 +272,26 @@ train.default <- function(x, y,
 }
 
 
+train.formula <- function (form, data, ..., subset, na.action, contrasts = NULL) 
+{
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))) m$data <- as.data.frame(data)
+  m$... <- m$contrasts <- NULL
+  m[[1]] <- as.name("model.frame")
+  m <- eval.parent(m)
+  Terms <- attr(m, "terms")
+  x <- model.matrix(Terms, m, contrasts)
+  cons <- attr(x, "contrast")
+  xint <- match("(Intercept)", colnames(x), nomatch = 0)
+  if (xint > 0)  x <- x[, -xint, drop = FALSE]
+  y <- model.response(m)
+  res <- train(x, y, ...)
+  res$terms <- Terms
+  res$coefnames <- colnames(x)
+  res$call <- match.call()
+  res$na.action <- attr(m, "na.action")
+  res$contrasts <- cons
+  res$xlevels <- .getXlevels(Terms, m)
+  class(res) <- c("train", "train.formula")
+  res
+}

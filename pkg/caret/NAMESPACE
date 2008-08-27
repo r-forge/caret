@@ -77,7 +77,8 @@ export(
        predict.pcaNNet,
        predict.list,
        predict.train,
-       densityplot.train
+       densityplot.train,
+       train.formula
        )
 
 S3method(confusionMatrix, default)
@@ -91,6 +92,7 @@ S3method(bagFDA,          default)
 S3method(preProcess,      default)
 S3method(pcaNNet,         default)
 
+S3method(train,   formula)
 S3method(pcaNNet, formula)
 
 S3method(varImp, train)
