@@ -13,7 +13,7 @@ resampleHist(object, type = "density", ...)
   \item{\dots}{options to pass to histogram or densityplot}
 }
 \details{
-All the metrics from the object are plotted, but only for the final model. For more comprehensive plots functions, see  \code{\link{histogram}}, \code{\link{densityplot}}, \code{\link{xyplot}}, \code{\link{stripplot}}.
+All the metrics from the object are plotted, but only for the final model. For more comprehensive plots functions, see  \code{\link{histogram.train}}, \code{\link{densityplot.train}}, \code{\link{xyplot.train}}, \code{\link{stripplot.train}}.
 
 For the the plot to be made, the \code{returnResamp} argument in \code{\link{trainControl}} should be either "final" or "all".
 }
@@ -22,7 +22,7 @@ a object of class \code{trellis}
 }
 \author{Max Kuhn}
 
-\seealso{\code{\link{train}}, \code{\link[lattice]{histogram}}, \code{\link[lattice]{densityplot}}}
+\seealso{\code{\link{train}}, \code{\link[lattice]{histogram}}, \code{\link[lattice]{densityplot}},  \code{\link{histogram.train}}, \code{\link{densityplot.train}}, \code{\link{xyplot.train}}, \code{\link{stripplot.train}}}
 \examples{
 data(iris)
 TrainData <- iris[,1:4]
