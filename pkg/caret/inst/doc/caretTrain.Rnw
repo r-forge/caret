@@ -135,10 +135,10 @@ testMDRR <- mdrrClass[-inTrain]
 print(length(trainMDRR))
 print(length(testMDRR))
 
-preProcValues <- apply(trainDescr, 2, processData)
+preProcValues <- preProcess(trainDescr)
 
-trainDescr <- applyProcessing(trainDescr, preProcValues)
-testDescr <- applyProcessing(testDescr, preProcValues)
+trainDescr <- predict(preProcValues, trainDescr)
+testDescr <-  predict(preProcValues, testDescr)
 @
 \end{small}
 
@@ -146,7 +146,12 @@ To estimate model performance across the tuning parameters ``leave group out cro
 
 \begin{small}
 <<setup>>=
-fitControl <- trainControl(method = "LGOCV", p = .75, number = 30, verboseIter = FALSE)
+fitControl <- trainControl(
+                           method = "LGOCV",
+                           p = .75,
+                           number = 30,
+                           returnResamp = "all",
+                           verboseIter = FALSE)
 set.seed(2)
 @
 \end{small}
@@ -197,6 +202,8 @@ options(width = currentWidth)
 
 Some notes about the use of \texttt{train}:
 \begin{itemize}
+  
+  \item There is a formula interface (e.g. \texttt{train(y~., data = someData)} that can be used. One of the issues with a large number of predictors is that the objects related to the formula which are saved can get very large. In these cases, it is best to stick with the non--formula interface described above.
 	\item The function determines the type of problem (classification or regression) from the type of the response given in the \texttt{y} argument. 
 	
 	\item The \texttt{$\ldots$} option can be used to pass parameters to the fitting function. For example, in random forest models, you can specify the number of trees to be used in the call to \texttt{train}. In the example above, the default trace for a \texttt{gbm} model was turned off using the \texttt{verbose} argument to \texttt{gbm}.
@@ -244,8 +251,9 @@ The function \texttt{trainControl}, generates parameters that control how models
    \item \texttt{selectionFunction}: In the previous examples, \texttt{train} selected the final model using classification accuracy. By default, the function chooses the model with the largest performance value (or smallest, for mean squared error in regression models). Other schemes for selecting model can be used.  Breiman et al (1984) suggested the ``one standard error rule'' for simple tree--based models. In this case, the model with the best performance value is identified and, using resampling, we can estimate the standard error of performance. The final model used was the simplest model within one standard error of the (empirically) best model. With simple trees this makes sense, since these models will start to overfit as they become more and more specific to the training data.
    \item[] \texttt{train} allows the user to specify alternate rules for selecting the final model. The argument \texttt{selectionFunction}  can be used to supply a function to algorithmically determine the final model. There are three existing functions in the package: \texttt{best} is chooses the largest/smallest value, \texttt{oneSE} attempts to capture the spirit of Breiman et al (1984) and \texttt{tolerance} selects the least complex model within some percent tolerance of the best value. See \texttt{?best} for more details.
 
-  \item[] The main issue with these functions is related to ordering the models from simplest to complex. In some cases, this is easy (e.g. simple trees, partial least squares), but in most cases, the ordering of models is subjective. For example, is a boosted tree model using 100 iterations and a tree depth of 2 more complex than one with 50 iterations and a depth of 8? The package makes some choices regarding the orderings. In the case of boosted trees, the package assumes that increasing the number of iterations adds complexity at a faster rate than increasing the tree depth, so models are ordered on the number of iterations then ordered with depth. See \texttt{?best} for more examples for specific models..
-
+  \item[] The main issue with these functions is related to ordering the models from simplest to complex. In some cases, this is easy (e.g. simple trees, partial least squares), but in most cases, the ordering of models is subjective. For example, is a boosted tree model using 100 iterations and a tree depth of 2 more complex than one with 50 iterations and a depth of 8? The package makes some choices regarding the orderings. In the case of boosted trees, the package assumes that increasing the number of iterations adds complexity at a faster rate than increasing the tree depth, so models are ordered on the number of iterations then ordered with depth. See \texttt{?best} for more examples for specific models.
+    
+    \item \texttt{returnResamp}: a character string containing one of the following values: \texttt{"all"}, \texttt{"final"} or \texttt{"none"}. This specifies how much of the resampled performance measures to save. 
 \end{itemize}
 
 

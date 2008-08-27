@@ -7,8 +7,14 @@ resampleHist <- function(object, type = "density", ...)
 
    resample <- object$resample
    tuneNames <- modelLookup(object$parameter)$parameter
-   resample <- resample[, !(names(resample) %in% tuneNames), drop = FALSE]
+   if(any(names(resample) %in% tuneNames))
+     {
+       bestTune <- object$bestTune
+       colnames(bestTune) <- gsub("^\\.", "", colnames(bestTune))
+       resample <- merge(bestTune, resample)        
+       resample <- resample[, !(names(resample) %in% tuneNames), drop = FALSE]
 
+     }
    results <- stack(resample)
    
    if(type == "density")

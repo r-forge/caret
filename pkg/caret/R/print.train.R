@@ -147,7 +147,8 @@
           cat("\n----------------------------------------------------------\n")
           cat("\nThe final model:\n\n")
           switch(x$method,
-                 lm =, nnet =, multinom =, pls =, earth =, 
+                 lm =, nnet =, multinom =, pls =, earth =,
+                 lmStepAIC =,
                  bagEarth =, bagFDA = print(summary(x$finalModel)),
                  rpart =, ctree =, ctree2=, cforest =,
                  glmboost =, gamboost =, blackboost =,

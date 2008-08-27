@@ -10,8 +10,11 @@ A set of lattice functions are provided to plot the resampled performance estima
 }
 \usage{
 \method{histogram}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
+
 \method{densityplot}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
+
 \method{xyplot}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
+
 \method{stripplot}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
 }
 
@@ -38,12 +41,9 @@ Using \code{horizontal = FALSE} in \code{stripplot} works.
 library(mlbench)
 data(BostonHousing)
 
-# for illustration, converting factors
-trainX <- model.matrix(medv ~ . - 1, 
-                       BostonHousing)
 library(rpart)
-rpartFit <- train(trainX, 
-                  BostonHousing$medv,
+rpartFit <- train(medv ~ .,
+                  data = BostonHousing,
                   "rpart", 
                   tuneLength = 9,
                   trControl = trainControl(

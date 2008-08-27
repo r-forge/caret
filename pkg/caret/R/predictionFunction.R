@@ -311,7 +311,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            },
                            
                            
-                           lm =
+                           lm =, lmStepAIC =
                            {
                              out <- predict(modelFit, newdata)
                              out
@@ -426,7 +426,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            {
                              library(caTools)
 
-                             out <- predict(modelFit, newdata, type="class")
+                             out <- caTools::predict(modelFit, newdata, type="class")
                              
                              if(!is.null(param))
                                {
@@ -437,7 +437,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  for(j in seq(along = param$.nIter))
                                    {
                                      tmp[,j] <- as.character(
-                                                             predict(
+                                                             caTools::predict(
                                                                      modelFit,
                                                                      newdata,
                                                                      nIter = param$.nIter[j]))

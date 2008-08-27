@@ -383,6 +383,11 @@
                        bagging(modFormula, data, ...)
                      },
                      lm = lm(modFormula, data, ...),
+                     lmStepAIC =
+                     {
+                       library(MASS)
+                       stepAIC(lm(modFormula, data), ...)
+                     },
                      lda = 
                      {
                        library(MASS)
@@ -676,7 +681,7 @@
                      logitBoost =
                      {
                        library(caTools)
-                       LogitBoost(as.matrix(trainX), trainY, nIter = tuneValue$.nIter)
+                       caTools::LogitBoost(as.matrix(trainX), trainY, nIter = tuneValue$.nIter)
                      },
                      J48 = 
                      {
