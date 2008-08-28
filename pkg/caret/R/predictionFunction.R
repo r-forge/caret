@@ -3,12 +3,13 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
   if(any(colnames(newdata) == ".outcome")) newdata$.outcome <- NULL
   
   predictedValue <- switch(method,
-                           lda =, rda =, gpls =
+                           lda =, rda =, gpls =, slda =
                            {
                              switch(method,
-                                    lda = library(MASS),
-                                    rda = library(klaR),
-                                    gpls = library(gpls))
+                                    lda =  library(MASS),
+                                    rda =  library(klaR),
+                                    gpls = library(gpls),
+                                    slda = library(ipred))
                              out <- as.character(predict(modelFit, newdata)$class)
                              out
                            },

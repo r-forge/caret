@@ -431,7 +431,12 @@ dev.off()
          \texttt{lda} & 
             \texttt{MASS}       &          
             None\\                     
-
+      Stabilised Linear &
+         \texttt{slda} & 
+            \texttt{ipred}       &          
+            None\\  
+      \:\: Discriminant Analysis & & &\\
+      
       Stepwise Diagonal &
         \texttt{sddaLDA}, &
         \texttt{SDDA} &
