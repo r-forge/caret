@@ -119,7 +119,8 @@ modelLookup <- function(model = NULL)
                            "M5Rules",
                            "LMT",
                            "JRip",
-                           "lmStepAIC"
+                           "lmStepAIC",
+                           "slda"
                            ),
                          parameter = c(
                            "parameter",      
@@ -173,6 +174,7 @@ modelLookup <- function(model = NULL)
                            "pruned",
                            "iter",
                            "NumOpt",
+                           "parameter",
                            "parameter"
                            ),
                          label = I(c(
@@ -227,6 +229,7 @@ modelLookup <- function(model = NULL)
                            "Pruned",
                            "# Iteratons",
                            "# Optimizations",
+                           "none",
                            "none"
                            )),
                          seq = c(
@@ -276,6 +279,7 @@ modelLookup <- function(model = NULL)
                            TRUE,    FALSE,
                            TRUE,
                            FALSE,              # sdda
+                           FALSE,
                            FALSE,
                            FALSE,
                            FALSE,
@@ -335,7 +339,8 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            FALSE,
                            FALSE,
-                           TRUE
+                           TRUE,
+                           FALSE
                            ),               
                          forClass =          
                          c(
@@ -390,7 +395,8 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            TRUE,
                            TRUE,
-                           FALSE
+                           FALSE,
+                           TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -444,7 +450,8 @@ modelLookup <- function(model = NULL)
                            FALSE,            #   M5Rules(1)
                            TRUE,             #   LMT(1)
                            TRUE,             #   JRip(1)
-                           FALSE             #   stepAIC(0)
+                           FALSE,            #   stepAIC(0)
+                           TRUE              #   slda(0)
 
                            ),
                          stringsAsFactors  = FALSE               

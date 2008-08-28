@@ -199,6 +199,6 @@
                       LMT = data.frame(.iter = (1:len) * 20),
                       JRip = data.frame(.NumOpt = 1:len),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
-                      lmStepAIC = data.frame(.parameter = "none"))
+                      lmStepAIC =, slda = data.frame(.parameter = "none"))
   trainGrid
 }

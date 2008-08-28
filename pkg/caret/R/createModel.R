@@ -46,7 +46,7 @@
                    "lssvmPoly", "lssvmRadial",
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
-                   "sddaLDA", "sddaQDA", "glmnet"))
+                   "sddaLDA", "sddaQDA", "glmnet", "slda"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -778,7 +778,12 @@
                        
                        out <- do.call("JRip", modelArgs) 
                        out      
-                     }                      
+                     },
+                     slda = 
+                     {
+                       library(ipred)
+                       slda(modFormula, data, ...)
+                     }
                      )
   
   

@@ -35,11 +35,12 @@ probFunction <- function(method, modelFit, newdata)
   if(any(colnames(newdata) == ".outcome")) newdata$.outcome <- NULL
   
   classProb <- switch(method,
-                      lda =, rda =
+                      lda =, rda =, slda =
                       {
                         switch(method,
-                               lda = library(MASS),
-                               rda = library(klaR))
+                               lda =  library(MASS),
+                               rda =  library(klaR),
+                               slda = library(ipred))
                         
                         out <- predict(modelFit, newdata)$posterior
                         out
