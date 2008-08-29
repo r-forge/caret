@@ -424,6 +424,18 @@ dev.off()
             \texttt{scale}, \texttt{degree} \\            
       \:\: (polynomial kernel) & & &\\               
 
+      Relevance Vector Machines  &
+         \texttt{rvmPoly} &
+            \texttt{kernlab}       &
+            \texttt{scale}, \texttt{degree} \\
+      \:\: (polynomial kernel) & & &\\
+
+      Supervised Principal &
+         \texttt{superpc}  &
+         \texttt{superpc}  &
+         \texttt{n.components}, 
+         \texttt{threshold} \\
+      \:\: Components  & & &\\
       \\       
              
 \multicolumn{5}{c}{{{\em Classification Models}}} \\ 
@@ -559,6 +571,7 @@ For example, we can load the Boston Housing data:
 <<bhExample>>=
 library(mlbench)
 data(BostonHousing)
+# we could use the formula interface too
 bhDesignMatrix <-  model.matrix(medv ~. - 1, BostonHousing)
 @
 \end{small}

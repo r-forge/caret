@@ -90,7 +90,12 @@ byComplexity <- function(x, model)
            {
              x[order(x$fraction),]
 
-           })
+           },
+           superpc =
+           {
+             x[order(x$threshold, x$n.components),]
+           }
+           )
 
   }
 

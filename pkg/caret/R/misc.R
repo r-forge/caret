@@ -120,7 +120,9 @@ modelLookup <- function(model = NULL)
                            "LMT",
                            "JRip",
                            "lmStepAIC",
-                           "slda"
+                           "slda",
+                           "superpc",
+                           "superpc"
                            ),
                          parameter = c(
                            "parameter",      
@@ -175,7 +177,8 @@ modelLookup <- function(model = NULL)
                            "iter",
                            "NumOpt",
                            "parameter",
-                           "parameter"
+                           "parameter",
+                           "threshold", "n.components"
                            ),
                          label = I(c(
                            "none",      
@@ -230,7 +233,8 @@ modelLookup <- function(model = NULL)
                            "# Iteratons",
                            "# Optimizations",
                            "none",
-                           "none"
+                           "none",
+                           "Threshold", "#Components"
                            )),
                          seq = c(
                            FALSE,
@@ -285,7 +289,8 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,
                            FALSE,
-                           FALSE
+                           FALSE,
+                           TRUE,    TRUE       # superpc
                            ),
                          forReg = c(
                            TRUE,
@@ -340,7 +345,8 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,
                            TRUE,
-                           FALSE
+                           FALSE,
+                           TRUE,    TRUE       # superpc
                            ),               
                          forClass =          
                          c(
@@ -396,7 +402,8 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            FALSE,
-                           TRUE
+                           TRUE,
+                           FALSE,    FALSE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -451,7 +458,8 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   LMT(1)
                            TRUE,             #   JRip(1)
                            FALSE,            #   stepAIC(0)
-                           TRUE              #   slda(0)
+                           TRUE,             #   slda(0)
+                           FALSE, FALSE      #   superpc(2)
 
                            ),
                          stringsAsFactors  = FALSE               
@@ -647,7 +655,14 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                grid <- grid[order(grid$.fraction, decreasing = TRUE),, drop = FALSE]
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
-             }     
+             },
+             superpc =
+             {
+               largest <- which(grid$.n.components == max(grid$.n.components) &
+                                grid$.threshold == max(grid$.threshold))
+               loop <- grid[largest,, drop = FALSE]
+               seqParam <- list(grid[-largest,, drop = FALSE])
+             }
              )
       out <- list(scheme = "seq", loop = loop, seqParam = seqParam, model = modelInfo, constant = constant, vary = vary)
     } else out <- list(scheme = "basic", loop = grid, seqParam = NULL, model = modelInfo, constant = names(grid), vary = NULL)
