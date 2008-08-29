@@ -459,7 +459,42 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                              library(RWeka)
                              out <- as.character(predict(modelFit , newdata))
                              out
+                           },
+                           superpc =
+                           {
+                             library(superpc)
+                             
+                             out <- superpc.predict(modelFit,
+                                                    modelFit$data,
+                                                    newdata = list(x=t(newdata)),
+                                                    n.components = modelFit$tuneValue$.n.components,
+                                                    threshold = modelFit$tuneValue$.threshold)$v.pred.1df
+                           
+                             
+                             if(!is.null(param))
+                               {
+                                 tmp <- data.frame(
+                                                   matrix(NA, nrow = nrow(newdata), ncol = nrow(param)),
+                                                   stringsAsFactors = FALSE)
+                                 
+                                 for(j in 1:nrow(param))
+                                   {
+                                     tmp[,j] <-  superpc.predict(
+                                                                 modelFit,
+                                                                 modelFit$data,
+                                                                 newdata = list(x=t(newdata)),
+                                                                 threshold = param$.threshold[j],
+                                                                 n.components = param$.n.components[j])$v.pred.1df
+                                   }
+                                 tmp <- cbind(out, tmp)
+                                 out <- as.data.frame(tmp)
+
+                                 ### todo: figure out how to pass more than one value
+                                 attr(out, "values") <- c(modelFit$tuneValue$.threshold, param$.threshold)
+                               }
+                             out
                            }
+                           
                            )
   predictedValue
 }

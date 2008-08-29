@@ -46,7 +46,8 @@
                    "lssvmPoly", "lssvmRadial",
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
-                   "sddaLDA", "sddaQDA", "glmnet", "slda"))
+                   "sddaLDA", "sddaQDA", "glmnet", "slda",
+                   "superpc"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -783,6 +784,16 @@
                      {
                        library(ipred)
                        slda(modFormula, data, ...)
+                     },
+                     superpc = 
+                     {
+                       library(superpc)      
+                       out <- superpc.train(list(x = t(trainX), y = trainY),
+                                            type = "regression",
+                                            ...)
+                       # prediction will need to source data, so save that too
+                       out$data <- list(x = t(trainX), y = trainY)
+                       out
                      }
                      )
   

@@ -198,6 +198,8 @@
                       M5Rules = data.frame(.pruned = c("Yes", "No")),
                       LMT = data.frame(.iter = (1:len) * 20),
                       JRip = data.frame(.NumOpt = 1:len),
+                      superpc = expand.grid(.n.components = 1:3,
+                        .threshold = seq(.1, .9, length = len)),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       lmStepAIC =, slda = data.frame(.parameter = "none"))
   trainGrid
