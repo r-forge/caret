@@ -1,5 +1,8 @@
 "print.train" <-
-  function(x, digits = min(3, getOption("digits") - 3), printCall = TRUE, details = FALSE, ...)
+  function(x,
+           digits = min(3, getOption("digits") - 3),
+           printCall = TRUE,
+           details = FALSE, ...)
 {
   stringFunc <- function (x) 
     {
@@ -93,7 +96,7 @@
 
     } else optString <- ""
   
-  sdCols <- names(tuneAcc) %in% c("RMSESD", "RsquaredSD", "AccuracySD", "KappaSD")
+  sdCols <- grep("SD$", colnames(tuneAcc))
   sdCheck <- unlist(lapply(
                            tuneAcc[, sdCols, drop = FALSE],
                            function(u) all(is.na(u))))
@@ -131,7 +134,7 @@
                      x$control$selectionFunction,
                      best = paste(
                        " the",
-                       ifelse(x$metric == "RMSE", "smallest", "largest"),
+                       ifelse(x$maximize, "largest", "smallest"),
                        "value.\n"),
                      oneSE = " the one SE rule.\n",
                      tolerance = " a tolerance rule.\n"))

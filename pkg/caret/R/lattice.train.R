@@ -1,12 +1,15 @@
 densityplot.train <- function(x,
                               data = NULL,
-                              metric = c("Accuracy", "RMSE"),
+                              metric = x$metric,
                               ...)
   {
 
     if (!is.null(match.call()$data))
         warning("explicit 'data' specification ignored")
 
+    if(x$control$method %in%  c("oob", "LOOCV"))
+      stop("Resampling plots cannot be done with leave-out-out CV or out-of-bag resampling")
+    
     resamp <- x$resample
     tNames <- gsub("^\\.", "", names(x$bestTune))
 
@@ -43,12 +46,16 @@ densityplot.train <- function(x,
 
 histogram.train <- function(x,
                               data = NULL,
-                              metric = c("Accuracy", "RMSE"),
+                              metric = x$metric,
                               ...)
   {
 
     if (!is.null(match.call()$data))
         warning("explicit 'data' specification ignored")
+
+    if(x$control$method %in%  c("oob", "LOOCV"))
+      stop("Resampling plots cannot be done with leave-out-out CV or out-of-bag resampling")
+    
     resamp <- x$resample
     tNames <- gsub("^\\.", "", names(x$bestTune))
 
@@ -86,11 +93,14 @@ histogram.train <- function(x,
 
 stripplot.train <- function(x,
                               data = NULL,
-                              metric = c("Accuracy", "RMSE"),
+                              metric = x$metric,
                               ...)
   {
     if (!is.null(match.call()$data))
         warning("explicit 'data' specification ignored")
+
+    if(x$control$method %in%  c("oob", "LOOCV"))
+      stop("Resampling plots cannot be done with leave-out-out CV or out-of-bag resampling")
     
     resamp <- x$resample
     tNames <- gsub("^\\.", "", names(x$bestTune))
@@ -153,11 +163,14 @@ stripplot.train <- function(x,
 
 xyplot.train <- function(x,
                               data = NULL,
-                              metric = c("Accuracy", "RMSE"),
+                              metric = x$metric,
                               ...)
   {
     if (!is.null(match.call()$data))
         warning("explicit 'data' specification ignored")
+
+    if(x$control$method %in%  c("oob", "LOOCV"))
+      stop("Resampling plots cannot be done with leave-out-out CV or out-of-bag resampling")
     
     resamp <- x$resample
     tNames <- gsub("^\\.", "", names(x$bestTune))

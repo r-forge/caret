@@ -10,6 +10,7 @@ trainControl(
              returnData = TRUE, 
              returnResamp = "final",
              p = 0.75, 
+             summaryFunction = defaultSummary,
              selectionFunction = "best",
              index = NULL)
 }
@@ -22,6 +23,7 @@ trainControl(
   \item{returnData}{A logical for saving the data}
   \item{returnResamp}{A character string indicating how much of the resampled summary metrics should be saved. Values can be ``final'', ``all'' or ``none''}
   \item{p}{For leave-group out cross-validation: the training percentage}
+  \item{summaryFunction}{a function to compute performance metrics across resamples. The arguments to the function should be the same as those in \code{\link{defaultSummary}}.}
   \item{selectionFunction}{the function used to select the optimal tuning parameter. This can be a name of the function or the funciton itself. See \code{\link{best}} for details and other options.}
   \item{index}{a list with elements for each resampling iteration. Each list element is the sample rows used for training at that iteration.}
 }

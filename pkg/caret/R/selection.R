@@ -1,4 +1,4 @@
-# I need to add to trainControl and train in all packages
+
 
 # This function sorts the tuning parameter matrix from
 # least complex models to most complex models
@@ -99,21 +99,22 @@ byComplexity <- function(x, model)
 
   }
 
+## In these functions, x is the data fram of performance values and tuning parameters.
 
-best <- function(x, metric)
+best <- function(x, metric, maximize)
   {
 
-    bestIter <- if(metric != "RMSE") which.max(x[,metric])
+    bestIter <- if(maximize) which.max(x[,metric])
     else which.min(x[,metric])   
 
     bestIter
   }
 
-oneSE <- function(x, metric, num)
+oneSE <- function(x, metric, num, maximize)
   {
     index <- 1:nrow(x)
     
-    if(metric == "RMSE")
+    if(!maximize)
       {
         bestIndex <- which.min(x[,metric])  
         perf <- x[bestIndex,metric] + (x[bestIndex,paste(metric, "SD", sep = "")])/sqrt(num)
@@ -129,12 +130,12 @@ oneSE <- function(x, metric, num)
     bestIter
   }
 
-tolerance <- function(x, metric, tol = 1.5)
+tolerance <- function(x, metric, tol = 1.5, maximize)
   {
        
     index <- 1:nrow(x)
     
-    if(metric == "RMSE")
+    if(!maximize)
       {
         best <- min(x[,metric])  
         perf <- (x[,metric] - best)/best * 100

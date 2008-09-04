@@ -687,11 +687,18 @@ decoerce <- function(x, grid, dot = FALSE)
   x
 }  
 
-foo <- function(x) postResample(x[,"pred"], x[,"obs"])
+## todo: make avaible to outside
+defaultSummary <- function(data, lev = NULL, model = NULL) postResample(data[,"pred"], data[,"obs"])
 
-# this function takes the raw perdictions per parameter combination 
-# and creates the resampe statistics for each combination  
-poolByResample <- function(x, grid, func)
+## This function takes the raw predictions per parameter combination 
+## and creates the resampe statistics for each combination
+
+poolByResample <- function(x,                ## The obs and pred outcomes
+                           grid,             ## The grid of tuning parameters
+                           func,             ## The summary function
+                           perfNames = NULL, ## Names of the computed metrics
+                           lev,              ## Class levels (NULL if reg)
+                           modelName)        ## The model name ("lm", "rf" etc)
 {
   k <- nrow(grid)
   for(i in 1:k)
@@ -700,8 +707,26 @@ poolByResample <- function(x, grid, func)
       subX <- merge(subGrid, x)
       if(nrow(subX) > 0)
         {
-          tmp <- by(subX, list(group = subX$group), foo)
+          tmp <- by(subX,
+                    list(group = subX$group),
+                    func,
+                    lev = lev,
+                    model = modelName)
+          
+          ## Convert the results from a "by" object to something
+          ## that we can use (a matrix). If the summary
+          ## function has one output, this will convert it to an
+          ## 1xB matrix (B = #resamples). 
+          
           resultsPerGroup <- t(sapply(tmp, function(u)u))
+
+          ## We always want an BxM matrix (M = #metrics).
+          if(length(perfNames) == 1)
+            {
+              resultsPerGroup <- t(resultsPerGroup)
+              colnames(resultsPerGroup) <- perfNames
+            }
+          
           resultsPerGroup <- merge(subGrid, resultsPerGroup)
           
           out <- if(!exists("out")) resultsPerGroup else rbind(out, resultsPerGroup)
@@ -710,7 +735,7 @@ poolByResample <- function(x, grid, func)
   out
 }
 
-summarize <- function(x, grid, func)
+summarize <- function(x, grid)
 {
   k <- nrow(grid)
   out <- NULL
@@ -779,7 +804,7 @@ modelWrapperBasic <- function(ind, x)
   outBagData$.outcome <- NULL
   
   pred <- predictionFunction(x$method, tmpModelFit, outBagData)
-  # to start computing auc ROC, we might want to return a list with
+  # todo: To start computing auc ROC, we might want to return a list with
   # probs and preds (where appropriate)
   pred
 }
@@ -883,25 +908,27 @@ iterPrint <- function(x, iter)
   cat("\n")
 }
 
-getClassLevels <- function(x)
+## make this object oriented
+getClassLevels <- function(x) 
   {
-    if(x$method %in% c("svmradial", "svmpoly",
-                       "svmRadial", "svmPoly",
-                       "rvmRadial", "rvmPoly",
-                       "gaussprRadial", "gaussprPoly",
-                       "ctree", "ctree2", "cforest"))
+    if(tolower(x$method) %in% tolower(c("svmRadial", "svmPoly",
+                                        "rvmRadial", "rvmPoly",
+                                        "lssvmRadial", "lssvmPoly",
+                                        "gaussprRadial", "gaussprPoly",
+                                        "ctree", "ctree2", "cforest")))
+       
       {
-        obsLevels <- switch(x$method,
+        obsLevels <- switch(tolower(x$method),
                             svmradial =, svmpoly =,
-                            svmRadial =, svmPoly =,
-                            rvmRadial =, rvmPoly =,
-                            gaussprRadial =, gaussprPoly =
+                            rvmradial =, rvmpoly =,
+                            lssvmradial =, lssvmpoly =, 
+                            gaussprpadial =, gaussprpoly =
                             {
                               library(kernlab)
                               lev(x$finalModel)
                             },
                             
-                            ctree =, cforest =
+                            ctree =, ctree2 =, cforest =
                             {
                               library(party)
                               levels(x$finalModel@data@get("response")[,1])
@@ -912,3 +939,5 @@ getClassLevels <- function(x)
     obsLevels
   }
 
+## todo: do we need to add the other kernlab models to the function above?
+## there is an error in test cases for predict.train
