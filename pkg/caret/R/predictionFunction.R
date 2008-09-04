@@ -427,7 +427,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            {
                              library(caTools)
 
-                             out <- caTools::predict(modelFit, newdata, type="class")
+                             out <- caTools::predict.LogitBoost(modelFit, newdata, type="class")
                              
                              if(!is.null(param))
                                {
@@ -438,7 +438,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  for(j in seq(along = param$.nIter))
                                    {
                                      tmp[,j] <- as.character(
-                                                             caTools::predict(
+                                                             caTools::predict.LogitBoost(
                                                                      modelFit,
                                                                      newdata,
                                                                      nIter = param$.nIter[j]))
@@ -489,7 +489,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  tmp <- cbind(out, tmp)
                                  out <- as.data.frame(tmp)
 
-                                 ### todo: figure out how to pass more than one value
+                                 
                                  attr(out, "values") <- c(modelFit$tuneValue$.threshold, param$.threshold)
                                }
                              out

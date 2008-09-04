@@ -78,7 +78,8 @@ export(
        predict.list,
        predict.train,
        densityplot.train,
-       train.formula
+       train.formula,
+       defaultSummary
        )
 
 S3method(confusionMatrix, default)

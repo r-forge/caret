@@ -10,9 +10,13 @@
 \usage{
 train(x, ...)
 
-\method{train}{default}(x, y, method = "rf",  ..., 
+\method{train}{default}(x, y, 
+      method = "rf",  
+      ..., 
       metric = ifelse(is.factor(y), "Accuracy", "RMSE"),   
-      trControl = trainControl(), tuneGrid = NULL, 
+      maximize = ifelse(metric == "RMSE", FALSE, TRUE),
+      trControl = trainControl(), 
+      tuneGrid = NULL, 
       tuneLength = 3)
 
 \method{train}{formula}(form, data, ..., subset, na.action, contrasts = NULL)
@@ -29,8 +33,8 @@ train(x, ...)
 \code{svmpoly}, \code{svmradial}, \code{fda}, \code{bagEarth}, \code{bagFDA}, \code{glmboost}, \code{gamboost}, \code{blackboost},  \code{ada}, \code{ctree}, \code{cforest}, \code{sddaLDA}, \code{sddaQDA},  \code{LogitBoost},  \code{J48}, \code{M5Rules}, \code{slda}, \code{superpc}, \code{enet} and \code{lasso}. See the Details section below.}  
   \item{\ldots}{ arguments passed to the classification or regression routine (such as \code{\link[randomForest]{randomForest}}). Errors will occur if values
          for tuning parameters are passed here.}  
-  \item{metric}{a string that specifies what summary metric will be used to select the optimal model. Possible values are "RMSE" and "Rsquared" for 
-     regression and "Accuracy" and "Kappa" for classification.(NOTE: If given, this argument must be named.)}         
+  \item{metric}{a string that specifies what summary metric will be used to select the optimal model. By default, possible values are "RMSE" and "Rsquared" for regression and "Accuracy" and "Kappa" for classification. If custom performance metrics are used (via the \code{summaryFunction} argument in \code{\link{trainControl}}, the value of \code{metric} should match one of the arguments. If it does not, a warning is issued and the first metric given by the \code{summaryFunction} is used. (NOTE: If given, this argument must be named.)}         
+  \item{maximize}{a logical: should the metric be maximized or minimized?}
   \item{trControl}{a list of values that define how this function acts. See \code{\link{trainControl}}. (NOTE: If given, this argument must be named.)}
   \item{tuneGrid}{a data frame with possible tuning values. The columns are named the same as the tuning parameters in each
          method preceded by a period (e.g. .decay, .lambda). See the function \code{\link{createGrid}} in this package for more details. 
@@ -115,6 +119,8 @@ The vignette entitled "caret Manual -- Model Building" has more details and exam
      cross-validation or out-of-bag estimation methods are requested,
      this will be \code{NULL}. The \code{returnResamp} argument of \code{\link{trainControl}}
      controls how much of the resampled results are saved.}
+  \item{perfNames}{a character vector of performance metrics that are produced by the summary function}
+  \item{maximize}{a logical recycled  from the function arguments.}
 }
 
 \author{Max Kuhn (the guts of \code{train.formula} were based on Ripley's \code{nnet.formula})}

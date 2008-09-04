@@ -5,6 +5,7 @@ trainControl <- function(
                          returnData = TRUE,
                          returnResamp = "final",
                          p = .75,
+                         summaryFunction = defaultSummary,
                          selectionFunction = "best",
                          index = NULL)
 {
@@ -17,6 +18,7 @@ trainControl <- function(
        returnData = returnData,
        returnResamp = returnResamp,
        p = p,
+       summaryFunction = summaryFunction,
        selectionFunction = selectionFunction,
        index = index)
 }

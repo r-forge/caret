@@ -9,13 +9,13 @@
 A set of lattice functions are provided to plot the resampled performance estimates (e.g. classification accuracy, RMSE) over tuning parameters (if any).
 }
 \usage{
-\method{histogram}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
+\method{histogram}{train}(x, data = NULL, metric = x$metric, ...)
 
-\method{densityplot}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
+\method{densityplot}{train}(x, data = NULL, metric = x$metric, ...)
 
-\method{xyplot}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
+\method{xyplot}{train}(x, data = NULL, metric = x$metric, ...)
 
-\method{stripplot}{train}(x, data = NULL, metric = c("Accuracy", "RMSE"), ...)
+\method{stripplot}{train}(x, data = NULL, metric = x$metric, ...)
 }
 
 \arguments{

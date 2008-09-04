@@ -803,12 +803,11 @@
 
   # for models using S4 classes, you can't easily append data, so 
   # exclude these and we'll use other methods to get this information
-  if(!(method %in% c("svmradial", "svmpoly",
-                     "svmRadial", "svmPoly",
-                     "rvmRadial", "rvmPoly",
-                     "lssvmRadial", "lssvmPoly",
-                     "gaussprRadial", "gaussprPoly",
-                     "ctree", "ctree2", "cforest")))
+  if(!(tolower(method) %in% tolower(c("svmRadial", "svmPoly",
+                                      "rvmRadial", "rvmPoly",
+                                      "lssvmRadial", "lssvmPoly",
+                                      "gaussprRadial", "gaussprPoly",
+                                      "ctree", "ctree2", "cforest"))))
     {
       modelFit$xNames <- xNames
       modelFit$problemType <- type
