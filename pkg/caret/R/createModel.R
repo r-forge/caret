@@ -47,7 +47,7 @@
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
                    "sddaLDA", "sddaQDA", "glmnet", "slda",
-                   "superpc"))
+                   "superpc", "ppr"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -794,7 +794,12 @@
                        # prediction will need to source data, so save that too
                        out$data <- list(x = t(trainX), y = trainY)
                        out
-                     }
+                     },
+                     ppr =
+                     {
+                       library(stats)
+                       ppr(as.matrix(trainX), trainY, nterms = tuneValue$.nterms)
+                     },                     
                      )
   
   
