@@ -1,4 +1,15 @@
 -------------------
+Version: 3.38
+Date: 2008-09-09
+
+Added a new class called predictors that returns the names of the predictors that were
+used in the final model.
+
+Also added ppr from the stats package.
+
+Minor update to the project web page to deal with IE issues
+
+-------------------
 Version: 3.37
 Date: 2008-09-04
 

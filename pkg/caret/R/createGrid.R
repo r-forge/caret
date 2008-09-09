@@ -200,6 +200,7 @@
                       JRip = data.frame(.NumOpt = 1:len),
                       superpc = expand.grid(.n.components = 1:3,
                         .threshold = seq(.1, .9, length = len)),
+                      ppr = data.frame(.nterms = 1:len),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       lmStepAIC =, slda = data.frame(.parameter = "none"))
   trainGrid

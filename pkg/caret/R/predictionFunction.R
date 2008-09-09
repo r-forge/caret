@@ -312,7 +312,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            },
                            
                            
-                           lm =, lmStepAIC =
+                           lm =, lmStepAIC =, ppr =
                            {
                              out <- predict(modelFit, newdata)
                              out

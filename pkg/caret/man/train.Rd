@@ -30,7 +30,7 @@ train(x, ...)
 \item{na.action}{A function to specify the action to be taken if NAs are found. The default action is for the procedure to fail. An alternative is na.omit, which leads to rejection of cases with missing values on any required variable. (NOTE: If given, this argument must be named.)}
 \item{contrasts}{a list of contrasts to be used for some or all of the factors appearing as variables in the model formula.}
   \item{method}{a string specifying which classification or regression model to use. Possible values are: \code{lm}, \code{rda}, \code{lda}, \code{gbm}, \code{rf},  \code{nnet}, \code{multinom}, \code{gpls}, \code{lvq}, \code{rpart}, \code{knn}, \code{pls}, \code{pam}, \code{nb},  \code{earth}, \code{treebag},
-\code{svmpoly}, \code{svmradial}, \code{fda}, \code{bagEarth}, \code{bagFDA}, \code{glmboost}, \code{gamboost}, \code{blackboost},  \code{ada}, \code{ctree}, \code{cforest}, \code{sddaLDA}, \code{sddaQDA},  \code{LogitBoost},  \code{J48}, \code{M5Rules}, \code{slda}, \code{superpc}, \code{enet} and \code{lasso}. See the Details section below.}  
+\code{svmpoly}, \code{svmradial}, \code{fda}, \code{bagEarth}, \code{bagFDA}, \code{glmboost}, \code{gamboost}, \code{blackboost},  \code{ada}, \code{ctree}, \code{cforest}, \code{sddaLDA}, \code{sddaQDA},  \code{LogitBoost},  \code{J48}, \code{M5Rules}, \code{slda}, \code{superpc}, \code{ppr}, \code{enet} and \code{lasso}. See the Details section below.}  
   \item{\ldots}{ arguments passed to the classification or regression routine (such as \code{\link[randomForest]{randomForest}}). Errors will occur if values
          for tuning parameters are passed here.}  
   \item{metric}{a string that specifies what summary metric will be used to select the optimal model. By default, possible values are "RMSE" and "Rsquared" for regression and "Accuracy" and "Kappa" for classification. If custom performance metrics are used (via the \code{summaryFunction} argument in \code{\link{trainControl}}, the value of \code{metric} should match one of the arguments. If it does not, a warning is issued and the first metric given by the \code{summaryFunction} is used. (NOTE: If given, this argument must be named.)}         
@@ -63,6 +63,7 @@ Random forests \tab  \code{rf} \tab \pkg{randomForest} \tab \code{mtry} \cr
 \tab \code{cforest} \tab \pkg{party} \tab \code{mtry} \cr   
 Bagged Trees \tab \code{treebag} \tab \pkg{ipred} \tab None \cr 
 Neural networks \tab  \code{nnet} \tab \pkg{nnet} \tab \code{decay}, \code{size} \cr
+Projection Pursuit Regressio \tab \code{ppr} \tab \pkg{stats} \tab \code{nterms} \cr
 Partial least squares \tab \code{pls} \tab \pkg{pls}, \pkg{caret} \tab \code{ncomp} \cr
 Support Vector Machines (RBF)  \tab \code{svmradial} \tab \pkg{kernlab} \tab \code{sigma}, \code{C}\cr 
 Support Vector Machines (polynomial)  \tab \code{svmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}, \code{C}\cr 

@@ -122,7 +122,8 @@ modelLookup <- function(model = NULL)
                            "lmStepAIC",
                            "slda",
                            "superpc",
-                           "superpc"
+                           "superpc",
+                           "ppr"
                            ),
                          parameter = c(
                            "parameter",      
@@ -178,7 +179,8 @@ modelLookup <- function(model = NULL)
                            "NumOpt",
                            "parameter",
                            "parameter",
-                           "threshold", "n.components"
+                           "threshold", "n.components",
+                           "nterms"
                            ),
                          label = I(c(
                            "none",      
@@ -234,7 +236,8 @@ modelLookup <- function(model = NULL)
                            "# Optimizations",
                            "none",
                            "none",
-                           "Threshold", "#Components"
+                           "Threshold", "#Components",
+                           "# Terms"
                            )),
                          seq = c(
                            FALSE,
@@ -290,7 +293,8 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,
                            FALSE,
-                           TRUE,    TRUE       # superpc
+                           TRUE,    TRUE,       # superpc
+                           FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -346,7 +350,8 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            TRUE,
                            FALSE,
-                           TRUE,    TRUE       # superpc
+                           TRUE,    TRUE,       # superpc
+                           TRUE
                            ),               
                          forClass =          
                          c(
@@ -403,7 +408,8 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            FALSE,
                            TRUE,
-                           FALSE,    FALSE
+                           FALSE,    FALSE,
+                           FALSE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -459,8 +465,8 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   JRip(1)
                            FALSE,            #   stepAIC(0)
                            TRUE,             #   slda(0)
-                           FALSE, FALSE      #   superpc(2)
-
+                           FALSE, FALSE,     #   superpc(2)
+                           FALSE
                            ),
                          stringsAsFactors  = FALSE               
                          )         
