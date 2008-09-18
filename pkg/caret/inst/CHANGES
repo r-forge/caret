@@ -1,4 +1,14 @@
 -------------------
+Version: 3.39
+Date: 2008-09-18
+
+Fixed bug in varImp.rpart when the model had only primary splits.
+
+Minor changes to the Affy normalization code
+
+Changed typo in predictors man page
+
+-------------------
 Version: 3.38
 Date: 2008-09-09
 

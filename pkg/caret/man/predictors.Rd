@@ -1,4 +1,4 @@
-\name{predictors}}
+\name{predictors}
 \alias{predictors}
 \alias{predictors.BinaryTree}
 \alias{predictors.LogitBoost}
