@@ -1,4 +1,11 @@
 -------------------
+Version: 3.41
+Date: 2008-09-19
+
+For gbm, let the user over-ride the default value of the distribution argument (brought
+us by Peter Tait via RHelp).
+
+-------------------
 Version: 3.40
 Date: 2008-09-18
 
