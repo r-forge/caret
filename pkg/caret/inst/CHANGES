@@ -1,4 +1,11 @@
 -------------------
+Version: 3.40
+Date: 2008-09-18
+
+Changed predict.preProcess so that it doesn't crash if newdata does not have all of the
+variables used to originally pre-process *unless* PCA processing was requested.
+
+-------------------
 Version: 3.39
 Date: 2008-09-18
 
