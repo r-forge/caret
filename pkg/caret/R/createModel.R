@@ -67,17 +67,26 @@
                      gbm =  
                      {
                        library(gbm)
-                       if(type == "Classification")
+                       theDots <- list(...)
+                       if(any(names(theDots) == "distribution"))
                          {
-                           modY <- gbmClasses
-                           modDist <- "bernoulli"
+                           modDist <- theDots$distribution
+                           theDots$distribution <- NULL
                          } else {
-                           modY <- trainY
-                           modDist <- "gaussian"
+                           modDist <- if(type == "Classification") "bernoulli" else "gaussian"
                          }
-                       out <- gbm.fit(trainX, modY, interaction.depth = tuneValue$.interaction.depth,
-                                      n.trees = tuneValue$.n.trees, shrinkage = tuneValue$.shrinkage, 
-                                      distribution = modDist, ...)
+                       
+                       modY <- if(type == "Classification") gbmClasses else trainY
+
+                       modArgs <- list(x = trainX,
+                                       y = modY,
+                                       interaction.depth = tuneValue$.interaction.depth,
+                                       n.trees = tuneValue$.n.trees,
+                                       shrinkage = tuneValue$.shrinkage, 
+                                       distribution = modDist)
+                       if(length(theDots) > 0) modArgs <- c(modArgs, theDots)
+                       
+                       do.call("gbm.fit", modArgs)
                      },
                      rf =
                      {
