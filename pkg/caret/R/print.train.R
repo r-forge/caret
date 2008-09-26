@@ -78,7 +78,7 @@
       finalTune <- x$bestTune
       names(finalTune) <- substring(names(finalTune), 2)
 
-      optValues <- paste(names(finalTune), "=", finalTune)
+      optValues <- paste(names(finalTune), "=", format(finalTune, digits = digits))
       optString <- paste(
                          "\nThe final ",
                          ifelse(numParam, "values", "value"),
