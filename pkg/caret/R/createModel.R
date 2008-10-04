@@ -47,7 +47,7 @@
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
                    "sddaLDA", "sddaQDA", "glmnet", "slda",
-                   "superpc", "ppr"))
+                   "superpc", "ppr", "sda", "penalized"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -808,7 +808,22 @@
                      {
                        library(stats)
                        ppr(as.matrix(trainX), trainY, nterms = tuneValue$.nterms)
-                     },                     
+                     },
+                     sda =
+                     {
+                       library(sparseLDA)
+                       sda(trainX, trainY, lambda = tuneValue$.lambda, stop = -tuneValue$.NumVars)
+                     },
+                     penalized =
+                     {
+                       library(penalized)
+                       modType <- if(is.factor(trainY)) "logistic" else "linear"
+                       penalized(trainY, trainX,
+                                 model = modType,
+                                 lambda1 = tuneValue$.lambda1,
+                                 lambda2 = tuneValue$.lambda2,
+                                 ...)
+                     }
                      )
   
   
@@ -821,7 +836,8 @@
                                       "rvmRadial", "rvmPoly",
                                       "lssvmRadial", "lssvmPoly",
                                       "gaussprRadial", "gaussprPoly",
-                                      "ctree", "ctree2", "cforest"))))
+                                      "ctree", "ctree2", "cforest",
+                                      "penalized"))))
     {
       modelFit$xNames <- xNames
       modelFit$problemType <- type

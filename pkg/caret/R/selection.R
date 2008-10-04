@@ -94,6 +94,14 @@ byComplexity <- function(x, model)
            superpc =
            {
              x[order(x$threshold, x$n.components),]
+           },
+           sda =
+           {
+             x[order(x$NumVars, x$lambda),]
+           },
+           penalized =
+           {
+             x[order(x$lambda1, x$lambda2),]
            }
            )
 
