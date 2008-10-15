@@ -807,12 +807,12 @@
                      ppr =
                      {
                        library(stats)
-                       ppr(as.matrix(trainX), trainY, nterms = tuneValue$.nterms)
+                       ppr(as.matrix(trainX), trainY, nterms = tuneValue$.nterms, ...)
                      },
                      sda =
                      {
                        library(sparseLDA)
-                       sda(trainX, trainY, lambda = tuneValue$.lambda, stop = -tuneValue$.NumVars)
+                       sda(trainX, trainY, lambda = tuneValue$.lambda, stop = -tuneValue$.NumVars, ...)
                      },
                      penalized =
                      {
