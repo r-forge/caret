@@ -1,4 +1,22 @@
 -------------------
+Version: 3.44
+Date: 2008-10-15
+
+Added sda from the sparseLDA pacakge (not on CRAN). 
+
+Also, a bug was fixed where the ellipses were not passed into a few of the newer 
+models (such as penalized and ppr)
+
+-------------------
+Version: 3.43
+Date: 2008-10-03
+
+Added the penalized model from the penalized package. In caret, it is regression only
+although the package allows for classification via glm models. However, it does not
+allow the user to pass the classes in (just an indicator matrix). Becuase of this, it
+doesn't really work with the rest of the classification tools in the package.
+
+-------------------
 Version: 3.42
 Date: 2008-09-26
 

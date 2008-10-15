@@ -75,10 +75,10 @@ Gaussian processes (polynomial)  \tab \code{guassprPoly} \tab \pkg{kernlab} \tab
 Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
 Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nprune} \cr
 Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr 
-M5 Rules \tab \code{M5Rules} \tab \pkg{RWeka} \tab \code{pruned} \cr 
-Elastic Net \tab \code{enet} \tab \pkg{elasticnet} \tab \code{lambda}, \code{fraction} \cr
+M5 rules \tab \code{M5Rules} \tab \pkg{RWeka} \tab \code{pruned} \cr 
+Elastic net \tab \code{enet} \tab \pkg{elasticnet} \tab \code{lambda}, \code{fraction} \cr
 The Lasso \tab \code{enet} \tab \pkg{elasticnet} \tab \code{fraction} \cr
-Penalized generalized linear models \tab \code{penalized} \tab \pkg{penalized} \tab \code{lambda1}, \code{lambda2}\cr
+Penalized linear models \tab \code{penalized} \tab \pkg{penalized} \tab \code{lambda1}, \code{lambda2}\cr
 Supervised principal components \tab \code{superpc} \tab \pkg{superpc} \tab \code{n.components}, \code{threshold} \cr 
 Linear discriminant analysis \tab \code{lda} \tab \pkg{MASS} \tab  None\cr 
 Stabilised Linear discriminant analysis \tab \code{slda} \tab \pkg{ipred} \tab  None\cr 
