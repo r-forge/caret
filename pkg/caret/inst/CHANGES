@@ -1,4 +1,11 @@
 -------------------
+Version: 3.45
+Date: 2008-10-17
+
+Added caching of RWeka objects to that they can be saved to the file system and
+used in other sessions. (changes per Kurt Hornik on 2008-10-05)
+
+-------------------
 Version: 3.44
 Date: 2008-10-15
 
