@@ -102,6 +102,10 @@ byComplexity <- function(x, model)
            penalized =
            {
              x[order(x$lambda1, x$lambda2),]
+           },
+           spls =
+           {
+             x[order(x$eta, x$K),]
            }
            )
 

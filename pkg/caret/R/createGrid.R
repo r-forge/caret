@@ -206,6 +206,7 @@
                         .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                       penalized = expand.grid(.lambda1 = 2^((1:len) -1),
                         .lambda2 = 2^((1:len) -1)),
+                      spls = expand.grid(.K = 1:len, .eta = seq(.1, .9, length = len)),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       lmStepAIC =, slda = data.frame(.parameter = "none"))
   trainGrid

@@ -313,7 +313,8 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{pls} & 
             \texttt{pls}, \texttt{caret}       & 
             \texttt{ncomp} \\      
-      
+
+            
       Support Vector Machines  &
          \texttt{svmRadial} & 
             \texttt{kernlab}       & 
@@ -343,8 +344,13 @@ There is additional functionality in \texttt{train} that is described in the nex
       Linear Least Squares &
          \texttt{lm} & 
             \texttt{stats}       & 
-            None \\         
-      
+            None \\  
+            
+      Sparse Partial Least Squares &
+         \texttt{spls} & 
+            \texttt{spls}, \texttt{spls}       & 
+            \texttt{K}, \texttt{eta} \\    
+            
       Multivariate Adaptive  &
          \texttt{earth}, \texttt{mars} & 
             \texttt{earth}       & 

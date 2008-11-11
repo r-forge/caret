@@ -507,6 +507,11 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                                modelFit$obsLevel[1])
                                }
                              out
+                           },
+                           spls =
+                           {
+                             library(spls)
+                             predict(modelFit, newdata)
                            }
                                                       
                            )

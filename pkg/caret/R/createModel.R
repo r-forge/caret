@@ -46,7 +46,7 @@
                    "lssvmPoly", "lssvmRadial",
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
-                   "sddaLDA", "sddaQDA", "glmnet", "slda",
+                   "sddaLDA", "sddaQDA", "glmnet", "slda", "spls",
                    "superpc", "ppr", "sda", "penalized"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
@@ -823,7 +823,12 @@
                                  lambda1 = tuneValue$.lambda1,
                                  lambda2 = tuneValue$.lambda2,
                                  ...)
-                     }
+                     },
+                     spls =
+                     {
+                       library(spls)
+                       spls(trainX, trainY, K = tuneValue$.K, eta = tuneValue$.eta, ...)
+                     },                     
                      )
   
 
