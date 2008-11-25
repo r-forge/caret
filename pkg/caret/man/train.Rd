@@ -84,6 +84,7 @@ Supervised principal components \tab \code{superpc} \tab \pkg{superpc} \tab \cod
 Linear discriminant analysis \tab \code{lda} \tab \pkg{MASS} \tab  None\cr 
 Stabilised Linear discriminant analysis \tab \code{slda} \tab \pkg{ipred} \tab  None\cr 
 Stepwise diagonal discriminant analysis \tab \code{sddaLDA}, \code{sddaQDA} \tab \pkg{SDDA} \tab None \cr
+Shrinkage discriminant analysis \tab \code{sda} \tab \pkg{sda} \tab diagonal \cr
 Logistic/multinomial regression \tab \code{multinom} \tab \pkg{nnet} \tab \code{decay}\cr 
 Regularized discriminant analysis \tab \code{rda} \tab \pkg{klaR} \tab \code{lambda}, \code{gamma} \cr
 Stabilised linear discriminant analysis \tab \code{slda} \tab \pkg{ipred} \tab None\cr

@@ -1,4 +1,12 @@
 -------------------
+Version: 3.47
+Date: 2008-11-24
+
+Added sda from the sda package. There was a naming conflict between 
+sda::sda and sparseLDA:::sda. The method value for sparseLDA was
+changed from "sda" to "sparseLDA".
+
+-------------------
 Version: 3.46
 Date: 2008-11-11
 
