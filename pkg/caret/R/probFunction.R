@@ -41,7 +41,7 @@ probFunction <- function(method, modelFit, newdata)
                                lda =  library(MASS),
                                rda =  library(klaR),
                                slda = library(ipred),
-                               sda  = library(sparseLDA))
+                               sparseLDA  = library(sparseLDA))
                         
                         out <- predict(modelFit, newdata)$posterior
                         out
@@ -207,6 +207,18 @@ probFunction <- function(method, modelFit, newdata)
                         out <- cbind(out, 1-out)
                         dimnames(out)[[2]] <-  modelFit$obsLevels
                         out
+                      },
+                      splsda =
+                      {
+                        library(spls)
+                        if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
+                        predict(modelFit, newdata, type = "prob")
+                      },
+                      sda =
+                      {                  
+                        library(sda)
+                        if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
+                        sda::predict.sda(modelFit, newdata)$prob
                       }
                       )
 

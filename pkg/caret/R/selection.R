@@ -95,7 +95,7 @@ byComplexity <- function(x, model)
            {
              x[order(x$threshold, x$n.components),]
            },
-           sda =
+           sparseLDA =
            {
              x[order(x$NumVars, x$lambda),]
            },
@@ -103,10 +103,11 @@ byComplexity <- function(x, model)
            {
              x[order(x$lambda1, x$lambda2),]
            },
-           spls =
+           spls =, splsda = 
            {
-             x[order(x$eta, x$K),]
-           }
+             x[order(-x$eta, x$K),]
+           },
+           sda = x[order(x$diagonal),]
            )
 
   }

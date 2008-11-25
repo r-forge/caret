@@ -124,9 +124,11 @@ modelLookup <- function(model = NULL)
                            "superpc",
                            "superpc",
                            "ppr",
-                           "sda", "sda",
+                           "sparseLDA", "sparseLDA",
                            "penalized", "penalized",
-                           "spls", "spls"
+                           "spls", "spls",
+                           "splsda", "splsda", "splsda",
+                           "sda"
                            ),
                          parameter = c(
                            "parameter",      
@@ -186,7 +188,9 @@ modelLookup <- function(model = NULL)
                            "nterms",
                            "NumVars", "lambda",
                            "lambda1", "lambda2",
-                           "K", "eta"
+                           "K", "eta",
+                           "K", "eta", "Kappa",
+                           "diagonal"
                            ),
                          label = I(c(
                            "none",      
@@ -246,7 +250,9 @@ modelLookup <- function(model = NULL)
                            "# Terms",
                            "Number of Predictors", "Lambda",
                            "L1 Penalty", "L2 Penalty",
-                           "#Components", "Threshold"
+                           "#Components", "Threshold",
+                           "#Components", "Threshold", "Kappa",
+                           "Diagonalize"
                            )),
                          seq = c(
                            FALSE,
@@ -306,7 +312,9 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,   FALSE,
                            FALSE,    FALSE,     ## penalized; see note in createModel,
-                           FALSE,    FALSE
+                           FALSE,    FALSE,
+                           FALSE,    FALSE,    FALSE,
+                           FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -366,7 +374,9 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            FALSE,   FALSE,
                            TRUE,    TRUE,
-                           TRUE,    TRUE
+                           TRUE,    TRUE,
+                           FALSE,   FALSE,   FALSE,
+                           FALSE
                            ),               
                          forClass =          
                          c(
@@ -427,7 +437,9 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            TRUE,     TRUE,
                            FALSE,    FALSE, ## penalized has no way to pass the class levels in
-                           FALSE,    FALSE
+                           FALSE,    FALSE,
+                           TRUE,     TRUE,    TRUE,
+                           TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -485,10 +497,12 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   slda(0)
                            FALSE, FALSE,     #   superpc(2)
                            FALSE,
-                           TRUE,  TRUE,      #   sda,
+                           TRUE,  TRUE,      #   sparseLDA,
                            FALSE, FALSE,     #   penalized
-                           FALSE, FALSE      #   spls (2)
-                           ),
+                           FALSE, FALSE,     #   spls (2),
+                           TRUE,  TRUE, TRUE,#   splsda (3)
+                           TRUE              #   sda
+                            ),
                          stringsAsFactors  = FALSE               
                          )         
   

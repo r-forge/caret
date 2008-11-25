@@ -314,6 +314,10 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{pls}, \texttt{caret}       & 
             \texttt{ncomp} \\      
 
+      Sparse Partial Least Squares &
+         \texttt{spls} & 
+            \texttt{spls}, \texttt{spls}       & 
+            \texttt{K}, \texttt{eta}, \texttt{kappa} \\   
             
       Support Vector Machines  &
          \texttt{svmRadial} & 
@@ -345,12 +349,7 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{lm} & 
             \texttt{stats}       & 
             None \\  
-            
-      Sparse Partial Least Squares &
-         \texttt{spls} & 
-            \texttt{spls}, \texttt{spls}       & 
-            \texttt{K}, \texttt{eta} \\    
-            
+      
       Multivariate Adaptive  &
          \texttt{earth}, \texttt{mars} & 
             \texttt{earth}       & 
@@ -381,8 +380,14 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{ppr} & 
             \texttt{stats}       & 
             \texttt{nterms} \\            
-      \:\: Regression & & &\\             
+      \:\: Regression & & &\\                   
             
+      Penalized Linear Models  &
+         \texttt{penalized} & 
+            \texttt{penalized}       & 
+            \texttt{lambda1}, \texttt{lambda2} \\            
+      \:\: Regression Splines & & &\\
+      
       Relevance Vector Machines  &
          \texttt{rvmRadial} & 
             \texttt{kernlab}       & 
@@ -407,12 +412,25 @@ There is additional functionality in \texttt{train} that is described in the nex
       Linear Discriminant Analysis &
          \texttt{lda} & 
             \texttt{MASS}       &          
-            None\\                     
+            None\\  
+ 
       Stabilised Linear &
          \texttt{slda} & 
             \texttt{ipred}       &          
             None\\  
+      \:\: Discriminant Analysis & & &\\            
+            
+      Shrinkage Linear &
+         \texttt{sda} & 
+            \texttt{sda}       &          
+            \texttt{diagonal}\\  
       \:\: Discriminant Analysis & & &\\
+      
+      Sparse Linear &
+         \texttt{sparseLDA} & 
+            \texttt{sparseLDA}       &          
+            \texttt{NumVars}, \texttt{lambda} \\  
+      \:\: Discriminant Analysis & & &\\      
       
       Stepwise Diagonal &
         \texttt{sddaLDA}, &

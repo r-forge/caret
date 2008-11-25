@@ -46,8 +46,8 @@
                    "lssvmPoly", "lssvmRadial",
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
-                   "sddaLDA", "sddaQDA", "glmnet", "slda", "spls",
-                   "superpc", "ppr", "sda", "penalized"))
+                   "sddaLDA", "sddaQDA", "glmnet", "slda", "spls", "splsda",
+                   "superpc", "ppr", "sda", "penalized", "sparseLDA"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -809,10 +809,16 @@
                        library(stats)
                        ppr(as.matrix(trainX), trainY, nterms = tuneValue$.nterms, ...)
                      },
-                     sda =
+                     sparseLDA =
                      {
                        library(sparseLDA)
-                       sda(trainX, trainY, lambda = tuneValue$.lambda, stop = -tuneValue$.NumVars, ...)
+                       sparseLDA:::sda(trainX, trainY, lambda = tuneValue$.lambda, stop = -tuneValue$.NumVars, ...)
+                     },
+                     sda =
+                     {
+                       library(sda)
+                       if(!is.matrix(trainX)) trainX <- as.matrix(trainX)
+                       sda::sda(trainX, trainY, diagonal = tuneValue$.diagonal, ...)
                      },
                      penalized =
                      {
@@ -828,7 +834,13 @@
                      {
                        library(spls)
                        spls(trainX, trainY, K = tuneValue$.K, eta = tuneValue$.eta, ...)
-                     },                     
+                     },
+                     splsda =
+                     {
+                       library(spls)
+                       splsda(trainX, trainY, K = tuneValue$.K, eta = tuneValue$.eta,
+                            kappa = tuneValue$.kappa, ...)
+                     }
                      )
   
 
