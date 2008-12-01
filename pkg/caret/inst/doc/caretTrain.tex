@@ -186,15 +186,15 @@ summary of leave group out cross-validation (30 reps) sample sizes:
 
 LGOCV resampled training results across tuning parameters:
 
-  sigma   C    Accuracy  Kappa  Accuracy SD  Kappa SD  Selected
-  0.0145  0.1  0.606     0.113  0.0283       0.0703            
-  0.0145  1    0.837     0.665  0.0422       0.0865    *       
-  0.0145  10   0.796     0.587  0.0514       0.104             
-  0.0145  100  0.794     0.585  0.0527       0.107             
+  sigma   C    Accuracy  Kappa   Accuracy SD  Kappa SD  Selected
+  0.0222  0.1  0.581     0.0522  0.0212       0.0533            
+  0.0222  1    0.837     0.665   0.0406       0.0846    *       
+  0.0222  10   0.807     0.609   0.0562       0.114             
+  0.0222  100  0.807     0.609   0.0533       0.109             
 
 Accuracy was used to select the optimal model using the largest value.
 
-The final values used in the model were C = 1 and sigma = 0.0144604755048034.
+The final values used in the model were C = 1 and sigma = 0.0222.
 \end{Soutput}
 \end{Schunk}
 \end{small}
@@ -310,6 +310,13 @@ There is additional functionality in \texttt{train} that is described in the nex
 \hline
 \endlastfoot
 \multicolumn{5}{c}{{{ \em ``Dual--Use Models''}}} \\ 
+
+      Generalized linear model &
+         \texttt{glm} & 
+            \texttt{stats}       & 
+            None \\  
+       
+
       Recursive Partitioning &
          \texttt{rpart} & 
             \texttt{rpart}       & 
@@ -368,7 +375,12 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{pls} & 
             \texttt{pls}, \texttt{caret}       & 
             \texttt{ncomp} \\      
-      
+
+      Sparse Partial Least Squares &
+         \texttt{spls} & 
+            \texttt{spls}       & 
+            \texttt{K}, \texttt{eta}, \texttt{kappa} \\   
+            
       Support Vector Machines  &
          \texttt{svmRadial} & 
             \texttt{kernlab}       & 
@@ -398,7 +410,7 @@ There is additional functionality in \texttt{train} that is described in the nex
       Linear Least Squares &
          \texttt{lm} & 
             \texttt{stats}       & 
-            None \\         
+            None \\  
       
       Multivariate Adaptive  &
          \texttt{earth}, \texttt{mars} & 
@@ -430,8 +442,14 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{ppr} & 
             \texttt{stats}       & 
             \texttt{nterms} \\            
-      \:\: Regression & & &\\             
+      \:\: Regression & & &\\                   
             
+      Penalized Linear Models  &
+         \texttt{penalized} & 
+            \texttt{penalized}       & 
+            \texttt{lambda1}, \texttt{lambda2} \\            
+      \:\: Regression Splines & & &\\
+      
       Relevance Vector Machines  &
          \texttt{rvmRadial} & 
             \texttt{kernlab}       & 
@@ -456,12 +474,25 @@ There is additional functionality in \texttt{train} that is described in the nex
       Linear Discriminant Analysis &
          \texttt{lda} & 
             \texttt{MASS}       &          
-            None\\                     
+            None\\  
+ 
       Stabilised Linear &
          \texttt{slda} & 
             \texttt{ipred}       &          
             None\\  
+      \:\: Discriminant Analysis & & &\\            
+            
+      Shrinkage Linear &
+         \texttt{sda} & 
+            \texttt{sda}       &          
+            \texttt{diagonal}\\  
       \:\: Discriminant Analysis & & &\\
+      
+      Sparse Linear &
+         \texttt{sparseLDA} & 
+            \texttt{sparseLDA}       &          
+            \texttt{NumVars}, \texttt{lambda} \\  
+      \:\: Discriminant Analysis & & &\\      
       
       Stepwise Diagonal &
         \texttt{sddaLDA}, &
@@ -623,15 +654,15 @@ summary of leave group out cross-validation (30 reps) sample sizes:
 
 LGOCV resampled training results across tuning parameters:
 
-  sigma   C    Sens   Spec   Sens SD  Spec SD  Selected
-  0.0145  0.1  1      0.102  0        0.0643           
-  0.0145  1    0.898  0.759  0.0638   0.0784           
-  0.0145  10   0.805  0.784  0.0736   0.0835           
-  0.0145  100  0.79   0.799  0.0672   0.0835   *       
+  sigma   C    Sens   Spec    Sens SD  Spec SD  Selected
+  0.0222  0.1  1      0.0471  0        0.0483           
+  0.0222  1    0.904  0.753   0.053    0.0825           
+  0.0222  10   0.812  0.8     0.0686   0.0884           
+  0.0222  100  0.812  0.8     0.0613   0.0837   *       
 
 Spec was used to select the optimal model using the largest value.
 
-The final values used in the model were C = 100 and sigma = 0.0144604755048034.
+The final values used in the model were C = 100 and sigma = 0.0222.
 \end{Soutput}
 \end{Schunk}
 Based on this model and the original SVM model, 60$\%$ accuracy can be achieved  by being very biased towards sensitivity.
@@ -661,8 +692,8 @@ best model within 2 pct of best:
 > svmNew$results[whichTwoPct, ]
 \end{Sinput}
 \begin{Soutput}
-       sigma  C      Sens     Spec     SensSD    SpecSD
-3 0.01446048 10 0.8054054 0.783908 0.07355571 0.0834559
+       sigma  C      Sens Spec     SensSD     SpecSD
+3 0.02222875 10 0.8117117  0.8 0.06862484 0.08844885
 \end{Soutput}
 \begin{Sinput}
 > whichSixPct <- tolerance(svmNew$results, "Spec", 6, TRUE)
@@ -675,8 +706,8 @@ best model within 6 pct of best:
 > svmNew$results[whichSixPct, ]
 \end{Sinput}
 \begin{Soutput}
-       sigma C      Sens      Spec     SensSD     SpecSD
-2 0.01446048 1 0.8981982 0.7586207 0.06375382 0.07842394
+       sigma C      Sens      Spec     SensSD   SpecSD
+2 0.02222875 1 0.9036036 0.7528736 0.05296353 0.082542
 \end{Soutput}
 \end{Schunk}
 
@@ -780,7 +811,7 @@ For multiple models, the objects can be grouped using a list and predicted simul
 \end{Sinput}
 \begin{Soutput}
 List of 2
- $ pls : num [1:99] 30.2 21.9 16.1 16.0 15.8 ...
+ $ pls : num [1:99] 30.2 21.9 16.1 16 15.8 ...
  $ mars: num [1:99] 34.4 20.2 18.2 14.4 15.7 ...
 \end{Soutput}
 \end{Schunk}
@@ -854,7 +885,7 @@ The function \texttt{confusionMatrix} can also be used to summarize the results 
 > sensitivity(mbrrPredictions$pred, mbrrPredictions$obs)
 \end{Sinput}
 \begin{Soutput}
-[1] 0.82
+[1] 0.8066667
 \end{Soutput}
 \begin{Sinput}
 > confusionMatrix(mbrrPredictions$pred, mbrrPredictions$obs)
@@ -864,20 +895,20 @@ Confusion Matrix and Statistics
 
           Reference
 Prediction Active Inactive
-  Active      123       24
-  Inactive     27       90
-                                      
-            Accuracy : 0.8068         
-              95% CI : (0.754, 0.8526)
- No Information Rate : 0.5682         
- P-Value [Acc > NIR] : 2.152e-16      
-                                      
-               Kappa : 0.6076         
-                                      
-         Sensitivity : 0.82           
-         Specificity : 0.7895         
-      Pos Pred Value : 0.8367         
-      Neg Pred Value : 0.7692         
+  Active      121       25
+  Inactive     29       89
+                                       
+            Accuracy : 0.7955          
+              95% CI : (0.7417, 0.8424)
+ No Information Rate : 0.5682          
+ P-Value [Acc > NIR] : 6.255e-15       
+                                       
+               Kappa : 0.5849          
+                                       
+         Sensitivity : 0.8067          
+         Specificity : 0.7807          
+      Pos Pred Value : 0.8288          
+      Neg Pred Value : 0.7542          
 \end{Soutput}
 \end{Schunk}
 \end{small}
@@ -900,7 +931,7 @@ The function \texttt{roc}\footnote{I'm looking into using the \texttt{ROCR} pack
 > aucRoc(mbrrROC)
 \end{Sinput}
 \begin{Soutput}
-[1] 0.8749415
+[1] 0.8724269
 \end{Soutput}
 \end{Schunk}
 \end{small}
