@@ -60,7 +60,7 @@ byComplexity <- function(x, model)
              x[order(x$degree, x$nprune),]
            },
            treebag =, lda =, lm =, sddaLDA =, sddaQDA =,
-           lmStepAIC =, slda =
+           lmStepAIC =, slda =, glm =
            {
              x
            },

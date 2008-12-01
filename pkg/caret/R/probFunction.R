@@ -161,9 +161,9 @@ probFunction <- function(method, modelFit, newdata)
                       },
                       gamboost =, blackboost =, glmboost =
                       {
-                        # glmboost defies conveintion a bit by having higher values of the lp
-                        # correspond to the second factor level (as opposed to the first),
-                        # so we use the -lp for the first factor level prob
+                                        # glmboost defies conveintion a bit by having higher values of the lp
+                                        # correspond to the second factor level (as opposed to the first),
+                                        # so we use the -lp for the first factor level prob
                         library(mboost)
                         lp <- predict(modelFit, as.matrix(newdata), type = "lp")
                         out <- cbind(
@@ -188,7 +188,7 @@ probFunction <- function(method, modelFit, newdata)
                       {
                         library(caTools)
                         out <- caTools::predict(modelFit, newdata, type = "raw")
-                        # I've seen them not be on [0, 1]
+                                        # I've seen them not be on [0, 1]
                         out <- t(apply(out, 1, function(x) x/sum(x)))
                         out
                       },
@@ -219,7 +219,16 @@ probFunction <- function(method, modelFit, newdata)
                         library(sda)
                         if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
                         sda::predict.sda(modelFit, newdata)$prob
-                      }
+                      },
+                      glm =
+                      {
+                        
+                        out <- predict(modelFit, newdata, type = "response")
+                        out <- cbind(1-out, out)
+                        ## glm models the second factor level. See Details in ?glm
+                        dimnames(out)[[2]] <-  modelFit$obsLevels
+                        out
+                      }cd 
                       )
 
   if(!is.data.frame(classProb)) classProb <- as.data.frame(classProb)

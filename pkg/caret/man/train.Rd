@@ -29,7 +29,7 @@ train(x, ...)
 \item{subset}{An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)}
 \item{na.action}{A function to specify the action to be taken if NAs are found. The default action is for the procedure to fail. An alternative is na.omit, which leads to rejection of cases with missing values on any required variable. (NOTE: If given, this argument must be named.)}
 \item{contrasts}{a list of contrasts to be used for some or all of the factors appearing as variables in the model formula.}
-  \item{method}{a string specifying which classification or regression model to use. Possible values are: \code{lm}, \code{rda}, \code{lda}, \code{gbm}, \code{rf},  \code{nnet}, \code{multinom}, \code{gpls}, \code{lvq}, \code{rpart}, \code{knn}, \code{pls}, \code{pam}, \code{nb},  \code{earth}, \code{treebag},
+  \item{method}{a string specifying which classification or regression model to use. Possible values are: \code{lm}, \code{glm}, \code{rda}, \code{lda}, \code{gbm}, \code{rf},  \code{nnet}, \code{multinom}, \code{gpls}, \code{lvq}, \code{rpart}, \code{knn}, \code{pls}, \code{pam}, \code{nb},  \code{earth}, \code{treebag},
 \code{svmpoly}, \code{svmradial}, \code{fda}, \code{bagEarth}, \code{bagFDA}, \code{glmboost}, \code{gamboost}, \code{blackboost},  \code{ada}, \code{ctree}, \code{cforest}, \code{sddaLDA}, \code{sddaQDA},  \code{LogitBoost},  \code{J48}, \code{M5Rules}, \code{slda}, \code{superpc}, \code{ppr}, \code{penalized}, \code{spls}, \code{enet} and \code{lasso}. See the Details section below.}  
   \item{\ldots}{ arguments passed to the classification or regression routine (such as \code{\link[randomForest]{randomForest}}). Errors will occur if values
          for tuning parameters are passed here.}  
@@ -50,6 +50,7 @@ A variety of models are currently available. The table below enumerates the mode
   
 \tabular{lccc}{
 \bold{Model} \tab \bold{\code{method} Value} \tab \bold{Package} \tab \bold{Tuning Parameter(s)} \cr
+Generalized linear model \tab \code{glm} \tab \pkg{stats} \tab none \cr
 Recursive partitioning \tab \code{rpart} \tab \pkg{rpart} \tab \code{maxdepth} \cr  
 \tab \code{ctree} \tab \pkg{party} \tab \code{mincriterion} \cr   
 Boosted trees \tab \code{gbm} \tab \pkg{gbm} \tab \code{interaction depth}, \cr

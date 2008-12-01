@@ -503,7 +503,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                } else {
                                  out <- ifelse(predict(modelFit, newdata) > .5,
                                                modelFit$obsLevel[1],
-                                               modelFit$obsLevel[1])
+                                               modelFit$obsLevel[2])
                                }
                              out
                            },
@@ -527,7 +527,20 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            {
                              library(sparseLDA)
                              as.character(sparseLDA:::predict.sda(modelFit, newdata)$class)
-                           }
+                           },
+                           glm =
+                           {
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 probs <-  predict(modelFit, newdata, type = "response")
+                                 out <- ifelse(probs < .5,
+                                               modelFit$obsLevel[1],
+                                               modelFit$obsLevel[2])
+                               } else {
+                                 out <- predict(modelFit, newdata, type = "response")
+                               }
+                             out
+                           }                   
                            )
   predictedValue
 }
