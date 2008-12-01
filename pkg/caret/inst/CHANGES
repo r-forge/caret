@@ -1,4 +1,11 @@
 -------------------
+Version: 3.49
+Date: 2008-11-30
+
+Fixed bug in resampleHist. Also added a check in the train functions
+that error trapped with glm models and > 2 classes
+
+-------------------
 Version: 3.48
 Date: 2008-11-30
 

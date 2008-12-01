@@ -228,7 +228,7 @@ probFunction <- function(method, modelFit, newdata)
                         ## glm models the second factor level. See Details in ?glm
                         dimnames(out)[[2]] <-  modelFit$obsLevels
                         out
-                      }cd 
+                      }
                       )
 
   if(!is.data.frame(classProb)) classProb <- as.data.frame(classProb)
