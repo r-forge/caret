@@ -209,8 +209,11 @@
                       spls = expand.grid(.K = 1:len, .eta = seq(.1, .9, length = len)),
                       splsda = expand.grid(.K = 1:len, .eta = seq(.1, .9, length = len), .kappa = .5),
                       sda = data.frame(.diagonal = FALSE),
+                      mda = data.frame(.subclasses = (1:len) + 1),
+                      pda = data.frame(.lambda = 1:len),
+                      pda2 = data.frame(.df = 2* (0:(len - 1) + 1)),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
-                      glm =,
+                      glm =, qda =,
                       lmStepAIC =, slda = data.frame(.parameter = "none"))
   trainGrid
 }
