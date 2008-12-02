@@ -35,12 +35,12 @@ probFunction <- function(method, modelFit, newdata)
   if(any(colnames(newdata) == ".outcome")) newdata$.outcome <- NULL
   
   classProb <- switch(method,
-                      lda =, rda =, slda =
+                      lda =, rda =, slda =, qda =
                       {
                         switch(method,
-                               lda =  library(MASS),
-                               rda =  library(klaR),
-                               slda = library(ipred),
+                               lda =, qda =  library(MASS),
+                               rda        =  library(klaR),
+                               slda       = library(ipred),
                                sparseLDA  = library(sparseLDA))
                         
                         out <- predict(modelFit, newdata)$posterior
@@ -228,7 +228,12 @@ probFunction <- function(method, modelFit, newdata)
                         ## glm models the second factor level. See Details in ?glm
                         dimnames(out)[[2]] <-  modelFit$obsLevels
                         out
-                      }
+                      },
+                      mda =, pda =, pda2 =
+                      {
+                        library(mda)
+                        predict(modelFit, newdata, type = "posterior")
+                      }                     
                       )
 
   if(!is.data.frame(classProb)) classProb <- as.data.frame(classProb)

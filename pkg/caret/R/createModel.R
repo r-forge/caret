@@ -47,6 +47,7 @@
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
                    "sddaLDA", "sddaQDA", "glmnet", "slda", "spls", "splsda",
+                   "qda",
                    "superpc", "ppr", "sda", "penalized", "sparseLDA"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
@@ -857,7 +858,27 @@
                        
                        out <- do.call("glm", modelArgs)
                        out
-                     }
+                     },
+                     mda =
+                     {
+                       library(mda)
+                       mda(modFormula, data = data, subclasses = tuneValue$.subclasses, ...)
+                     },
+                     pda =
+                     {
+                       library(mda)
+                       fda(modFormula, data = data, method = gen.ridge, lambda = tuneValue$.lambda, ...)
+                     },
+                     pda2 =
+                     {
+                       library(mda)
+                       fda(modFormula, data = data, method = gen.ridge, df = tuneValue$.df, ...)
+                     },                     
+                     qda =
+                     {
+                       library(MASS)
+                       qda(trainX, trainY, ...)
+                     }              
                      )
   
 

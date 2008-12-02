@@ -325,7 +325,12 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{ctree} & 
             \texttt{party}       & 
             \texttt{mincriterion} \\   
-                  
+       &
+         \texttt{ctree2} & 
+            \texttt{party}       & 
+            \texttt{maxdepth} \\   
+            
+            
       Boosted Trees &
          \texttt{gbm} & 
             \texttt{gbm}       & 
@@ -474,8 +479,14 @@ There is additional functionality in \texttt{train} that is described in the nex
       Linear Discriminant Analysis &
          \texttt{lda} & 
             \texttt{MASS}       &          
+            None\\
+            
+      Quadratic Discriminant  &
+         \texttt{qda} & 
+            \texttt{MASS}       &          
             None\\  
- 
+      \:\:  Analysis & & &\\               
+            
       Stabilised Linear &
          \texttt{slda} & 
             \texttt{ipred}       &          
@@ -500,17 +511,27 @@ There is additional functionality in \texttt{train} that is described in the nex
         None \\
       \:\: Discriminant Analysis & \texttt{sddaQDA} & &\\
             
-      Logistic/Multinomial  &
-         \texttt{multinom} & 
-            \texttt{nnet}       & 
-            \texttt{decay}& \\   
-      \: \: Regression \\ 
-                     
       Regularized Discriminant  &
          \texttt{rda} & 
             \texttt{klaR}       & 
-            \texttt{lambda}, \texttt{gamma} & \\*
-      \: \: Analysis \\*
+            \texttt{lambda}, \texttt{gamma} & \\
+      \: \: Analysis \\
+      
+      Mixture Discriminant  &
+         \texttt{mda} & 
+            \texttt{mda}       & 
+            \texttt{subclasses} & \\
+      \: \: Analysis \\      
+                     
+      Penalized Discriminant  &
+         \texttt{pda} & 
+            \texttt{mda}       & 
+            \texttt{lambda} & \\
+      
+     \: \: Analysis &
+         \texttt{pda2} & 
+            \texttt{mda}       & 
+            \texttt{df} & \\   
       
       Flexible Discriminant  &
          \texttt{fda} & 
@@ -523,7 +544,12 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{caret},  \texttt{earth}       & 
             \texttt{degree}, \texttt{nprune} \\   
             
- 
+      Logistic/Multinomial  &
+         \texttt{multinom} & 
+            \texttt{nnet}       & 
+            \texttt{decay}& \\   
+      \: \: Regression \\ 
+      
       LogitBoost &      
          \texttt{logitboost} & 
             \texttt{caTools}       &          

@@ -3,11 +3,11 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
   if(any(colnames(newdata) == ".outcome")) newdata$.outcome <- NULL
   
   predictedValue <- switch(method,
-                           lda =, rda =, gpls =, slda = 
+                           lda =, rda =, gpls =, slda =, qda = 
                            {
                              switch(method,
-                                    lda        =  library(MASS),
-                                    rda        =  library(klaR),
+                                    lda =, qda = library(MASS),
+                                    rda        = library(klaR),
                                     gpls       = library(gpls),
                                     slda       = library(ipred))
                              out <- as.character(predict(modelFit, newdata)$class)
@@ -540,7 +540,12 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  out <- predict(modelFit, newdata, type = "response")
                                }
                              out
-                           }                   
+                           },
+                           mda =, pda =, pda2 = 
+                           {
+                             library(mda)
+                             as.character(predict(modelFit, newdata))
+                           }
                            )
   predictedValue
 }

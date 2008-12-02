@@ -129,7 +129,11 @@ modelLookup <- function(model = NULL)
                            "spls", "spls",
                            "splsda", "splsda", "splsda",
                            "sda",
-                           "glm"
+                           "glm",
+                           "mda",
+                           "pda",
+                           "pda2",
+                           "qda"
                            ),
                          parameter = c(
                            "parameter",      
@@ -192,6 +196,10 @@ modelLookup <- function(model = NULL)
                            "K", "eta",
                            "K", "eta", "Kappa",
                            "diagonal",
+                           "parameter",
+                           "subclasses",
+                           "lambda",
+                           "df",
                            "parameter"
                            ),
                          label = I(c(
@@ -255,6 +263,10 @@ modelLookup <- function(model = NULL)
                            "#Components", "Threshold",
                            "#Components", "Threshold", "Kappa",
                            "Diagonalize",
+                           "none",
+                           "#Subclasses Per Class",
+                           "Shrinkage Penalty Coefficient",
+                           "Degrees of Freedom",
                            "none"
                            )),
                          seq = c(
@@ -318,7 +330,11 @@ modelLookup <- function(model = NULL)
                            FALSE,    FALSE,
                            FALSE,    FALSE,    FALSE,
                            FALSE,
-                           FALSE               ## glm
+                           FALSE,              ## glm
+                           FALSE,
+                           FALSE,
+                           FALSE,
+                           FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -381,7 +397,11 @@ modelLookup <- function(model = NULL)
                            TRUE,    TRUE,
                            FALSE,   FALSE,   FALSE,
                            FALSE,
-                           TRUE                  ## glm
+                           TRUE,                 ## glm
+                           FALSE,
+                           FALSE,
+                           FALSE,
+                           FALSE
                            ),               
                          forClass =          
                          c(
@@ -445,7 +465,11 @@ modelLookup <- function(model = NULL)
                            FALSE,    FALSE,
                            TRUE,     TRUE,    TRUE,
                            TRUE,
-                           TRUE      ## glm
+                           TRUE,      ## glm
+                           TRUE,
+                           TRUE,
+                           TRUE,
+                           TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -508,7 +532,11 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE,     #   spls (2),
                            TRUE,  TRUE, TRUE,#   splsda (3)
                            TRUE,             #   sda
-                           TRUE              # glm
+                           TRUE,             #   glm
+                           TRUE,             #   mda
+                           TRUE,
+                           TRUE,
+                           TRUE
                             ),
                          stringsAsFactors  = FALSE               
                          )         
