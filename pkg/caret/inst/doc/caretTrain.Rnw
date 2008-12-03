@@ -619,7 +619,7 @@ The third method for customizing the tuning process is to modify the algorithm t
 User--defined functions can be used, as long as they have the following arguments:
 \begin{itemize}
   \item \texttt{x} is a data frame containing the tune parameters and their associated performance metrics. Each row corresponds to a different tuning parameter combination
-    \item \texttt{metric} a character string indicating which performance metric should be optimized (this is passed in directory from the \texttt{metric} argument of \texttt{train}. 
+    \item \texttt{metric} a character string indicating which performance metric should be optimized (this is passed in directly from the \texttt{metric} argument of \texttt{train}. 
       \item \texttt{maximize} is a single logical value indicating whether larger values of the performance metric are better (this is also directly passed from the call to \texttt{train}).
   \end{itemize}
   The function should output a single integer indicating which row in \texttt{x} is chosen.
