@@ -134,6 +134,8 @@ The vignette entitled "caret Manual -- Model Building" has more details and exam
 
 \author{Max Kuhn (the guts of \code{train.formula} were based on Ripley's \code{nnet.formula})}
 
+\references{Kuhn (2008), ``Building Predictive Models in R Using the caret'' (\url{http://www.jstatsoft.org/v28/i05/})}
+
 \seealso{\code{\link{trainControl}}, \code{\link{createGrid}}, \code{\link{createFolds}}}
 \examples{
 data(iris)
