@@ -5,8 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     
-    <meta name="Generator" content="iWeb 2.0.3" />
-    <meta name="iWeb-Build" content="local-build-20080617" />
+    <meta name="Generator" content="iWeb 2.0.4" />
+    <meta name="iWeb-Build" content="local-build-20090120" />
     <meta name="viewport" content="width=700" />
     <title>The caret Packages</title>
     <link rel="stylesheet" type="text/css" media="screen,print" href="Classification_and_Regression_Training_files/Classification_and_Regression_Training.css" />
@@ -106,7 +106,7 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
                     <p style="text-indent: 0px; " class="paragraph_style_3"><span style="font-size: 0px; position: relative; top: -11px; " class="Bullet"></span><br /></p>
                   </li>
                 </ol>
-                <p class="paragraph_style_3">There is also a paper currently under review at the <a href="http://www.jstatsoft.org/" title="http://www.jstatsoft.org/" class="style_4">Journal of Statistical Software</a>. The example data can be obtained <a href="Data/descr.RData" title="Data/descr.RData">here</a> (the predictors) and <a href="Data/mutagen.RData" title="Data/mutagen.RData">here</a> (the classes).<br /></p>
+                <p class="paragraph_style_3">There is also a paper on caret in the <a href="http://www.jstatsoft.org/v28/i05" title="http://www.jstatsoft.org/v28/i05" class="style_4">Journal of Statistical Software</a>. The example data can be obtained <a href="Data/descr.RData" title="Classification_and_Regression_Training_files/descr.RData">here</a> (the predictors) and <a href="Data/mutagen.RData" title="Classification_and_Regression_Training_files/mutagen.RData">here</a> (the classes).<br /></p>
                 <p class="paragraph_style_3"><br /></p>
                 <p class="paragraph_style_3">The current release version can be found on <a href="http://cran.r-project.org/web/packages/caret/" title="http://cran.r-project.org/web/packages/caret/">CRAN</a>.<br /></p>
                 <p class="paragraph_style_3"><br /></p>
@@ -154,27 +154,21 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
           
 
 
-          
           <div style="height: 152px; width: 573px;  height: 152px; left: 68px; position: absolute; top: 1317px; width: 573px; z-index: 1; " class="tinyText style_SkipStroke_3 stroke_0">
             <img src="Classification_and_Regression_Training_files/droppedImage_1.jpg" alt="" style="border: none; height: 152px; width: 573px; " />
           </div>
           
 
 
-          <div id="id2" style="height: 440px; left: 3px; position: absolute; top: 1517px; width: 703px; z-index: 1; " class="style_SkipStroke">
-            <div class="text-content style_External_703_440" style="padding: 0px; ">
+          <div id="id2" style="height: 192px; left: 3px; position: absolute; top: 1517px; width: 703px; z-index: 1; " class="style_SkipStroke">
+            <div class="text-content style_External_703_192" style="padding: 0px; ">
               <div class="style">
-                <p style="padding-top: 0pt; " class="paragraph_style">Parameter tuning in <span class="style_1">caret</span> is done via resampling; every candidate model is evaluated many times using the bootstrap or cross-validation. To ease the computational burden, two sister packages were created (<span class="style_1">caretNWS</span> and <span class="style_1">caretLSF</span>) that use parallel processing to build the models. These packages can be used to simultaneously fit the various models across different processors and/or computers.<br /></p>
-                <p class="paragraph_style"><br /></p>
-                <p class="paragraph_style_3"><a href="http://cran.r-project.org/web/packages/caretNWS/" title="http://cran.r-project.org/web/packages/caretNWS/" class="style_6">caretNWS</a> uses the <a href="http://nws-r.sourceforge.net/" title="http://nws-r.sourceforge.net/">NetworkSpaces</a> approach to starting and manage jobs via the <a href="http://cran.r-project.org/web/packages/nws/" title="http://cran.r-project.org/web/packages/nws/" class="style_6">nws</a> package and is useful across many operating systems and architectures. There are commercial and free versions of NetworkSpaces.<br /></p>
-                <p class="paragraph_style_3"><br /></p>
-                <p class="paragraph_style_3"><a href="http://cran.r-project.org/web/packages/caretLSF/" title="http://cran.r-project.org/web/packages/caretLSF/" class="style_6">caretLSF</a> is more specialized. It uses the commercial Load Sharing Facility (LSF) batch queuing system from Platform to manage jobs, but can be easily extended to other types of queuing systems.<br /></p>
-                <p class="paragraph_style_3"><br /></p>
-                <p style="padding-bottom: 0pt; " class="paragraph_style_3">I’ve been working on benchmarking these two approaches in different configurations. I’ll have a version of those results soon (I want to shoot for a presentation at useR! in 2009). </p>
-              </div> 
+                <p style="padding-top: 0pt; " class="paragraph_style">Parameter tuning in <span class="style_1">caret</span> is done via resampling; every candidate model is evaluated many times using the bootstrap or cross-validation. Previously, there were companion packages to <span class="style_1">caret</span> (<span class="style_1">caretNWS</span> and <span class="style_1">caretLSF</span>) that worked for specific technologies. As of version 4.02 of <span class="style_1">caret</span>, these packages are no longer needed since <span class="style_1">caret </span>can use any parallel processing technology. See the examples in <span class="style_6">train</span> (by typing <br /></p>
+                <p class="paragraph_style"><span class="style_6">?train</span>) that demonstrate this using MPI and NWS.<br /></p>
+              </div>
             </div>
           </div>
-          <div style="height: 729px; line-height: 729px; " class="spacer"> </div>
+          <div style="height: 481px; line-height: 481px; " class="spacer"> </div>
         </div>
         <div style="height: 150px; margin-left: 0px; position: relative; width: 700px; z-index: 15; " id="footer_layer">
           <div style="height: 0px; line-height: 0px; " class="bumper"> </div>

@@ -50,14 +50,12 @@ data(BloodBrain)
 
 filterVarImp(bbbDescr[, 1:5], logBBB, nonpara = FALSE)
 apply(
-   bbbDescr[, 1:5],
-   2,
-   function(x, y) summary(lm(y~x))$coefficients[2,3],
-   y = logBBB)
-
+      bbbDescr[, 1:5],
+      2,
+      function(x, y) summary(lm(y~x))$coefficients[2,3],
+      y = logBBB)
 
 filterVarImp(bbbDescr[, 1:5], logBBB, nonpara = TRUE)
-
 }
 
 \keyword{ models }
