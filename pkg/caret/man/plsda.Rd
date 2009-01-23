@@ -32,9 +32,9 @@ A multivariate PLS model is fit to the indicator matrix using the \code{\link[pl
 
 Two prediciton methods can be used in \code{plsda}.
 
-  The \bf{softmax function} transforms the model predictions to "probability-like" values (e.g. on  [0, 1] and sum to 1). The class with the largest class probability is the predicted class.
+  The \bold{softmax function} transforms the model predictions to "probability-like" values (e.g. on  [0, 1] and sum to 1). The class with the largest class probability is the predicted class.
 
-   Also, \bf{Bayes rule} can be applied to the model predictions to form posterior probabilities. Here, the model predictions for the training set are used along with the training set outcomes to create conditional distributions for each class. When new samples are predicted, the raw model predictions are run through these conditional distributions to produce a posterior probability for each class (along with the prior). This process is repeated \code{ncomp} times for every possible PLS model. The \code{\link[klaR]{NaiveBayes}} function is used with \code{usekernel = TRUE} for the posterior probability calculations.
+   Also, \bold{Bayes rule} can be applied to the model predictions to form posterior probabilities. Here, the model predictions for the training set are used along with the training set outcomes to create conditional distributions for each class. When new samples are predicted, the raw model predictions are run through these conditional distributions to produce a posterior probability for each class (along with the prior). This process is repeated \code{ncomp} times for every possible PLS model. The \code{\link[klaR]{NaiveBayes}} function is used with \code{usekernel = TRUE} for the posterior probability calculations.
 
 }
 \value{

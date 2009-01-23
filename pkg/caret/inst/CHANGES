@@ -1,4 +1,16 @@
 -------------------
+Version: 4.05
+Date: 2009-01-23
+
+Updated again for more stringent R CMD check tests in R-devel 2.9
+
+-------------------
+Version: 4.04
+Date: 2009-01-22
+
+Updated for more stringent R CMD check tests in R-devel 2.9
+
+-------------------
 Version: 4.03
 Date: 2009-01-20
 
