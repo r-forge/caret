@@ -240,7 +240,11 @@ train.default <- function(x, y,
   ## Remove this and check for other places it is reference
   ## replaced by tuneValue
   if(method == "pls") finalModel$bestIter <- bestTune
-  
+
+  ## To use predict.train and automatically use the optimal lambda,
+  ## we need to save it
+  if(method == "glmnet") finalModel$lambdaOpt <- bestTune$.lambda
+
   outData <- if(trControl$returnData) trainData else NULL
   
   ## In the case of pam, the data will need to be saved differently

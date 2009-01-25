@@ -522,6 +522,42 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            {
                              library(mda)
                              as.character(predict(modelFit, newdata))
+                           },
+                           glmnet =
+                           {
+                             
+                             library(glmnet)
+                             if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
+
+                             if(!is.null(param))
+                               {
+                              
+                                 if(length(modelFit$obsLevels) < 2)
+                                   {
+                                     out <- as.data.frame(predict(modelFit, newdata, s = param$.lambda))
+                                   } else {
+                                     tmp <- predict(modelFit, newdata, s = param$.lambda, type = "class")
+                                     if(length(modelFit$obsLevels) == 2)
+                                       {
+                                         tmp <- apply(tmp, 1, function(x, y) y[x], y = modelFit$obsLevels)
+                                         out <- as.data.frame(t(tmp), stringsAsFactors = FALSE)
+                                       } else {
+                                         out <- as.data.frame(tmp, stringsAsFactors = FALSE)
+                                       }
+                                   }
+                               } else {
+                                 
+                                 if(is.null(modelFit$lambdaOpt))
+                                   stop("optimal lambda not saved by train; needs a single lambda value")
+                                 if(length(modelFit$obsLevels) < 2)
+                                   {
+                                     out <- predict(modelFit, newdata, s = modelFit$lambdaOpt)[,1]
+                                   } else {
+                                     out <- predict(modelFit, newdata, s = modelFit$lambdaOpt, type = "class")[,1]
+                                     if(length(modelFit$obsLevels) == 2) out <- modelFit$obsLevels[out]
+                                   }
+                               }
+                             out
                            }
                            )
   predictedValue
