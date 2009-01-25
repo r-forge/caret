@@ -73,7 +73,7 @@
 \section{Introduction}
 
 
-The \texttt{caret} package (short for {\bf{\color{blue}{c}}}lassification {\bf{\color{blue}{a}}}nd {\bf{\color{blue}{re}}}gression {\bf{\color{blue}{t}}}raining) contains functions to streamline the model training process for complex regression and classification problems. The package utilizes a number of R packages but tries not to load them all at package start-up\footnote{By adding formal package dependencies, the package startup time can be greatly decreased}. The package ``suggests'' field includes: \texttt{ada}, \texttt{affy}, \texttt{caTools}, \texttt{class}, \texttt{e1071,}, \texttt{earth ($\ge$ 2.0-0)}, \texttt{elasticnet}, \texttt{ellipse}, \texttt{gbm}, \texttt{gpls}, \texttt{grid}, \texttt{ipred}, \texttt{kernlab}, \texttt{klaR}, \texttt{MASS}, \texttt{mboost}, \texttt{mda}, \texttt{mgcv}, \texttt{mlbench}, \texttt{nnet}, \texttt{pamr,}, \texttt{party}, \texttt{penalized}, \texttt{pls}, \texttt{proxy}, \texttt{randomForest}, \texttt{rpart}, \texttt{RWeka ($\ge$ 0.3-14)}, \texttt{sda}, \texttt{SDDA}, \texttt{sparseLDA ($\ge$ 0.1-1)}, \texttt{spls}, \texttt{superpc}. \texttt{caret} loads packages as needed and assumes that they are installed. Install \texttt{caret} using 
+The \texttt{caret} package (short for {\bf{\color{blue}{c}}}lassification {\bf{\color{blue}{a}}}nd {\bf{\color{blue}{re}}}gression {\bf{\color{blue}{t}}}raining) contains functions to streamline the model training process for complex regression and classification problems. The package utilizes a number of R packages but tries not to load them all at package start-up\footnote{By adding formal package dependencies, the package startup time can be greatly decreased}. The package ``suggests'' field includes: \texttt{ada}, \texttt{affy}, \texttt{caTools}, \texttt{class}, \texttt{e1071,}, \texttt{earth ($\ge$ 2.0-0)}, \texttt{elasticnet}, \texttt{ellipse}, \texttt{gbm}, \texttt{glmnet}, \texttt{gpls}, \texttt{grid}, \texttt{ipred}, \texttt{kernlab}, \texttt{klaR}, \texttt{MASS}, \texttt{mboost}, \texttt{mda}, \texttt{mgcv}, \texttt{mlbench}, \texttt{nnet}, \texttt{pamr,}, \texttt{party}, \texttt{penalized}, \texttt{pls}, \texttt{proxy}, \texttt{randomForest}, \texttt{rpart}, \texttt{RWeka ($\ge$ 0.3-14)}, \texttt{sda}, \texttt{SDDA}, \texttt{sparseLDA ($\ge$ 0.1-1)}, \texttt{spls}, \texttt{superpc}. \texttt{caret} loads packages as needed and assumes that they are installed. Install \texttt{caret} using 
 \begin{Verbatim}
 install.packages(caret, dependencies = c("Depends", "Suggests"))
 \end{Verbatim}
@@ -429,3 +429,151 @@ The \texttt{featurePlot} function is a wrapper for different \texttt{lattice} pl
 
 For example, Figures \ref{f:classEllipse}, \ref{f:densityPlot}, \ref{f:boxPlot} and \ref{f:scatPlot} shows the default plot for continuous outcomes generated using the \texttt{featurePlot} function. 
 
+
+\begin{figure}[hb]
+   \begin{center}	
+      \vspace*{1 in}   	
+      \includegraphics[clip, width = .6\textwidth]{fp1}
+      \caption{An example plot of three example predictors from the MDRR data using the \texttt{featurePlot} function with density ellipses for each class generated with the arguments
+      {\tt plot = "ellipse"} and a factor outcome.}
+      \label{f:classEllipse}         
+   \end{center}
+\end{figure}  
+
+\begin{figure}[p]
+   \begin{center}		
+      \includegraphics[clip, width = .6\textwidth]{fp2}
+      \caption{An example of using the {\tt plot = "density"} argument in the \texttt{featurePlot} function with three example predictors from the MDRR data and a factor outcome.}
+      \label{f:densityPlot}
+      \vspace*{.25 in}             
+      \includegraphics[clip, width = .6\textwidth]{fp3}
+      \caption{An example of using the {\tt plot = "boxplot"} argument in the \texttt{featurePlot} function with three example predictors from the MDRR data and a factor outcome.}
+      \label{f:boxPlot}      
+      \vspace*{.25 in}                   
+      \includegraphics[clip, width = .6\textwidth]{fp4}
+      \caption{A set of scatter--plots for three example predictors from the blood--brain barrier data and a numeric outcome (on the y--axis).}            
+      \label{f:scatPlot}         
+   \end{center}
+\end{figure}  
+
+\clearpage 
+
+\section{Other Functions}
+
+\subsection{Processing Affy Arrays}
+
+For Affymetrix gene chip data, RMA processing (\href{http://nar.oxfordjournals.org/cgi/content/abstract/31/4/e15}{Irizarry, 2003}) is a popular method of processing gene expression data. However, for predictive modeling, it has a drawback in that the processing is batch oriented; if an additional sample is collected, the RMA processing must be repeated using all the samples. This is mainly because of two steps in the processing: the quantile normalization process and the calculation of expression. Quantile normalization normalizes the data such that the between--chip distributions have equivalent quantiles and is very effective in improving the quality of the data. It is possible to let the samples in the training set define the reference distribution for normalization. For the expression calculation, a robust method such as a trimmed mean can be used to summarize the probe level data into a single summary metric per sample. For example,
+\begin{Verbatim}
+# first, let affy/expresso know that the method exists
+normalize.AffyBatch.methods <- c(normalize.AffyBatch.methods, "normalize2Reference")
+   
+RawData <- ReadAffy(celfile.path=FilePath)
+   
+Batch1Step1 <- bg.correct(RawData, "rma")
+Batch1Step2 <- normalize.AffyBatch.quantiles(Batch1Step1)
+referencePM <- pm(Batch1Step2)[,1]
+Batch1Step3 <- computeExprSet(Batch1Step2, "pmonly", "trimMean")  
+   
+Batch2Step1 <- bg.correct(RawData2, "rma")
+Batch2Step2 <- normalize.AffyBatch.normalize2Reference(Batch2Step1, ref = referencePM)
+Batch2Step3 <- computeExprSet(Batch2Step2, "pmonly", "trimMean")     
+\end{Verbatim}
+
+
+\subsection{Yet Another $k$--Nearest Neighbor Function}
+
+\texttt{knn3} is a class for $k$--nearest neighbor classification. This particular implementation is a modification of the \texttt{knn} C code and returns the vote information for all of the classes (\texttt{knn} only returns the probability for the winning class). There is a formula interface via
+\begin{Verbatim}
+knn3(formula, data)
+\end{Verbatim}
+or by passing the training data directly
+\begin{Verbatim}
+# x is a matrix, y is a factor vector
+knn3(x, y)
+\end{Verbatim}
+There are also \texttt{print} and \texttt{predict} methods.
+
+\subsection{Partial Least Squares Discriminant Analysis}
+
+The \texttt{plsda} function is a wrapper for the \texttt{plsr} function in the \texttt{pls} package that does not require a formula interface and can take factor outcomes as arguments. The classes are broken down into dummy variables (one for each class). These 0/1 dummy variables are modeled by partial least squares. 
+
+From this model, there are two approaches to computing the class predictions and probabilities:
+\begin{itemize}
+\item the softmax technique can be used on a per-sample basis to normalize the scores so that they are more ``probability like'' (i.e. they sum to one and are between zero and one). For a vector of model predictions for each class $x$, the softmax class probabilities are computed as
+\[
+prob_k= \frac{exp(x_k)}{\sum_{k=1}^C exp(x_k)}
+\]
+The predicted class is simply the class with the largest model prediction, or equivalently, the largest class probability. This is the default behavior for \texttt{plsda}.
+\item Bayes rule can be applied to the model predictions to form posterior probabilities. Here, the model predictions for the training set are used along with the training set outcomes to create conditional distributions for each class. When new samples are predicted, the raw model predictions are run through these conditional distributions to produce a posterior probability for each class (along with the prior). Bayes rule can be used by specifying \texttt{probModel = "Bayes"}. An additional parameter, \texttt{prior}, can be used to set prior probabilities  for the classes.
+\end{itemize}
+The advantage to using Bayes rule is that the full training set is used to directly compute the class probabilities (unlike the softmax function which only uses the current sample's scores). This creates more realistic probability estimates (See Figure \ref{f:plsProbs}). The disadvantage is that a separate Bayesian model must be created for each value of \texttt{ncomp}, which is more time consuming.  
+ 
+For the MDRR data set, we can fit two PLS models using each technique and predict the class probabilities for the test set. Figure \ref{f:plsProbs}  shows the results.
+
+Similar to \texttt{plsda}, \texttt{caret} also contains a function \texttt{splsda} that allows for classification using sparse PLS. A dummy 
+matrix is created for each class and used with the \texttt{spls} function in the \texttt{spls} package. The same approach to estimating class probabilities is used for \texttt{plsda} and \texttt{splsda}.
+
+
+\begin{figure}
+   \begin{center}		
+      \includegraphics[clip, width = .9\textwidth]{plsProbs}
+\caption{A comparison of two methods for computing class probabilities for PLS classification models on the MDRR data. Using a 5 component PLS model, the test set sample class probabilities were predicted using either the softmax function or Bayes rule. The histograms show the distributions of the active class probabilities for both methods and the true class of the samples. While Bayes rule takes more time to compute (1.36 seconds compared to 0.014 seconds for softmax), the probabilities using Bayes rule appear more appropriate since they encompass the full scale. The softmax probabilities are close to the middle of the distribution and rarely show high confidence in the predicted class. Both techniques show approximately the same accuracy (0.79 for Bayes and 0.77 for softmax) and Kappa values (0.56 for Bayes and 0.52 for softmax).}
+      \label{f:plsProbs}       
+   \end{center}
+\end{figure}  
+
+\subsection{Bagged MARS and FDA}
+
+Multivariate adaptive regression splines (MARS) models, like classification/regression trees, are unstable predictors (Breiman, 1996). This means that small perturbations in the training data might lead to significantly different models. Bagged trees and random forests are effective ways of improving tree models by exploiting these instabilities. \texttt{caret} contains a function, \texttt{bagEarth}, that fits MARS models via the \texttt{earth} function. There are formula and non--formula interfaces. 
+
+Also, flexible discriminant analysis is a generalization of linear discriminant analysis that can use non--linear features as inputs. One way of doing this is the use MARS--type features to classify samples. The function \texttt{bagFDA} fits FDA models of a set of bootstrap samples and aggregates the predictions to reduce noise.  
+
+\subsection{Neural Networks with a Principal Component Step}
+
+Neural networks can be affected by severe amounts of multicollinearity in the predictors. the function \texttt{pcaNNet} is a wrapper around the \texttt{preProcess} and \texttt{nnet} functions that will run principal component analysis on the predictors before using them as inputs into a neural network. The function will keep enough components that will capture some pre-defined threshold on the cumulative proportion of variance (see the \texttt{thresh} argument). For new samples, the same transformation is applied to the new predictor values (based on the loadings from the training set). The function is available for both regression and classification. 
+
+\section{References}
+
+\begin{description}
+   \item Blake, J. F. (2000), ``Chemoinformatics: predicting the physicochemical properties of 'drug--like' molecules,'' {\it Current Opinion in Biotechnology}, 11, 104--107.
+
+   \item Borggaard, C., Thodberg, H. H. (1992), ``Optimal minimal neural interpretation of spectra,''  {\it Analytical Chemistry}, 64, 545--551.
+
+   \item Breiman, L. (1996), ``Bagging predictors,'' {\it Machine Learning}, 24, 123--140.
+
+	\item  Brodnjak-Voncina et al. (2005). ``Multivariate data analysis in classification of vegetable oils characterized
+	by the content of fatty acids,'' {\it Chemometrics and Intelligent Laboratory Systems}, 75, 31--45.
+
+   \item Clark, D. E., Pickett, S. D. (2000), ``Computational methods for the prediction of 'drug--likeness','' {\it Drug Discov Today}, 5, 49--58.
+
+	\item Irizarry, RA, Bolstad BM, Collin, F, Cope, LM, Hobbs, B, and, Speed, TP (2003), ``Summaries of Affymetrix Genechip probe level data,''  {\it Nucleic Acids Research}, 31, e15
+
+   \item Mente, S. R., Lombardo, F. (2005), ``A recursive-partitioning model for blood--brain barrier permeation,'' {\it Journal of Computer--Aided Molecular Design}, 19, 465--481.
+
+
+   \item Serneels, S., De Nolf, E. and Van Espen, P. J. (2006), ``Spatial sign preprocessing: a simple way to impart moderate robustness to multivariate estimators,'' {\it Journal of Chemical Information and Modeling}, 46, 1402--1409.
+
+   \item Sutherland, J.J., O'Brien L.A. and Weaver D.F. (2004), ``A comparison of methods for modeling quantitative structure-activity relationships,'' {\it Journal of Medicinal Chemistry}, 47, 5541--5554.
+
+   \item Svetnik, V., Wang, T., Tong, C., Liaw, A., Sheridan, R. P. and Song, Q. (2005), ``Boosting: An ensemble learning tool for compound classification and QSAR modeling,'' {\it Journal of Chemical Information and Modeling}, 45, 786 --799.
+
+   \item Willett, P. (1999), ``Dissimilarity-Based Algorithms for Selecting Structurally Diverse Sets of Compounds,'' {\it Journal of Computational Biology}, 6, 447--457.
+
+\end{description}
+
+\end{document}
+
+
+
+   setwd("/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc")
+   oldWidth <- options("width")$width
+   options(width = 80)
+   Sweave(
+      file = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretMisc.Rnw",
+      out = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretMisc.tex")
+   options(width = oldWidth)
+
+   
+
+
+      
