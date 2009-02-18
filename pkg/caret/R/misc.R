@@ -442,10 +442,10 @@ modelLookup <- function(model = NULL)
                            TRUE, 
                            TRUE, 
                            TRUE, 
-                           FALSE,   FALSE, 
+                           TRUE,   TRUE, 
                            FALSE,   FALSE,          
                            FALSE,   FALSE,          
-                           FALSE,   FALSE,         
+                           TRUE,   TRUE,         
                            TRUE,    TRUE,
                            TRUE,    TRUE,
                            FALSE,   FALSE,
@@ -509,10 +509,10 @@ modelLookup <- function(model = NULL)
                            TRUE,             #   pam (1) 
                            TRUE,             #   knn (1) 
                            TRUE,             #   nb (1) 
-                           FALSE, FALSE,     #   earth (2)
+                           TRUE,  TRUE,      #   earth (2)
                            FALSE, FALSE,     #   earthTest (2)         
                            FALSE, FALSE,     #   mars (2)       
-                           FALSE, FALSE,     #   bagEarth (2)        
+                           TRUE,  TRUE,      #   bagEarth (2)        
                            TRUE, TRUE,       #   fda (2)
                            TRUE, TRUE,       #   bagFDA (2)
                            FALSE, FALSE,     #   enet (2)
@@ -768,7 +768,7 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                
                for(i in seq(along = uniqueAlpha))
                  {
-                   seqParam[[i]] <- data.frame(.lambda = subset(grid, .alpha == uniqueAlpha[i])$.lambda)
+                   seqParam[[i]] <- data.frame(.lambda = subset(grid, subset = .alpha == uniqueAlpha[i])$.lambda)
                  } 
              }
              )
