@@ -19,7 +19,8 @@ byComplexity <- function(x, model)
              x[order(x$n.trees, x$interaction.depth, x$shrinkage),] 
            },
            rf =, rfNWS =, rfLSF =, gpls =, pls =, PLS =, pam =, cforest =,
-           nb =, rpart =, ctree2 =, logitBoost=, J48 =, LMT =, ppr =, mda =, pda =, pda2 =   
+           nb =, rpart =, ctree2 =, logitBoost=, J48 =, LMT =, ppr =, mda =, pda =, pda2 =,
+           lars =, lars2 =
            {
              x[order(x[,1]),]
            },
@@ -99,6 +100,10 @@ byComplexity <- function(x, model)
            {
              x[order(x$NumVars, x$lambda),]
            },
+           relaxo =
+           {
+             x[order(x$phi, -x$lambda),]
+           },           
            penalized =
            {
              x[order(x$lambda1, x$lambda2),]

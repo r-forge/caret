@@ -45,7 +45,7 @@
                    "rvmRadial", "rvmPoly",
                    "gaussprRadial", "gaussprPoly",
                    "sddaLDA", "sddaQDA", "glmnet", "slda", "spls", 
-                   "qda",
+                   "qda", "relaxo", "lars", "lars2",
                    "superpc", "ppr", "sda", "penalized", "sparseLDA"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
@@ -856,7 +856,17 @@
                      {
                        library(MASS)
                        qda(trainX, trainY, ...)
-                     }              
+                     },
+                     relaxo =
+                     {
+                       library(relaxo)
+                       relaxo(as.matrix(trainX), trainY, phi = tuneValue$.phi, ...)
+                     },
+                     lars =, lars2 =
+                     {
+                       library(lars)
+                       lars(as.matrix(trainX), trainY, ...)
+                     }
                      )
   
 
