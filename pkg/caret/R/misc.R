@@ -132,7 +132,10 @@ modelLookup <- function(model = NULL)
                            "pda",
                            "pda2",
                            "qda",
-                           "glmnet", "glmnet"
+                           "glmnet", "glmnet",
+                           "relaxo", "relaxo",
+                           "lars",
+                           "lars2"
                            ),
                          parameter = c(
                            "parameter",      
@@ -199,7 +202,10 @@ modelLookup <- function(model = NULL)
                            "lambda",
                            "df",
                            "parameter",
-                           "lambda", "alpha"
+                           "lambda", "alpha",
+                           "lambda", "phi",
+                           "fraction",
+                           "step"
                            ),
                          label = I(c(
                            "none",      
@@ -267,7 +273,11 @@ modelLookup <- function(model = NULL)
                            "Degrees of Freedom",
                            "none",
                            "Regularization Parameter",
-                           "Mixing Percentage"
+                           "Mixing Percentage",
+                           "Penalty Parameter",
+                           "Relaxation Parameter",
+                           "Fraction",
+                           "#Steps"
                            )),
                          seq = c(
                            FALSE,
@@ -334,7 +344,10 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,
                            FALSE,
-                           TRUE,  FALSE
+                           TRUE,  FALSE,
+                           TRUE,  FALSE,
+                           TRUE,
+                           TRUE
                            ),
                          forReg = c(
                            TRUE,
@@ -401,7 +414,10 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,
                            FALSE,
-                           TRUE,  TRUE
+                           TRUE,  TRUE,
+                           TRUE, TRUE,
+                           TRUE,
+                           TRUE
                            ),               
                          forClass =          
                          c(
@@ -469,7 +485,10 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            TRUE,
-                           TRUE,  TRUE
+                           TRUE,  TRUE,
+                           FALSE, FALSE,
+                           FALSE,
+                           FALSE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -536,7 +555,10 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            TRUE,
-                           TRUE, TRUE        # glmnet
+                           TRUE,  TRUE,       # glmnet
+                           FALSE, FALSE,      # relaxo,
+                           FALSE,             # lars
+                           FALSE              #lars2
                             ),
                          stringsAsFactors  = FALSE               
                          )         
@@ -770,7 +792,36 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                  {
                    seqParam[[i]] <- data.frame(.lambda = subset(grid, subset = .alpha == uniqueAlpha[i])$.lambda)
                  } 
-             }
+             },
+             relaxo =
+             {
+
+               loop <- aggregate(
+                                 grid$.lambda, 
+                                 list(.phi = grid$.phi),
+                                 max)
+               names(loop) <- c(".phi", ".lambda")
+               
+               seqParam <- vector(mode = "list", length = nrow(loop))
+               
+               for(i in seq(along = seqParam))
+                 {
+                   seqParam[[i]] <- data.frame(.lambda = subset(grid,
+                                                 subset = .phi == loop$.phi[i] & .lambda < loop$.lambda[i])$.lambda)
+                 } 
+             },
+             lars = 
+             {
+               grid <- grid[order(grid$.fraction, decreasing = TRUE),, drop = FALSE]
+               loop <- grid[1,,drop = FALSE]
+               seqParam <- list(grid[-1,,drop = FALSE])
+             },
+             lars2 = 
+             {
+               grid <- grid[order(grid$.step, decreasing = TRUE),, drop = FALSE]
+               loop <- grid[1,,drop = FALSE]
+               seqParam <- list(grid[-1,,drop = FALSE])
+             }             
              )
       out <- list(scheme = "seq", loop = loop, seqParam = seqParam, model = modelInfo, constant = constant, vary = vary)
     } else out <- list(scheme = "basic", loop = grid, seqParam = NULL, model = modelInfo, constant = names(grid), vary = NULL)
