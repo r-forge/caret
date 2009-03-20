@@ -61,7 +61,7 @@ byComplexity <- function(x, model)
              x[order(x$degree, x$nprune),]
            },
            treebag =, lda =, lm =, sddaLDA =, sddaQDA =,
-           lmStepAIC =, slda =, glm =, qda =
+           lmStepAIC =, slda =, glm =, qda =, OneR =
            {
              x
            },
@@ -112,6 +112,7 @@ byComplexity <- function(x, model)
            {
              x[order(-x$eta, x$K),]
            },
+           PART = x[order(x$pruned, -x$threshold),],
            sda = x[order(x$diagonal),],
            glmnet = x[order(-x$lambda, x$alpha),]
            )

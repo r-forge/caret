@@ -522,6 +522,17 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{RWeka}    & 
             \texttt{C}  \\  
             
+      Single Rule &
+         \texttt{OneR} & 
+            \texttt{RWeka}    & 
+            None  \\  
+            
+      PART &
+         \texttt{PART} & 
+            \texttt{RWeka}    & 
+            \texttt{threshold}, \texttt{pruned}   \\  
+            
+            
       Least Squares Support Vector  &
          \texttt{lssvmRadial} & 
             \texttt{kernlab}       & 
