@@ -450,7 +450,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                              library(RWeka)
                              predict(modelFit , newdata)
                            },
-                           J48 =, LMT =, JRip = 
+                           J48 =, LMT =, JRip =, OneR =, PART = 
                            {
                              library(RWeka)
                              out <- as.character(predict(modelFit , newdata))

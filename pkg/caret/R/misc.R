@@ -135,7 +135,10 @@ modelLookup <- function(model = NULL)
                            "glmnet", "glmnet",
                            "relaxo", "relaxo",
                            "lars",
-                           "lars2"
+                           "lars2",
+                           "OneR",
+                           "PART",
+                           "PART"
                            ),
                          parameter = c(
                            "parameter",      
@@ -205,7 +208,10 @@ modelLookup <- function(model = NULL)
                            "lambda", "alpha",
                            "lambda", "phi",
                            "fraction",
-                           "step"
+                           "step",
+                           "parameter",
+                           "threshold",
+                           "pruned"
                            ),
                          label = I(c(
                            "none",      
@@ -277,7 +283,10 @@ modelLookup <- function(model = NULL)
                            "Penalty Parameter",
                            "Relaxation Parameter",
                            "Fraction",
-                           "#Steps"
+                           "#Steps",
+                           "none",
+                           "Confidence Threshold",
+                           "Pruning"
                            )),
                          seq = c(
                            FALSE,
@@ -347,7 +356,9 @@ modelLookup <- function(model = NULL)
                            TRUE,  FALSE,
                            TRUE,  FALSE,
                            TRUE,
-                           TRUE
+                           TRUE,
+                           FALSE,
+                           FALSE, FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -417,7 +428,9 @@ modelLookup <- function(model = NULL)
                            TRUE,  TRUE,
                            TRUE, TRUE,
                            TRUE,
-                           TRUE
+                           TRUE,
+                           FALSE,
+                           FALSE,  FALSE
                            ),               
                          forClass =          
                          c(
@@ -488,7 +501,9 @@ modelLookup <- function(model = NULL)
                            TRUE,  TRUE,
                            FALSE, FALSE,
                            FALSE,
-                           FALSE
+                           FALSE,
+                           TRUE,
+                           TRUE,  TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -558,7 +573,9 @@ modelLookup <- function(model = NULL)
                            TRUE,  TRUE,       # glmnet
                            FALSE, FALSE,      # relaxo,
                            FALSE,             # lars
-                           FALSE              #lars2
+                           FALSE,             # lars2
+                           TRUE,              # OneR
+                           TRUE, TRUE         # PART
                             ),
                          stringsAsFactors  = FALSE               
                          )         

@@ -241,8 +241,9 @@
                       pda2 = data.frame(.df = 2* (0:(len - 1) + 1)),
                                             lars = expand.grid(.fraction = seq(0.05, 1, length = len)),
                       lars2 = larsTune(data, len),
+                      PART = data.frame(.threshold = 0.25, .pruned = "yes"), 
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
-                      glm =, qda =,                      
+                      glm =, qda =, OneR =,                     
                       lmStepAIC =, slda = data.frame(.parameter = "none"))
   trainGrid
 }
