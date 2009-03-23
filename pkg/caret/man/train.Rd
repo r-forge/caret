@@ -68,11 +68,11 @@ Neural networks \tab  \code{nnet} \tab \pkg{nnet} \tab \code{decay}, \code{size}
 Projection pursuit regression \tab \code{ppr} \tab \pkg{stats} \tab \code{nterms} \cr
 Partial least squares \tab \code{pls} \tab \pkg{pls}, \pkg{caret} \tab \code{ncomp} \cr
 Sparse partial least squares \tab \code{spls} \tab \pkg{spls}, \pkg{caret} \tab \code{K}, \code{eta}, \code{kappa} \cr
-Support vector machines (RBF)  \tab \code{svmradial} \tab \pkg{kernlab} \tab \code{sigma}, \code{C}\cr 
-Support vector machines (polynomial)  \tab \code{svmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}, \code{C}\cr 
-Relevance vector machines (RBF)  \tab \code{rvmradial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
-Relevance vector machines (polynomial)  \tab \code{rvmpoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
-Least squares support vector machines (RBF)  \tab \code{lssvmradial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
+Support vector machines (RBF)  \tab \code{svmRadial} \tab \pkg{kernlab} \tab \code{sigma}, \code{C}\cr 
+Support vector machines (polynomial)  \tab \code{svmPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}, \code{C}\cr 
+Relevance vector machines (RBF)  \tab \code{rvmRadial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
+Relevance vector machines (polynomial)  \tab \code{rvmPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
+Least squares support vector machines (RBF)  \tab \code{lssvmRadial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
 Gaussian processes (RBF)  \tab \code{guassprRadial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
 Gaussian processes (polynomial)  \tab \code{guassprPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
 Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
