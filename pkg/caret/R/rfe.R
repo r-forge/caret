@@ -11,6 +11,7 @@
 
 ## - add varimp, predict and predictors for recent models
 ## - fix formula method
+## - should final var list be based on resampling?
 
 rfeIter <- function(x, y,
                     testX, testY, sizes,
@@ -46,7 +47,7 @@ rfeIter <- function(x, y,
       rfePred <- if(k == 1) modelPred else rbind(rfePred, modelPred)
 
 
-      if(!exists("modImp"))
+      if(!exists("modImp")) ##todo: get away from this since it finds object in other spaces
         {
           if(rfeControl$verbose) cat("  Computing importance\n")
           modImp <- rfeControl$functions$rank(fitObject, .x, y)
@@ -163,7 +164,7 @@ rfe <- function (x, ...) UseMethod("rfe")
         {
           resampleResults <- cbind(resampleResults,
                                    rep(subsets[i], nrow(resampleResults)))
-          resamples <- if(!exists("resamples")) resampleResults else rbind(resamples, resampleResults)
+          resamples <- if(i == 1) resampleResults else rbind(resamples, resampleResults)
         }
     }
 
@@ -438,7 +439,7 @@ caretFuncs <- list(
                      vimp$var <- rownames(vimp)
                      vimp
                    },
-                   selectSize = pickSizeTolerance,
+                   selectSize = pickSizeBest,
                    selectVar = pickVars
                    )
   
@@ -468,7 +469,7 @@ ldaFuncs <- list(
                    names(vimp) <- "Overall"
                    
                  },
-                 selectSize = pickSizeTolerance,
+                 selectSize = pickSizeBest,
                  selectVar = pickVars
                  )
   
@@ -492,7 +493,7 @@ treebagFuncs <- list(
                        vimp$var <- rownames(vimp)
                        vimp
                      },
-                     selectSize = pickSizeTolerance,
+                     selectSize = pickSizeBest,
                      selectVar = pickVars)
   
 
@@ -532,7 +533,7 @@ rfFuncs <-  list(
                   vimp$var <- rownames(vimp)                  
                   vimp
                 },
-                selectSize = pickSizeTolerance,
+                selectSize = pickSizeBest,
                 selectVar = pickVars)
   
 
@@ -593,7 +594,7 @@ nbFuncs <- list(
                   vimp$var <- rownames(vimp)                  
                   vimp
                 },
-                selectSize = pickSizeTolerance,
+                selectSize = pickSizeBest,
                 selectVar = pickVars)
   
 
@@ -683,4 +684,29 @@ xyplot.rfe <- function(x,
     form <- as.formula(paste(metric, " ~ Variables"))
     xyplot(form, data = data, ...)
   }
+
+######################################################################
+######################################################################
+## other functions
+
+predictors.rfe <- function(x, ...) x$optVariables
+
+varImp.rfe <- function(object, drop = FALSE, ...)
+  {
+
+    sizeIndex <- which(object$results$Variables == object$optsize)
+    getImp <- function(u, i) u[[i]]
+    imp <- lapply(object$variables, getImp, i = sizeIndex)
+    k <- length(imp)
+    imp <- do.call("rbind", imp)
+    if(drop) imp <- subset(imp, var %in% object$optVar)
+    out <- aggregate(imp$Overall, list(var = imp$var), sum, na.rm = TRUE)
+    out$x <- out$x/k
+    rownames(out) <- out$var
+    out$var <- NULL
+    names(out) <- "Overall"
+    out[order(-out$Overall),,drop = FALSE]
+
+  }
+  
 

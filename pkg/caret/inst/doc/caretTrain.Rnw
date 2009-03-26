@@ -81,6 +81,7 @@ library(grid)
 library(randomForest)
 data(BloodBrain)
 data(mdrr)
+load("rfeExamples.RData")
 @
 
 \section{Model Training and Parameter Tuning}\label{S:train}
@@ -910,6 +911,14 @@ print(plotObsVsPred(testPred))
 
 To plot class probabilities, \texttt{plotClassProbs} will display the results by model, data and true class (for example, Figure \ref{f:mbrrProbs}).     
 
+
+\section{Session Information}
+
+<<<session, echo=FALSE, results=tex>>=
+toLatex(sessionInfo())
+@ 
+
+
 \section{References}
 
 \begin{description}
@@ -926,11 +935,3 @@ To plot class probabilities, \texttt{plotClassProbs} will display the results by
 \end{description}
 
 \end{document}
-
-   setwd("/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc")
-   oldWidth <- options("width")$width
-   options(width = 80)
-   Sweave(
-      file = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretTrain.Rnw",
-      out = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretTrain.tex")
-   options(width = oldWidth)

@@ -57,7 +57,7 @@ feature elimination). The funcitons described here are passed to the algorithm v
    \item \code{selectVar}:   a function with arguments \code{x} (for a matrix with columns for 
           the performance metrics and the number of variables, called "\code{Variables}"), 
           \code{metric} (a character string of the performance measure to optimize) and \code{maximize} 
-          (a logical for whether the metric should be maximized). The retrun value shouldbe a 
+          (a logical for whether the metric should be maximized). The retrun value should be a 
           single integer corresponding to the subset size that is optimal. Examples included 
           in this package are \code{pickSizeBest} and \code{pickSizeTolerance}
    \item \code{selectSize}: inputs are \code{y} (a list of the outputs of the \code{rank} function)
