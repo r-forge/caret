@@ -81,6 +81,15 @@ bagProfile <- rfe(x, logBBB,
                   sizes = c(2, 5, 10, 20),
                   rfeControl = rfeControl(functions = treebagFuncs))
 
+set.seed(1)
+svmProfile <- rfe(x, logBBB,
+                  sizes = c(5, 20, 65),
+                  rfeControl = rfeControl(functions = caretFuncs, 
+                                          number = 200),
+                  ## pass options to train()
+                  method = "svmRadial",
+                  fit = FALSE)
+
 ## classification with no resampling
 
 data(mdrr)

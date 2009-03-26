@@ -59,7 +59,7 @@ Boosted trees \tab \code{gbm} \tab \pkg{gbm} \tab \code{interaction depth}, \cr
 \tab \code{ada} \tab \pkg{ada} \tab \code{maxdepth}, \code{iter}, \code{nu}\cr            
 Boosted regression models \tab \code{glmboost} \tab \pkg{mboost} \tab \code{mstop}\cr   
 \tab \code{gamboost} \tab \pkg{mboost} \tab  \code{mstop}\cr    
-\tab \code{logitboost} \tab \pkg{caTools} \tab  \code{nIter}\cr    
+\tab \code{logitBoost} \tab \pkg{caTools} \tab  \code{nIter}\cr    
 Random forests \tab  \code{rf} \tab \pkg{randomForest} \tab \code{mtry} \cr
 \tab \code{cforest} \tab \pkg{party} \tab \code{mtry} \cr   
 Bagged trees \tab \code{treebag} \tab \pkg{ipred} \tab None \cr 

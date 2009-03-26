@@ -610,6 +610,12 @@ Also, flexible discriminant analysis is a generalization of linear discriminant 
 
 Neural networks can be affected by severe amounts of multicollinearity in the predictors. the function \texttt{pcaNNet} is a wrapper around the \texttt{preProcess} and \texttt{nnet} functions that will run principal component analysis on the predictors before using them as inputs into a neural network. The function will keep enough components that will capture some pre-defined threshold on the cumulative proportion of variance (see the \texttt{thresh} argument). For new samples, the same transformation is applied to the new predictor values (based on the loadings from the training set). The function is available for both regression and classification. 
 
+\section{Session Information}
+
+<<<session, echo=FALSE, results=tex>>=
+toLatex(sessionInfo())
+@ 
+
 \section{References}
 
 \begin{description}
@@ -640,18 +646,6 @@ Neural networks can be affected by severe amounts of multicollinearity in the pr
 \end{description}
 
 \end{document}
-
-
-
-   setwd("/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc")
-   oldWidth <- options("width")$width
-   options(width = 80)
-   Sweave(
-      file = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretMisc.Rnw",
-      out = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretMisc.tex")
-   options(width = oldWidth)
-
-   
 
 
       
