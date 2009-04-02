@@ -12,17 +12,23 @@ This function computes the class centroids and covariance matrix for a training 
 \usage{
 classDist(x, ...)
 
-\method{classDist}{default}(x, y, vars = NULL, ...)
+\method{classDist}{default}(x, y, groups = 5, pca = FALSE, keep = NULL, ...)
 
 \method{predict}{classDist}(object, newdata, trans = log, ...)
 
 }
 \arguments{
   \item{x}{a matrix or data frame of predictor variables}
-  \item{y}{a factor vector of class labels}
-  \item{vars}{An optional list of variables (by name or index) that 
-              should be used in the distance calculation. \code{NULL}
-              indicates that all variables should be used.}
+  \item{y}{a numeric or factor vector of class labels}
+  \item{groups}{an integer for the number of bins for splitting
+                a numeric outcome}
+  \item{pca}{a logical: should principal components analysis be 
+             applied to the dataset prior to splitting the data by
+             class?}
+  \item{keep}{an integer for the number of PCA components that should
+              by used to predict new samples (\code{NULL} uses all
+              within a tolerance of \code{sqrt(.Machine$double.eps)})}
+  \item{object}{an object of class \code{classDist}}
   \item{newdata}{a matrix or data frame. If \code{vars} was 
                  previously specified, these columns should be in
                  \code{newdata}}
@@ -32,9 +38,14 @@ classDist(x, ...)
   \item{\dots}{optional arguments to pass (not currently used)}
 }
 \details{
-The covariance matrix is calculated for each class.
+For factor outcomes, the data are split into groups for each class 
+and the mean and covariance matrix are calculated. These are then 
+used to compute Mahalanobis distances to the class centers (using 
+\code{predict.classDist} The function will check for non-singular matrices.
 
-The function will check for non-singular matrices.
+For numeric outcomes, the data are split into roughly equal sized 
+bins based on \code{groups}. Percentiles are used to split the data. 
+
 }
 \value{
 for \code{classDist}, an object of class \code{classDist} with 
@@ -43,12 +54,17 @@ elements:
                  contains a mean vector for the class centroid and the
                  inverse of the class covariance matrix}
   \item{classes}{a character vector of class labels}
-  \item{vars}{the value passed to \code{vars}}
+  \item{pca}{the results of \code{\link[stats]{prcomp}} when 
+             \code{pca = TRUE}}
   \item{call}{the function call}
-  \item{p}{the number of variables after filtering}
+  \item{p}{the number of variables}
   \item{n}{a vector of samples sizes per class}
 
-For \code{predict.classDist}, a matrix with columns for each class. The columns names are the names of the class with the prefix \code{dist.} 
+For \code{predict.classDist}, a matrix with columns for each class. 
+The columns names are the names of the class with the prefix 
+\code{dist.}. In the case of numeric \code{y}, the class labels are
+the percentiles. For example, of \code{groups = 9}, the variable names
+would be \code{dist.11.11}, \code{dist.22.22}, etc.
 }
 
 \author{
@@ -66,5 +82,6 @@ newDist <- predict(distData,
                    iris[-trainSet, 1:4])
 
 splom(newDist, groups = iris$Species[-trainSet])
+}
 \keyword{ manip }
 

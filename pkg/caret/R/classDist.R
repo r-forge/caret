@@ -1,14 +1,34 @@
 classDist <- function (x, ...)  UseMethod("classDist")
 
-classDist.default <- function(x, y, vars = NULL, ...)
+classDist.default <- function(x, y, groups = 5,
+                              pca = FALSE,
+                              keep = NULL,
+                              ...)
 {
-  if(!is.factor(y)) stop("y should be a factor")
-  if(!is.null(vars))
+  if(is.numeric(y))
     {
-      if(is.numeric(vars)) x <- x[, vars, drop = FALSE]
-      if(is.character(vars)) x <- x[, colnames(x) %in% vars, drop = FALSE]
+      y <- cut(y, 
+               unique(quantile(y, probs = seq(0, 1, length = groups + 1))), 
+               include.lowest = TRUE)
+      classLabels <- paste(round((1:groups)/groups*100, 2))
+      y <- factor(y)
+      cuts <- levels(y)
+    } else {
+      classLabels <- levels(y)
+      cuts <- NULL
     }
+
   p <- ncol(x)
+  
+  if(pca)
+    {
+      pca <- prcomp(x, center = TRUE, scale. = TRUE,
+                    tol = sqrt(.Machine$double.eps))
+      keep <- min(keep, nco(pca$rotation))
+      if(!is.null(keep)) pca$rotation <- pca$rotation[, 1:keep, drop = FALSE]
+      x <- as.data.frame(predict(pca, newdata = x))
+    } else pca <- NULL
+  
   x <- split(x, y)
   getStats <- function(u)
     {
@@ -25,8 +45,9 @@ classDist.default <- function(x, y, vars = NULL, ...)
     }
   structure(
             list(values = lapply(x, getStats),
-                 classes = levels(y),
-                 vars = vars,
+                 classes = classLabels,
+                 cuts = cuts,
+                 pca = pca,
                  call = match.call(),
                  p = p,
                  n = unlist(lapply(x, nrow))),
@@ -36,10 +57,26 @@ classDist.default <- function(x, y, vars = NULL, ...)
 print.classDist <- function(x, ...)
   {
     cat("\nCall:\n", deparse(x$call), "\n\n", sep = "")
-    cat("# variables", x$p, "\n")
+
+    if(!is.null(x$cuts))
+      {
+        cat("Classes based on", length(x$cuts) - 1,
+            "cuts of the data\n")
+        paste(x$cuts, collapse = " ")
+        cat("\n")
+      }
+
+    if(!is.null(x$pca)) cat("PCA applied,",
+                            ncol(x$pca$rotation),
+                            "components retained\n\n")
+    cat("# predictors variables:", x$p, "\n")
     cat("# samples:",
         paste(
-              paste(x$n, " (", names(x$n), ")", sep = ""),
+              paste(x$n,
+                    ifelse(is.null(x$cuts), " (", " "),
+                    names(x$n),
+                    ifelse(is.null(x$cuts), ")", ""),
+                    sep = ""),
               collapse = ", "),
         "\n")
     invisible(x)
@@ -47,16 +84,17 @@ print.classDist <- function(x, ...)
 
 predict.classDist <- function(object, newdata, trans = log, ...)
 {
-  if(!is.null(object$vars))
+  if(!is.null(object$pca))
     {
-      if(is.numeric(object$vars)) newdata <- newdata[, object$vars, drop = FALSE]
-      if(is.character(object$vars)) newdata <- newdata[, colnames(newdata) %in% object$vars, drop = FALSE]
+      newdata <- predict(object$pca, newdata = newdata)
     }
+  
   pred <- function(a, x) mahalanobis(x, center = a$means, cov = a$A, inverted = TRUE)
 
   out <- lapply(object$values, pred, x = newdata)
   out <- do.call("cbind", out)
-  colnames(out) <- paste("dist.", colnames(out), sep = "")
+  colnames(out) <- paste("dist.", object$classes, sep = "")
+  
   if(!is.null(trans)) out <- apply(out, 2, trans)
   out
 }

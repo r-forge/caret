@@ -9,7 +9,6 @@
 ## - convert outer resample to lapply for easy parallelization
 ## - check lda ranking function
 
-## - add varimp, predict and predictors for recent models
 ## - fix formula method
 ## - should final var list be based on resampling?
 
@@ -38,7 +37,10 @@ rfeIter <- function(x, y,
       if(rfeControl$verbose) cat("  Fitting subset size:\t", sizeValues[k], "\n")
       flush.console()
       
-      fitObject <- rfeControl$functions$fit(.x, y, p == ncol(.x), ...)  
+      fitObject <- rfeControl$functions$fit(.x, y,
+                                            first = p == ncol(.x),
+                                            last = FALSE,
+                                            ...)  
 
       modelPred <- data.frame(pred = rfeControl$functions$pred(fitObject, .tx),
                               obs = testY,
@@ -85,8 +87,7 @@ rfe <- function (x, ...) UseMethod("rfe")
 
   if(is.null(rfeControl$metric)) rfeControl$metric <- ifelse(is.factor(y), "Accuracy", "RMSE")
   if(is.null(rfeControl$index))
-    rfeControl$index <- switch(
-                               tolower(rfeControl$method),
+    rfeControl$index <- switch(tolower(rfeControl$method),
                                cv = createFolds(y, rfeControl$number, returnTrain = TRUE),
                                loocv = createFolds(y, length(y), returnTrain = TRUE),
                                boot = createResample(y, rfeControl$number),
@@ -156,8 +157,7 @@ rfe <- function (x, ...) UseMethod("rfe")
                                 function(u) postResample(u$pred, u$obs))
       resampleResults <- t(as.data.frame(resampleResults))
       
-      externPerf[i, -1] <-  c(
-                              apply(resampleResults, 2, mean, na.rm = TRUE),
+      externPerf[i, -1] <-  c(apply(resampleResults, 2, mean, na.rm = TRUE),
                               apply(resampleResults, 2, sd  , na.rm = TRUE))
       externPerf[i, 1] <- subsets[i]
       if(rfeControl$returnResamp != "none")
@@ -168,21 +168,18 @@ rfe <- function (x, ...) UseMethod("rfe")
         }
     }
 
-
   externPerf <- externPerf[order(externPerf[,"Variables"]),]
   
-  bestSubsetIndex <- rfeControl$functions$selectSize(x = externPerf,
-                                                     metric = rfeControl$metric,
-                                                     maximize = if(rfeControl$metric == "RMSE") FALSE else TRUE)
-
-  
-  bestSubset <- externPerf[bestSubsetIndex, "Variables"]
+  bestSubset <- rfeControl$functions$selectSize(x = externPerf,
+                                                metric = rfeControl$metric,
+                                                maximize = if(rfeControl$metric == "RMSE") FALSE else TRUE)
 
   bestVar <- rfeControl$functions$selectVar(selectedVars, bestSubset)  
 
-  fit <- rfeControl$functions$fit(
-                                  x[, bestVar, drop = FALSE],
+  fit <- rfeControl$functions$fit(x[, bestVar, drop = FALSE],
                                   y,
+                                  first = FALSE,
+                                  last = TRUE,
                                   ...)
 
   resamples <- switch(rfeControl$returnResamp,
@@ -234,7 +231,6 @@ rfe.formula <- function (form, data, ..., subset, na.action, contrasts = NULL)
   xint <- match("(Intercept)", colnames(x), nomatch = 0)
   if (xint > 0)  x <- x[, -xint, drop = FALSE]
   y <- model.response(m)
-  ### this was just x but causing problems
   res <- rfe(as.data.frame(x), y, ...)
   res$terms <- Terms
   res$coefnames <- colnames(x)
@@ -254,12 +250,10 @@ print.rfe <- function(x, top = 5, digits = max(3, getOption("digits") - 3), ...)
 
   cat("\nRecursive feature selection\n\n")
 
-  cat(
-      "Outer resamping method was",
+  cat("Outer resamping method was",
       x$control$number,
       "iterations of",
-      switch(
-             x$control$method,
+      switch(x$control$method,
              "boot" = "the bootstrap.",
              "LGOCV" = "leave group out cross-validation.",
              "LOOCV" = "leave one out cross-validation.",
@@ -287,8 +281,7 @@ print.rfe <- function(x, top = 5, digits = max(3, getOption("digits") - 3), ...)
 ######################################################################
 ######################################################################
 
-plot.rfe <- function (
-                      x,
+plot.rfe <- function (x,
                       plotType = "size",
                       metric = c("Accuracy", "RMSE"),
                       digits = getOption("digits") - 5,
@@ -319,8 +312,7 @@ plot.rfe <- function (
 ######################################################################
 ######################################################################
 
-rfeControl <- function(
-                       functions = NULL,
+rfeControl <- function(functions = NULL,
                        metric = NULL, 
                        rerank = FALSE,
                        method = "boot",
@@ -351,31 +343,21 @@ rfeControl <- function(
 pickSizeBest <- function(x, metric, maximize)
   {
     best <- if(maximize) which.max(x[,metric]) else which.min(x[,metric])
-    min(best)
+    min(x[best, "Variables"])
   }
 
 pickSizeTolerance <- function(x, metric, tol = 1.5, maximize)
   {
-    
-    index <- 1:nrow(x)
-    
     if(!maximize)
       {
         best <- min(x[,metric])  
         perf <- (x[,metric] - best)/best * 100
-        delta <- c(diff(-x[, metric]), 0)
-
       } else {
         best <- max(x[,metric])  
         perf <- (x[,metric] - best)/best * -100
-        delta <- c(diff(x[, metric]), 0)
       }
-    flag <- delta <= 0 & perf <= tol
-    if(!any(flag)) flag <- perf <= tol
-    
-    candidates <- index[flag]
-    bestIter <- min(candidates)
-    bestIter
+    flag <- perf <= tol
+    min(x[flag, "Variables"])
   }
 
 
@@ -386,21 +368,18 @@ pickVars <- function(y, size)
     sizes <- unlist(lapply(y[[1]], nrow))
     sizeIndex <- which(size == sizes)
     
-    allImp <- do.call(
-                      "rbind",
+    allImp <- do.call("rbind",
                       lapply(
                              y,
                              function(u, pos) u[[pos]],
                              pos = sizeIndex))
 
-    meanImp <- aggregate(
-                         allImp[, grep("Overall$", names(allImp))[1]],
+    meanImp <- aggregate(allImp[, grep("Overall$", names(allImp))[1]],
                          list(var = allImp$var),
                          mean)
     meanImp$imp <- meanImp$x
 
-    counts <- aggregate(
-                        allImp[, grep("Overall$", names(allImp))[1]],
+    counts <- aggregate(allImp[, grep("Overall$", names(allImp))[1]],
                         list(var = allImp$var),
                         length)
     counts$pct <- counts$x/length(y)    
@@ -413,7 +392,7 @@ pickVars <- function(y, size)
 
 
 caretFuncs <- list(
-                   fit = function(x, y, first, ...) train(x, y, ...),
+                   fit = function(x, y, first, last, ...) train(x, y, ...),
                    pred = function(object, x)
                    {
                      modelPred <- extractPrediction(
@@ -447,7 +426,7 @@ caretFuncs <- list(
 
 ## write a better imp sort function
 ldaFuncs <- list(
-                 fit = function(x, y, first, ...)
+                 fit = function(x, y, first, last, ...)
                  {
                    library(MASS)
                    lda(x, y, ...)
@@ -475,7 +454,7 @@ ldaFuncs <- list(
   
 
 treebagFuncs <- list(
-                     fit = function(x, y, first, ...)
+                     fit = function(x, y, first, last, ...)
                      {
                        library(ipred)
                        ipredbagg(y, x, ...)
@@ -498,7 +477,7 @@ treebagFuncs <- list(
   
 
 rfFuncs <-  list(
-                fit = function(x, y, first, ...)
+                fit = function(x, y, first, last, ...)
                 {
                   library(randomForest)
                   randomForest(x, y, importance = first, ...)
@@ -538,7 +517,7 @@ rfFuncs <-  list(
   
 
 lmFuncs <- list(
-                fit = function(x, y, first, ...)
+                fit = function(x, y, first, last, ...)
                 {
                   tmp <- as.data.frame(x)
                   tmp$y <- y
@@ -566,7 +545,7 @@ lmFuncs <- list(
   
 
 nbFuncs <- list(
-                fit = function(x, y, first, ...)
+                fit = function(x, y, first, last, ...)
                 {
                   library(klaR)
                   NaiveBayes(x, y, usekernel = TRUE, fL = 2, ...)
@@ -623,9 +602,9 @@ densityplot.rfe <- function(x,
   }
 
 histogram.rfe <- function(x,
-                            data = NULL,
-                            metric = x$control$metric,
-                            ...)
+                          data = NULL,
+                          metric = x$control$metric,
+                          ...)
   {
     if (!is.null(match.call()$data))
       warning("explicit 'data' specification ignored")
@@ -642,9 +621,9 @@ histogram.rfe <- function(x,
   }
 
 stripplot.rfe <- function(x,
-                            data = NULL,
-                            metric = x$control$metric,
-                            ...)
+                          data = NULL,
+                          metric = x$control$metric,
+                          ...)
   {
     if (!is.null(match.call()$data))
       warning("explicit 'data' specification ignored")
@@ -669,9 +648,9 @@ stripplot.rfe <- function(x,
 
 
 xyplot.rfe <- function(x,
-                            data = NULL,
-                            metric = x$control$metric,
-                            ...)
+                       data = NULL,
+                       metric = x$control$metric,
+                       ...)
   {
     if (!is.null(match.call()$data))
       warning("explicit 'data' specification ignored")
