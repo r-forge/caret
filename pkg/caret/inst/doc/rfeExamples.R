@@ -1,24 +1,50 @@
 library(caret)
-data(BloodBrain)
+library(mlbench)
 
-x <- scale(bbbDescr[,-nearZeroVar(bbbDescr)])
-x <- x[, -findCorrelation(cor(x), .8)]
-x <- as.data.frame(x)
+data(BostonHousing)
+
+xData <- model.matrix(medv ~ (crim+zn+indus+chas+nox+rm+age+dis+rad+tax+ptratio+b+lstat)^2,
+                     data = BostonHousing)[,-1]
+xData <- as.data.frame(scale(xData))
+colnames(xData) <- gsub(":", ".", colnames(xData), fixed = TRUE)
+
+
+set.seed(1)
+splits <- createDataPartition(BostonHousing$medv,
+                               p = 2/3,
+                               times = 30)
+
+set.seed(2)
+larsFit <- train(xData, BostonHousing$medv,
+                 "lars",
+                 tuneLength = 15,
+                 trControl = trainControl(
+                   method = "LGOCV",
+                   index = splits))
+
+
 
 ######################################################################
 ######################################################################
 
 set.seed(1)
-lmProfile <- rfe(x, logBBB,
-                 sizes = seq(2, 60, by = 2),
-                 rfeControl = rfeControl(functions = lmFuncs(), 
-                   number = 100))
+lmProfile <- rfe(xData, BostonHousing$medv,
+                 sizes = (1:8) * 10,
+                 rfeControl = rfeControl(
+                   functions = lmFuncs, 
+                   method = "LGOCV",
+                   verbose = FALSE,
+                   returnResamp = "final",
+                   index = splits))
 set.seed(1)
-lmProfile2 <- rfe(x, logBBB,
-                  sizes = seq(2, 60, by = 2),
-                  rfeControl = rfeControl(functions = lmFuncs(), 
-                    rerank = TRUE, 
-                    number = 100))
+rfProfile <- rfe(xData, BostonHousing$medv,
+                 sizes = (1:8) * 10,
+                 rfeControl = rfeControl(
+                   functions = rfFuncs, 
+                   method = "LGOCV",
+                   verbose = FALSE,
+                   returnResamp = "final",
+                   index = splits))
 
 ######################################################################
 ######################################################################
