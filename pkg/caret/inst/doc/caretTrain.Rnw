@@ -345,7 +345,13 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{spls} & 
             \texttt{spls}, \texttt{caret}      & 
             \texttt{K}, \texttt{eta}, \texttt{kappa} \\   
-            
+        
+      Support Vector Machines  &
+         \texttt{svmLinear} & 
+            \texttt{kernlab}       & 
+            none \\            
+      \:\: (linear kernel) & & &\\   
+      
       Support Vector Machines  &
          \texttt{svmRadial} & 
             \texttt{kernlab}       & 
@@ -357,7 +363,14 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree}, \texttt{C} \\            
       \:\: (polynomial kernel) & & &\\  
+      
      Gaussian Processes  &
+         \texttt{gaussprLinear} & 
+            \texttt{kernlab}       & 
+            none \\            
+      \:\: (linear kernel) & & &\\   
+      
+      Gaussian Processes  &
          \texttt{gaussprRadial} & 
             \texttt{kernlab}       & 
             \texttt{sigma} \\            
@@ -376,6 +389,11 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{lm} & 
             \texttt{stats}       & 
             None \\  
+            
+      Robust Linear Least Squares &
+         \texttt{rlm} & 
+            \texttt{MASS}       & 
+            None \\              
                    
       M5 Rules &
          \texttt{M5Rules} & 
@@ -412,6 +430,12 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{penalized}       & 
             \texttt{lambda1}, \texttt{lambda2} \\            
       \:\: Regression Splines & & &\\
+      
+      Relevance Vector Machines  &
+         \texttt{rvmLinear} & 
+            \texttt{kernlab}       & 
+            none \\            
+      \:\: (linear kernel) & & &\\  
       
       Relevance Vector Machines  &
          \texttt{rvmRadial} & 

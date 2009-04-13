@@ -61,8 +61,8 @@ rfeIter <- function(x, y,
             }
         }
 
-      retained <- modImp$var[1:sizeValues[k]]
-      .x <- x[, retained, drop = FALSE]
+      retained <- as.character(modImp$var)[1:sizeValues[k]]
+      .x  <-   x[, retained, drop = FALSE]
       .tx <- .tx[, retained, drop = FALSE]
       finalVariables[[k]] <- subset(modImp, var %in% retained)
       

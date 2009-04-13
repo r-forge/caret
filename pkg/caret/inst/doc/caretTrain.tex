@@ -399,7 +399,13 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{spls} & 
             \texttt{spls}, \texttt{caret}      & 
             \texttt{K}, \texttt{eta}, \texttt{kappa} \\   
-            
+        
+      Support Vector Machines  &
+         \texttt{svmLinear} & 
+            \texttt{kernlab}       & 
+            none \\            
+      \:\: (linear kernel) & & &\\   
+      
       Support Vector Machines  &
          \texttt{svmRadial} & 
             \texttt{kernlab}       & 
@@ -411,7 +417,14 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree}, \texttt{C} \\            
       \:\: (polynomial kernel) & & &\\  
+      
      Gaussian Processes  &
+         \texttt{gaussprLinear} & 
+            \texttt{kernlab}       & 
+            none \\            
+      \:\: (linear kernel) & & &\\   
+      
+      Gaussian Processes  &
          \texttt{gaussprRadial} & 
             \texttt{kernlab}       & 
             \texttt{sigma} \\            
@@ -430,6 +443,11 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{lm} & 
             \texttt{stats}       & 
             None \\  
+            
+      Robust Linear Least Squares &
+         \texttt{rlm} & 
+            \texttt{MASS}       & 
+            None \\              
                    
       M5 Rules &
          \texttt{M5Rules} & 
@@ -466,6 +484,12 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{penalized}       & 
             \texttt{lambda1}, \texttt{lambda2} \\            
       \:\: Regression Splines & & &\\
+      
+      Relevance Vector Machines  &
+         \texttt{rvmLinear} & 
+            \texttt{kernlab}       & 
+            none \\            
+      \:\: (linear kernel) & & &\\  
       
       Relevance Vector Machines  &
          \texttt{rvmRadial} & 
@@ -1046,6 +1070,22 @@ Two functions, \texttt{plotObsVsPred} and \texttt{plotClassProbs}, are interface
 
 To plot class probabilities, \texttt{plotClassProbs} will display the results by model, data and true class (for example, Figure \ref{f:mbrrProbs}).     
 
+
+\section{Session Information}
+
+\begin{itemize}
+  \item R version 2.9.0 Under development (unstable) (2009-01-22 r47686), \verb|i386-apple-darwin9.6.0|
+  \item Locale: \verb|en_US.UTF-8/en_US.UTF-8/C/C/en_US.UTF-8/en_US.UTF-8|
+  \item Base packages: base, datasets, graphics, grDevices, grid,
+    methods, splines, stats, tools, utils
+  \item Other packages: caret~4.10, class~7.2-45, e1071~1.5-19,
+    earth~2.3-0, ellipse~0.3-5, gbm~1.6-3, Hmisc~3.5-0, ipred~0.8-6,
+    kernlab~0.9-8, klaR~0.5-8, lattice~0.17-20, leaps~2.7, MASS~7.2-45,
+    mlbench~1.1-5, nnet~7.2-45, pls~2.1-0, proxy~0.4-1,
+    randomForest~4.5-28, rpart~3.1-42, survival~2.34-1
+  \item Loaded via a namespace (and not attached): cluster~1.11.12
+\end{itemize}
+
 \section{References}
 
 \begin{description}
@@ -1062,11 +1102,3 @@ To plot class probabilities, \texttt{plotClassProbs} will display the results by
 \end{description}
 
 \end{document}
-
-   setwd("/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc")
-   oldWidth <- options("width")$width
-   options(width = 80)
-   Sweave(
-      file = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretTrain.Rnw",
-      out = "/Users/kuhna03/Documents/Code/caret/pkg/caret/inst/doc/caretTrain.tex")
-   options(width = oldWidth)

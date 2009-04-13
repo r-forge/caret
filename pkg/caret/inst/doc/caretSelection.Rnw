@@ -1,0 +1,411 @@
+% \VignetteIndexEntry{caret Manual -- Variable Selection}
+% \VignetteDepends{caret}
+% \VignettePackage{caret}
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage[pdftex]{graphicx}
+\usepackage{color}
+\usepackage{xspace}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[lined,algonl,boxed]{algorithm2e}
+\usepackage[
+         colorlinks=true,
+         linkcolor=blue,
+         citecolor=blue,
+         urlcolor=blue]
+         {hyperref}
+\usepackage{lscape}
+\usepackage{ctable}
+\usepackage{Sweave}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% define new colors for use
+\definecolor{darkgreen}{rgb}{0,0.6,0}
+\definecolor{darkred}{rgb}{0.6,0.0,0}
+\definecolor{lightbrown}{rgb}{1,0.9,0.8}
+\definecolor{brown}{rgb}{0.6,0.3,0.3}
+\definecolor{darkblue}{rgb}{0,0,0.8}
+\definecolor{darkmagenta}{rgb}{0.5,0,0.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\bld}[1]{\mbox{\boldmath $#1$}}
+\newcommand{\shell}[1]{\mbox{$#1$}}
+\renewcommand{\vec}[1]{\mbox{\bf {#1}}}
+
+\newcommand{\ReallySmallSpacing}{\renewcommand{\baselinestretch}{.6}\Large\normalsize}
+\newcommand{\SmallSpacing}{\renewcommand{\baselinestretch}{1.1}\Large\normalsize}
+
+\newcommand{\halfs}{\frac{1}{2}}
+
+\setlength{\oddsidemargin}{-.25 truein}
+\setlength{\evensidemargin}{0truein}
+\setlength{\topmargin}{-0.2truein}
+\setlength{\textwidth}{7 truein}
+\setlength{\textheight}{8.5 truein}
+\setlength{\parindent}{0.20truein}
+\setlength{\parskip}{0.10truein}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\lhead{}
+\chead{Variable Selection Using The {\tt caret} Package}
+\rhead{}
+\lfoot{}
+\cfoot{}
+\rfoot{\thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Variable Selection Using The {\tt caret} Package}
+\author{Max Kuhn \\ max.kuhn@pfizer.com}
+
+
+
+\begin{document}
+
+\section{Introduction}
+
+\section{Models with Built--In Feature Selection}
+
+Many models included in \texttt{caret} have built--in feature selection, including \texttt{rpart}, \texttt{gbm}, \texttt{ada}, \texttt{glmboost}, \texttt{gamboost}, \texttt{blackboost}, \texttt{ctree}, \texttt{sparseLDA}, \texttt{sddaLDA}, \texttt{sddaQDA}	\texttt{glmnet}, \texttt{lasso}, \texttt{lars}, \texttt{spls}, \texttt{earth}, \texttt{fda},   \texttt{bagEarth}, \texttt{bagFDA} , \texttt{pam} and others. Many of the functions have an ancillary method called \texttt{predictors} that returns a vector indicating which predictors were used in the final model.
+
+In many cases, using these models with built--in feature selection will be more efficient than algorithms where the search routine for the right predictors is ``outside'' the model. Built--in feature selection couples the predictor search algorithm with the parameter fitting and are usually optimize with a single objective function (e.g. error rates or likelihood). 
+
+
+\section{Feature Selection Using Search Algorithms}
+
+\subsection{Searching the Feature Space}
+Search routines; validation 
+
+\subsection{Resampling and External Validation}
+
+\subsection{Backwards Selection}
+
+The recursive feature elimination (RFE), a.k.a. backwards selection, can be used to estimate the appropriate number of prectors. First, the algorithm fits the model to all predictors. Each predictor is ranked on how important it is to teh model. Let $S_i$ be a seqeunce of ordered numbers which are canidate values for the number of predictors to retain. At each iteration of feature selection, the $S_i$ top raked predictors are retianed, the model is refit and performance is assessed. The value of $S_i$ with teh best performance is chosen and the top $S_i$ predictors are used to fit the final model. Algorithm \ref{A:rfe} has a more complete definition.
+
+The algorithm has an optional step where the predictor rankings are recomputed on the model on the reduced feature set. REF used RFE with ranomd forest and reported that there was XXX. There are some cases where re--ranking the predictors could help. XXX put this below XXX.
+
+\begin{algorithm}[H]
+   \caption{Recursive feature elimination}
+   \label{A:rfe}
+   \SetLine
+   \restylealgo{plain}
+   \dontprintsemicolon
+
+
+    \vspace*{3pt} Tune/train the model on the training set using all predictors\vspace*{3pt}\; 
+
+    \vspace*{3pt} Calculate model performance\vspace*{3pt}\; 
+
+     \vspace*{3pt} Calculate variable importance or rankings\vspace*{3pt} \; 
+
+     \For{Each subset size $S_i$, $i=1\ldots S$}{
+
+         \vspace*{3pt} Keep the $S_i$ most important variables \vspace*{3pt}\;		  
+			
+         \vspace*{3pt} Tune/train the model on the training set using $S_i$ predictors\vspace*{3pt}\;
+
+         \vspace*{3pt}	Calculate model performance \vspace*{3pt}\;
+
+         \vspace*{3pt} [Optional] Recalculate the rankings for each predictor\vspace*{3pt}\;
+	  				
+      } % end resample
+
+    \vspace*{3pt} Calculate the performance profile over the $S_i$ \vspace*{3pt}\;
+    
+    \vspace*{3pt} Determine the appropriate number of predictors and the final ranks of each predictor\vspace*{3pt}\;
+
+    \vspace*{3pt} Fit the final model based on the optimal $S_i$ \vspace*{3pt}\;    
+    
+\end{algorithm}
+
+As previously mentioned, computing the appropriate performance measure can be difficult. To get performace estiamtes that incorporate the variaiton due to feature selection, it is suggested that the steps in be ``wrapped'' inside a layer of resampling (e.g. 10--fold cross--validation). Algorithm \ref{A:rfe2} shows a version of the algorithm that uses resampling.
+
+While this will provie better estimates of performance, it is more computationally burdensome. For users with access to machines with multiple processors, the first \texttt{For} loop in Algorithm \ref{A:rfe2} can be easily parallelized. Another complication to using reampling is that multiple lists of the ``best'' predictors are generated at each iteration. At first this may seem like a disadvantage, but it does provide a more probablistic assessment of predictor importance than a ranking based on a single, fixed data set. At the end of the algorithm, a concensus ranking can be used to determine the best predictors to retain.
+
+\begin{algorithm}[H]
+   \caption{Recursive feature elimination incorporating resampling}
+   \label{A:rfe2}
+   \SetLine
+   \restylealgo{plain}
+   \dontprintsemicolon
+
+   \For{Each Resamping Iteration}{
+	
+     \vspace*{3pt} Partition data into training and test/hold--back set via resampling\vspace*{3pt} \; 
+
+    \vspace*{3pt} Tune/train the model on the training set using all predictors\vspace*{3pt}\; 
+
+    \vspace*{3pt} Predict the held--back samples\vspace*{3pt}\; 
+
+     \vspace*{3pt} Calculate variable importance or rankings\vspace*{3pt} \; 
+
+     \For{Each subset size $S_i$, $i=1\ldots S$}{
+
+         \vspace*{3pt} Keep the $S_i$ most important variables \vspace*{3pt}\;		  
+			
+         \vspace*{3pt} Tune/train the model on the training set using $S_i$ predictors\vspace*{3pt}\;
+
+         \vspace*{3pt}	Predict the held--back samples \vspace*{3pt}\;
+
+         \vspace*{3pt} [Optional] Recalculate the rankings for each predictor\vspace*{3pt}\;
+	  				
+      } % end resample
+    }
+    \vspace*{3pt} Calculate the performance profile over the $S_i$ using the held--back samples \vspace*{3pt}\;
+    
+    \vspace*{3pt} Determine the appropriate number of predictors and the final ranks of each predictor\vspace*{3pt}\;
+
+    \vspace*{3pt} Fit the final model based on the optimal $S_i$ using the original training set \vspace*{3pt}\;    
+    
+\end{algorithm}
+
+\clearpage
+\section{Recursive Feature Elimination via \texttt{caret}}
+
+\subsection{An Example}
+
+<<<startUp, echo=FALSE>>=
+library(caret)
+library(mlbench)
+library(Hmisc)
+@ 
+
+To test the algorithm, the ``Friedman 1'' benchmark problem (Friedman, 1991) was used. there are three informative variables generated with
+\[
+y = 10 \sin(\pi x_1x_2) + 20 (x_3 - 0.5)^2 + 10 x_4 + 5 x_5 + N(0, \sigma^2)
+\]
+In the simulation that follows:
+<<simSettings>>=
+n <- 100
+p <- 40
+sigma <- 1
+set.seed(1)
+sim <- mlbench.friedman1(n, sd = sigma)
+x <- cbind(sim$x,  matrix(rnorm(n * p), nrow = n))
+y <- sim$y
+colnames(x) <- paste("var", 1:ncol(x), sep = "")
+@ 
+Of the \Sexpr{ncol(x)} predictors, there are \Sexpr{ncol(x)-5} pure noise variables: 5 are uniform on [0, 1] and \Sexpr{p} are random univariate standard normals.
+
+The predictors are centered and scaled:
+<<<preProc>>=
+normalization <- preProcess(x)
+x <- predict(normalization, x)
+x <- as.data.frame(x)
+subsets <- c(1:5, 10, 15, 20, 25)
+@ 
+
+The simulation will fit models with subset sizes of \Sexpr{paste(sort(subsets, decreasing = TRUE), collapse = ", ")}. A linear model and random forests will be used.
+
+<<lm>>=
+set.seed(10)
+
+ctrl <- rfeControl(
+                   functions = lmFuncs,
+                   method = "cv",
+                   verbose = FALSE,
+                   returnResamp = "final")
+
+lmProfile <- rfe(x, y,
+                 sizes = subsets,
+                 rfeControl = ctrl)
+
+print(lmProfile)
+@ 
+
+\begin{figure}
+   \begin{center}		
+<<lmPlot, echo = FALSE, results = hide>>=
+pdf("lm.pdf", width = 5, height = 7)
+   trellis.par.set(caretTheme())
+   plot1 <- plot(lmProfile, type = c("g", "o"))
+   plot2 <- plot(lmProfile, type = c("g", "o"), metric = "Rsquared")
+   print(update(plot1, 
+                ylab = "Resampled RMSE"), 
+         split=c(1,1,1,2), 
+         more=TRUE)
+   print(update(plot2, 
+                ylab = "Resampled R^2"), 
+         split=c(1,2,1,2))
+dev.off()
+@
+      \includegraphics[clip]{lm}
+      \caption{Hold--out performance distributions for four models with built--in feature selection.}
+      \label{F:lars} 
+    \end{center}
+\end{figure} 
+
+
+\subsection{Helper Functions}
+
+\subsubsection{the \texttt{fit} function}
+
+This function builds the model based on the current data set. The possible arguments are:
+\begin{itemize}
+\item \texttt{x}: the current training set of predictor data with the appropriate subset of variables
+\item \texttt{y}: the current outcome data (either a numeric or factor vector)
+\item \texttt{first}: a single logical values for whether the current predcitor set has all possible variables
+\item $\ldots$: optional arguments to pass to the fit function in the call to \texttt{rfe}
+\end{itemize}
+
+The \texttt{first} argument can be useful. For example, if a random forest model is fit, you may only want the initial model with all predictor varibles to be run wiht \texttt{importance = TRUE}. 
+
+This function should return a model fit function that can be used for prediction
+
+<<rfModel>>=
+rfFuncs$fit
+@ 
+
+
+\subsubsection{the \texttt{pred} function}
+
+This function returns a vector of predictions (numeric or factors) from the model. The input arguments must be
+\begin{itemize}
+\item \texttt{object}: the model generated by the \texttt{fit} function
+\item \texttt{x}: the current set of predictor set for the held--back samples
+\end{itemize}
+
+<<rfPredict>>=
+rfFuncs$pred
+@ 
+
+
+\subsubsection{the \texttt{rank} function}
+
+This function should return XXXX.
+
+Inputs are:
+\begin{itemize}
+\item \texttt{object}: the model generated by the \texttt{fit} function
+\item \texttt{x}: the current set of predictor set for the training samples
+\item \texttt{y}: the current training outcomes
+\end{itemize}
+
+<<rfRank>>=
+rfFuncs$rank
+@ 
+
+\subsubsection{the \texttt{selectVar} function}
+
+Inputs for the function are:
+\begin{itemize}
+\item \texttt{y}: a list of varibles importance for each resampling iteration and each subset size (generated by the user--defined \texttt{rank} function)
+\item \texttt{size}: the subset sized passed into the call to \texttt{rfe}
+\end{itemize}
+
+This function should return character string of predictor names (of length \texttt{size}) in the order of most important to least important
+
+<<rfSelectVar>>=
+rfFuncs$selectVar
+@ 
+
+
+\subsubsection{the \texttt{selectSize} function}
+
+Inputs for the function are:
+\begin{itemize}
+\item \texttt{x}: a matrix with columns for the performance metrics and the number of variables, called \texttt{Variables}
+\item \texttt{metric}: a character string of the performance measure to optimize (e.g. RMSE, Accuracy)
+\item \texttt{maximize}: a single logical for whether the metric should be maximized
+\end{itemize}
+
+This function should return an integer that indicates the row of \texttt{x} that is optimal
+
+\texttt{caret} comes with two examples runtions for this purpose: \texttt{selectBest} 
+
+For example, suppose we have computed the RMSE over a series of variables sizes:
+
+\begin{figure}
+   \begin{center}
+<<tolerance, echo = FALSE, results = hide>>=
+pdf("tolerance.pdf", width = 5, height = 5)
+  example <- data.frame(RMSE = c(
+                          3.215, 2.819, 2.414, 2.144, 
+                          2.014, 1.997, 2.025, 1.987, 
+                          1.971, 2.055, 1.935, 1.999, 
+                          2.047, 2.002, 1.895, 2.018),
+                        Variables = 1:16)
+
+par(mfrow = c(2, 1), mar = c(0, 4, 4, 2))
+with(example, plot(Variables, RMSE))
+
+smallest <- pickSizeBest(example, metric = "RMSE", maximize = FALSE)
+points(example$Variables[smallest], 
+       example$RMSE[smallest], pch = 16, cex= 1.3)
+
+within10Pct <- pickSizeTolerance(example, metric = "RMSE", tol = 10, maximize = FALSE)
+
+points(example$Variables[within10Pct], 
+       example$RMSE[within10Pct], pch = 17, cex= 1.3)
+
+minRMSE <- min(example$RMSE)
+example$Tolerance <- (example$RMSE - minRMSE)/minRMSE * 100    
+  with(example, plot(Variables, Tolerance))
+     abline(h = 10, lty = 2, col = "darkgrey")
+dev.off()
+@
+      \includegraphics[clip]{tolerance}
+      \caption{ads}      
+      \label{F:all} 
+    \end{center}
+\end{figure}
+
+
+<<rf>>=
+set.seed(10)
+ctrl$functions <- rfFuncs
+
+rfProfile <- rfe(x, y,
+                 sizes = subsets,
+                 rfeControl = ctrl)
+print(rfProfile)
+@ 
+
+\begin{figure}
+   \begin{center}		
+<<rfPlot, echo = FALSE, results = hide>>=
+pdf("rf.pdf", width = 5, height = 7)
+   trellis.par.set(caretTheme())
+   plot1 <- plot(rfProfile, type = c("g", "o"))
+   plot2 <- plot(rfProfile, type = c("g", "o"), metric = "Rsquared")
+   print(update(plot1, 
+                ylab = "Resampled RMSE"), 
+         split=c(1,1,1,2), 
+         more=TRUE)
+   print(update(plot2, 
+                ylab = "Resampled R^2"), 
+         split=c(1,2,1,2))
+dev.off()
+@
+      \includegraphics[clip]{rf}
+      \caption{Hold--out performance distributions for four models with built--in feature selection.}
+      \label{F:rf} 
+    \end{center}
+\end{figure}
+
+\section{Session Information}
+
+<<<session, echo=FALSE, results=tex>>=
+toLatex(sessionInfo())
+@ 
+
+\section{References}
+
+\begin{description}
+  \item Chun, H. and Keles, S. (2007) ``Sparse partial least squares for simultaneous dimension reduction and variable selection'', \url{http://www.stat.wisc.edu/~keles/Papers/SPLS_Nov07.pdf}.
+    
+  \item Friedman, J. H. (1991) ``Multivariate Adaptive Regression Splines (with discussion),'' {\it Annals of Statistics}, 19, 1--`141
+    \item  Friedman, J. H. (2001) ``Greedy Function Approximation: A Gradient Boosting Machine,'' {\it Annals of Statistics},  29, 1189--1232
+  \item Zou, H. and Hastie, T.  (2005) ``Regularization and Variable Selection via the Elastic Net,'' {\it Journal of the Royal Statistical Society, Series B}, 67, 301--320.
+    
+  \end{description}
+
+\end{document}
+
+

@@ -610,6 +610,43 @@ Also, flexible discriminant analysis is a generalization of linear discriminant 
 
 Neural networks can be affected by severe amounts of multicollinearity in the predictors. the function \texttt{pcaNNet} is a wrapper around the \texttt{preProcess} and \texttt{nnet} functions that will run principal component analysis on the predictors before using them as inputs into a neural network. The function will keep enough components that will capture some pre-defined threshold on the cumulative proportion of variance (see the \texttt{thresh} argument). For new samples, the same transformation is applied to the new predictor values (based on the loadings from the training set). The function is available for both regression and classification. 
 
+\subsection{Class Distance Calculations}
+
+\texttt{caret} contains functions to generate new predictors variables based on distances to class centroids (similar to how linear discriminant analysis works). For each level of a factor variable, the class centroid and covariance matrix is calculated. For new samples, the Mahalanobis distance to each of the class centroids is computed and can be used as an additional predictor. This can be helpful for non--linear models when the true decision boundary is actually linear.
+
+In cases where there are more predictors within a class than samples, the \texttt{classDist} function has arguments called \texttt{pca} and \texttt{keep} arguments that allow for principal components analysis within each class to be used to avoid issues with singular covariance matrices. 
+
+As an example, we can used the Fisher/Anderson iris data. 
+<<classDist>>=
+inTrain <- seq(1, 150, 6)
+centroids <- classDist(iris[inTrain, 1:4], iris$Species[inTrain])
+distances <- predict(centroids, iris[-inTrain, 1:4])
+head(distances)
+@ 
+Figure \ref{F:classDist} shows a scatterplot matrix of the class distances for the held--out samples. 
+
+For data sets with numerical outcomes, the data can be split into groups based on quantiles of the data (more fine granularity can be achieved with the \texttt{groups} argument to the \texttt{classDist} function).
+
+\begin{figure}
+   \begin{center}		
+<<classDistPlot, echo = FALSE, results = hide>>=
+pdf("classDist.pdf", width = 5, height = 7)
+   trellis.par.set(caretTheme())
+   print(
+         splom(distances, 
+               groups = iris$Species[-inTrain],
+               auto.key = list(columns = 3)))
+dev.off()
+@
+      \includegraphics[clip]{classDist}
+      \caption{Class distances for the help--out samples for the Fisher/Anderson iris computed using the \texttt{classDist} function. The distances have been logged.}
+      \label{F:classDist} 
+    \end{center}
+\end{figure} 
+
+For example, in the Fisher/Anderson iris data there are four predictors and a class variable describing three species of iris. These data are typically used to demonstrate how the four predictors can be used to predict the three species. 
+
+
 \section{Session Information}
 
 <<<session, echo=FALSE, results=tex>>=
