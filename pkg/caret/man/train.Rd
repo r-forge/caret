@@ -29,7 +29,7 @@ train(x, ...)
 \item{subset}{An index vector specifying the cases to be used in the training sample. (NOTE: If given, this argument must be named.)}
 \item{na.action}{A function to specify the action to be taken if NAs are found. The default action is for the procedure to fail. An alternative is na.omit, which leads to rejection of cases with missing values on any required variable. (NOTE: If given, this argument must be named.)}
 \item{contrasts}{a list of contrasts to be used for some or all of the factors appearing as variables in the model formula.}
-  \item{method}{a string specifying which classification or regression model to use. Possible values are: \code{ada}, \code{bagEarth}, \code{bagFDA}, \code{blackboost}, \code{cforest}, \code{ctree}, \code{ctree2}, \code{earth}, \code{enet}, \code{fda}, \code{gamboost}, \code{gaussprPoly}, \code{gaussprRadial}, \code{gbm}, \code{glm}, \code{glmboost}, \code{glmnet}, \code{gpls}, \code{J48}, \code{JRip}, \code{knn}, \code{lars}, \code{lasso}, \code{lda}, \code{lm}, \code{lmStepAIC}, \code{LMT}, \code{logitBoost}, \code{lssvmPoly}, \code{lssvmRadial}, \code{lvq}, \code{M5Rules}, \code{mda}, \code{multinom}, \code{nb}, \code{nnet}, \code{OneR}, \code{pam}, \code{pcaNNet}, \code{pda}, \code{pda2}, \code{penalized}, \code{pls}, \code{ppr}, \code{qda}, \code{rda}, \code{rf}, \code{rpart}, \code{rvmPoly}, \code{rvmRadial}, \code{sda}, \code{sddaLDA}, \code{sddaQDA}, \code{slda}, \code{sparseLDA}, \code{spls}, \code{superpc}, \code{svmPoly}, \code{svmRadial} and \code{treebag}. See the Details section below.}  
+  \item{method}{a string specifying which classification or regression model to use. Possible values are: \code{ada}, \code{bagEarth}, \code{bagFDA}, \code{blackboost}, \code{cforest}, \code{ctree}, \code{ctree2}, \code{earth}, \code{enet}, \code{fda}, \code{gamboost}, \code{gaussprPoly}, \code{gaussprRadial}, \code{gaussprLinear}, \code{gbm}, \code{glm}, \code{glmboost}, \code{glmnet}, \code{gpls}, \code{J48}, \code{JRip}, \code{knn}, \code{lars}, \code{lasso}, \code{lda}, \code{lm}, \code{lmStepAIC}, \code{LMT}, \code{logitBoost}, \code{lssvmPoly}, \code{lssvmRadial}, \code{lvq}, \code{M5Rules}, \code{mda}, \code{multinom}, \code{nb}, \code{nnet}, \code{OneR}, \code{pam}, \code{pcaNNet}, \code{pda}, \code{pda2}, \code{penalized}, \code{pls}, \code{ppr}, \code{qda}, \code{rda}, \code{rf}, \code{rlm}, \code{rpart}, \code{rvmLinear}, \code{rvmPoly}, \code{rvmRadial}, \code{sda}, \code{sddaLDA}, \code{sddaQDA}, \code{slda}, \code{sparseLDA}, \code{spls}, \code{superpc}, \code{svmPoly}, \code{svmRadial}, \code{svmLinear} and \code{treebag}. See the Details section below.}  
   \item{\ldots}{ arguments passed to the classification or regression routine (such as \code{\link[randomForest]{randomForest}}). Errors will occur if values
          for tuning parameters are passed here.}  
   \item{metric}{a string that specifies what summary metric will be used to select the optimal model. By default, possible values are "RMSE" and "Rsquared" for regression and "Accuracy" and "Kappa" for classification. If custom performance metrics are used (via the \code{summaryFunction} argument in \code{\link{trainControl}}, the value of \code{metric} should match one of the arguments. If it does not, a warning is issued and the first metric given by the \code{summaryFunction} is used. (NOTE: If given, this argument must be named.)}         
@@ -68,14 +68,18 @@ Neural networks \tab  \code{nnet} \tab \pkg{nnet} \tab \code{decay}, \code{size}
 Projection pursuit regression \tab \code{ppr} \tab \pkg{stats} \tab \code{nterms} \cr
 Partial least squares \tab \code{pls} \tab \pkg{pls}, \pkg{caret} \tab \code{ncomp} \cr
 Sparse partial least squares \tab \code{spls} \tab \pkg{spls}, \pkg{caret} \tab \code{K}, \code{eta}, \code{kappa} \cr
+Support vector machines (linear)  \tab \code{svmLinear} \tab \pkg{kernlab} \tab \code{C}\cr 
 Support vector machines (RBF)  \tab \code{svmRadial} \tab \pkg{kernlab} \tab \code{sigma}, \code{C}\cr 
 Support vector machines (polynomial)  \tab \code{svmPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}, \code{C}\cr 
+Relevance vector machines (linear)  \tab \code{rvmLinear} \tab \pkg{kernlab} \tab none\cr 
 Relevance vector machines (RBF)  \tab \code{rvmRadial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
 Relevance vector machines (polynomial)  \tab \code{rvmPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
 Least squares support vector machines (RBF)  \tab \code{lssvmRadial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
+Gaussian processes (linear)  \tab \code{guassprLinearl} \tab \pkg{kernlab} \tab none\cr 
 Gaussian processes (RBF)  \tab \code{guassprRadial} \tab \pkg{kernlab} \tab \code{sigma}\cr 
 Gaussian processes (polynomial)  \tab \code{guassprPoly} \tab \pkg{kernlab} \tab \code{scale}, \code{degree}\cr 
 Linear least squares \tab \code{lm} \tab \pkg{stats} \tab None \cr 
+Robust linear least squares \tab \code{rlm} \tab \pkg{MASS} \tab None \cr 
 Multivariate adaptive regression splines \tab \code{earth} \tab \pkg{earth} \tab \code{degree}, \code{nprune} \cr
 Bagged MARS \tab \code{bagEarth} \tab \pkg{caret},  \pkg{earth}\tab \code{degree}, \code{nprune} \cr 
 M5 rules \tab \code{M5Rules} \tab \pkg{RWeka} \tab \code{pruned} \cr 
