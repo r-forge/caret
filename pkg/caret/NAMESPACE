@@ -109,7 +109,11 @@ export(
        nbFuncs,
        classDist,
        classDist.default,
-       predict.classDist
+       predict.classDist,
+       densityplot.rfe,
+       histogram.rfe,
+       xyplot.rfe,
+       stripplot.rfe
        )
 
 S3method(confusionMatrix, default)
