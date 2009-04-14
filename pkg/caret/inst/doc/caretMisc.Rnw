@@ -616,6 +616,8 @@ Neural networks can be affected by severe amounts of multicollinearity in the pr
 
 In cases where there are more predictors within a class than samples, the \texttt{classDist} function has arguments called \texttt{pca} and \texttt{keep} arguments that allow for principal components analysis within each class to be used to avoid issues with singular covariance matrices. 
 
+\texttt{predict.classDist} is then used to generate the class distances. By default, the distances are logged, but this can be changed via the \texttt{trans} argument to \texttt{predict.classDist}.
+
 As an example, we can used the Fisher/Anderson iris data. 
 <<classDist>>=
 inTrain <- seq(1, 150, 6)

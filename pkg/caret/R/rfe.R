@@ -1,16 +1,9 @@
 ## todo:
-## - document and check other control function (ranking etc)
 ## - re-write most of the documentation
 ## - test with many models
-## - add section in the vingette and pre-compute a few models
-
-## - check consistency of options
-## - test rfeIter by itself
 ## - convert outer resample to lapply for easy parallelization
 ## - check lda ranking function
-
-## - fix formula method
-## - should final var list be based on resampling?
+## - write man pages for lattice functions
 
 rfeIter <- function(x, y,
                     testX, testY, sizes,
@@ -364,30 +357,11 @@ pickSizeTolerance <- function(x, metric, tol = 1.5, maximize)
 
 pickVars <- function(y, size)
   {
-
-    sizes <- unlist(lapply(y[[1]], nrow))
-    sizeIndex <- which(size == sizes)
-    
-    allImp <- do.call("rbind",
-                      lapply(
-                             y,
-                             function(u, pos) u[[pos]],
-                             pos = sizeIndex))
-
-    meanImp <- aggregate(allImp[, grep("Overall$", names(allImp))[1]],
-                         list(var = allImp$var),
-                         mean)
-    meanImp$imp <- meanImp$x
-
-    counts <- aggregate(allImp[, grep("Overall$", names(allImp))[1]],
-                        list(var = allImp$var),
-                        length)
-    counts$pct <- counts$x/length(y)    
-    counts$x <- NULL
-    
-    varInfo <- merge(counts, meanImp)
-    varInfo <- varInfo[order(varInfo$pct, varInfo$imp, decreasing = TRUE),]
-    as.character(varInfo$var[1:size])
+    imp <- lapply(y, function(x) x[[1]])
+    imp <- do.call("rbind", imp)
+    finalImp <- aggregate(imp$Overall, list(var = imp$var), mean, na.rm = TRUE)
+    finalImp <- finalImp[order(finalImp$x, decreasing = TRUE),]
+    as.character(finalImp$var[1:size])
   }
 
 
