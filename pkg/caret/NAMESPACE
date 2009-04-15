@@ -113,7 +113,13 @@ export(
        densityplot.rfe,
        histogram.rfe,
        xyplot.rfe,
-       stripplot.rfe
+       stripplot.rfe,
+       knnregTrain,
+       knnreg,
+       knnreg.default,
+       knnreg.matrix,
+       knnreg.data.frame,
+       predict.knnreg
        )
 
 S3method(confusionMatrix, default)
@@ -133,10 +139,12 @@ S3method(posPredValue,    default)
 S3method(negPredValue,    default)
 S3method(rfe,             default)
 S3method(classDist,       default)
+S3method(knnreg,          default)
 
 S3method(train,   formula)
 S3method(pcaNNet, formula)
 S3method(rfe,     formula)
+S3method(knnreg,  formula)
 
 S3method(varImp, train)
 S3method(varImp, rpart)
@@ -180,6 +188,7 @@ S3method(print, preProcess)
 S3method(print, pcaNNet)
 S3method(print, rfe)
 S3method(print, classDist)
+S3method(print, knnreg)
 
 S3method(predict, PLS)
 S3method(predict, plsda)
@@ -192,6 +201,7 @@ S3method(predict, pcaNNet)
 S3method(predict, list)
 S3method(predict, train)
 S3method(predict, classDist)
+S3method(predict, knnreg)
 
 S3method(summary, bagEarth)
 S3method(summary, bagFDA)
@@ -213,6 +223,7 @@ S3method(predictors, rvm)
 S3method(predictors, lssvm)
 S3method(predictors, gpls)
 S3method(predictors, knn3)
+S3method(predictors, knnreg)
 S3method(predictors, LogitBoost)
 S3method(predictors, lda)
 S3method(predictors, rda)

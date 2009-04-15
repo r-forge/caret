@@ -332,7 +332,7 @@ modelLookup <- function(model = NULL)
                            FALSE,   FALSE,   # lssvm
                            FALSE,
                            FALSE,   FALSE,   # gausspr
-                           FALSE,
+                           FALSE,#
                            FALSE, 
                            FALSE, 
                            TRUE, 
@@ -416,7 +416,7 @@ modelLookup <- function(model = NULL)
                            TRUE, 
                            TRUE, 
                            FALSE, 
-                           FALSE, 
+                           TRUE, 
                            FALSE, 
                            TRUE,    TRUE, 
                            TRUE,    TRUE,           

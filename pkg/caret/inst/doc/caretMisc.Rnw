@@ -533,7 +533,7 @@ Batch2Step3 <- computeExprSet(Batch2Step2, "pmonly", "trimMean")
 
 \subsection{Yet Another $k$--Nearest Neighbor Function}
 
-\texttt{knn3} is a class for $k$--nearest neighbor classification. This particular implementation is a modification of the \texttt{knn} C code and returns the vote information for all of the classes (\texttt{knn} only returns the probability for the winning class). There is a formula interface via
+\texttt{knn3} is a function for $k$--nearest neighbor classification. This particular implementation is a modification of the \texttt{knn} C code and returns the vote information for all of the classes (\texttt{knn} only returns the probability for the winning class). There is a formula interface via
 \begin{Verbatim}
 knn3(formula, data)
 \end{Verbatim}
@@ -543,6 +543,9 @@ or by passing the training data directly
 knn3(x, y)
 \end{Verbatim}
 There are also \texttt{print} and \texttt{predict} methods.
+
+Similarly, \texttt{caret} contains a $k$--nearest neighbor regression function, \texttt{knnreg}. It returns the average outcome for the neighbor.
+
 
 \subsection{Partial Least Squares Discriminant Analysis}
 

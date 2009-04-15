@@ -393,7 +393,12 @@
                      },         
                      knn =
                      {
-                       knn3(as.matrix(trainX), trainY, k = tuneValue$.k, ...)
+                       if(type == "Classification")
+                         {
+                           knn3(as.matrix(trainX), trainY, k = tuneValue$.k, ...)
+                         } else {
+                           knnreg(as.matrix(trainX), trainY, k = tuneValue$.k, ...)
+                         }
                      },
                      nb =
                      {
