@@ -84,7 +84,12 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            
                            knn =
                            {
-                             out <- as.character(predict(modelFit, newdata, type="class"))
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 out <- as.character(predict(modelFit, newdata, type="class"))
+                               } else {
+                                 out <- predict(modelFit, newdata)
+                               }
                              out
                            },
                            

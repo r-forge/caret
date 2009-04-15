@@ -158,6 +158,11 @@ predictors.knn3 <- function(x, ...)
     colnames(x$learn$X)
   }
 
+predictors.knnreg <- function(x, ...)
+  {
+    colnames(x$learn$X)
+  }
+
 predictors.LogitBoost <- function(x, ...)
   {
     if("Weka_classifier" %in% class(x))
