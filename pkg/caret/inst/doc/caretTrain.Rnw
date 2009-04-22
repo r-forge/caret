@@ -381,7 +381,13 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree} \\            
       \:\: (polynomial kernel) & & &\\  
-    
+
+                      
+      $k$ Nearest Neighbors &
+         \texttt{knn} & 
+            \texttt{caret}       & 
+            \texttt{k} \\   
+      
       \\
 \multicolumn{5}{c}{{{ \em Regression Only Models}}} \\      
     
@@ -563,12 +569,6 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{kernlab}       & 
             \texttt{sigma} \\            
       \:\:  Machines (RBF kernel) & & &\\   
-      
-                
-      $k$ Nearest Neighbors &
-         \texttt{knn3} & 
-            \texttt{caret}       & 
-            \texttt{k} \\   
                   
       Nearest Shrunken Centroids &
          \texttt{pam} & 
