@@ -335,7 +335,12 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{nnet} & 
             \texttt{nnet}       &       
             \texttt{decay}, \texttt{size} \\      
-      
+
+       &               
+         \texttt{pcaNNet} & 
+            \texttt{pcaNNet}       &       
+            \texttt{decay}, \texttt{size} \\              
+            
       Partial Least Squares &
          \texttt{pls} & 
             \texttt{pls}, \texttt{caret}       & 
@@ -349,38 +354,32 @@ There is additional functionality in \texttt{train} that is described in the nex
       Support Vector Machines  &
          \texttt{svmLinear} & 
             \texttt{kernlab}       & 
-            none \\            
-      \:\: (linear kernel) & & &\\   
+            none \\              
       
-      Support Vector Machines  &
+  &
          \texttt{svmRadial} & 
             \texttt{kernlab}       & 
-            \texttt{sigma}, \texttt{C} \\            
-      \:\: (RBF kernel) & & &\\   
+            \texttt{sigma}, \texttt{C} \\             
       
-      Support Vector Machines  &
+  &
          \texttt{svmPoly} & 
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree}, \texttt{C} \\            
-      \:\: (polynomial kernel) & & &\\  
       
      Gaussian Processes  &
          \texttt{gaussprLinear} & 
             \texttt{kernlab}       & 
-            none \\            
-      \:\: (linear kernel) & & &\\   
+            none \\             
       
-      Gaussian Processes  &
+  &
          \texttt{gaussprRadial} & 
             \texttt{kernlab}       & 
-            \texttt{sigma} \\            
-      \:\: (RBF kernel) & & &\\   
+            \texttt{sigma} \\              
       
-      Gaussian Processes  &
+  &
          \texttt{gaussprPoly} & 
             \texttt{kernlab}       & 
             \texttt{scale}, \texttt{degree} \\            
-      \:\: (polynomial kernel) & & &\\  
 
                       
       $k$ Nearest Neighbors &
@@ -396,12 +395,12 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{stats}       & 
             None \\  
             
-      Robust Linear Least Squares &
+      Robust Linear Regression &
          \texttt{rlm} & 
             \texttt{MASS}       & 
             None \\              
                    
-      M5 Rules &
+      Rule--Based Models &
          \texttt{M5Rules} & 
             \texttt{RWeka}    & 
             \texttt{pruned}  \\             
@@ -441,20 +440,17 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{rvmLinear} & 
             \texttt{kernlab}       & 
             none \\            
-      \:\: (linear kernel) & & &\\  
       
-      Relevance Vector Machines  &
+  &
          \texttt{rvmRadial} & 
             \texttt{kernlab}       & 
-            \texttt{sigma} \\            
-      \:\: (RBF kernel) & & &\\   
+            \texttt{sigma} \\              
       
-      Relevance Vector Machines  &
+  &
          \texttt{rvmPoly} & 
             \texttt{kernlab}       & 
-            \texttt{scale}, \texttt{degree} \\            
-      \:\: (polynomial kernel) & & &\\               
-
+            \texttt{scale}, \texttt{degree} \\                        
+            
       Supervised Principal &
          \texttt{superpc}  &
          \texttt{superpc}  &
@@ -548,27 +544,31 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{RWeka}    & 
             \texttt{iter}  \\  
             
-      C4.5 decision trees &
+      Rule--Based Models &
          \texttt{J48} & 
             \texttt{RWeka}    & 
             \texttt{C}  \\  
             
-      Single Rule &
+       &
          \texttt{OneR} & 
             \texttt{RWeka}    & 
             None  \\  
             
-      PART &
+       &
          \texttt{PART} & 
             \texttt{RWeka}    & 
             \texttt{threshold}, \texttt{pruned}   \\  
+            
+        &
+         \texttt{JRip} & 
+            \texttt{RWeka}    & 
+            \texttt{NumOpt}   \\
             
             
       Least Squares Support Vector  &
          \texttt{lssvmRadial} & 
             \texttt{kernlab}       & 
-            \texttt{sigma} \\            
-      \:\:  Machines (RBF kernel) & & &\\   
+            \texttt{sigma} \\             
                   
       Nearest Shrunken Centroids &
          \texttt{pam} & 

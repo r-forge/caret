@@ -184,7 +184,7 @@ While this will provide better estimates of performance, it is more computationa
 \clearpage
 \section{Recursive Feature Elimination via \texttt{caret}}
 
-In \texttt{caret}, Algorithm \ref{A:rfe1} is implemented by the function \texttt{rfeIter}. The resampling-based Algorithm \ref{A:rfe2} is in the \texttt{rfe} function. Given the potential selection bias issues, this document focuses on \texttt{rfe}.  There are several arguments:
+In \texttt{caret}, Algorithm \ref{A:rfe} is implemented by the function \texttt{rfeIter}. The resampling-based Algorithm \ref{A:rfe2} is in the \texttt{rfe} function. Given the potential selection bias issues, this document focuses on \texttt{rfe}.  There are several arguments:
 \begin{itemize}
 \item \texttt{x}, a matrix or data frame of predictor variables
 \item \texttt{y}, a vector (numeric or factor) of outcomes
