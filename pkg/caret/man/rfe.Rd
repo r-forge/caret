@@ -27,13 +27,13 @@ rfeIter(x, y,
   \item{testX}{a matrix or data frame of test set predictors. This must have the same column names as \code{x}}
   \item{testY}{a vector of test set outcomes }
   \item{sizes}{a numeric vector of integers corresponding to the number of features that should be retained}
-  \item{rfeControl}{a list of options, including functions for fitting and prediction. See XXXXX for examples}
+  \item{rfeControl}{a list of options, including functions for fitting and prediction. See the package vignette or \code{\link{rfeControl}} for examples}
   \item{\dots}{options to pass to the model fitting function}
 }
 \details{
-This function implements backwards selection of predictors based on predictor importance ranking. 
+This function implements backwards selection of predictors based on predictor importance ranking. The predictors are ranked and the less important ones are sequentially eliminated. The package vignette for feature selection has detailed descriptions of the algorithms.
 
-To aviod selection bias, it is better to use the function \code{rfe} than\code{rfeIter}.
+\code{rfeIter} is the basic algorithm while \code{rfe} wraps these operations inside of resampling. To avoid selection bias, it is better to use the function \code{rfe} than \code{rfeIter}.
 }
 \value{
 A list with elements
@@ -66,12 +66,11 @@ lmProfile2 <- rfe(x, logBBB,
                                          rerank = TRUE, 
                                          number = 200))
 
-# xyplot(lmProfile$results$RMSE + lmProfile2$results$RMSE +
-#        rfProfile$results$RMSE + rfProfile2$results$RMSE ~ 
-#        lmProfile$results$Variables, 
-#        type = c("g", "p", "l"), 
-#        auto.key = TRUE)
-
+xyplot(lmProfile$results$RMSE + lmProfile2$results$RMSE +
+       rfProfile$results$RMSE + rfProfile2$results$RMSE ~ 
+       lmProfile$results$Variables, 
+       type = c("g", "p", "l"), 
+       auto.key = TRUE)
 
 rfProfile <- rfe(x, logBBB,
                  sizes = c(2, 5, 10, 20),

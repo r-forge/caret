@@ -1,8 +1,8 @@
 Package: caret
-Version: 4.10
-Date: 2009-03-20
+Version: 4.11
+Date: 2009-04-25
 Title: Classification and Regression Training
-Author: Max Kuhn. Contributions from Jed Wing, Steve Weston and Andre Williams
+Author: Max Kuhn. Contributions from Jed Wing, Steve Weston,  Andre Williams and Chris Keefer
 Description: Misc functions for training and plotting classification and regression models
 Maintainer: Max Kuhn <Max.Kuhn@pfizer.com>
 Depends: R (>= 2.5.1), lattice
