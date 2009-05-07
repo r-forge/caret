@@ -13,6 +13,7 @@ confusionMatrix.default <- function(data, reference,
   library(e1071)
   if(!is.factor(data)) data <- factor(data)
   if(!is.factor(reference)) reference <- factor(reference)
+  if(!is.character(positive)) stop("positive argument must be character")
 
   if(length(levels(data)) != length(levels(reference)))
     stop("the data and reference factors must have the same number of levels")
