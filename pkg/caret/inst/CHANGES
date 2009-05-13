@@ -1,4 +1,10 @@
 -------------------
+Version: 4.14
+Date: 2009-05-13
+
+Fixed bug in print.train
+
+-------------------
 Version: 4.13
 Date: 2009-05-12
 
