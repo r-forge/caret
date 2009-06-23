@@ -1,4 +1,11 @@
 -------------------
+Version: 4.19
+Date: 2009-06-23
+
+Weights argument was added to train for models that accept weights
+
+
+-------------------
 Version: 4.18
 Date: 2009-06-17
 
