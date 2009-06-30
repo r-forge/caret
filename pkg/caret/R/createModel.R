@@ -797,7 +797,7 @@
                      enet =, lasso =
                      {
                        library(elasticnet)
-                       lmbda <- if(method == "lasso") 1 else tuneValue$.lambda
+                       lmbda <- if(method == "lasso") 0 else tuneValue$.lambda
                        enet(as.matrix(trainX), trainY, lambda = lmbda) 
                      },
                      glmnet =
