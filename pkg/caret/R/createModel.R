@@ -54,7 +54,8 @@
                    "gaussprRadial", "gaussprPoly", "gaussprLinear",
                    "sddaLDA", "sddaQDA", "glmnet", "slda", "spls", "smda",
                    "qda", "relaxo", "lars", "lars2", "rlm", "vbmpRadial",
-                   "superpc", "ppr", "sda", "penalized", "sparseLDA"))
+                   "superpc", "ppr", "sda", "penalized", "sparseLDA",
+                   "obliqueTree"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -1185,6 +1186,16 @@
                             control = ctl,
                             X.TEST = trainX[1,],
                             t.class.TEST  = as.numeric(trainY)[1])
+                     },
+                     obliqueTree =
+                     {
+                       library(oblique.tree)
+                       
+                       oblique.tree(.outcome ~ .,
+                                    data = data,
+                                    oblique.splits = as.character(tuneValue$.oblique.splits),
+                                    variable.selection = as.character(tuneValue$.variable.selection),
+                                    ...)
                      }
                      )
   
