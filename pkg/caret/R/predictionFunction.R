@@ -675,6 +675,14 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                              probs <- predictCPP(modelFit, newdata)
                              out <- modelFit$obsLevels[apply(probs, 1, which.max)]
                              out
+                           },
+                           obliqueTree =
+                           {
+                             library(oblique.tree)
+                             as.character(
+                                          predict(modelFit,
+                                                  newdata,
+                                                  type = "class"))
                            }
                          
   )
