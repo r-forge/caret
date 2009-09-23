@@ -1,4 +1,4 @@
-\name{rfe}
+\name{caretFuncs}
 \alias{caretFuncs}
 \alias{lmFuncs}
 \alias{rfFuncs}
