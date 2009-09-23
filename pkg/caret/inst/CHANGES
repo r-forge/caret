@@ -1,5 +1,13 @@
 -------------------
-Version: 4.21Date: 2009-09-18
+Version: 4.22
+Date: 2009-09-23
+
+Many Rd changes to work with updated parser.
+
+
+-------------------
+Version: 4.21
+Date: 2009-09-18
 
 Re-saved data in more compressed format
 
