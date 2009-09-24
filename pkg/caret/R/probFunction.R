@@ -260,11 +260,6 @@ probFunction <- function(method, modelFit, newdata)
                         probs <- cbind(1-probs, probs)
                         colnames(probs) <- modelFit$obsLevels
                         probs
-                      },
-                      obliqueTree =
-                      {
-                        library(oblique.tree)  
-                        predict(modelFit, newdata)
                       }
                       )
 
