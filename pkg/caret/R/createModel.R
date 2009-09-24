@@ -1186,16 +1186,6 @@
                             control = ctl,
                             X.TEST = trainX[1,],
                             t.class.TEST  = as.numeric(trainY)[1])
-                     },
-                     obliqueTree =
-                     {
-                       library(oblique.tree)
-                       
-                       oblique.tree(.outcome ~ .,
-                                    data = data,
-                                    oblique.splits = as.character(tuneValue$.oblique.splits),
-                                    variable.selection = as.character(tuneValue$.variable.selection),
-                                    ...)
                      }
                      )
   
