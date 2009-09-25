@@ -10,7 +10,7 @@ dotPlot(x, top = min(20, dim(x$importance)[1]), ...)
 \arguments{
   \item{x}{an object of class \code{varImp.train}}
   \item{top}{the number of predictors to plot}
-  \item{\dots}{options passed to \code{\link[lattice]{dotplot}}}
+  \item{\dots}{options passed to \code{\link[lattice:xyplot]{dotplot}}}
 }
 
 \value{
