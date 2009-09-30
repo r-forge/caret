@@ -628,7 +628,7 @@ stripplot.rfe <- function(x,
 
 xyplot.rfe <- function(x,
                        data = NULL,
-                       metric = x$Metric,
+                       metric = x$metric,
                        ...)
   {
     if (!is.null(match.call()$data))
