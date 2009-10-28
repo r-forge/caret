@@ -79,8 +79,8 @@ IWEffectRegistry.prototype.p_generateQueueForEffectType=function(effectType)
 {effectQueue=effectQueue.concat(this.p_generateQueueForEffectClass(effect,effectClass));effectClass=effectType+"_"+i++;}
 return effectQueue;}
 IWEffectRegistry.prototype.p_generateQueueForEffectClass=function(effect,effectClass,elementList)
-{var effectQueue=[];var elements=elementList||document.getElementsByClassName(effectClass).toArray();while(elements&&elements.length>0)
-{var element=elements.shift();var children=document.getElementsByClassName(effectClass,element).toArray();if(children.length>0)
+{var effectQueue=[];var elements=elementList||$$('.'+effectClass);while(elements&&elements.length>0)
+{var element=elements.shift();var children=$(element).select('.'+effectClass);if(children.length>0)
 {elements.minusArray(children);effectQueue=effectQueue.concat(this.p_generateQueueForEffectClass(effect,effectClass,children));}
 effectQueue.push({element:element,effect:effect});}
 return effectQueue;}
@@ -91,7 +91,7 @@ var allStyleSheetsLoaded=false;var timeStyleSheetsAppearedInDOM=undefined;IWEffe
 {allStyleSheetsLoaded=true;timeStyleSheetsAppearedInDOM=undefined;}}
 else if(!allStyleSheetsLoaded)
 {for(var i=0,sheetCount=document.styleSheets.length;i<sheetCount;i++)
-{var styleSheet=document.styleSheets[i];if(styleSheet.href.indexOf("Moz.css")!=-1)
+{var styleSheet=document.styleSheets[i];if(styleSheet.href&&styleSheet.href.indexOf("Moz.css")!=-1)
 {timeStyleSheetsAppearedInDOM=new Date().getTime();}}}}
 else
 {allStyleSheetsLoaded=true;}
@@ -118,7 +118,8 @@ function IWImageExtents(ancestor,images,left,top,right,bottom)
 {var current=images[e].parentNode;while(current&&current!=ancestor)
 {if((current.style.position=="absolute")||(current.style.position=="relative"))
 {imageClippedBounds.origin.x+=current.offsetLeft||0;imageClippedBounds.origin.y+=current.offsetTop||0;}
-var clipX=[current.style.overflow,current.style.overflowX].include('hidden');var clipY=[current.style.overflow,current.style.overflowY].include('hidden');if(clipX||clipY)
+var testForHidden=function(str)
+{return str=='hidden';};var clipX=[current.style.overflow,current.style.overflowX].any(testForHidden);var clipY=[current.style.overflow,current.style.overflowY].any(testForHidden);if(clipX||clipY)
 {var currentRect=new IWRect(clipX?current.offsetLeft:imageClippedBounds.origin.x,clipY?current.offsetTop:imageClippedBounds.origin.y,clipX?current.offsetWidth:imageClippedBounds.size.width,clipY?current.offsetHeight:imageClippedBounds.size.height);imageClippedBounds=imageClippedBounds.intersection(currentRect);}
 current=current.parentNode;}}
 if((imageClippedBounds.size.width>0)&&(imageClippedBounds.size.height>0))
