@@ -257,6 +257,7 @@
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,
-                      lmStepAIC =, slda = data.frame(.parameter = "none"))
+                      lmStepAIC =, slda =, Linda =, QdaCov =,
+                      glmrob = data.frame(.parameter = "none"))
   trainGrid
 }

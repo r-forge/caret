@@ -686,6 +686,25 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  prbs <- predict(modelFit, as.matrix(newdata), maxshow = 0)
                                  ifelse(prbs > .5, modelFit$obsLevels[1], modelFit$obsLevels[2])
                                }
+                           },
+                           Linda =, QdaCov =
+                           {
+                             library(rrcov)
+                             predict(modelFit, newdata)@classification
+                           },                           
+                           glmrob =
+                           {
+                             library(robust)
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 probs <-  predict(modelFit, newdata, type = "response")
+                                 out <- ifelse(probs > .5,
+                                               modelFit$obsLevel[1],
+                                               modelFit$obsLevel[2])
+                               } else {
+                                 out <- predict(modelFit, newdata, type = "response")
+                               }
+                             out
                            }
   )
 predictedValue

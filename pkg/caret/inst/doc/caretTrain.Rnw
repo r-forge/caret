@@ -475,11 +475,20 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{MASS}       &          
             None\\
             
+          &
+         \texttt{Linda} & 
+            \texttt{rrcov}       &          
+            None\\
+                        
+            
       Quadratic Discriminant  &
          \texttt{qda} & 
             \texttt{MASS}       &          
             None\\  
-      \:\:  Analysis & & &\\               
+      \:\:  Analysis           &
+         \texttt{QdaCov} & 
+            \texttt{rrcov}       &          
+            None\\            
             
       Stabilized Linear &
          \texttt{slda} & 
