@@ -1,4 +1,19 @@
 -------------------
+Version: 4.28
+Date: 2009-11-05
+
+Added robust linear and quadratic discriminant analysis functions 
+from rrcov.
+
+Also added another column to the output of extractPRob and 
+extractPrediction that saves the name of the model object so
+that you can have multiple models of the same type and tell
+which predictions came from which model.
+
+Changes were made to plotClassProbs: new parameters were added
+and densityplots can now be produced.
+
+-------------------
 Version: 4.27
 Date: 2009-11-01
 

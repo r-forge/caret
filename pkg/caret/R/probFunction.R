@@ -10,7 +10,8 @@ probFunction <- function(method, modelFit, newdata)
                    "svmRadial", "svmPoly", "svmLinear",
                    "gaussprRadial", "gaussprPoly", "gaussprLinear",
                    "lssvmRadial", "lssvmLinear",
-                   "ctree", "ctree2",  "cforest"))
+                   "ctree", "ctree2",  "cforest",
+                   "penalized", "Linda", "QdaCov"))
     {
       
       obsLevels <- switch(method,
@@ -22,6 +23,8 @@ probFunction <- function(method, modelFit, newdata)
                             library(kernlab)
                             lev(modelFit)
                           },
+
+                          Linda =, QdaCov = names(modelFit@prior),
                           
                           ctree =, cforest =
                           {
@@ -264,6 +267,21 @@ probFunction <- function(method, modelFit, newdata)
                       nodeHarvest =
                       {
                         predict(modelFit, as.matrix(newdata), maxshow = 0)
+                      },
+                      Linda =, QdaCov =
+                      {
+                        library(rrcov)
+                        probs <- predict(modelFit, newdata)@posterior
+                        colnames(probs) <- names(modelFit@prior)
+                        probs
+                      },
+                      glmrob =
+                      {
+                        library(robust)
+                        out <- predict(modelFit, newdata, type = "response")
+                        out <- cbind(out, 1- out)
+                        dimnames(out)[[2]] <-  modelFit$obsLevels
+                        out
                       }
                       )
 

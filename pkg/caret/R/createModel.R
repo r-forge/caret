@@ -55,7 +55,7 @@
                    "sddaLDA", "sddaQDA", "glmnet", "slda", "spls", "smda",
                    "qda", "relaxo", "lars", "lars2", "rlm", "vbmpRadial",
                    "superpc", "ppr", "sda", "penalized", "sparseLDA",
-                   "obliqueTree", "nodeHarvest"))
+                   "obliqueTree", "nodeHarvest", "Linda", "QdaCov"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -1204,7 +1204,42 @@
                                               ...)                          
                          }
                        out                        
-                       }
+                       },
+                     Linda =
+                     {
+                       library(rrcov)
+                       Linda(trainX, trainY, ...)
+                     },
+                     QdaCov =
+                     {
+                       library(rrcov)
+                       QdaCov(trainX, trainY, ...)
+                     },
+                     glmrob = 
+                     {
+                       library(robust)
+                       ##check for family in dot and over-write if none
+                       theDots <- list(...)
+                       if(!any(names(theDots) == "family"))
+                         {
+                           theDots$family <- if(is.factor(data$.outcome)) binomial() else gaussian()              
+                         }
+
+                       ## There is no documentation on ?glmrob about this, but binary responses
+                       ## should be represented by 0/1 numeric values rather than factors
+                       if(type == "Classification") data$.outcome <- ifelse(data$.outcome == obsLevels[1], 1, 0)
+
+                       ## pass in any model weights
+                       if(!is.null(modelWeights)) theDots$weights <- modelWeights
+                       
+                       modelArgs <- c(
+                                      list(formula = modFormula,
+                                           data = data),
+                                      theDots)
+     
+                       out <- do.call("glmrob", modelArgs)
+                       out
+                     }
                      )
   
 
@@ -1222,7 +1257,7 @@
                                       "lssvmRadial", "lssvmPoly", "lssvmLinear",
                                       "gaussprRadial", "gaussprPoly", "gaussprLinear",
                                       "ctree", "ctree2", "cforest",
-                                      "penalized"))))
+                                      "penalized", "Linda", "QdaCov"))))
     {
       modelFit$xNames <- xNames
       modelFit$problemType <- type

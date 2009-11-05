@@ -20,7 +20,7 @@ byComplexity <- function(x, model)
            },
            rf =, rfNWS =, rfLSF =, gpls =, pcr =, pls =, PLS =, pam =, cforest =,
            nb =, rpart =, ctree2 =, logitBoost=, J48 =, LMT =, ppr =, mda =, pda =, pda2 =,
-           lars =, lars2 =
+           lars =, lars2 =, Linda =, QdaCov = 
            {
              x[order(x[,1]),]
            },
@@ -66,7 +66,7 @@ byComplexity <- function(x, model)
            treebag =, lda =, lm =, sddaLDA =, sddaQDA =,
            lmStepAIC =, slda =, glm =, qda =, OneR =,
            rvmLinear =, lssvmLinear =, gaussprLinear =,
-           rlm =, vbmpRadial =
+           rlm =, vbmpRadial =, glmrob =
            {
              x
            },
