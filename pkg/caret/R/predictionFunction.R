@@ -5,7 +5,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
   coerceChar <- function(x)  as.data.frame(lapply(x, as.character), stringsAsFactors = FALSE)
   
   predictedValue <- switch(method,
-                           lda =, rda =, gpls =, slda =, qda = 
+                           lda =, rda =, gpls =, slda =, qda =
                            {
                              switch(method,
                                     lda =, qda = library(MASS),
@@ -705,9 +705,16 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                  out <- predict(modelFit, newdata, type = "response")
                                }
                              out
+                           },
+                           stepLDA =, stepQDA =
+                           {
+                             library(MASS)
+                             as.character(
+                                          predict(modelFit$fit,
+                                                  newdata[,  predictors(modelFit), drop = FALSE])$class)
                            }
-  )
-predictedValue
+                           )
+  predictedValue
 }
 
 

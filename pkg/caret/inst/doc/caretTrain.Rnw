@@ -508,6 +508,12 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{NumVars}, \texttt{lambda} \\  
       \:\: Discriminant Analysis & & &\\      
       
+       Stepwise Discriminant&
+        \texttt{stepLDA}, &
+        \texttt{klaR} &
+        None \\
+      \:\: Analysis & \texttt{stepQDA} & \texttt{klaR}  &\\     
+      
       Stepwise Diagonal &
         \texttt{sddaLDA}, &
         \texttt{SDDA} &

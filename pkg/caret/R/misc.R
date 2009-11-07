@@ -151,7 +151,9 @@ modelLookup <- function(model = NULL)
                            "nodeHarvest", "nodeHarvest",
                            "Linda",
                            "QdaCov",
-                           "glmrob"
+                           "glmrob",
+                           "stepLDA", "stepLDA",
+                           "stepQDA", "stepQDA"
                            ),
                          parameter = c(
                            "parameter",      
@@ -237,7 +239,9 @@ modelLookup <- function(model = NULL)
                            "maxinter", "mode",      
                            "parameter",
                            "parameter",
-                           "parameter"
+                           "parameter",
+                           "maxvar", "direction",
+                           "maxvar", "direction"
                            ),
                          label = I(c(
                            "none",      
@@ -325,7 +329,9 @@ modelLookup <- function(model = NULL)
                            "Maximum Interaction Depth", "Prediction Mode",      
                            "none",
                            "none",
-                           "none"
+                           "none",
+                           "Maximum #Variables", "Search Direction" ,
+                           "Maximum #Variables", "Search Direction"
                            )),
                          seq = c(
                            FALSE,
@@ -410,7 +416,9 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE,
                            FALSE,
                            FALSE,
-                           FALSE
+                           FALSE,
+                           FALSE, FALSE,
+                           FALSE, FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -495,7 +503,9 @@ modelLookup <- function(model = NULL)
                            TRUE,  TRUE,
                            FALSE,
                            FALSE,
-                           TRUE
+                           TRUE,
+                           FALSE, FALSE,
+                           FALSE, FALSE
                            ),               
                          forClass =          
                          c(
@@ -581,7 +591,9 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,
                            TRUE,
                            TRUE,
-                           TRUE
+                           TRUE,
+                           TRUE, TRUE,
+                           TRUE, TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -666,7 +678,9 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,
                            TRUE,              ## Linda
                            TRUE,              ## QdaCov
-                           TRUE               ## glmrob
+                           TRUE,              ## glmrob
+                           TRUE, TRUE,        ## stepLDA
+                           TRUE, TRUE        ## stepQDA
                            ),
                          stringsAsFactors  = FALSE               
                          )         

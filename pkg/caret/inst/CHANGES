@@ -1,4 +1,11 @@
 -------------------
+Version: 4.29
+Date: 2009-11-06
+
+Added stepwise variable selection for lda and qda using the 
+stepclass function in klaR
+
+-------------------
 Version: 4.28
 Date: 2009-11-05
 
