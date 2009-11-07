@@ -282,7 +282,13 @@ probFunction <- function(method, modelFit, newdata)
                         out <- cbind(out, 1- out)
                         dimnames(out)[[2]] <-  modelFit$obsLevels
                         out
-                      }
+                      },
+                           stepLDA =, stepQDA =
+                           {
+                             library(MASS)
+                             predict(modelFit$fit,
+                                     newdata[, predictors(modelFit), drop = FALSE])$posterior
+                           }
                       )
 
   if(!is.data.frame(classProb)) classProb <- as.data.frame(classProb)

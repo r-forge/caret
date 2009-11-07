@@ -129,6 +129,7 @@ byComplexity <- function(x, model)
            PART = x[order(x$pruned, -x$threshold),],
            sda = x[order(x$diagonal),],
            glmnet = x[order(-x$lambda, x$alpha),],
+           stepLDA =, stepQDA = x[order(x$maxvar),],
            stop("no sorting routine for this model")
            )
 

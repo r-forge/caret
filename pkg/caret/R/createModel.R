@@ -55,7 +55,7 @@
                    "sddaLDA", "sddaQDA", "glmnet", "slda", "spls", "smda",
                    "qda", "relaxo", "lars", "lars2", "rlm", "vbmpRadial",
                    "superpc", "ppr", "sda", "penalized", "sparseLDA",
-                   "obliqueTree", "nodeHarvest", "Linda", "QdaCov"))
+                   "nodeHarvest", "Linda", "QdaCov", "stepLDA", "stepQDA"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -1239,7 +1239,39 @@
      
                        out <- do.call("glmrob", modelArgs)
                        out
+                     },
+                     stepLDA =
+                     {
+                       library(klaR)
+                       library(MASS)
+                       out <- stepclass(trainX, trainY,
+                                 method = "lda",
+                                 maxvar = tuneValue$.maxvar,
+                                 direction = as.character(tuneValue$.direction),
+                                 ...)
+                       out$fit <- lda(trainX[, predictors(out), drop = FALSE],
+                                      trainY,
+                                      ...)
+                       out
+                     },
+                     stepQDA =
+                     {
+                       library(klaR)
+                       library(MASS)
+                       out <- stepclass(trainX, trainY,
+                                 method = "qda",
+                                 maxvar = tuneValue$.maxvar,
+                                 direction = as.character(tuneValue$.direction),
+                                 ...)
+                       out$fit <- qda(trainX[, predictors(out), drop = FALSE],
+                                      trainY,
+                                      ...)
+                       out
                      }
+
+
+
+                     
                      )
   
 

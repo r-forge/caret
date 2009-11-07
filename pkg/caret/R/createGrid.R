@@ -254,6 +254,7 @@
                       nodeHarvest = expand.grid(
                         .maxinter = 1:len,
                         .mode = c("mean", "outbag")),
+                      stepLDA =, stepQDA = data.frame(.maxvar = Inf, .direction = "both"),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,
