@@ -1,4 +1,12 @@
 -------------------
+Version: 4.30
+Date: 2009-11-09
+
+For whatever reason, there is now a function in the spls package
+by the name of splsda that does the same thing. A few functions
+and a man page were changed to ensure backwards compatibility.
+
+-------------------
 Version: 4.29
 Date: 2009-11-06
 

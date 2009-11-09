@@ -225,7 +225,7 @@ probFunction <- function(method, modelFit, newdata)
                       {
                         library(spls)
                         if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
-                        predict(modelFit, newdata, type = "prob")
+                        caret:::predict.splsda(modelFit, newdata, type = "prob")
                       },
                       sda =
                       {                  
@@ -275,20 +275,12 @@ probFunction <- function(method, modelFit, newdata)
                         colnames(probs) <- names(modelFit@prior)
                         probs
                       },
-                      glmrob =
+                      stepLDA =, stepQDA =
                       {
-                        library(robust)
-                        out <- predict(modelFit, newdata, type = "response")
-                        out <- cbind(out, 1- out)
-                        dimnames(out)[[2]] <-  modelFit$obsLevels
-                        out
-                      },
-                           stepLDA =, stepQDA =
-                           {
-                             library(MASS)
-                             predict(modelFit$fit,
-                                     newdata[, predictors(modelFit), drop = FALSE])$posterior
-                           }
+                        library(MASS)
+                        predict(modelFit$fit,
+                                newdata[, predictors(modelFit), drop = FALSE])$posterior
+                      }
                       )
 
   if(!is.data.frame(classProb)) classProb <- as.data.frame(classProb)

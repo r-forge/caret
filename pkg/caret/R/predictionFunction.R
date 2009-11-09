@@ -514,7 +514,7 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                {
                                  predict(modelFit, newdata)
                                } else {
-                                 as.character(predict(modelFit, newdata, type = "class"))
+                                 as.character(caret:::predict.splsda(modelFit, newdata, type = "class"))
                                }
                            },
                            sda =
@@ -692,20 +692,6 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                              library(rrcov)
                              predict(modelFit, newdata)@classification
                            },                           
-                           glmrob =
-                           {
-                             library(robust)
-                             if(modelFit$problemType == "Classification")
-                               {
-                                 probs <-  predict(modelFit, newdata, type = "response")
-                                 out <- ifelse(probs > .5,
-                                               modelFit$obsLevel[1],
-                                               modelFit$obsLevel[2])
-                               } else {
-                                 out <- predict(modelFit, newdata, type = "response")
-                               }
-                             out
-                           },
                            stepLDA =, stepQDA =
                            {
                              library(MASS)
