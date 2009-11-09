@@ -1020,7 +1020,7 @@
                        library(spls)
                        if(is.factor(trainY))
                          {
-                           splsda(trainX, trainY, K = tuneValue$.K, eta = tuneValue$.eta,
+                           caret:::splsda(trainX, trainY, K = tuneValue$.K, eta = tuneValue$.eta,
                                   kappa = tuneValue$.kappa, ...)
                          } else {
                            spls(trainX, trainY, K = tuneValue$.K, eta = tuneValue$.eta,
@@ -1214,31 +1214,6 @@
                      {
                        library(rrcov)
                        QdaCov(trainX, trainY, ...)
-                     },
-                     glmrob = 
-                     {
-                       library(robust)
-                       ##check for family in dot and over-write if none
-                       theDots <- list(...)
-                       if(!any(names(theDots) == "family"))
-                         {
-                           theDots$family <- if(is.factor(data$.outcome)) binomial() else gaussian()              
-                         }
-
-                       ## There is no documentation on ?glmrob about this, but binary responses
-                       ## should be represented by 0/1 numeric values rather than factors
-                       if(type == "Classification") data$.outcome <- ifelse(data$.outcome == obsLevels[1], 1, 0)
-
-                       ## pass in any model weights
-                       if(!is.null(modelWeights)) theDots$weights <- modelWeights
-                       
-                       modelArgs <- c(
-                                      list(formula = modFormula,
-                                           data = data),
-                                      theDots)
-     
-                       out <- do.call("glmrob", modelArgs)
-                       out
                      },
                      stepLDA =
                      {
