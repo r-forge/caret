@@ -81,13 +81,13 @@ In many cases, using these models with built--in feature selection will be more 
 
 \subsection{Searching the Feature Space}
 
-Many feature selection routines used a ``wrapper'' approach to find appropriate variables such that an algorithm that searches the feature space repeatedly fits the model with different predictor SETS. The best predictor set is determined by some measure of performance (i.e. $R^2$, classification accuracy, ECT). Examples of search functions are genetic algorithms, simulated annealing and forward/backward/stepwise selection methods. In theory, each of these search routines could converge to an optimal set of predictors.
+Many feature selection routines used a ``wrapper'' approach to find appropriate variables such that an algorithm that searches the feature space repeatedly fits the model with different predictor sets. The best predictor set is determined by some measure of performance (i.e. $R^2$, classification accuracy, etc). Examples of search functions are genetic algorithms, simulated annealing and forward/backward/stepwise selection methods. In theory, each of these search routines could converge to an optimal set of predictors.
 
 An example of one search routine is backwards selection (a.k.a. recursive feature elimination). 
 
 \subsubsection{Backwards Selection}
 
-First, the algorithm fits the model to all predictors. Each predictor is ranked ITS importance to the model. Let $S$ be a sequence of ordered numbers which are candidate values for the number of predictors to retain ($S_1 > S_2, \ldots$). At each iteration of feature selection, the $S_i$ top raked predictors are retained, the model is refit and performance is assessed. The value of $S_i$ with the best performance is determined and the top $S_i$ predictors are used to fit the final model. Algorithm \ref{A:rfe} has a more complete definition.
+First, the algorithm fits the model to all predictors. Each predictor is ranked using it's importance to the model. Let $S$ be a sequence of ordered numbers which are candidate values for the number of predictors to retain ($S_1 > S_2, \ldots$). At each iteration of feature selection, the $S_i$ top raked predictors are retained, the model is refit and performance is assessed. The value of $S_i$ with the best performance is determined and the top $S_i$ predictors are used to fit the final model. Algorithm \ref{A:rfe} has a more complete definition.
 
 The algorithm has an optional step (line \ref{A:rerank}) where the predictor rankings are recomputed on the model on the reduced feature set. Svetnik {\it el al} (2004) showed that, for random forest models, there was a decrease in performance when the rankings were re--computed at every step. However, in other cases when the initial rankings are not good (e.g. linear models with highly collinear predictors), re--calculation can slightly improve performance.
 
@@ -175,7 +175,7 @@ While this will provide better estimates of performance, it is more computationa
     
     \vspace*{3pt} Determine the appropriate number of predictors \nllabel{A:selectSize}\vspace*{3pt}\;
     
-   \vspace*{3pt}  Estimate the fial list of predictors to keep in the final model\nllabel{A:selectVar}\vspace*{3pt}\;
+   \vspace*{3pt}  Estimate the final list of predictors to keep in the final model\nllabel{A:selectVar}\vspace*{3pt}\;
 
     \vspace*{3pt} Fit the final model based on the optimal $S_i$ using the original training set\nllabel{A:fit2} \vspace*{3pt}\;    
     
@@ -191,13 +191,13 @@ In \texttt{caret}, Algorithm \ref{A:rfe} is implemented by the function \texttt{
 \item \texttt{sizes}, a integer vector for the specific subset sizes that should be tested (which need not to include \texttt{ncol(x)}) 
 \item \texttt{rfeControl}, a list of options that can be used to specify the model and the methods for prediction, ranking etc.
 \end{itemize}
-For a specific model, a set of functions must be specified in \texttt{rfeControl$\$$functions}. Section \ref{S:helpers} below has descriptions of these sub--functions. There are a number of pre--defined sets of functions for several models, including: linear regression (in the object \texttt{lmFuncs}), random forests (\texttt{rfFuncs}), naive Bayes (\texttt{nbFuncs}), bagged trees (\texttt{treebagFuncs}) and functions that can be used with \texttt{caret}'s train function (\texttt{caretFuncs}). The latter is useful if the model has tuning parameters that must be determined at each iteration.
+For a specific model, a set of functions must be specified in \texttt{rfeControl$\$$functions}. Section \ref{S:helpers} below has descriptions of these sub--functions. There are a number of pre--defined sets of functions for several models, including: linear regression (in the object \texttt{lmFuncs}), random forests (\texttt{rfFuncs}), naive Bayes (\texttt{nbFuncs}), bagged trees (\texttt{treebagFuncs}) and functions that can be used with \texttt{caret}'s \texttt{train} function (\texttt{caretFuncs}). The latter is useful if the model has tuning parameters that must be determined at each iteration.
 
 
 \subsection{An Example}
 
 
-To test the algorithm, the ``Friedman 1'' benchmark (Friedman, 1991) was used. There are three informative variables generated by the equation
+To test the algorithm, the ``Friedman 1'' benchmark (Friedman, 1991) was used. There are five informative variables generated by the equation
 \[
 y = 10 \sin(\pi x_1x_2) + 20 (x_3 - 0.5)^2 + 10 x_4 + 5 x_5 + N(0, \sigma^2)
 \]
@@ -241,7 +241,7 @@ Recursive feature selection
 
 Outer resamping method was 10 iterations of cross-validation. 
 
-Resampling perfromance over subset size:
+Resampling performance over subset size:
 
  Variables  RMSE Rsquared RMSESD RsquaredSD Selected
          1 3.473   0.5285 0.4706     0.1219         
@@ -312,11 +312,11 @@ There are also several plot methods to visualize the results. \texttt{plot(lmPro
 
 To use feature elimination for an arbitrary model, a set of functions must be passed to \texttt{rfe} for each of the steps in Algorithm  \ref{A:rfe2}. This section defines those functions and uses the existing random forest functions as an illustrative example.
 
-\subsubsection{The \texttt{summary} Function}
+\subsubsection{The \texttt{summary} Function}\label{S:summary}
 
 The \texttt{summary} function takes the observed and predicted values and computes one or more performance metrics (see line \ref{A:summary}). The input is a data frame with columns \texttt{obs} and \texttt{pred}. The output should be a named vector of numeric variables. Note that the \texttt{metric} argument of the \texttt{rfe} function should reference one of the names of the output of \texttt{summary}.
 
-\subsubsection{The \texttt{fit} Function}
+\subsubsection{The \texttt{fit} Function}\label{S:fit}
 
 This function builds the model based on the current data set (lines line \ref{A:fit0},  \ref{A:fit1} and \ref{A:fit2}). The arguments for the function must be:
 \begin{itemize}
@@ -342,7 +342,7 @@ function (x, y, first, last, ...)
 \end{Schunk}
 For feature selection without re--ranking at each iteration, the random forest variable importances only need to be computed on the first iterations when all of the predictors are in the model. This can be accomplished using  \texttt{importance = first}.
 
-\subsubsection{The \texttt{pred} Function}
+\subsubsection{The \texttt{pred} Function}\label{S:pred}
 
 This function returns a vector of predictions (numeric or factors) from the current model (lines \ref{A:pred0} and \ref{A:pred1}). The input arguments must be
 \begin{itemize}
@@ -490,9 +490,9 @@ Note that if the predictor rankings are recomputed at each iteration (line \ref{
 For random forest, we fit the same series of model sizes as the linear model. The option to save all the resampling results across subset sizes was changed for this model and are used to show the lattice plot function capabilities in Figure \ref{F:rf2}.
 \begin{Schunk}
 \begin{Sinput}
-> set.seed(10)
 > ctrl$functions <- rfFuncs
 > ctrl$returnResamp <- "all"
+> set.seed(10)
 > rfProfile <- rfe(x, y, sizes = subsets, rfeControl = ctrl)
 > print(rfProfile)
 \end{Sinput}
@@ -501,7 +501,7 @@ Recursive feature selection
 
 Outer resamping method was 10 iterations of cross-validation. 
 
-Resampling perfromance over subset size:
+Resampling performance over subset size:
 
  Variables  RMSE Rsquared RMSESD RsquaredSD Selected
          1 3.768   0.4025 0.3996     0.1628         
@@ -536,6 +536,132 @@ The top 4 variables (out of 4):
     \end{center}
 \end{figure}
 
+\clearpage
+
+\section{Feature Selection Using Univariate Filters}
+
+Another approach to feature selection is to pre--screen the predictors using simple univariate statistical methods then only use those that pass some criterion in the subsequent model steps. Similar to recursive selection, cross-validation of the subsequent models will be biased as the remaining predictors have already been evaluate on the data set. Proper performance estimates via resampling should include the feature selection step.
+
+As an example, it has been suggested for classification models, that predictors can be filtered by conducting some sort of $k$--sample test (where $k$ is the number of classes) to see if the mean of the predictor is different between the classes. Wilcoxon tests, $t$-tests and ANOVA models are sometimes used. Predictors that have statistically significant differences between the classes are then used for modeling.
+
+The caret function \texttt{sbf} (for selection by filter) can be used
+to cross--validate such feature selection schemes. Similar to
+\texttt{rfe}, functions can be passed into \texttt{sbf} for the
+computational components: univariate filtering, model fitting, prediction and performance summaries (details are given below).
+
+The function is applied to the entire training set and also to different resampled versions of the data set. From this, generalizable estimates of performance can be computed that properly take into account the feature selection step. Also, the results of the predictor filters can be tracked over resamples to understand the uncertainty in the filtering.
+
+\subsection{Basic Syntax}
+
+Similar to the \texttt{rfe} function, the syntax for \texttt{sbf} is:
+\begin{Verbatim}
+   sbf(predictors, outcome, sbfControl = sbfControl(), ...)
+   ## or 
+   sbf(formula, data, sbfControl = sbfControl(), ...)
+\end{Verbatim}
+In this case, the details are specificed using the \texttt{sbfControl}
+function. Here, the argument \texttt{functions} dictates what the
+different components should do. This argument should have elements
+called \texttt{filter}, \texttt{fit}, \texttt{pred} and \texttt{summary}.
+
+\subsubsection{The \texttt{filter} Function}\label{S:filter}
+
+This function takes as inputs the predictors and the outcome in
+objects called \texttt{x} and \texttt{y}, respectively. The output
+should be a named logical vector where the names correspond to the
+column names of \texttt{x}. Columns with values of \texttt{TRUE} will
+be used in the subsequent model.
+
+There are two built--in functions called \texttt{anovaFilter} and
+\texttt{gamFilter}. \texttt{anovaFilter} treats the outcome as the
+independent variable and the predictor as the outcome. In this way,
+the null hypothesis is that the mean predictor values are equal across
+the different classes. For regression, \texttt{gamFilter} fits a smoothing spline in
+the predictor to the outcome  using a generalized additive model and tests to see if there is any
+functional relationship between the two. 
+
+\subsubsection{The \texttt{fit} Function}
+
+The component is very similar to the function described in Section
+\ref{S:fit}. For \texttt{sbf}, there are no \texttt{first} or
+\texttt{last} arguments. The function should have arguments
+\texttt{x}, \texttt{y} and \texttt{...}. The data within \texttt{x}
+have been filtered using the \texttt{filter} function described
+above. The output of the \texttt{fit} function should be a fitted model.
+
+
+With some data sets, no predictors will survive the filter. In these cases, a model with predictors cannot be computed, but the lack of viable predictors should not be ignored in the final results. To account for this issue, \texttt{caret} contains a model function called \texttt{nullModel} that fits a simple model that is independent of any of the predictors. For problems where the outcome is numeric, the function predicts every sample using the simple mean o the training set outcomes. For classification, the model predicts all samples using the most prevalent class in the training data.
+
+This function can be used in the \texttt{fit} component function to
+``error-trap'' cases where no predictors are selected. For example,
+there are several built--in functions for some models. The object
+\texttt{rfSBF} is a set of functions that may be useful for fitting
+random forest models with filtering. The \texttt{fit} function here
+uses \texttt{nullModel} to check for cases with no predictors:
+\begin{Schunk}
+\begin{Sinput}
+> rfSBF$fit
+\end{Sinput}
+\begin{Soutput}
+function (x, y, ...) 
+{
+    if (ncol(x) > 0) {
+        library(randomForest)
+        randomForest(x, y, ...)
+    }
+    else nullModel(y = y)
+}
+<environment: namespace:caret>
+\end{Soutput}
+\end{Schunk}
+
+\subsubsection{The \texttt{summary} and \texttt{pred} Functions}
+
+The \texttt{summary} function is used to calculate model performance on held--out samples. The \texttt{pred} function is used to predict new samples using the current
+predictor set. The arguments and outputs for these two functions are identical to the previously discussed \texttt{summary} and \texttt{pred} functions in Sections \ref{S:summary} and \ref{S:pred}, respectively.
+
+\subsection{The Example}
+
+Returning to the example from (Friedman, 1991), we can fit another
+random forest model with the predictors pre--filtered using the
+generalized additive model approach described in Section \ref{S:filter}.
+
+\begin{Schunk}
+\begin{Sinput}
+> set.seed(10)
+> rfWithFilter <- sbf(x, y, sbfControl = sbfControl(functions = rfSBF, 
++     method = "cv", verbose = FALSE))
+> print(rfWithFilter)
+\end{Sinput}
+\begin{Soutput}
+Selection By Filter
+
+Outer resamping method was 10 iterations of cross-validation. 
+
+Resampling performance:
+
+  RMSE Rsquared RMSESD RsquaredSD
+ 4.133   0.2799 0.4713     0.1818
+
+Using the training set, 7 variables were selected:
+   var1, var2, var3, var21, var23...
+
+During resampling, the top 5 selected variables (out of a possible 14):
+   var1 (100%), var3 (100%), var42 (100%), var2 (90%), var23 (60%)
+
+On average, 6.4 variables were selected (min = 5, max = 9)
+\end{Soutput}
+\end{Schunk}
+
+In this case, the training set indicated that
+7 should be used in the random
+forest model, but the resampling results indicate that there is some
+variation in this number. Some of the informative predictors are
+used, but a few others are erroneous retained.
+
+Similar to \texttt{rfe}, there are methods for \texttt{predictors},
+\texttt{densityplot}, \texttt{histogram} and \texttt{varImp}.
+
 
 \section{Session Information}
 
@@ -544,11 +670,12 @@ The top 4 variables (out of 4):
   \item Locale: \verb|en_US.UTF-8/en_US.UTF-8/C/C/en_US.UTF-8/en_US.UTF-8|
   \item Base packages: base, datasets, graphics, grDevices, grid,
     methods, splines, stats, tools, utils
-  \item Other packages: caret~4.28, class~7.3-1, e1071~1.5-20,
-    ellipse~0.3-5, gbm~1.6-3, Hmisc~3.7-0, ipred~0.8-8, kernlab~0.9-9,
-    klaR~0.6-0, lattice~0.17-26, MASS~7.3-3, mlbench~1.1-6, nnet~7.3-1,
-    pls~2.1-0, plyr~0.1.9, proxy~0.4-4, randomForest~4.5-33,
-    reshape~0.8.3, rpart~3.1-45, survival~2.35-7
+  \item Other packages: akima~0.5-3, caret~4.31, class~7.3-1,
+    e1071~1.5-20, ellipse~0.3-5, gam~1.0.1, gbm~1.6-3, Hmisc~3.7-0,
+    ipred~0.8-8, kernlab~0.9-9, klaR~0.6-0, lattice~0.17-26,
+    MASS~7.3-3, mlbench~1.1-6, nnet~7.3-1, pls~2.1-0, plyr~0.1.9,
+    proxy~0.4-4, randomForest~4.5-33, reshape~0.8.3, rpart~3.1-45,
+    survival~2.35-7
   \item Loaded via a namespace (and not attached): cluster~1.12.1
 \end{itemize}
 \section{References}
