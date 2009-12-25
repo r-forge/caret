@@ -85,6 +85,7 @@ modelLookup <- function(model = NULL)
                            "rfNWS",
                            "rfLSF",
                            "rf",
+                           "parRF",
                            ## to keep backwards compat, we have double svm entries
                            "svmpoly", "svmpoly", "svmpoly", 
                            "svmradial", "svmradial",                           
@@ -153,7 +154,8 @@ modelLookup <- function(model = NULL)
                            "QdaCov",
                            "glmrob",
                            "stepLDA", "stepLDA",
-                           "stepQDA", "stepQDA"
+                           "stepQDA", "stepQDA",
+                           "plr", "plr"
                            ),
                          parameter = c(
                            "parameter",      
@@ -174,7 +176,8 @@ modelLookup <- function(model = NULL)
                            "n.trees", "interaction.depth",  "shrinkage",          
                            "mtry",
                            "mtry",         
-                           "mtry", 
+                           "mtry",
+                           "mtry",
                            "C", "degree", "scale",  
                            "C", "sigma",
                            "C", "degree", "scale",  
@@ -241,7 +244,8 @@ modelLookup <- function(model = NULL)
                            "parameter",
                            "parameter",
                            "maxvar", "direction",
-                           "maxvar", "direction"
+                           "maxvar", "direction",
+                           "lambda", "cp"                           
                            ),
                          label = I(c(
                            "none",      
@@ -262,6 +266,7 @@ modelLookup <- function(model = NULL)
                            "#Trees", "Interaction Depth",  "Learning Rate",
                            "#Randomly Selected Predictors",
                            "#Randomly Selected Predictors",         
+                           "#Randomly Selected Predictors",
                            "#Randomly Selected Predictors", 
                            "Cost", "Polynomial Degree", "Scale",  
                            "Cost", "Sigma",
@@ -331,7 +336,8 @@ modelLookup <- function(model = NULL)
                            "none",
                            "none",
                            "Maximum #Variables", "Search Direction" ,
-                           "Maximum #Variables", "Search Direction"
+                           "Maximum #Variables", "Search Direction",
+                           "L2 Penalty", "Complexity Parameter"
                            )),
                          seq = c(
                            FALSE,
@@ -352,6 +358,7 @@ modelLookup <- function(model = NULL)
                            TRUE,    FALSE,   FALSE,         
                            FALSE,
                            FALSE,         
+                           FALSE,
                            FALSE,
                            FALSE,   FALSE,   FALSE, #svmPoly  
                            FALSE,   FALSE,                              
@@ -418,6 +425,7 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            FALSE,
                            FALSE, FALSE,
+                           FALSE, FALSE,
                            FALSE, FALSE
                            ),
                          forReg = c(
@@ -439,7 +447,8 @@ modelLookup <- function(model = NULL)
                            TRUE,    TRUE,    TRUE,       
                            TRUE,
                            TRUE,         
-                           TRUE,         
+                           TRUE,
+                           TRUE,
                            TRUE,    TRUE,    TRUE, 
                            TRUE,    TRUE,
                            TRUE,    TRUE,    TRUE, 
@@ -505,6 +514,7 @@ modelLookup <- function(model = NULL)
                            FALSE,
                            TRUE,
                            FALSE, FALSE,
+                           FALSE, FALSE,
                            FALSE, FALSE
                            ),               
                          forClass =          
@@ -527,7 +537,8 @@ modelLookup <- function(model = NULL)
                            TRUE,    TRUE,    TRUE,        
                            TRUE,
                            TRUE,           
-                           TRUE, 
+                           TRUE,
+                           TRUE,
                            TRUE,    TRUE,    TRUE, ##svmPoly 
                            TRUE,    TRUE,
                            TRUE,    TRUE,    TRUE, 
@@ -593,6 +604,7 @@ modelLookup <- function(model = NULL)
                            TRUE,
                            TRUE,
                            TRUE, TRUE,
+                           TRUE, TRUE,
                            TRUE, TRUE
                            ),
                          probModel = c(
@@ -614,7 +626,8 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE, TRUE, #   gbm (3)         
                            TRUE,             #   rfNWS (1)
                            TRUE,             #   rfLSF (1)         
-                           TRUE,             #   rf (1) 
+                           TRUE,             #   rf (1)
+                           TRUE,             #   parRF(1)
                            TRUE, TRUE, TRUE, #   svmPoly (3) 
                            TRUE, TRUE,       #   svmRadial (2)
                            TRUE, TRUE, TRUE, #   svmpoly (3) 
@@ -680,7 +693,8 @@ modelLookup <- function(model = NULL)
                            TRUE,              ## QdaCov
                            TRUE,              ## glmrob
                            TRUE, TRUE,        ## stepLDA
-                           TRUE, TRUE        ## stepQDA
+                           TRUE, TRUE,        ## plr
+                           TRUE, TRUE         ## stepQDA
                            ),
                          stringsAsFactors  = FALSE               
                          )         

@@ -1,4 +1,12 @@
 -------------------
+Version: 4.32
+Date: 2009-12-24
+
+Added a parallel random forest method in train() using the foreach package. 
+Also added penalized logistic regression using the plr() function in the
+stepPlr package.
+
+-------------------
 Version: 4.31
 Date: 2009-12-07
 

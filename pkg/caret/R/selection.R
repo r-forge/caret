@@ -18,7 +18,7 @@ byComplexity <- function(x, model)
              # complexity faster than number of splits
              x[order(x$n.trees, x$interaction.depth, x$shrinkage),] 
            },
-           rf =, rfNWS =, rfLSF =, gpls =, pcr =, pls =, PLS =, pam =, cforest =,
+           rf =, rfNWS =, rfLSF =, parRF =, gpls =, pcr =, pls =, PLS =, pam =, cforest =,
            nb =, rpart =, ctree2 =, logitBoost=, J48 =, LMT =, ppr =, mda =, pda =, pda2 =,
            lars =, lars2 =, Linda =, QdaCov = 
            {
@@ -125,6 +125,10 @@ byComplexity <- function(x, model)
            {
              x[order(x$maxinter, x$mode),]
            },
+           plr =
+           {
+             x[order(-x$lambda),]
+           },           
            obliqueTree = x[order(x$variable.selection),],
            PART = x[order(x$pruned, -x$threshold),],
            sda = x[order(x$diagonal),],
