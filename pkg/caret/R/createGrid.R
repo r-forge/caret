@@ -91,6 +91,19 @@
         }
       data.frame(.mtry = tuneSeq)
     }
+
+  GAMensTune <- function(data, len)
+    {
+      tmp <- rfTune(data, len)
+      out <- expand.grid(
+                         .rsm_size = tmp[,1],
+                         .iter = (1:len) * 10,
+                         .fusion = "avgagg")
+      out$.fusion <- as.character(out$.fusion)
+      colnames(out) <- c(".rsm_size", ".iter", ".fusion")
+      out
+    }
+
   
   cforestTune <- function(data, len)
     {
@@ -257,7 +270,8 @@
                       stepLDA =, stepQDA = data.frame(.maxvar = Inf, .direction = "both"),
                       plr = expand.grid(
                         .cp = "bic", 
-                        .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),         
+                        .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
+                      GAMens = GAMensTune(data, len),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,

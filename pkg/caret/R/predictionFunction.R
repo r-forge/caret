@@ -705,6 +705,11 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                              ifelse(predict(modelFit, as.matrix(newdata), type = "class") == 1,
                                     modelFit$obsLevels[1],
                                     modelFit$obsLevels[2])
+                           },
+                           GAMens =
+                           {
+                             library(GAMens)
+                             predict(modelFit, newdata)$class[,1]
                            }
                            )
   predictedValue

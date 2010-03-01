@@ -1,4 +1,13 @@
 -------------------
+Version: 4.33
+Date: 2010-03-01
+
+Added GAMens (ensembles using gams)
+
+Fixed a bug in roc() that, for some data cases, would reverse the "positive"
+class and report sensitivity as specificity and vice-versa.
+
+-------------------
 Version: 4.32
 Date: 2009-12-24
 

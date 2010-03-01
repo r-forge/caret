@@ -1276,6 +1276,38 @@
                                   cp = as.character(tuneValue$.cp),
                                   ...)
                        out
+                     },
+                     GAMens =
+                     {
+                       library(GAMens)
+                       modParam <- list(formula = modFormula,
+                                        data = data,
+                                        autoform = TRUE,
+                                        rsm_size =tuneValue$.rsm_size,
+                                        rsm = ifelse(tuneValue$.rsm_size > 0, TRUE, FALSE),
+                                        iter = tuneValue$.iter,
+                                        bagging = ifelse(tuneValue$.iter > 0, TRUE, FALSE),
+                                        fusion = tuneValue$.fusion)
+                       theDots <- list(...)
+                       if(any(names(theDots) == "autoform"))
+                         {
+                           warning("autoform is automatically set to TRUE by train()")
+                           theDots$autoform <- NULL
+                         }
+                       if(any(names(theDots) == "rsm"))
+                         {
+                           warning("rsm is automatically set using the rsm_size parameter by train()")
+                           theDots$rsm <- NULL
+                         }
+                       if(any(names(theDots) == "bagging"))
+                         {
+                           warning("bagging is automatically set using the rsm_size parameter by train()")
+                           theDots$bagging <- NULL
+                         }
+                       modParam <- c(modParam, theDots)
+                       out <- do.call("GAMens", modParam)
+                       ## "fix" call afterwords?
+                       out  
                      }
                      
                      )
