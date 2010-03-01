@@ -288,6 +288,15 @@ probFunction <- function(method, modelFit, newdata)
                         out <- cbind(out, 1-out)
                         dimnames(out)[[2]] <-  modelFit$obsLevels
                         out
+                      },
+                      GAMens =
+                      {
+                        library(GAMens)
+                        out <- predict(modelFit, newdata)$pred
+                        out <- cbind(1 - out, out)
+                        dimnames(out)[[2]] <-  modelFit$obsLevels
+                        out
+
                       }
                       )
 

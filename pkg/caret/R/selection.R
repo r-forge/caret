@@ -134,6 +134,7 @@ byComplexity <- function(x, model)
            sda = x[order(x$diagonal),],
            glmnet = x[order(-x$lambda, x$alpha),],
            stepLDA =, stepQDA = x[order(x$maxvar),],
+           GAMens = x[order(x$iter, x$rsm_size),],
            stop("no sorting routine for this model")
            )
 

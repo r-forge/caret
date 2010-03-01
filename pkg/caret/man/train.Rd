@@ -63,7 +63,7 @@ Boosted regression models \tab \code{glmboost} \tab \pkg{mboost} \tab \code{msto
 \tab \code{gamboost} \tab \pkg{mboost} \tab  \code{mstop}\cr    
 \tab \code{logitBoost} \tab \pkg{caTools} \tab  \code{nIter}\cr    
 Random forests \tab  \code{rf} \tab \pkg{randomForest} \tab \code{mtry} \cr
-\tab \code{parRF} \tab \pkg{randomForest}, pkg{foreach} \tab \code{mtry} \cr   
+\tab \code{parRF} \tab \pkg{randomForest}, \pkg{foreach} \tab \code{mtry} \cr   
 \tab \code{cforest} \tab \pkg{party} \tab \code{mtry} \cr   
 Bagged trees \tab \code{treebag} \tab \pkg{ipred} \tab None \cr 
 Node Harvest \tab \code{nodeHarvest} \tab \pkg{nodeHarvest} \tab \code{maxinter}, \code{node} \cr 
@@ -115,6 +115,7 @@ Stabilised linear discriminant analysis \tab \code{slda} \tab \pkg{ipred} \tab N
 Flexible discriminant analysis (MARS) \tab \code{fda} \tab \pkg{mda}, \pkg{earth} \tab \code{degree}, \code{nprune} \cr
 Bagged FDA \tab \code{bagFDA} \tab \pkg{caret},  \pkg{earth} \tab \code{degree}, \code{nprune} \cr  
 Logistic/multinomial regression \tab \code{multinom} \tab \pkg{nnet} \tab \code{decay}\cr 
+Penalized logistic regression \tab \code{plr} \tab \pkg{stepPlr} \tab \code{lambda}, \code{cp}\cr 
 Rule--based classification \tab \code{J48} \tab \pkg{RWeka} \tab \code{C}\cr 
  \tab \code{OneR} \tab \pkg{RWeka} \tab None\cr
  \tab \code{PART} \tab \pkg{RWeka} \tab \code{threshold}, \code{pruned}\cr
@@ -255,7 +256,21 @@ usingMPI <-  train(medv ~ .,
                    "glmboost",
                    trControl = mpiControl)
 
-stopCluster(cl)
+}
+
+################################################
+## Parallel Random Forest using foreach and doMPI
+
+\dontrun{
+library(doMPI)
+cl <- startMPIcluster(count = 5, verbose = TRUE)
+registerDoMPI(cl)
+
+rfMPI <- train(medv ~ .,
+               data = BostonHousing, 
+               "parRF")
+
+closeCluster(cl)
 }
 
 #######################################
