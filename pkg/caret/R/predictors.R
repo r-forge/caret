@@ -461,3 +461,7 @@ predictors.stepclass <- function(x, ...)
     form[[2]] <- NULL
     all.vars(form)
   }
+
+
+predictors.trocc <- function(x, ...) x$genes
+  

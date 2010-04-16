@@ -156,7 +156,8 @@ modelLookup <- function(model = NULL)
                            "stepLDA", "stepLDA",
                            "stepQDA", "stepQDA",
                            "plr", "plr",
-                           "GAMens", "GAMens", "GAMens"
+                           "GAMens", "GAMens", "GAMens",
+                           "rocc"
                            ),
                          parameter = c(
                            "parameter",      
@@ -247,7 +248,8 @@ modelLookup <- function(model = NULL)
                            "maxvar", "direction",
                            "maxvar", "direction",
                            "lambda", "cp",
-                           "iter", "rsm_size", "fusion"
+                           "iter", "rsm_size", "fusion",
+                           "xgenes"
                            ),
                          label = I(c(
                            "none",      
@@ -330,7 +332,7 @@ modelLookup <- function(model = NULL)
                            "none",
                            "none",
                            "Theta Estimated",
-                          "# Predictors",  "# Subclasses", "Lambda",
+                           "# Predictors",  "# Subclasses", "Lambda",
                            "#Components",
                            "Oblique Splits", "Variable Selection Method",
                            "Maximum Interaction Depth", "Prediction Mode",      
@@ -340,7 +342,8 @@ modelLookup <- function(model = NULL)
                            "Maximum #Variables", "Search Direction" ,
                            "Maximum #Variables", "Search Direction",
                            "L2 Penalty", "Complexity Parameter",
-                           "Ensemble Size", "#Random Feature Subsets", "Data Fusion Function"
+                           "Ensemble Size", "#Random Feature Subsets", "Data Fusion Function",
+                           "#Variables Retained"
                            )),
                          seq = c(
                            FALSE,
@@ -430,7 +433,8 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE,
                            FALSE, FALSE,
                            FALSE, FALSE,
-                           FALSE, FALSE, FALSE
+                           FALSE, FALSE, FALSE,
+                           FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -520,7 +524,8 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE,
                            FALSE, FALSE,
                            FALSE, FALSE,
-                           FALSE, FALSE, FALSE
+                           FALSE, FALSE, FALSE,
+                           FALSE
                            ),               
                          forClass =          
                          c(
@@ -611,7 +616,8 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,
                            TRUE, TRUE,
                            TRUE, TRUE,
-                           TRUE, TRUE, TRUE
+                           TRUE, TRUE, TRUE,
+                           TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -701,7 +707,8 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,        ## stepLDA
                            TRUE, TRUE,        ## plr
                            TRUE, TRUE,        ## stepQDA
-                           TRUE, TRUE, TRUE   ## GAMens
+                           TRUE, TRUE, TRUE,  ## GAMens,
+                           FALSE              ## rrocc
                            ),
                          stringsAsFactors  = FALSE               
                          )         

@@ -710,6 +710,13 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                            {
                              library(GAMens)
                              predict(modelFit, newdata)$class[,1]
+                           },
+                           rocc =
+                           {
+                             library(rocc)
+                             tmp <- p.rocc(modelFit, t(as.matrix(newdata)))
+                             factor(ifelse(tmp == "1",  modelFit$obsLevels[1],  modelFit$obsLevels[2]),
+                                    levels =  modelFit$obsLevels)
                            }
                            )
   predictedValue

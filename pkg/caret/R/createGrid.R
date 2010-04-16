@@ -169,6 +169,12 @@
       data.frame(.step = tuneSeq)
     }
 
+  roccTune <- function(data, len)
+    {
+      tmp <- rfTune(data, len)
+      names(tmp) <- ".xgenes"
+      tmp
+    }
   
   trainGrid <- switch(method,
                       nnet =, pcaNNet = expand.grid(
@@ -272,6 +278,7 @@
                         .cp = "bic", 
                         .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                       GAMens = GAMensTune(data, len),
+                      rocc = roccTune(data, len),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,
