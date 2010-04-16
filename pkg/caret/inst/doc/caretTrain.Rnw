@@ -636,7 +636,11 @@ There is additional functionality in \texttt{train} that is described in the nex
       Learned Vector Quantization &
          \texttt{lvq} & 
             \texttt{class}       &          
-            \texttt{k} \\            
+            \texttt{k} \\       
+      ROC Curves &
+         \texttt{rocc} & 
+            \texttt{rocc}       &          
+            \texttt{xgenes} \\                 
 \label{label-name}
 \end{longtable}
 
