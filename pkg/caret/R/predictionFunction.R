@@ -717,7 +717,26 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                              tmp <- p.rocc(modelFit, t(as.matrix(newdata)))
                              factor(ifelse(tmp == "1",  modelFit$obsLevels[1],  modelFit$obsLevels[2]),
                                     levels =  modelFit$obsLevels)
-                           }
+                           },
+                           foba =
+                           {
+                             library(foba)
+                             out <- predict(modelFit, newdata, k = modelFit$tuneValue$.k, type = "fit")$fit
+                             
+                             if(!is.null(param))
+                               {
+                                 tmp <- data.frame(
+                                                   matrix(NA, nrow = nrow(newdata), ncol = nrow(param)),
+                                                   stringsAsFactors = FALSE)
+                                 
+                                 for(j in seq(along = param$.k))
+                                   {
+                                     tmp[,j] <- predict(modelFit, newdata, k = param$.k[j], type = "fit")$fit
+                                   }
+                                 out <- cbind(out, tmp)
+                               }
+                             out
+                           },
                            )
   predictedValue
 }

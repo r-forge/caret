@@ -130,6 +130,7 @@ byComplexity <- function(x, model)
              x[order(-x$lambda),]
            },
            rocc = x[order(x$xgenes),],
+           foba = x[order(x$k, -x$lambda),], 
            obliqueTree = x[order(x$variable.selection),],
            PART = x[order(x$pruned, -x$threshold),],
            sda = x[order(x$diagonal),],

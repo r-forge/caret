@@ -1,4 +1,10 @@
 -------------------
+Version: 4.36
+Date: 2010-04-17
+
+Added penalized linear models from the foba package
+
+-------------------
 Version: 4.35
 Date: 2010-04-15
 
