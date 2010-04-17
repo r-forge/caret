@@ -279,6 +279,9 @@
                         .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                       GAMens = GAMensTune(data, len),
                       rocc = roccTune(data, len),
+                      foba = expand.grid(
+                        .lambda = 10 ^ seq(-5, -1, length = len),
+                        .k = larsTune(data, len)[,1]),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,

@@ -420,25 +420,6 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{RWeka}    & 
             \texttt{pruned}  \\             
 
-     Least Angle   Regression&
-         \texttt{lars} & 
-            \texttt{lars}       & 
-            \texttt{fraction} \\   
-         &
-         \texttt{lars2} & 
-            \texttt{lars}       & 
-            \texttt{step} \\            
-                
-      Elastic Net &
-         \texttt{enet} & 
-            \texttt{elasticnet}      & 
-            \texttt{lambda}, \texttt{fraction} \\          
-
-      The Lasso &
-         \texttt{lasso} & 
-            \texttt{elasticnet}      & 
-            \texttt{fraction} \\       
-
       Projection Pursuit   &
          \texttt{ppr} & 
             \texttt{stats}       & 
@@ -449,8 +430,31 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{penalized} & 
             \texttt{penalized}       & 
             \texttt{lambda1}, \texttt{lambda2} \\            
-      \:\: Regression Splines & & &\\
+       
+       &
+         \texttt{lars} & 
+            \texttt{lars}       & 
+            \texttt{fraction} \\   
+         &
+         \texttt{lars2} & 
+            \texttt{lars}       & 
+            \texttt{step} \\            
+                
+      &
+         \texttt{enet} & 
+            \texttt{elasticnet}      & 
+            \texttt{lambda}, \texttt{fraction} \\          
+
+      &
+         \texttt{lasso} & 
+            \texttt{elasticnet}      & 
+            \texttt{fraction} \\       
       
+       &
+         \texttt{foba} & 
+            \texttt{foba}      & 
+            \texttt{lambda}, \texttt{k} \\    
+            
       Relevance Vector Machines  &
          \texttt{rvmLinear} & 
             \texttt{kernlab}       & 

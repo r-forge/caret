@@ -157,7 +157,8 @@ modelLookup <- function(model = NULL)
                            "stepQDA", "stepQDA",
                            "plr", "plr",
                            "GAMens", "GAMens", "GAMens",
-                           "rocc"
+                           "rocc",
+                           "foba", "foba"
                            ),
                          parameter = c(
                            "parameter",      
@@ -249,7 +250,8 @@ modelLookup <- function(model = NULL)
                            "maxvar", "direction",
                            "lambda", "cp",
                            "iter", "rsm_size", "fusion",
-                           "xgenes"
+                           "xgenes",
+                           "k", "lambda"
                            ),
                          label = I(c(
                            "none",      
@@ -343,7 +345,8 @@ modelLookup <- function(model = NULL)
                            "Maximum #Variables", "Search Direction",
                            "L2 Penalty", "Complexity Parameter",
                            "Ensemble Size", "#Random Feature Subsets", "Data Fusion Function",
-                           "#Variables Retained"
+                           "#Variables Retained",
+                           "#Variables Retained", "L2 Penalty"
                            )),
                          seq = c(
                            FALSE,
@@ -434,7 +437,8 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE,
                            FALSE, FALSE,
                            FALSE, FALSE, FALSE,
-                           FALSE
+                           FALSE,
+                           TRUE, FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -525,7 +529,8 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE,
                            FALSE, FALSE,
                            FALSE, FALSE, FALSE,
-                           FALSE
+                           FALSE,
+                           TRUE, TRUE
                            ),               
                          forClass =          
                          c(
@@ -617,7 +622,8 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,
                            TRUE, TRUE,
                            TRUE, TRUE, TRUE,
-                           TRUE
+                           TRUE,
+                           FALSE, FALSE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -708,7 +714,8 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE,        ## plr
                            TRUE, TRUE,        ## stepQDA
                            TRUE, TRUE, TRUE,  ## GAMens,
-                           FALSE              ## rrocc
+                           FALSE,             ## rrocc
+                           FALSE, FALSE       ## foba
                            ),
                          stringsAsFactors  = FALSE               
                          )         
@@ -971,7 +978,25 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                grid <- grid[order(grid$.step, decreasing = TRUE),, drop = FALSE]
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
-             }             
+             },
+             foba = 
+             {
+               grid <- grid[order(grid$.lambda, grid$.k, decreasing = TRUE),, drop = FALSE]
+               
+               uniqueLambda <- unique(grid$.lambda)
+               
+               loop <- data.frame(.lambda = uniqueLambda)
+               loop$.k <- NA
+               
+               seqParam <- vector(mode = "list", length = length(uniqueLambda))
+               
+               for(i in seq(along = uniqueLambda))
+                 {
+                   subK <- grid[grid$.lambda == uniqueLambda[i],".k"]
+                   loop$.k[loop$.lambda == uniqueLambda[i]] <- subK[which.max(subK)]
+                   seqParam[[i]] <- data.frame(.k = subK[-which.max(subK)])
+                 }         
+             }, 
              )
       out <- list(scheme = "seq", loop = loop, seqParam = seqParam, model = modelInfo, constant = constant, vary = vary)
     } else out <- list(scheme = "basic", loop = grid, seqParam = NULL, model = modelInfo, constant = names(grid), vary = NULL)
