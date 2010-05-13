@@ -187,10 +187,10 @@ summary of leave group out cross-validation (30 reps) sample sizes:
 LGOCV resampled training results across tuning parameters:
 
   C    sigma   Accuracy  Kappa   Accuracy SD  Kappa SD  Selected
-  0.1  0.0222  0.581     0.0522  0.0212       0.0533            
-  1    0.0222  0.837     0.665   0.0406       0.0846    *       
-  10   0.0222  0.807     0.609   0.0562       0.114             
-  100  0.0222  0.807     0.609   0.0533       0.109             
+  0.1  0.0222  0.581     0.0522  0.581        0.0522            
+  1    0.0222  0.837     0.665   0.837        0.665     *       
+  10   0.0222  0.807     0.609   0.807        0.609             
+  100  0.0222  0.807     0.609   0.807        0.609             
 
 Accuracy was used to select the optimal model using the largest value.
 
@@ -238,12 +238,12 @@ summary of leave group out cross-validation (30 reps) sample sizes:
 LGOCV resampled training results across tuning parameters:
 
   interaction.depth  n.trees  shrinkage  Accuracy  Kappa  Accuracy SD  Kappa SD  Selected
-  1                  100      0.1        0.81      0.611  0.0479       0.0958    *       
-  1                  300      0.1        0.798     0.587  0.0416       0.0831            
-  1                  500      0.1        0.791     0.573  0.0431       0.0862            
-  3                  100      0.1        0.804     0.598  0.0427       0.0864            
-  3                  300      0.1        0.799     0.59   0.0417       0.0835            
-  3                  500      0.1        0.799     0.59   0.043        0.0861            
+  1                  100      0.1        0.81      0.611  0.81         0.611     *       
+  1                  300      0.1        0.798     0.587  0.798        0.587             
+  1                  500      0.1        0.791     0.573  0.791        0.573             
+  3                  100      0.1        0.804     0.598  0.804        0.598             
+  3                  300      0.1        0.799     0.59   0.799        0.59              
+  3                  500      0.1        0.799     0.59   0.799        0.59              
 
 Accuracy was used to select the optimal model using the largest value.
 
@@ -315,6 +315,10 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{glm} & 
             \texttt{stats}       & 
             None \\  
+&
+         \texttt{glmStepAIC} & 
+            \texttt{MASS}       & 
+            None \\              
        
       Recursive Partitioning &
          \texttt{rpart} & 
@@ -349,7 +353,7 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{glmboost} & 
             \texttt{mboost}       &          
             \texttt{mstop}\\   
-      &      
+         &      
          \texttt{gamboost} & 
             \texttt{mboost}       &          
             \texttt{mstop}\\      
@@ -374,10 +378,15 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{ipred}       & 
             None \\                         
    
-      Node Harvest &
-         \texttt{nodeHarvest} & 
+            Other Trees &
+            \texttt{nodeHarvest} & 
             \texttt{nodeHarvest}       & 
-            \texttt{maxinter}, \texttt{mode}  \\                  
+            \texttt{maxinter}, \texttt{mode}  \\    
+            
+            &
+            \texttt{partDSA} & 
+            \texttt{partDSA}       & 
+            \texttt{cut.off.growth}, \texttt{MPD}  \\     
             
       Multivariate Adaptive  &
          \texttt{earth}, \texttt{mars} & 
@@ -458,6 +467,11 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{lm} & 
             \texttt{stats}       & 
             None \\  
+            
+            &
+         \texttt{lmStepAIC} & 
+            \texttt{MASS}       & 
+            None \\  
 
        Principal Component Regression &
          \texttt{pcr} & 
@@ -527,9 +541,9 @@ There is additional functionality in \texttt{train} that is described in the nex
       Supervised Principal &
          \texttt{superpc}  &
          \texttt{superpc}  &
-         \texttt{n.components}, 
+         \texttt{n.components}\\
+      \:\: Components  & & & 
          \texttt{threshold} \\
-      \:\: Components  & & &\\
       \\       
              
 \multicolumn{5}{c}{{{\em Classification Only Models}}} \\ 
@@ -783,10 +797,10 @@ summary of leave group out cross-validation (30 reps) sample sizes:
 LGOCV resampled training results across tuning parameters:
 
   C    sigma   Sens   Spec    Sens SD  Spec SD  Selected
-  0.1  0.0222  1      0.0471  0        0.0483           
-  1    0.0222  0.904  0.753   0.053    0.0825           
-  10   0.0222  0.812  0.8     0.0686   0.0884           
-  100  0.0222  0.812  0.8     0.0613   0.0837   *       
+  0.1  0.0222  1      0.0471  1        0.0471           
+  1    0.0222  0.904  0.753   0.904    0.753            
+  10   0.0222  0.812  0.8     0.812    0.8              
+  100  0.0222  0.812  0.8     0.812    0.8      *       
 
 Spec was used to select the optimal model using the largest value.
 
@@ -820,8 +834,8 @@ best model within 2 pct of best:
 > svmNew$results[whichTwoPct, ]
 \end{Sinput}
 \begin{Soutput}
-   C      sigma      Sens Spec     SensSD     SpecSD
-3 10 0.02222875 0.8117117  0.8 0.06862484 0.08844885
+   C      sigma      Sens Spec    SensSD SpecSD
+3 10 0.02222875 0.8117117  0.8 0.8117117    0.8
 \end{Soutput}
 \begin{Sinput}
 > whichSixPct <- tolerance(svmNew$results, "Spec", 6, TRUE)
@@ -834,8 +848,8 @@ best model within 6 pct of best:
 > svmNew$results[whichSixPct, ]
 \end{Sinput}
 \begin{Soutput}
-  C      sigma      Sens      Spec     SensSD   SpecSD
-2 1 0.02222875 0.9036036 0.7528736 0.05296353 0.082542
+  C      sigma      Sens      Spec    SensSD    SpecSD
+2 1 0.02222875 0.9036036 0.7528736 0.9036036 0.7528736
 \end{Soutput}
 \end{Schunk}
 
@@ -1133,7 +1147,7 @@ To plot class probabilities, \texttt{plotClassProbs} will display the results by
   \item Locale: \verb|en_US.UTF-8/en_US.UTF-8/C/C/en_US.UTF-8/en_US.UTF-8|
   \item Base packages: base, datasets, graphics, grDevices, grid,
     methods, splines, stats, tools, utils
-  \item Other packages: akima~0.5-3, caret~4.36, class~7.3-1,
+  \item Other packages: akima~0.5-3, caret~4.38, class~7.3-1,
     e1071~1.5-20, earth~2.3-5, ellipse~0.3-5, gam~1.0.1, gbm~1.6-3,
     Hmisc~3.7-0, ipred~0.8-8, kernlab~0.9-9, klaR~0.6-0,
     lattice~0.17-26, leaps~2.9, MASS~7.3-3, mlbench~1.1-6, nnet~7.3-1,
