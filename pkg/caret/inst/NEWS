@@ -1,4 +1,17 @@
 -------------------
+Version: 4.38
+Date: 2010-05-12
+
+Added partDSA and stepAIC for linear models and generalized
+linear models
+
+-------------------
+Version: 4.37
+Date: 2010-04-18
+
+Fixed a new bug in how resampling results are exported
+
+-------------------
 Version: 4.36
 Date: 2010-04-17
 

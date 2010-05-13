@@ -261,6 +261,10 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{glm} & 
             \texttt{stats}       & 
             None \\  
+&
+         \texttt{glmStepAIC} & 
+            \texttt{MASS}       & 
+            None \\              
        
       Recursive Partitioning &
          \texttt{rpart} & 
@@ -295,7 +299,7 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{glmboost} & 
             \texttt{mboost}       &          
             \texttt{mstop}\\   
-      &      
+         &      
          \texttt{gamboost} & 
             \texttt{mboost}       &          
             \texttt{mstop}\\      
@@ -320,10 +324,15 @@ There is additional functionality in \texttt{train} that is described in the nex
             \texttt{ipred}       & 
             None \\                         
    
-      Node Harvest &
-         \texttt{nodeHarvest} & 
+            Other Trees &
+            \texttt{nodeHarvest} & 
             \texttt{nodeHarvest}       & 
-            \texttt{maxinter}, \texttt{mode}  \\                  
+            \texttt{maxinter}, \texttt{mode}  \\    
+            
+            &
+            \texttt{partDSA} & 
+            \texttt{partDSA}       & 
+            \texttt{cut.off.growth}, \texttt{MPD}  \\     
             
       Multivariate Adaptive  &
          \texttt{earth}, \texttt{mars} & 
@@ -404,6 +413,11 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{lm} & 
             \texttt{stats}       & 
             None \\  
+            
+            &
+         \texttt{lmStepAIC} & 
+            \texttt{MASS}       & 
+            None \\  
 
        Principal Component Regression &
          \texttt{pcr} & 
@@ -473,9 +487,9 @@ There is additional functionality in \texttt{train} that is described in the nex
       Supervised Principal &
          \texttt{superpc}  &
          \texttt{superpc}  &
-         \texttt{n.components}, 
+         \texttt{n.components}\\
+      \:\: Components  & & & 
          \texttt{threshold} \\
-      \:\: Components  & & &\\
       \\       
              
 \multicolumn{5}{c}{{{\em Classification Only Models}}} \\ 

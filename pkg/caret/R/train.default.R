@@ -152,6 +152,7 @@ train.default <- function(x, y,
   paramNames <- names(tuneGrid)
   paramNames <- gsub("^\\.", "", paramNames)
 
+
   ## Now take the predictions and boil them down to performance matrics per tuning
   ## parameter and resampling combo.
   if(trControl$method != "oob")
@@ -221,8 +222,8 @@ train.default <- function(x, y,
                            },
                            final =
                            {
-                             out <- merge(bestTune, perResample)        
-                             out <- out[,!(names(perResample) %in% names(tuneGrid))]
+                             out <- merge(bestTune, perResample)
+                             out <- out[,!(names(out) %in% names(tuneGrid))]
                              out
                            })                        
     } else {

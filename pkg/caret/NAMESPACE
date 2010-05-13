@@ -180,6 +180,7 @@ S3method(varImp, bagEarth)
 S3method(varImp, RandomForest)
 S3method(varImp, rfe)
 S3method(varImp, sbf)
+S3method(varImp, dsa)
 
 S3method(densityplot, train)
 S3method(histogram,   train)
@@ -286,6 +287,7 @@ S3method(predictors, smda)
 S3method(predictors, sbf)
 S3method(predictors, trocc)
 S3method(predictors, foba)
+S3method(predictors, dsa)
 
 S3method(confusionMatrix, table)
 
