@@ -954,7 +954,7 @@ For multiple models, the objects can be grouped using a list and predicted simul
 \begin{Soutput}
 List of 2
  $ pls : num [1:99] 30.2 21.9 16.1 16 15.8 ...
- $ mars: num [1:99] 34.4 20.2 18.2 14.4 15.7 ...
+ $ mars: num [1:99] 34.2 20.9 18.8 14.6 16.4 ...
 \end{Soutput}
 \end{Schunk}
 \end{small}
@@ -981,8 +981,8 @@ In some cases,observed outcomes and their associated predictions may be needed f
 \end{Sinput}
 \begin{Soutput}
 model: earth
-    RMSE Rsquared 
-4.678437 0.793299 
+     RMSE  Rsquared 
+4.6052438 0.8016275 
 ------------------------------------------------------------ 
 model: pls
      RMSE  Rsquared 
@@ -1130,7 +1130,7 @@ Two functions, \texttt{plotObsVsPred} and \texttt{plotClassProbs}, are interface
 
 \begin{figure}
    \begin{center}      
-\includegraphics{caretTrain-bhPredPlot}
+      \includegraphics[clip, width = .75\textwidth]{bhPredPlot}   
       \caption{The results of using \texttt{ plotObsVsPred } to show plots of the observed median home price against the predictions from two models. The plot shows the training and test sets in the same Lattice plot}
       \label{f:bhPredPlot}         
    \end{center}
@@ -1139,21 +1139,258 @@ Two functions, \texttt{plotObsVsPred} and \texttt{plotClassProbs}, are interface
 
 To plot class probabilities, \texttt{plotClassProbs} will display the results by model, data and true class (for example, Figure \ref{f:mbrrProbs}).     
 
+\clearpage
+
+\section{Comparing Resampling Distributions}
+
+\texttt{caret} also includes functions to characterize the differences between models using their resampling distributions. 
+
+Using the blood-brain barrier data (see \texttt{?BloodBrain)}, three regression models were
+created: an \texttt{rpart} tree, a conditional inference tree using
+\texttt{ctree}, M5 rules using \texttt{M5Rules} and a MARS model using \texttt{earth}. We ensure that the models use the same resampling data sets. In this case, 100 leave--group--out cross--validation was employed.
+
+\begin{Schunk}
+\begin{Sinput}
+> data(BloodBrain)
+> set.seed(1)
+> tmp <- createDataPartition(logBBB, p = 0.8, times = 100)
+> rpartFit <- train(bbbDescr, logBBB,
++                   "rpart", 
++                   tuneLength = 16,
++                   trControl = trainControl(method = "LGOCV", index = tmp))
+\end{Sinput}
+\begin{Soutput}
+Fitting: maxdepth=16 
+\end{Soutput}
+\begin{Sinput}
+> ctreeFit <- train(bbbDescr, logBBB,
++                  "ctree2",
++                   tuneLength = 10,
++                   trControl = trainControl(method = "LGOCV", index = tmp))
+\end{Sinput}
+\begin{Soutput}
+Fitting: maxdepth=1 
+Fitting: maxdepth=2 
+Fitting: maxdepth=3 
+Fitting: maxdepth=4 
+Fitting: maxdepth=5 
+Fitting: maxdepth=6 
+Fitting: maxdepth=7 
+Fitting: maxdepth=8 
+Fitting: maxdepth=9 
+Fitting: maxdepth=10 
+\end{Soutput}
+\begin{Sinput}
+> earthFit <- train(bbbDescr, logBBB,
++                   "earth",
++                   tuneLength = 20,
++                   trControl = trainControl(method = "LGOCV", index = tmp))
+\end{Sinput}
+\begin{Soutput}
+Fitting: degree=1, nprune=76 
+\end{Soutput}
+\end{Schunk}
+\begin{Sinput}
+> m5Fit <- train(bbbDescr, logBBB,
++                "M5Rules",
++                trControl = trainControl(method = "LGOCV", index = tmp))    
+\end{Sinput}
+\begin{Soutput}
+Fitting: pruned=Yes 
+Fitting: pruned=No 
+\end{Soutput}
+
+
+Given these models, can we make statistical statements about their performance differences? To do this, we first collect the resampling results using \texttt{resamples}.
+
+\begin{Schunk}
+\begin{Sinput}
+> resamps <- resamples(list(CART = rpartFit, CondInfTree = ctreeFit, 
++     MARS = earthFit, M5 = m5Fit))
+> resamps
+\end{Sinput}
+\begin{Soutput}
+Call:
+resamples.default(x = list(CART = rpartFit, CondInfTree = ctreeFit,     MARS = earthFit, M5 = m5Fit))
+
+Models: CART, CondInfTree, MARS, M5 
+Number of resamples: 100 
+Performance metrics: RMSE, Rsquared 
+\end{Soutput}
+\begin{Sinput}
+> summary(resamps)
+\end{Sinput}
+\begin{Soutput}
+Call:
+summary.resamples(object = resamps)
+
+Models: CART, CondInfTree, MARS, M5 
+Number of resamples: 100 
+
+RMSE 
+              Min. 1st Qu. Median   Mean 3rd Qu.   Max.
+CART        0.4927  0.5806 0.6417 0.6331  0.6764 0.7819
+CondInfTree 0.4528  0.5934 0.6375 0.6427  0.6873 0.8685
+MARS        0.4387  0.5709 0.6073 0.6128  0.6601 0.8327
+M5          0.4607  0.5689 0.6219 0.6308  0.6763 0.8341
+
+Rsquared 
+               Min. 1st Qu. Median   Mean 3rd Qu.   Max.
+CART        0.12070  0.2749 0.3436 0.3455  0.4049 0.5981
+CondInfTree 0.07711  0.2852 0.3517 0.3449  0.4099 0.6164
+MARS        0.18800  0.3381 0.4146 0.4141  0.4939 0.6515
+M5          0.12260  0.3080 0.3910 0.3950  0.4744 0.6286
+\end{Soutput}
+\end{Schunk}
+
+There are several Lattice plot methods that can be used to visualize
+the resampling distributions: density plots, box--whisker plots,
+scatterplot matrices and scatterplots of summary statistics. In the
+latter case, the plot consists of the differences between two models
+on the $y$--axis and the average on the $x$--axis (See Figure
+\ref{f:resampleScatter}). In Figure \ref{F:resampleDens}, density plots
+of the data are shown. In this figure,  the $R^2$ distributions
+indicate that M5 rules and MARS appear to be
+        similar to one another but different from the two tree--based
+        models. However, this pattern is inconsistent with the root
+        mean squared error distributions.
+
+\begin{Schunk}
+\begin{Sinput}
+> bwplot(resamps, metric = "RMSE")
+> densityplot(resamps, metric = "RMSE")
+> xyplot(resamps, models = c("CART", "MARS"), metric = "RMSE")
+> splom(resamps, metric = "RMSE")
+\end{Sinput}
+\end{Schunk}
+
+
+
+Since models are fit on the same versions of the training data, it makes sense to make inferences on the differences between models. In this way we reduce the within--resample correlation that may exist. We can compute the differences, then use a simple $t$--test to evaluate the null hypothesis that there is no difference between models.
+
+\begin{Schunk}
+\begin{Sinput}
+> difValues <- diff(resamps)
+> difValues
+\end{Sinput}
+\begin{Soutput}
+Call:
+diff.resamples(x = resamps)
+
+Models: CART, CondInfTree, MARS, M5 
+Metrics: RMSE, Rsquared 
+Number of differences: 6 
+\end{Soutput}
+\begin{Sinput}
+> summary(difValues)
+\end{Sinput}
+\begin{Soutput}
+Call:
+summary.diff.resamples(object = difValues)
+
+Upper diagonal: estimates of the difference
+Lower diagonal: p-value for H0: difference = 0
+
+RMSE 
+            CART      CondInfTree MARS      M5       
+CART                  -0.009607    0.020238  0.002280
+CondInfTree 0.1384183              0.029845  0.011887
+MARS        0.0074587 0.0001124             -0.017958
+M5          0.8030070 0.1826212   0.0443769          
+
+Rsquared 
+            CART      CondInfTree MARS       M5        
+CART                   0.0005807  -0.0685809 -0.0495256
+CondInfTree 0.9558245             -0.0691617 -0.0501063
+MARS        9.588e-09 1.090e-08               0.0190553
+M5          0.0003594 0.0001707   0.1132682            
+\end{Soutput}
+\end{Schunk}
+Note that these results are consistent with the patterns shown in
+Figure \ref{F:resampleDens}; there are more differences in the $R^2$
+distributions than in the error distributions.
+
+Several Lattices methods also exist to plot the differences (density
+and box--whisker plots) or the inferential results (level and dot
+plots). Figures \ref{F:diffLevel} and \ref{F:diffDot} show examples of
+level and dot plots.
+
+\begin{Schunk}
+\begin{Sinput}
+> dotplot(difValues)
+> densityplot(difValues, metric = "RMSE", auto.key = TRUE, pch = "|")
+> bwplot(difValues, metric = "RMSE")
+> levelplot(difValues, what = "differences")
+\end{Sinput}
+\end{Schunk}
+
+
+
+\begin{figure}
+   \begin{center}		
+      \includegraphics[clip, width = .6\textwidth]{resampleScatter}    
+
+      \caption{ Examples of output from \texttt{xyplot(resamps, models = c("CART", "MARS"))}. The averages and differences of the two models is shown for each resampling data set.}
+      \label{f:resampleScatter} 
+    \end{center}
+\end{figure} 
+
+\begin{figure}
+   \begin{center}		
+      \includegraphics[clip, width = .9\textwidth]{resampleDens}    
+
+      \caption{ Examples of output from
+        \texttt{densityplot(resamps)}. Looking at $R^2$, M5 rules and MARS appear to be
+        similar to one another but different from the two tree--based
+        models. However, this pattern is inconsistent with the root
+        mean squared error distributions.}
+      \label{F:resampleDens} 
+    \end{center}
+\end{figure} 
+
+
+\begin{figure}
+   \begin{center}		
+      \includegraphics[clip, width = .8\textwidth]{diffLevel}    
+
+      \caption{ Examples of output from \texttt{levelplot(difValues,
+          what = "differences")}. The pair--wise differences in RMSE
+        are shown}
+      \label{F:diffLevel} 
+    \end{center}
+\end{figure} 
+
+
+\begin{figure}
+   \begin{center}		
+      \includegraphics[clip, width = .8\textwidth]{diffDot}    
+
+      \caption{ Examples of output from
+        \texttt{dotplot(difValues)}. The differences in RMSE and their
+        associated confidence intervals are shown.}
+      \label{F:diffDot} 
+    \end{center}
+\end{figure} 
+
+
 
 \section{Session Information}
 
 \begin{itemize}\raggedright
-  \item R version 2.10.0 RC (2009-10-18 r50160), \verb|x86_64-apple-darwin9.8.0|
-  \item Locale: \verb|en_US.UTF-8/en_US.UTF-8/C/C/en_US.UTF-8/en_US.UTF-8|
+  \item R version 2.11.0 Patched (2010-05-11 r51982), \verb|x86_64-apple-darwin9.8.0|
+  \item Locale: \verb|en_US/en_US/en_US/C/en_US/en_US|
   \item Base packages: base, datasets, graphics, grDevices, grid,
-    methods, splines, stats, tools, utils
-  \item Other packages: akima~0.5-3, caret~4.38, class~7.3-1,
-    e1071~1.5-20, earth~2.3-5, ellipse~0.3-5, gam~1.0.1, gbm~1.6-3,
-    Hmisc~3.7-0, ipred~0.8-8, kernlab~0.9-9, klaR~0.6-0,
-    lattice~0.17-26, leaps~2.9, MASS~7.3-3, mlbench~1.1-6, nnet~7.3-1,
-    pls~2.1-0, plyr~0.1.9, proxy~0.4-4, randomForest~4.5-33,
-    reshape~0.8.3, rpart~3.1-45, survival~2.35-7
-  \item Loaded via a namespace (and not attached): cluster~1.12.1
+    methods, splines, stats, stats4, tools, utils
+  \item Other packages: akima~0.5-4, caret~4.39, class~7.3-2,
+    e1071~1.5-24, earth~2.4-0, ellipse~0.3-5, gam~1.03, gbm~1.6-3.1,
+    Hmisc~3.8-0, ipred~0.8-8, kernlab~0.9-10, klaR~0.6-3,
+    lattice~0.18-5, leaps~2.9, MASS~7.3-5, mlbench~2.0-0,
+    modeltools~0.2-16, mvtnorm~0.9-9, nnet~7.3-1, pls~2.1-0,
+    plyr~0.1.9, proxy~0.4-6, randomForest~4.5-34, reshape~0.8.3,
+    rpart~3.1-46, survival~2.35-8
+  \item Loaded via a namespace (and not attached): cluster~1.12.3,
+    coin~1.0-11, colorspace~1.0-1, party~0.9-9994, rJava~0.8-4,
+    RWeka~0.4-1
 \end{itemize}
 
 \section{References}

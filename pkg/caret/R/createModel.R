@@ -1362,7 +1362,8 @@
 
   ## In case the model needs to be saved to the file system and run later, we will
   ## need to cache the model (per Kurt Hornik on 2008-10-05)
-  if(method %in% c("JRip", "LMT", "M5Rules", "J48", "OneR", "PART")) .jcache(modelFit$classifier)
+  ## No ,onger needed?
+  ## if(method %in% c("JRip", "LMT", "M5Rules", "J48", "OneR", "PART")) .jcache(modelFit$classifier)
   
   ##save a few items so we have a self contained set of information in the model. this will
   ## also carry over to the finalModel if returnData = TRUE in train call
