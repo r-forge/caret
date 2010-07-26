@@ -21,7 +21,7 @@
          \usepackage{lscape}
 
 \usepackage{Sweave}
-
+\SweaveOpts{keep.source=TRUE}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % define new colors for use
@@ -332,10 +332,15 @@ There is additional functionality in \texttt{train} that is described in the nex
             {\tt \href{http://cran.r-project.org/web/packages/party/index.html}{party}}     & 
             \texttt{mtry} \\     
                         
-      Bagged Trees &
+      Bagging&
          \texttt{treebag} & 
              {\tt \href{http://cran.r-project.org/web/packages/ipred/index.html}{ipred}}       & 
-            None \\                         
+            None \\                 
+            
+          &
+         \texttt{bag} & 
+             {\tt \href{http://cran.r-project.org/web/packages/caret/index.html}{caret}}       & 
+            \texttt{vars} \\               
 
 \rowcolor[rgb]{.95, .95, .95}            
             Other Trees &
