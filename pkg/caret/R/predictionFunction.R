@@ -840,7 +840,11 @@ predictionFunction <- function(method, modelFit, newdata, param = NULL)
                                }
 
                              out
-                           }                           
+                           },
+                           bag =
+                           {
+                             predict(modelFit, newdata)
+                           }
                            )
   predictedValue
 }

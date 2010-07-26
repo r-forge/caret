@@ -57,7 +57,7 @@
                    "superpc", "ppr", "sda", "penalized", "sparseLDA",
                    "nodeHarvest", "Linda", "QdaCov", "stepLDA", "stepQDA",
                    "parRF", "plr", "rocc", "foba", "partDSA", "hda", "icr",
-                   "qrf", "scrda"))
+                   "qrf", "scrda", "bag"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -1409,6 +1409,10 @@
                                              ...)
                        modelFit$data <- list(x = t(trainX), y = trainY)
                        modelFit
+                     },
+                     bag =
+                     {
+                       bag(trainX, trainY, vars = tuneValue$.vars, ...)
                      }
                      )
   

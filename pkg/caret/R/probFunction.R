@@ -319,6 +319,11 @@ probFunction <- function(method, modelFit, newdata)
                         ## need to back-transform the column names
                         colnames(tmp) <- obsLevels[as.numeric(colnames(tmp))]
                         tmp
+                      },
+                      bag =
+                      {
+                        predict(modelFit, newdata, type = "prob")
+
                       }
                       )
 

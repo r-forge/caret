@@ -119,8 +119,8 @@ See the package vignette ``caret Manual -- Data and Functions'' for more details
 \end{Soutput}
 \begin{Sinput}
 > descrCor <- cor(filteredDescr)
-> highlyCorDescr <- findCorrelation(descrCor, cutoff = 0.75)
-> filteredDescr <- filteredDescr[, -highlyCorDescr]
+> highlyCorDescr <- findCorrelation(descrCor, cutoff = .75)
+> filteredDescr <- filteredDescr[,-highlyCorDescr]
 > print(ncol(filteredDescr))
 \end{Sinput}
 \begin{Soutput}
@@ -129,8 +129,8 @@ See the package vignette ``caret Manual -- Data and Functions'' for more details
 \begin{Sinput}
 > set.seed(1)
 > inTrain <- sample(seq(along = mdrrClass), length(mdrrClass)/2)
-> trainDescr <- filteredDescr[inTrain, ]
-> testDescr <- filteredDescr[-inTrain, ]
+> trainDescr <- filteredDescr[inTrain,]
+> testDescr <- filteredDescr[-inTrain,]
 > trainMDRR <- mdrrClass[inTrain]
 > testMDRR <- mdrrClass[-inTrain]
 > print(length(trainMDRR))
@@ -147,7 +147,7 @@ See the package vignette ``caret Manual -- Data and Functions'' for more details
 \begin{Sinput}
 > preProcValues <- preProcess(trainDescr)
 > trainDescr <- predict(preProcValues, trainDescr)
-> testDescr <- predict(preProcValues, testDescr)
+> testDescr <-  predict(preProcValues, testDescr)
 \end{Sinput}
 \end{Schunk}
 \end{small}
@@ -157,8 +157,12 @@ To estimate model performance across the tuning parameters ``leave group out cro
 \begin{small}
 \begin{Schunk}
 \begin{Sinput}
-> fitControl <- trainControl(method = "LGOCV", p = 0.75, number = 30, 
-+     returnResamp = "all", verboseIter = FALSE)
+> fitControl <- trainControl(
++                            method = "LGOCV",
++                            p = .75,
++                            number = 30,
++                            returnResamp = "all",
++                            verboseIter = FALSE)
 > set.seed(2)
 \end{Sinput}
 \end{Schunk}
@@ -170,8 +174,7 @@ The first two arguments to \texttt{train} are the predictor and outcome data obj
 \begin{small}
 \begin{Schunk}
 \begin{Sinput}
-> svmFit <- train(trainDescr, trainMDRR, method = "svmRadial", 
-+     tuneLength = 4, trControl = fitControl)
+> svmFit <- train(trainDescr, trainMDRR, method = "svmRadial", tuneLength = 4, trControl = fitControl)
 > svmFit
 \end{Sinput}
 \begin{Soutput}
@@ -219,11 +222,9 @@ For a gradient boosting machine (GBM) model, the amount of ``shrinkage'' in a gr
 
 \begin{Schunk}
 \begin{Sinput}
-> gbmGrid <- expand.grid(.interaction.depth = c(1, 3), .n.trees = c(100, 300, 
-+     500), .shrinkage = 0.1)
+> gbmGrid <-  expand.grid(.interaction.depth = c(1, 3), .n.trees = c(100, 300, 500), .shrinkage = 0.1)
 > set.seed(3)
-> gbmFit <- train(trainDescr, trainMDRR, "gbm", tuneGrid = gbmGrid, trControl = fitControl, 
-+     verbose = FALSE)
+> gbmFit <- train(trainDescr, trainMDRR, "gbm", tuneGrid = gbmGrid, trControl = fitControl, verbose = FALSE)
 > gbmFit
 \end{Sinput}
 \begin{Soutput}
@@ -386,10 +387,15 @@ There is additional functionality in \texttt{train} that is described in the nex
             {\tt \href{http://cran.r-project.org/web/packages/party/index.html}{party}}     & 
             \texttt{mtry} \\     
                         
-      Bagged Trees &
+      Bagging&
          \texttt{treebag} & 
              {\tt \href{http://cran.r-project.org/web/packages/ipred/index.html}{ipred}}       & 
-            None \\                         
+            None \\                 
+            
+          &
+         \texttt{bag} & 
+             {\tt \href{http://cran.r-project.org/web/packages/caret/index.html}{caret}}       & 
+            \texttt{vars} \\               
 
 \rowcolor[rgb]{.95, .95, .95}            
             Other Trees &
@@ -828,12 +834,14 @@ The output to the function should be a vector of numeric summary metrics with no
 As an example, classification accuracy in two--class problems can be decomposed into sensitivity and specificity. We can use these values to tune the parameters using the following function:
 \begin{Schunk}
 \begin{Sinput}
-> newSummary <- function(data, lev, model) {
-+     out <- c(sensitivity(data[, "pred"], data[, "obs"], lev[1]), 
-+         specificity(data[, "pred"], data[, "obs"], lev[2]))
+> newSummary <- function (data, lev, model)
++   {
++     out <- c(sensitivity(data[, "pred"], data[, "obs"], lev[1]),
++       specificity(data[, "pred"], data[, "obs"], lev[2]))
++     
 +     names(out) <- c("Sens", "Spec")
 +     out
-+ }
++   }
 \end{Sinput}
 \end{Schunk}
 
@@ -842,8 +850,7 @@ To rebuild the support vector machine model using this criterion, we can see the
 \begin{Sinput}
 > fitControl$summaryFunction <- newSummary
 > set.seed(2)
-> svmNew <- train(trainDescr, trainMDRR, method = "svmRadial", 
-+     metric = "Spec", tuneLength = 4, trControl = fitControl)
+> svmNew <- train(trainDescr, trainMDRR, method = "svmRadial", metric = "Spec", tuneLength = 4, trControl = fitControl)
 > svmNew
 \end{Sinput}
 \begin{Soutput}
@@ -887,28 +894,28 @@ User--defined functions can be used, as long as they have the following argument
 As an example, if we chose the previous SVM model on the basis of specificity, we would choose a cost value of 100, the most complex model. Lower cost values would produce approximately the same performance with less complex models (with the exception of cost = 0.1). The tolerance function could be used to find a less complex model based on $(x-x_{best})/x_{best}\times 100$, which is the percent difference. For example, to select cost values based on $2\%$ and 6$\%$ losses of performance:
 \begin{Schunk}
 \begin{Sinput}
-> whichTwoPct <- tolerance(svmNew$results, "Spec", 2, TRUE)
+> whichTwoPct <- tolerance(svmNew$results, "Spec", 2, TRUE)  
 > cat("best model within 2 pct of best:\n")
 \end{Sinput}
 \begin{Soutput}
 best model within 2 pct of best:
 \end{Soutput}
 \begin{Sinput}
-> svmNew$results[whichTwoPct, ]
+> svmNew$results[whichTwoPct,]
 \end{Sinput}
 \begin{Soutput}
    C      sigma      Sens Spec     SensSD     SpecSD
 3 10 0.02222875 0.8117117  0.8 0.06862484 0.08844885
 \end{Soutput}
 \begin{Sinput}
-> whichSixPct <- tolerance(svmNew$results, "Spec", 6, TRUE)
+> whichSixPct <- tolerance(svmNew$results, "Spec", 6, TRUE)  
 > cat("\n\nbest model within 6 pct of best:\n")
 \end{Sinput}
 \begin{Soutput}
 best model within 6 pct of best:
 \end{Soutput}
 \begin{Sinput}
-> svmNew$results[whichSixPct, ]
+> svmNew$results[whichSixPct,]
 \end{Sinput}
 \begin{Soutput}
   C      sigma      Sens      Spec     SensSD   SpecSD
@@ -944,7 +951,8 @@ For example, we can load the Boston Housing data:
 \begin{Sinput}
 > library(mlbench)
 > data(BostonHousing)
-> bhDesignMatrix <- model.matrix(medv ~ . - 1, BostonHousing)
+> # we could use the formula interface too
+> bhDesignMatrix <-  model.matrix(medv ~. - 1, BostonHousing)
 \end{Sinput}
 \end{Schunk}
 \end{small}
@@ -955,13 +963,12 @@ For example, we can load the Boston Housing data:
 \begin{Schunk}
 \begin{Sinput}
 > set.seed(4)
-> inTrain <- createDataPartition(BostonHousing$medv, p = 0.8, list = FALSE, 
-+     times = 1)
-> trainBH <- bhDesignMatrix[inTrain, ]
-> testBH <- bhDesignMatrix[-inTrain, ]
+> inTrain <- createDataPartition(BostonHousing$medv, p = .8, list = FALSE, times = 1)
+> trainBH <- bhDesignMatrix[inTrain,]
+> testBH <- bhDesignMatrix[-inTrain,]
 > preProc <- preProcess(trainBH)
 > trainBH <- predict(preProc, trainBH)
-> testBH <- predict(preProc, testBH)
+> testBH  <- predict(preProc,  testBH)
 > trainMedv <- BostonHousing$medv[inTrain]
 > testMedv <- BostonHousing$medv[-inTrain]
 \end{Sinput}
@@ -976,8 +983,7 @@ For example, we can load the Boston Housing data:
 > set.seed(5)
 > plsFit <- train(trainBH, trainMedv, "pls", tuneLength = 10, trControl = trainControl(verboseIter = FALSE))
 > set.seed(5)
-> marsFit <- train(trainBH, trainMedv, "earth", tuneLength = 10, 
-+     trControl = trainControl(verboseIter = FALSE))
+> marsFit <- train(trainBH, trainMedv, "earth", tuneLength = 10, trControl = trainControl(verboseIter = FALSE))
 \end{Sinput}
 \end{Schunk}
 \end{small}
@@ -1010,7 +1016,9 @@ For multiple models, the objects can be grouped using a list and predicted simul
 \begin{small}
 \begin{Schunk}
 \begin{Sinput}
-> bhModels <- list(pls = plsFit, mars = marsFit)
+> bhModels <- list(
++                  pls = plsFit,
++                  mars = marsFit)
 > bhPred1 <- predict(bhModels, newdata = testBH)
 > str(bhPred1)
 \end{Sinput}
@@ -1025,7 +1033,9 @@ In some cases,observed outcomes and their associated predictions may be needed f
 \begin{small}
 \begin{Schunk}
 \begin{Sinput}
-> allPred <- extractPrediction(bhModels, testX = testBH, testY = testMedv)
+> allPred <- extractPrediction(bhModels,
++                              testX = testBH,
++                              testY = testMedv)
 > testPred <- subset(allPred, dataType == "Test")
 > head(testPred)
 \end{Sinput}
@@ -1039,8 +1049,10 @@ In some cases,observed outcomes and their associated predictions may be needed f
 413 14.5 17.94325   pls     Test    pls
 \end{Soutput}
 \begin{Sinput}
-> by(testPred, list(model = testPred$model), function(x) postResample(x$pred, 
-+     x$obs))
+> by(
++    testPred, 
++    list(model = testPred$model), 
++    function(x) postResample(x$pred, x$obs))
 \end{Sinput}
 \begin{Soutput}
 model: earth
@@ -1083,10 +1095,8 @@ The function \texttt{confusionMatrix} can also be used to summarize the results 
 \begin{small}
 \begin{Schunk}
 \begin{Sinput}
-> mbrrPredictions <- extractPrediction(list(svmFit), testX = testDescr, 
-+     testY = testMDRR)
-> mbrrPredictions <- mbrrPredictions[mbrrPredictions$dataType == 
-+     "Test", ]
+> mbrrPredictions <- extractPrediction(list(svmFit), testX = testDescr, testY = testMDRR)
+> mbrrPredictions <- mbrrPredictions[mbrrPredictions$dataType == "Test",]
 > sensitivity(mbrrPredictions$pred, mbrrPredictions$obs)
 \end{Sinput}
 \begin{Soutput}
@@ -1161,7 +1171,7 @@ The function \texttt{roc}\footnote{I'm looking into using the \texttt{ROCR} pack
 \begin{Schunk}
 \begin{Sinput}
 > mbrrProbs <- extractProb(list(svmFit), testX = testDescr, testY = testMDRR)
-> mbrrProbs <- mbrrProbs[mbrrProbs$dataType == "Test", ]
+> mbrrProbs <- mbrrProbs[mbrrProbs$dataType == "Test",]
 > mbrrROC <- roc(mbrrProbs$Active, mbrrProbs$obs)
 > aucRoc(mbrrROC)
 \end{Sinput}
@@ -1272,8 +1282,10 @@ Given these models, can we make statistical statements about their performance d
 
 \begin{Schunk}
 \begin{Sinput}
-> resamps <- resamples(list(CART = rpartFit, CondInfTree = ctreeFit, 
-+     MARS = earthFit, M5 = m5Fit))
+> resamps <- resamples(list(CART = rpartFit,
++                           CondInfTree = ctreeFit,
++                           MARS = earthFit,
++                           M5 = m5Fit))
 > resamps
 \end{Sinput}
 \begin{Soutput}
@@ -1326,7 +1338,9 @@ indicate that M5 rules and MARS appear to be
 \begin{Sinput}
 > bwplot(resamps, metric = "RMSE")
 > densityplot(resamps, metric = "RMSE")
-> xyplot(resamps, models = c("CART", "MARS"), metric = "RMSE")
+> xyplot(resamps,
++        models = c("CART", "MARS"),
++        metric = "RMSE")
 > splom(resamps, metric = "RMSE")
 \end{Sinput}
 \end{Schunk}
@@ -1385,8 +1399,12 @@ level and dot plots.
 \begin{Schunk}
 \begin{Sinput}
 > dotplot(difValues)
-> densityplot(difValues, metric = "RMSE", auto.key = TRUE, pch = "|")
-> bwplot(difValues, metric = "RMSE")
+> densityplot(difValues,
++             metric = "RMSE",
++             auto.key = TRUE,
++             pch = "|")
+> bwplot(difValues,
++        metric = "RMSE")
 > levelplot(difValues, what = "differences")
 \end{Sinput}
 \end{Schunk}
@@ -1447,7 +1465,7 @@ level and dot plots.
   \item Locale: \verb|en_US/en_US/en_US/C/en_US/en_US|
   \item Base packages: base, datasets, graphics, grDevices, grid,
     methods, splines, stats, stats4, tools, utils
-  \item Other packages: akima~0.5-4, caret~4.43, class~7.3-2,
+  \item Other packages: akima~0.5-4, caret~4.45, class~7.3-2,
     e1071~1.5-24, earth~2.4-0, ellipse~0.3-5, gam~1.03, gbm~1.6-3.1,
     Hmisc~3.8-0, ipred~0.8-8, kernlab~0.9-10, klaR~0.6-3,
     lattice~0.18-5, leaps~2.9, MASS~7.3-5, mlbench~2.0-0,

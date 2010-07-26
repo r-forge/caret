@@ -189,8 +189,8 @@ Looking at the MDRR data, the \texttt{nearZeroVar} function can be used to ident
 \begin{small}
 \begin{Schunk}
 \begin{Sinput}
-> nzv <- nearZeroVar(mdrrDescr, saveMetrics = TRUE)
-> nzv[nzv$nzv, ][1:10, ]
+> nzv <- nearZeroVar(mdrrDescr, saveMetrics= TRUE)
+> nzv[nzv$nzv,][1:10,]
 \end{Sinput}
 \begin{Soutput}
        freqRatio percentUnique zeroVar  nzv
@@ -245,8 +245,8 @@ For the previous MDRR data, there are 65 descriptors that are almost perfectly c
 -0.99610 -0.05373  0.25010  0.26080  0.65530  1.00000 
 \end{Soutput}
 \begin{Sinput}
-> highlyCorDescr <- findCorrelation(descrCor, cutoff = 0.75)
-> filteredDescr <- filteredDescr[, -highlyCorDescr]
+> highlyCorDescr <- findCorrelation(descrCor, cutoff = .75)
+> filteredDescr <- filteredDescr[,-highlyCorDescr]
 > descrCor2 <- cor(filteredDescr)
 > summary(descrCor2[upper.tri(descrCor2)])
 \end{Sinput}
@@ -264,13 +264,13 @@ The function \texttt{findLinearCombos} uses the QR decomposition of a matrix to 
 \begin{small}
 \begin{Schunk}
 \begin{Sinput}
-> ltfrDesign <- matrix(0, nrow = 6, ncol = 6)
-> ltfrDesign[, 1] <- c(1, 1, 1, 1, 1, 1)
-> ltfrDesign[, 2] <- c(1, 1, 1, 0, 0, 0)
-> ltfrDesign[, 3] <- c(0, 0, 0, 1, 1, 1)
-> ltfrDesign[, 4] <- c(1, 0, 0, 1, 0, 0)
-> ltfrDesign[, 5] <- c(0, 1, 0, 0, 1, 0)
-> ltfrDesign[, 6] <- c(0, 0, 1, 0, 0, 1)
+> ltfrDesign <- matrix(0, nrow=6, ncol=6)
+> ltfrDesign[,1] <- c(1, 1, 1, 1, 1, 1)
+> ltfrDesign[,2] <- c(1, 1, 1, 0, 0, 0)
+> ltfrDesign[,3] <- c(0, 0, 0, 1, 1, 1)
+> ltfrDesign[,4] <- c(1, 0, 0, 1, 0, 0)
+> ltfrDesign[,5] <- c(0, 1, 0, 0, 1, 0)
+> ltfrDesign[,6] <- c(0, 0, 1, 0, 0, 1)
 > ltfrDesign
 \end{Sinput}
 \begin{Soutput}
@@ -345,8 +345,8 @@ In the example below, the half of the MDRR data are used to estimate the locatio
 \begin{Sinput}
 > set.seed(96)
 > inTrain <- sample(seq(along = mdrrClass), length(mdrrClass)/2)
-> training <- filteredDescr[inTrain, ]
-> test <- filteredDescr[-inTrain, ]
+> training <- filteredDescr[inTrain,]
+> test <- filteredDescr[-inTrain,]
 > trainMDRR <- mdrrClass[inTrain]
 > testMDRR <- mdrrClass[-inTrain]
 > preProcValues <- preProcess(training, method = c("center", "scale"))
@@ -393,8 +393,7 @@ The function \texttt{createDataPartition} can be used to create balanced splits 
 \begin{Schunk}
 \begin{Sinput}
 > set.seed(3456)
-> set1index <- createDataPartition(mdrrClass, p = 0.8, list = FALSE, 
-+     times = 1)
+> set1index <- createDataPartition(mdrrClass, p = .8, list = FALSE, times = 1)
 > set1 <- mdrrClass[set1index]
 > round(table(set1)/length(set1), 2)
 \end{Sinput}
@@ -525,7 +524,7 @@ matrix is created for each class and used with the \texttt{spls} function in the
 \begin{figure}
    \begin{center}		
       \includegraphics[clip, width = .9\textwidth]{plsProbs}
-\caption{A comparison of two methods for computing class probabilities for PLS classification models on the MDRR data. Using a 5 component PLS model, the test set sample class probabilities were predicted using either the softmax function or Bayes rule. The histograms show the distributions of the active class probabilities for both methods and the true class of the samples. While Bayes rule takes more time to compute (0.64 seconds compared to 0.01 seconds for softmax), the probabilities using Bayes rule appear more appropriate since they encompass the full scale. The softmax probabilities are close to the middle of the distribution and rarely show high confidence in the predicted class. Both techniques show approximately the same accuracy (0.8 for Bayes and 0.77 for softmax) and Kappa values (0.58 for Bayes and 0.52 for softmax).}
+\caption{A comparison of two methods for computing class probabilities for PLS classification models on the MDRR data. Using a 5 component PLS model, the test set sample class probabilities were predicted using either the softmax function or Bayes rule. The histograms show the distributions of the active class probabilities for both methods and the true class of the samples. While Bayes rule takes more time to compute (0.66 seconds compared to 0.011 seconds for softmax), the probabilities using Bayes rule appear more appropriate since they encompass the full scale. The softmax probabilities are close to the middle of the distribution and rarely show high confidence in the predicted class. Both techniques show approximately the same accuracy (0.8 for Bayes and 0.77 for softmax) and Kappa values (0.58 for Bayes and 0.52 for softmax).}
       \label{f:plsProbs}       
    \end{center}
 \end{figure}  
@@ -602,7 +601,7 @@ between the new latent variable and the outcomes.
   \item Locale: \verb|en_US.UTF-8/en_US.UTF-8/C/C/en_US.UTF-8/en_US.UTF-8|
   \item Base packages: base, datasets, graphics, grDevices, grid,
     methods, splines, stats, tools, utils
-  \item Other packages: caret~4.43, class~7.3-2, e1071~1.5-24,
+  \item Other packages: caret~4.45, class~7.3-2, e1071~1.5-24,
     ellipse~0.3-5, gbm~1.6-3.1, ipred~0.8-8, kernlab~0.9-10,
     klaR~0.6-3, lattice~0.18-5, MASS~7.3-5, mlbench~2.0-0, nnet~7.3-1,
     pls~2.1-0, plyr~0.1.9, proxy~0.4-6, randomForest~4.5-34,
