@@ -306,6 +306,7 @@
                       neuralnet = expand.grid(.layer1 = ((1:len) * 2) - 1, .layer2 = 0, .layer3 = 0),
                       scrda = scrdaTune(data, len),
                       bag = data.frame(.vars = ncol(data) - 1),
+                      hdda = expand.grid(.model = c("best", "dbest"), .threshold = seq(0.05, .3, length = len)),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,

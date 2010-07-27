@@ -324,6 +324,11 @@ probFunction <- function(method, modelFit, newdata)
                       {
                         predict(modelFit, newdata, type = "prob")
 
+                      },
+                      hdda =
+                      {
+                        library(HDclassif)
+                        predict(modelFit, newdata)$posterior
                       }
                       )
 

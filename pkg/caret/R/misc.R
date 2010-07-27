@@ -166,7 +166,8 @@ modelLookup <- function(model = NULL)
                            "neuralnet", "neuralnet", "neuralnet",
                            "qrf",
                            "scrda", "scrda",
-                           "bag"
+                           "bag",
+                           "hdda", "hdda"
                            ),
                          parameter = c(
                            "parameter",      
@@ -267,7 +268,8 @@ modelLookup <- function(model = NULL)
                            "layer1", "layer2", "layer3",
                            "mtry",
                            "alpha", "delta",
-                           "vars"
+                           "vars",
+                           "threshold", "model"
                            ),
                          label = I(c(
                            "none",      
@@ -370,7 +372,8 @@ modelLookup <- function(model = NULL)
                            "#Hidden Units in Layer 1", "#Hidden Units in Layer 2", "#Hidden Units in Layer 3",
                            "#Randomly Selected Predictors",
                            "Regularization Value", "Threshold",
-                           "#Randomly Selected Predictors"
+                           "#Randomly Selected Predictors",
+                           "Threshold", "Model Type"
                            )),
                          seq = c(
                            FALSE,
@@ -470,7 +473,8 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE, FALSE,
                            FALSE,
                            TRUE, TRUE,
-                           FALSE
+                           FALSE,
+                           FALSE, FALSE
                            ),
                          forReg = c(
                            TRUE,
@@ -570,7 +574,8 @@ modelLookup <- function(model = NULL)
                            TRUE, TRUE, TRUE,
                            TRUE,
                            FALSE, FALSE,
-                           TRUE
+                           TRUE,
+                           FALSE, FALSE
                            ),               
                          forClass =          
                          c(
@@ -671,7 +676,8 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE, FALSE,
                            FALSE,
                            TRUE, TRUE,
-                           TRUE
+                           TRUE,
+                           TRUE, TRUE
                            ),
                          probModel = c(
                            TRUE,             #   bagged trees
@@ -771,7 +777,8 @@ modelLookup <- function(model = NULL)
                            FALSE, FALSE, FALSE, ## neuralnet
                            FALSE,             ## qrf
                            TRUE, TRUE,        ## scrda
-                           TRUE
+                           TRUE,              ## bag
+                           TRUE, TRUE         ## hdda
                            ),
                          stringsAsFactors  = FALSE               
                          )         
