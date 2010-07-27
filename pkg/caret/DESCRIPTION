@@ -11,5 +11,5 @@ Suggests: gbm, pls, mlbench, rpart, ellipse, ipred, klaR, randomForest, gpls, pa
   kernlab, mda, mgcv, nnet, class, MASS, mboost, earth (>= 2.2-3), party, ada, affy, proxy, e1071,
   grid, elasticnet, SDDA, caTools, RWeka (>= 0.4-1), superpc, penalized, sparseLDA (>= 0.1-1), 
   spls, sda, glmnet, relaxo, lars, vbmp, nodeHarvest, rrcov, gam, stepPlr, foreach, GAMens (>= 1.1.1),
-  rocc, foba, partDSA, hda, fastICA, neuralnet, quantregForest, rda
+  rocc, foba, partDSA, hda, fastICA, neuralnet, quantregForest, rda, HDclassif
 License: GPL-2

@@ -3,7 +3,8 @@ Version: 4.45
 Date: 2010-07-25
 
 Added a general framework for bagging models via the 
-bag() function.
+bag() function. Also, model type "hdda" from the HDclassif
+package was added.
 
 -------------------
 Version: 4.44
