@@ -5,6 +5,7 @@
 \description{Methods for making inferences about differences between models }
 \usage{
 \method{diff}{resamples}(x, models = x$models, metric = x$metrics, test = t.test, ...)
+
 \method{summary}{diff.resamples}(object, digits = max(3, getOption("digits") - 3), ...)
 }
 \arguments{
@@ -17,6 +18,8 @@
   \item{\dots}{further arguments to pass to \code{test}}
 }
 \details{
+The ideas and methods here are based on Hothorn et al (2005) and Eugster et al (2008).
+
 For each metric, all pair-wise differences are computed and tested to assess if the difference is equal to zero.
 }
 \value{
@@ -34,9 +37,13 @@ An object of class \code{"summary.diff.resamples"} with elements:
   \item{table }{a list of tables that show the differences and p-values }
 }
 
+\references{Hothorn et al. The design and analysis of benchmark experiments. Journal of Computational and Graphical Statistics (2005) vol. 14 (3) pp. 675-699
+
+Eugster et al. Exploratory and inferential analysis of benchmark experiments. Ludwigs-Maximilians-Universitat Munchen, Department of Statistics, Tech. Rep (2008) vol. 30}
+
 \author{Max Kuhn}
 
-\seealso{\code{\link{resamples}}}
+\seealso{\code{\link{resamples}}, \code{\link{dotplot.diff.resamples}},  \code{\link{densityplot.diff.resamples}}, \code{\link{bwplot.diff.resamples}}, \code{\link{levelplot.diff.resamples}}}
 
 \examples{
 \dontrun{
