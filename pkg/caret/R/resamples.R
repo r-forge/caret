@@ -7,7 +7,7 @@ resamples.default <- function(x, modelNames = names(x), ...)
     ## that they actually used the samples samples in the resamples
     if(length(x) < 2) stop("at least two train objects are needed")
     classes <- unlist(lapply(x, function(x) class(x)[1]))
-    if(!all(classes == "train")) stop("all objects in x must of class train")
+    if(!all(classes %in% c("sbf", "rfe", "train"))) stop("all objects in x must of class train, sbf or rfe")
 
  
     numResamp <- unlist(lapply(x, function(x) length(x$control$index)))
@@ -20,23 +20,34 @@ resamples.default <- function(x, modelNames = names(x), ...)
         uniqueIndex <- length(table(table(unlist(indices))))
         if(length(uniqueIndex) > 1) stop("The samples indices are not equal across resamples")
       }
+
+    getNames <- function(x)
+      {
+        switch(class(x)[1],
+               sbf = x$metrics,
+               train =, rfe = x$perfNames)               
+      }
     
-    perfs <- lapply(x, function(x) x$perfNames)
+    perfs <- lapply(x, getNames)
     if(length(unique(unlist(lapply(perfs, length)))) != 1) stop("all objects must has the same performance metrics")
     perfs <- do.call("rbind", perfs)
     uniques <- apply(perfs, 2, function(x) length(unique(x)))
     if(!all(uniques == 1)) stop("all objects must has the same performance metrics")
-    pNames <- perfs[1,]
+    pNames <- unique(as.vector(perfs))
 
-
-    pNames <- x[[1]]$perfNames
     
     if(is.null(modelNames)) modelNames <- paste("Model", seq(along = x))
     for(i in seq(along = x))
       {
 
+        ## TODO check for returnResamp in control object and select appropriate
+        ## data for train
+        if(class(x[[i]])[1] == "rfe" && x[[i]]$control$returnResamp == "all")
+          {
+            x[[i]]$resample <- subset(x[[i]]$resample, Variables == x[[i]]$bestSubset)
+          }
         tmp <- x[[i]]$resample[, c(pNames, "Resample"), drop = FALSE]
-        names(tmp)[names(tmp) %in% pNames] <- paste(modelNames[i], names(tmp)[names(tmp) %in% pNames], sep = ".")
+        names(tmp)[names(tmp) %in% pNames] <- paste(modelNames[i], names(tmp)[names(tmp) %in% pNames], sep = "~")
         out <- if(i == 1) tmp else merge(out, tmp)
       }
 
@@ -52,6 +63,113 @@ resamples.default <- function(x, modelNames = names(x), ...)
     
     out
   }
+
+
+prcomp.resamples <- function(x, metric = x$metrics[1],  ...)
+  {
+    
+    if(length(metric) != 1) stop("exactly one metric must be given")
+
+    tmpData <- x$values[, grep(paste("~", metric, sep = ""),
+                               names(x$value),
+                               fixed = TRUE),
+                        drop = FALSE]
+    names(tmpData) <- gsub(paste("~", metric, sep = ""),
+                           "",
+                           names(tmpData),
+                           fixed = TRUE)
+
+    tmpData <- t(tmpData)
+    out <- prcomp(tmpData)
+    out$metric <- metric
+    out$call <- match.call()
+    class(out) <- c("prcomp.resamples", "prcomp")
+    out
+  }
+
+plot.prcomp.resamples <- function(x, what = "scree", dims = max(2, ncol(x$rotation)), ...)
+{
+  if(length(what) > 1) stop("one plot at a time please")
+  switch(what,
+         scree =
+         {
+           barchart(x$sdev ~ paste("PC", seq(along = x$sdev)),
+                    ylab = "Standard Deviation", ...)
+         },
+         cumulative =
+         {
+           barchart(cumsum(x$sdev^2)/sum(x$sdev^2) ~ paste("PC", seq(along = x$sdev)),
+                    ylab = "Culmulative Percent of Variance", ...)
+         },
+         loadings =
+         {
+
+           panelRange <- extendrange(x$rotation[, 1:dims,drop = FALSE])
+           if(dims > 2)
+             {
+               
+               splom(~x$rotation[, 1:dims,drop = FALSE],
+                     main = caret:::useMathSymbols(x$metric),
+                     prepanel.limits = function(x) panelRange,
+                     type = c("p", "g"),
+                     ...)
+             } else {
+               xyplot(PC2~PC1, data = as.data.frame(x$rotation),
+                     main = caret:::useMathSymbols(x$metric),
+                     xlim = panelRange,
+                     ylim = panelRange,
+                     type = c("p", "g"),
+                     ...)
+             }
+
+         },
+         components =
+         {
+
+           panelRange <- extendrange(x$x[, 1:dims,drop = FALSE])
+           if(dims > 2)
+             {
+               
+               splom(~x$x[, 1:dims,drop = FALSE],
+                     main = caret:::useMathSymbols(x$metric),
+                     prepanel.limits = function(x) panelRange,
+                     groups = rownames(x$x),
+                     type = c("p", "g"),
+                     ...)
+             } else {
+               xyplot(PC2~PC1, data = as.data.frame(x$x),
+                     main = caret:::useMathSymbols(x$metric),
+                     xlim = panelRange,
+                     ylim = panelRange,
+                     
+                     groups = rownames(x$x),
+                     type = c("p", "g"),
+                     ...)
+             }
+
+         })
+} 
+
+
+print.prcomp.resamples <- function (x, digits = max(3, getOption("digits") - 3), print.x = FALSE, ...) 
+{
+  cat("\nCall:\n", deparse(x$call), "\n\n", sep = "")
+  cat("Metric:", x$metric, "\n")
+
+
+  sds <- rbind(x$sdev, cumsum(x$sdev^2)/sum(x$sdev^2))
+  rownames(sds) <- c("Std. Dev. ", "Cum. Percent Var. ")
+  colnames(sds) <- rep("", ncol(sds))
+                     
+  print(sds, digits = digits, ...)
+  cat("\nRotation:\n")
+  print(x$rotation, digits = digits, ...)
+  if (print.x && length(x$x)) {
+    cat("\nRotated variables:\n")
+    print(x$x, digits = digits, ...)
+  }
+  invisible(x)
+}
 
 print.resamples <- function(x, ...)
   {
@@ -70,10 +188,10 @@ summary.resamples <- function(object, ...)
   out <- vector(mode = "list", length = length(object$metrics))
   for(i in seq(along = object$metrics))
     {
-      tmpData <- vals[, grep(paste(".", object$metrics[i], sep = ""), names(vals), fixed = TRUE), drop = FALSE]
+      tmpData <- vals[, grep(paste("~", object$metrics[i], sep = ""), names(vals), fixed = TRUE), drop = FALSE]
       
       out[[i]] <- do.call("rbind", lapply(tmpData, summary))
-      rownames(out[[i]]) <- gsub(paste(".", object$metrics[i], sep = ""),
+      rownames(out[[i]]) <- gsub(paste("~", object$metrics[i], sep = ""),
                                  "",
                                  rownames(out[[i]]),
                                  fixed = TRUE)
@@ -115,7 +233,7 @@ xyplot.resamples <- function (x, data = NULL, models = x$models[1:2], metric = x
 {
   if(length(metric) != 1) stop("exactly one metric must be given")
   if(length(models) != 2) stop("exactly two model names must be given")
-  tmpData <- x$values[, paste(models, metric, sep =".")]
+  tmpData <- x$values[, paste(models, metric, sep ="~")]
   tmpData$Difference <- tmpData[,1] - tmpData[,2]
   tmpData$Average <- (tmpData[,1] + tmpData[,2])/2
   ylm <- extendrange(c(tmpData$Difference, 0))
@@ -123,7 +241,7 @@ xyplot.resamples <- function (x, data = NULL, models = x$models[1:2], metric = x
          data = tmpData,
          ylab = paste(models, collapse = " - "),
          ylim = ylm,
-         main = metric,
+         main = useMathSymbols(metric),
          panel = function(x, y, ...)
          {
            panel.abline(h = 0, col = "darkgrey", lty = 2)
@@ -132,23 +250,55 @@ xyplot.resamples <- function (x, data = NULL, models = x$models[1:2], metric = x
   
 }
 
-
-
-
-splom.resamples <- function (x, data = NULL, models = x$models, metric = x$metric[1], ...) 
+parallel.resamples <- function (x, data = NULL, models = x$models, metric = x$metric[1], ...) 
 {
   if(length(metric) != 1) stop("exactly one metric must be given")
 
-  tmpData <- x$values[, grep(paste(".", metric, sep = ""),
+  tmpData <- x$values[, grep(paste("~", metric, sep = ""),
                              names(x$value),
                              fixed = TRUE),
                       drop = FALSE]
-  names(tmpData) <- gsub(paste(".", metric, sep = ""),
+  names(tmpData) <- gsub(paste("~", metric, sep = ""),
                          "",
                          names(tmpData),
                          fixed = TRUE)
-  tmpData
-  splom(~tmpData, ...)
+  rng <- range(unlist(lapply(lapply(tmpData, as.numeric), range)))
+  prng <- pretty(rng)
+
+  reord <- order(apply(tmpData, 2, median))
+  tmpData <- tmpData[, reord]
+
+  parallel(~tmpData,
+           common.scale = TRUE,
+           scales = list(x = list(at = (prng-min(rng))/diff(rng), labels = prng)),
+           xlab = useMathSymbols(metric),
+           ...)
+    
+}
+
+splom.resamples <- function (x, data = NULL, models = x$models, metric = x$metric[1], panelRange = NULL, ...) 
+{
+  if(length(metric) != 1) stop("exactly one metric must be given")
+
+  tmpData <- x$values[, grep(paste("~", metric, sep = ""),
+                             names(x$value),
+                             fixed = TRUE),
+                      drop = FALSE]
+  names(tmpData) <- gsub(paste("~", metric, sep = ""),
+                         "",
+                         names(tmpData),
+                         fixed = TRUE)
+  if(is.null(panelRange)) panelRange <- extendrange(tmpData)
+  splom(~tmpData,
+        panel = function(x, y)
+        {
+          panel.splom(x, y, ...)
+          panel.abline(0, 1, lty = 2, col = "darkgrey")
+
+          },
+        main = useMathSymbols(metric),
+        prepanel.limits = function(x) panelRange,
+        ...)
                          
 }
 
@@ -156,7 +306,7 @@ splom.resamples <- function (x, data = NULL, models = x$models, metric = x$metri
 densityplot.resamples <- function (x, data = NULL, models = x$models, metric = x$metric, ...) 
 {
   plotData <- melt(x$values, id.vars = "Resample")
-  tmp <- strsplit(as.character(plotData$variable), ".", fixed = TRUE)
+  tmp <- strsplit(as.character(plotData$variable), "~", fixed = TRUE)
   plotData$Model <- unlist(lapply(tmp, function(x) x[1]))
   plotData$Metric <- unlist(lapply(tmp, function(x) x[2]))
   plotData <- subset(plotData, Model %in% models & Metric  %in% metric)
@@ -171,7 +321,7 @@ densityplot.resamples <- function (x, data = NULL, models = x$models, metric = x
 bwplot.resamples <- function (x, data = NULL, models = x$models, metric = x$metric, ...) 
 {
   plotData <- melt(x$values, id.vars = "Resample")
-  tmp <- strsplit(as.character(plotData$variable), ".", fixed = TRUE)
+  tmp <- strsplit(as.character(plotData$variable), "~", fixed = TRUE)
   plotData$Model <- unlist(lapply(tmp, function(x) x[1]))
   plotData$Metric <- unlist(lapply(tmp, function(x) x[2]))
   plotData <- subset(plotData, Model %in% models & Metric  %in% metric)
@@ -179,6 +329,57 @@ bwplot.resamples <- function (x, data = NULL, models = x$models, metric = x$metr
   bwplot(Model~value|Metric, data = plotData,
          xlab = "", ...)
                          
+}
+
+
+
+dotplot.resamples <- function (x, data = NULL, models = x$models, metric = x$metric, conf.level = 0.95, ...) 
+{
+  plotData <- melt(x$values, id.vars = "Resample")
+  tmp <- strsplit(as.character(plotData$variable), "~", fixed = TRUE)
+  plotData$Model <- unlist(lapply(tmp, function(x) x[1]))
+  plotData$Metric <- unlist(lapply(tmp, function(x) x[2]))
+  plotData <- subset(plotData, Model %in% models & Metric  %in% metric)
+  plotData$variable <- factor(as.character(plotData$variable))
+
+  plotData <- split(plotData, plotData$variable)
+  results <- lapply(plotData,
+                    function(x, cl)
+                    {
+                      ttest <- t.test(x$value, conf.level = cl)
+                      out <- c(ttest$conf.int, ttest$estimate)
+                      names(out) <- c("LowerLimit", "UpperLimit", "Estimate")
+                      out
+                    },
+                    cl = conf.level)
+  results <- do.call("rbind", results)
+  results <- melt(results)
+  tmp <- strsplit(as.character(results$X1), "~", fixed = TRUE)
+  results$Model <- unlist(lapply(tmp, function(x) x[1]))
+  results$Metric <- unlist(lapply(tmp, function(x) x[2]))
+  dotplot(Model ~ value|Metric,
+         data = results,
+         xlab = "",
+         panel = function(x, y)
+         {
+           plotTheme <- trellis.par.get()
+           y <- as.numeric(y)
+           
+           vals <- aggregate(x, list(group = y), function(x) c(min = min(x), mid = median(x), max = max(x)))
+         
+           panel.dotplot(vals$x[,"mid"], vals$group,
+                        pch = plotTheme$plot.symbol$pch,
+                        col = plotTheme$plot.symbol$col)
+           panel.segments(vals$x[,"min"], vals$group, 
+                          vals$x[,"max"], vals$group, 
+                          lty = plotTheme$plot.line$lty,
+                        col = plotTheme$plot.line$col,
+                          lwd = plotTheme$plot.line$lwd)
+          
+         },
+          sub = paste("Confidence Level:", conf.level),
+         ...)
+  
 }
 
 
@@ -211,8 +412,8 @@ diff.resamples <- function(x,
                   {
                     index <- index + 1
                     
-                    left <- paste(models[i], metric[h], sep = ".")
-                    right <- paste(models[j], metric[h], sep = ".")
+                    left <- paste(models[i], metric[h], sep = "~")
+                    right <- paste(models[j], metric[h], sep = "~")
                     
                                         # cat(right, left, "\n")
                     dif[,index] <- x$values[,left] - x$values[,right]
@@ -221,7 +422,7 @@ diff.resamples <- function(x,
               }
           }
 
-        stats <- apply(dif, 2, function(x, tst, ...) tst(x, ...), tst = test)
+        stats <- apply(dif, 2, function(x, tst, ...) tst(x, ...), tst = test, ...)
         
         allDif[[h]] <- dif
         allStats[[h]] <- stats
@@ -260,9 +461,10 @@ bwplot.diff.resamples <- function(x, data, metric = x$metric, ...)
     plotData$Metric <- rep(x$metric, each = length(x$difs[[1]]))
     plotData$ind <- gsub(".diff.", " - ", plotData$ind, fixed = TRUE)
     plotData <- subset(plotData, Metric %in% metric)
-    bwplot(ind ~ values|Metric, data = plotData,
-                     xlab = "",
-                     ...)
+    bwplot(ind ~ values|Metric,
+           data = plotData,
+           xlab = "",
+           ...)
 
   }
 
@@ -439,7 +641,7 @@ dotplot.diff.resamples <- function(x, data = NULL, metric = x$metric[1], ...)
     plotData
     dotplot(Difference ~ value,
             data = plotData,
-            xlab = paste("Difference in", metric),
+            xlab = paste("Difference in", useMathSymbols(metric)),
             panel = function(x, y)
             {
               plotTheme <- trellis.par.get()
@@ -459,9 +661,6 @@ dotplot.diff.resamples <- function(x, data = NULL, metric = x$metric[1], ...)
                 
 
               panel.dotplot(middle$x, middle$mod)
-              
-
-
             },
             ...)
   }
@@ -474,40 +673,92 @@ if(FALSE)
     data(BloodBrain)
 
 
-library(caret)
-data(BloodBrain)
 
-set.seed(1)
-tmp <- createDataPartition(logBBB,
-                           p = .8,
-                           times = 100)
+    set.seed(1)
+    tmp <- createDataPartition(logBBB,
+                               p = .8,
+                               times = 5)
+    bbbDescr2 <- scale(bbbDescr[, apply(bbbDescr, 2, function(x) length(unique(x)) > 1)])
 
-rpartFit <- train(bbbDescr, logBBB,
-                  "rpart", 
-                  tuneLength = 16,
-                  trControl = trainControl(method = "LGOCV", index = tmp))
-
-
-ctreeFit <- train(bbbDescr, logBBB,
-                  "ctree2",
-                  tuneLength = 5,
-                  trControl = trainControl(method = "LGOCV", index = tmp))
-
-m5Fit <- train(bbbDescr, logBBB,
-               "M5Rules",
-               trControl = trainControl(method = "LGOCV", index = tmp))    
+    rpartFit <- train(bbbDescr, logBBB,
+                      "rpart", 
+                      tuneLength = 16,
+                      trControl = trainControl(method = "LGOCV", index = tmp))
 
 
-earthFit <- train(bbbDescr, logBBB,
-                  "earth",
-                  tuneLength = 20,
-                  trControl = trainControl(method = "LGOCV", index = tmp))
+    ctreeFit <- train(bbbDescr, logBBB,
+                      "ctree2",
+                      tuneLength = 5,
+                      trControl = trainControl(method = "LGOCV", index = tmp))
 
+    m5Fit <- train(bbbDescr, logBBB,
+                   "M5Rules",
+                   trControl = trainControl(method = "LGOCV", index = tmp))    
+
+
+    earthFit <- train(bbbDescr, logBBB,
+                      "earth",
+                      tuneLength = 10,
+                      trControl = trainControl(method = "LGOCV", index = tmp))
+
+
+
+    bagEarthFit <- train(bbbDescr, logBBB,
+                         "bagEarth",
+                         tuneLength = 10,
+                         trControl = trainControl(method = "LGOCV", index = tmp))
+
+    rfFit <- train(bbbDescr, logBBB,
+                   "rf",
+                   tuneLength = 5,
+                   trControl = trainControl(method = "LGOCV", index = tmp))
+
+    crfFit <- train(bbbDescr, logBBB,
+                    "cforest",
+                    tuneLength = 5,
+                    trControl = trainControl(method = "LGOCV", index = tmp))
+
+    gbmFit <- train(bbbDescr, logBBB,
+                    "gbm",
+                    tuneGrid = expand.grid(
+                      .interaction.depth = -1 + (1:5) * 2,
+                      .n.trees = 20 * (1:20),
+                      .shrinkage = .1),
+                    verbose = FALSE,
+                    trControl = trainControl(method = "LGOCV", index = tmp))
+
+    svmRFit <- train(bbbDescr2, logBBB,
+                    "svmRadial",
+                    tuneLength = 5,
+                    trControl = trainControl(method = "LGOCV", index = tmp))
+
+    svmLFit <- train(bbbDescr2, logBBB,
+                    "svmLinear",
+                    tuneLength = 5,
+                    trControl = trainControl(method = "LGOCV", index = tmp))    
+
+    plsFit <- train(bbbDescr2, logBBB,
+                    "pls",
+                    tuneLength = 15,
+                    trControl = trainControl(method = "LGOCV", index = tmp))
+
+
+    lmFit <- train(bbbDescr2, logBBB,
+                    "lm",
+                    trControl = trainControl(method = "LGOCV", index = tmp))       
+    
 
     resamps <- resamples(list(CART = rpartFit,
                               CondInfTree = ctreeFit,
                               MARS = earthFit,
-                              M5 = m5Fit))
+                              M5 = m5Fit,
+                              rf = rfFit,
+                              crf = crfFit,
+                              pls = plsFit,
+                              svmL = svmLFit,
+                              svmR = svmRFit,
+                              bagMARS = bagEarthFit,
+                              gbm = gbmFit))
     
 
     resamps

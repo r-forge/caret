@@ -81,7 +81,19 @@ train.default <- function(x, y,
 
   ## If no default training grid is specified, get one. We have to pass in the formula
   ## and data for some models (rpart, pam, etc - see manual for more details)
-  if(is.null(tuneGrid)) tuneGrid <- createGrid(method, tuneLength, trainData)
+  if(is.null(tuneGrid))
+    {
+      tuneGrid <- createGrid(method, tuneLength, trainData)
+    } else {
+      if(is.function(tuneGrid))
+        {
+          if(length(formals(tuneGrid)) == 2
+             && names(formals(tuneGrid)) == c("len", "data"))
+            {
+              tuneGrid <- tuneGrid(tuneLength, trainData)
+            } else stop("If a function, tuneGrid should have arguments len and data")
+        }
+    }
 
   ##------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -152,6 +164,11 @@ train.default <- function(x, y,
   paramNames <- names(tuneGrid)
   paramNames <- gsub("^\\.", "", paramNames)
 
+  if(trControl$verboseIter)
+    {
+      cat("Aggregating results\n")
+      flush.console()
+    }
 
   ## Now take the predictions and boil them down to performance matrics per tuning
   ## parameter and resampling combo.
@@ -173,6 +190,16 @@ train.default <- function(x, y,
   ## Sort the tuning parameters from least complex to most complex
   performance <- byComplexity(performance, method)
 
+  if(trControl$verboseIter)
+    {
+      mod <- modelLookup(method)
+      if(!all(mod$label == "none"))
+        {
+          cat("Selecting tuning parameters\n")
+          flush.console()
+        }
+    }
+  
   ## select the optimal set
   selectClass <- class(trControl$selectionFunction)[1]
 
@@ -239,7 +266,13 @@ train.default <- function(x, y,
     }
   names(orderList) <- trainInfo$model$parameter
   performance <- performance[do.call("order", orderList),]      
-  
+
+  if(trControl$verboseIter)
+    {
+      cat("Fitting model on full training set\n")
+      flush.console()
+    }
+    
   ## Make the final model based on the tuning results
   finalModel <- createModel(
                             trainData, 

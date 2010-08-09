@@ -3,6 +3,9 @@
 \alias{densityplot.resamples}
 \alias{bwplot.resamples}
 \alias{splom.resamples}
+\alias{parallel.resamples}
+\alias{dotplot.resamples}
+
 \title{Lattice Functions for Visualizing Resampling Results}
 
 \description{
@@ -10,9 +13,16 @@ Lattice functions for visualizing resampling results across models
 }
 \usage{
 \method{xyplot}{resamples}(x, data = NULL, models = x$models[1:2], metric = x$metric[1], ...)
+
+\method{dotplot}{resamples}(x, data = NULL, models = x$models, metric = x$metric, conf.level = 0.95, ...)
+
 \method{densityplot}{resamples}(x, data = NULL, models = x$models, metric = x$metric, ...)
+
 \method{bwplot}{resamples}(x, data = NULL, models = x$models, metric = x$metric, ...)
-\method{splom}{resamples}(x, data = NULL, models = x$models, metric = x$metric[1], ...)
+
+\method{splom}{resamples}(x, data = NULL, models = x$models, metric = x$metric[1], panelRange = NULL, ...)
+
+\method{parallel}{resamples}(x, data = NULL, models = x$models, metric = x$metric[1], ...)
 
 }
 \arguments{
@@ -20,10 +30,16 @@ Lattice functions for visualizing resampling results across models
   \item{data}{Not used}
   \item{models}{a character string for which models to plot. Note: \code{xyplot} requires exactly two models whereas the other methods can plot more than two.}
   \item{metric}{a character string for which metrics to use as conditioning variables in the plot. \code{splom} requires exactly one metric and does not condition.}
-  \item{\dots}{further arguments to pass to either \code{\link[lattice:histogram]{histogram}}, \code{\link[lattice:histogram]{densityplot}}, \code{\link[lattice:xyplot]{xyplot}} or \code{\link[lattice:splom]{splom}}}
+  \item{panelRange}{a common range for the panels. If \code{NULL}, the panel ranges are derived from the values across all the models}
+  \item{conf.level}{the confidence level for intervals about the mean (obtained using \code{\link[stats]{t.test}})}
+  \item{\dots}{further arguments to pass to either \code{\link[lattice:histogram]{histogram}}, \code{\link[lattice:histogram]{densityplot}}, \code{\link[lattice:xyplot]{xyplot}}, \code{\link[lattice:xyplot]{dotplot}} or \code{\link[lattice:splom]{splom}}}
 }
 \details{
+The ideas and methods here are based on Hothorn et al (2005) and Eugster et al (2008).
+
 \code{xyplot} only uses two models in the plot. The plot uses difference of the models on the y-axis and the average of the models on the x-axis.
+
+\code{dotplot} plots the average performance value (with two-sided confidence limits) for each model and metric.
 
 \code{densityplot} and \code{bwplot} display univariate visualizations of the resampling distributions while \code{splom} shows the pair-wise relationships.
 }
@@ -31,10 +47,14 @@ Lattice functions for visualizing resampling results across models
 a lattice object
 }
 
+\references{Hothorn et al. The design and analysis of benchmark experiments. Journal of Computational and Graphical Statistics (2005) vol. 14 (3) pp. 675-699
+
+Eugster et al. Exploratory and inferential analysis of benchmark experiments. Ludwigs-Maximilians-Universitat Munchen, Department of Statistics, Tech. Rep (2008) vol. 30}
+
 \author{Max Kuhn}
 
 \seealso{
-\code{\link{resamples}}, \code{\link[lattice:bwplot]{bwplot}}, \code{\link[lattice:histogram]{densityplot}}, \code{\link[lattice:xyplot]{xyplot}}, \code{\link[lattice:splom]{splom}}
+\code{\link{resamples}}, \code{\link[lattice:xyplot]{dotplot}}, \code{\link[lattice:bwplot]{bwplot}}, \code{\link[lattice:histogram]{densityplot}}, \code{\link[lattice:xyplot]{xyplot}}, \code{\link[lattice:splom]{splom}}
 }
 \examples{
 \dontrun{
@@ -43,6 +63,11 @@ a lattice object
 resamps <- resamples(list(CART = rpartFit,
                           CondInfTree = ctreeFit,
                           MARS = earthFit))
+
+dotplot(resamps, 
+        scales =list(x = list(relation = "free")), 
+        between = list(x = 2))
+
 bwplot(resamps,
        metric = "RMSE")
 
@@ -55,6 +80,8 @@ xyplot(resamps,
        metric = "RMSE")
 
 splom(resamps, metric = "RMSE")
+
+parallel(resamps, metric = "RMSE")
 
 
 }
