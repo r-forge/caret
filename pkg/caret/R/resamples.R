@@ -276,30 +276,55 @@ parallel.resamples <- function (x, data = NULL, models = x$models, metric = x$me
     
 }
 
-splom.resamples <- function (x, data = NULL, models = x$models, metric = x$metric[1], panelRange = NULL, ...) 
+splom.resamples <- function (x, data = NULL, variables = "models",
+                             models = x$models,
+                             metric = NULL,
+                             panelRange = NULL,
+                             ...) 
 {
-  if(length(metric) != 1) stop("exactly one metric must be given")
 
-  tmpData <- x$values[, grep(paste("~", metric, sep = ""),
-                             names(x$value),
-                             fixed = TRUE),
-                      drop = FALSE]
-  names(tmpData) <- gsub(paste("~", metric, sep = ""),
-                         "",
-                         names(tmpData),
-                         fixed = TRUE)
-  if(is.null(panelRange)) panelRange <- extendrange(tmpData)
-  splom(~tmpData,
-        panel = function(x, y)
+  if(variables == "models")
+    {
+
+      if(is.null(metric)) metric <- x$metric[1]
+      if(length(metric) != 1) stop("exactly one metric must be given")
+
+      tmpData <- x$values[, grep(paste("~", metric, sep = ""),
+                                 names(x$value),
+                                 fixed = TRUE),
+                          drop = FALSE]
+      names(tmpData) <- gsub(paste("~", metric, sep = ""),
+                             "",
+                             names(tmpData),
+                             fixed = TRUE)
+      if(is.null(panelRange)) panelRange <- extendrange(tmpData)
+      splom(~tmpData,
+            panel = function(x, y)
+            {
+              panel.splom(x, y, ...)
+              panel.abline(0, 1, lty = 2, col = "darkgrey")
+
+            },
+            main = caret:::useMathSymbols(metric),
+            prepanel.limits = function(x) panelRange,
+            ...)
+    } else{
+      if(variables == "metrics")
         {
-          panel.splom(x, y, ...)
-          panel.abline(0, 1, lty = 2, col = "darkgrey")
+      if(is.null(metric)) metric <- x$metric
+          if(length(metric) < 2) stop("There should be at least two metrics")
+          plotData <- melt(x$values, id.vars = "Resample")
+          tmp <- strsplit(as.character(plotData$variable), "~", fixed = TRUE)
+          plotData$Model <- unlist(lapply(tmp, function(x) x[1]))
+          plotData$Metric <- unlist(lapply(tmp, function(x) x[2]))
+          plotData <- subset(plotData, Model %in% models & Metric  %in% metric)
+          means <- cast(plotData, Model ~ Metric, mean)
+          splom(~means[, metric], groups = means$Model, ...)
 
-          },
-        main = useMathSymbols(metric),
-        prepanel.limits = function(x) panelRange,
-        ...)
-                         
+        } else stop ("'variables' should be either 'models' or 'metrics'")
+
+    }
+  
 }
 
 
@@ -678,6 +703,7 @@ if(FALSE)
     tmp <- createDataPartition(logBBB,
                                p = .8,
                                times = 5)
+    
     bbbDescr2 <- scale(bbbDescr[, apply(bbbDescr, 2, function(x) length(unique(x)) > 1)])
 
     rpartFit <- train(bbbDescr, logBBB,
@@ -725,6 +751,7 @@ if(FALSE)
                       .n.trees = 20 * (1:20),
                       .shrinkage = .1),
                     verbose = FALSE,
+                    bag.fraction = 0.9,
                     trControl = trainControl(method = "LGOCV", index = tmp))
 
     svmRFit <- train(bbbDescr2, logBBB,
@@ -761,6 +788,7 @@ if(FALSE)
                               gbm = gbmFit))
     
 
+    save.image("bbb.RData")
     resamps
     bwplot(resamps, metric = "RMSE")
     densityplot(resamps,
