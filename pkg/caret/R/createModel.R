@@ -57,7 +57,7 @@
                    "superpc", "ppr", "sda", "penalized", "sparseLDA",
                    "nodeHarvest", "Linda", "QdaCov", "stepLDA", "stepQDA",
                    "parRF", "plr", "rocc", "foba", "partDSA", "hda", "icr",
-                   "qrf", "scrda", "bag", "hdda"))
+                   "qrf", "scrda", "bag", "hdda", "logreg", "logforest", "logicBag"))
     {
       trainX <- data[,!(names(data) %in% ".outcome")]
       trainY <- data[,".outcome"] 
@@ -646,11 +646,12 @@
 
                        ## pass in any model weights
                        if(!is.null(modelWeights)) theDots$weights <- modelWeights  
+
                        
                        modelArgs <- c(
                                       list(
-                                           x = as.matrix(trainX),
-                                           y = trainY,
+                                           formula = modFormula,
+                                           data = data,
                                            control = ctl),
                                       theDots)
                       
@@ -662,15 +663,13 @@
                            tmp <- if(is.factor(trainY)) try(out[mstop(AIC(out, "classical"))], silent = TRUE) else try(out[mstop(AIC(out))], silent = TRUE)
                          }
                        
-                       out$call["x"] <- "xData"         
-                       out$call["y"] <- "yData"  
-                       
                        out
 
                      },      
                      blackboost = 
                      {
                        library(mboost)
+                       library(party)
                        
                        theDots <- list(...)
                        
@@ -700,19 +699,15 @@
                        
                        modelArgs <- c(
                                       list(
-                                           x = as.matrix(trainX),
-                                           y = trainY,
+                                           formula = modFormula,
+                                           data = data,
                                            control = ctl,
                                            tree_controls = treeCtl),
                                       theDots)                     
                        
                        out <- do.call("blackboost", modelArgs)
-
-                       out$call["x"] <- "xData"         
-                       out$call["y"] <- "yData"  
-                       
+                       out$call["data"] <- "data"  
                        out
-
                      },
                      
                      ada = 
@@ -1418,6 +1413,33 @@
                      {
                        library(HDclassif)
                        hdda(trainX, trainY, model = tuneValue$.model, threshold = tuneValue$.threshold, ...)
+                     },
+                     logreg =
+                     {
+                       library(LogicReg)
+                       if(is.factor(trainY)) trainY <- ifelse(trainY == levels(trainY)[1], 1, 0)
+                       logreg(resp = trainY, bin = trainX,
+                              ntrees = tuneValue$.ntrees,
+                              tree.control = logreg.tree.control(treesize = tuneValue$.treesize),
+                              select = 1,
+                              type = ifelse(type == "Regression", 2, 3),
+                              ...)
+                     },
+                     logforest =
+                     {
+                       library(LogicForest)
+                       y2 <- ifelse(trainY == levels(trainY)[1], 1, 0)
+                       logforest(resp = y2,
+                                 Xs = trainX,
+                                 ...)
+                     },
+                     logicBag =
+                     {
+                       library(logicFS)
+                       logic.bagging(as.matrix(trainX), trainY,
+                                     ntrees = tuneValue$.ntrees,
+                                     nleaves = tuneValue$.nleaves,
+                                     ...)
                      }
                      )
   
