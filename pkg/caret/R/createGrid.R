@@ -32,7 +32,7 @@
       library(kernlab)
       ## this was changed to follow what kernlab does inside of ksvm and rvm:
       sigmaEstimate <- try(
-                           sigest(.outcome ~ ., data, na.action = na.omit, scaled = FALSE),
+                           sigest(.outcome ~ ., data, na.action = na.omit, scaled = TRUE),
                            silent = TRUE)
       if(!(class(sigmaEstimate) == "try-error"))
         {
@@ -190,6 +190,14 @@
       out
 
     }
+  relaxoGrid <- function(data, len)
+    {
+      library(relaxo)
+      tmp <- relaxo(as.matrix(data[, names(data) != ".outcome", drop = FALSE]),
+                    data$.outcome)
+      expand.grid(.phi = seq(0.1, 0.9, length = len),
+                  .lambda = 10^seq(log10(min(tmp$lambda)), log10(quantile(tmp$lambda, probs = .9)), length = len))
+    }
   
   trainGrid <- switch(method,
                       nnet =, pcaNNet = expand.grid(
@@ -257,9 +265,7 @@
                       glmnet = expand.grid(
                         .alpha = seq(0.1, 1, length = len),
                         .lambda = seq(.1, 3, length = 3 * len)),
-                      relaxo = expand.grid(
-                        .phi = seq(0.1, 0.9, length = len),
-                        .lambda = 10^seq(-1, 3, length = 3 * len)),
+                      relaxo = relaxoGrid(data, len),
                       logitBoost = data.frame(.nIter =  floor((1:len) * 50)),
                       J48 = data.frame(.C = 0.25),
                       M5Rules = data.frame(.pruned = c("Yes", "No")),
@@ -278,7 +284,7 @@
                       mda = data.frame(.subclasses = (1:len) + 1),
                       pda = data.frame(.lambda = 1:len),
                       pda2 = data.frame(.df = 2* (0:(len - 1) + 1)),
-                                            lars = expand.grid(.fraction = seq(0.05, 1, length = len)),
+                      lars = expand.grid(.fraction = seq(0.05, 1, length = len)),
                       lars2 = larsTune(data, len),
                       PART = data.frame(.threshold = 0.25, .pruned = "yes"),
                       vbmpRadial = data.frame(.estimateTheta = "yes"),
@@ -307,11 +313,13 @@
                       scrda = scrdaTune(data, len),
                       bag = data.frame(.vars = ncol(data) - 1),
                       hdda = expand.grid(.model = c("best", "dbest"), .threshold = seq(0.05, .3, length = len)),
+                      logreg = expand.grid(.ntrees = (1:3) + 1, .treesize = 2^(1+(1:len))),
+                      logicBag = expand.grid(.ntrees = (1:len) + 1, .nleaves = 2^((1:len) + 1)),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,
                       glmStepAIC =, lmStepAIC =, slda =, Linda =, QdaCov =,
-                      glmrob = data.frame(.parameter = "none"))
+                      glmrob =, logforest = data.frame(.parameter = "none"))
   trainGrid
 }
 
