@@ -15,6 +15,8 @@
 \alias{varImp.RandomForest}
 \alias{varImp.rfe}
 \alias{varImp.dsa}
+\alias{varImp.fda}
+
 
 \title{Calculation of variable importance for regression and classification models}
 
@@ -25,18 +27,33 @@ A generic method for calculating variable importance for objects produced by
 
 \usage{
 \method{varImp}{train}(object, useModel = TRUE, nonpara = TRUE, scale = TRUE, ...)
+
 \method{varImp}{earth}(object, value = "gcv", ...)
+
+\method{varImp}{fda}(object, value = "gcv", ...)
+
 \method{varImp}{rpart}(object, ...)
+
 \method{varImp}{randomForest}(object, ...)
+
 \method{varImp}{gbm}(object, numTrees, ...)
+
 \method{varImp}{classbagg}(object, ...)
+
 \method{varImp}{regbagg}(object, ...)
+
 \method{varImp}{pamrtrained}(object, threshold, data, ...)
+
 \method{varImp}{lm}(object, ...)
+
 \method{varImp}{mvr}(object, estimate = NULL, ...)
+
 \method{varImp}{bagEarth}(object, ...)
+
 \method{varImp}{RandomForest}(object, normalize = TRUE, ...)
+
 \method{varImp}{rfe}(object, drop = FALSE, ...)
+
 \method{varImp}{dsa}(object, cuts = NULL, ...)
 }
 
