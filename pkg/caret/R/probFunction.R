@@ -329,6 +329,36 @@ probFunction <- function(method, modelFit, newdata)
                       {
                         library(HDclassif)
                         predict(modelFit, newdata)$posterior
+                      },
+                      logreg =
+                      {
+                        library(LogicReg)
+                        tmp <- predict(modelFit, newbin = newdata)
+                        out <- cbind(tmp, 1 - tmp)
+                        names(out) <- modelFit$obsLevels
+                        out
+                      },
+                      logforest =
+                      {
+                        library(LogicForest)
+                        tmp <- predict(modelFit, newdata = newdata)$proportion_one
+                        out <- as.data.frame(cbind(tmp, 1 - tmp))
+                        names(out) <- modelFit$obsLevels
+                        out
+                      },
+                      logicBag =
+                      {
+                        library(logicFS)
+
+                        if(length(modelFit$obsLevels) == 2)
+                          {
+                            out <- predict(modelFit, newData = newdata, type = "prob")
+                            out <- as.data.frame(cbind(out, 1 - out))
+                            colnames(out) <- modelFit$obsLevels
+                          } else {
+                            out <- predict(modelFit, newData = newdata, type = "prob")
+                          }
+                        out
                       }
                       )
 
