@@ -75,7 +75,7 @@
 
 Many models that can be accessed using \texttt{caret}'s \texttt{train} function produce prediction equations that do not necessarily use all the predictors. These models are thought to have built--in feature selection and include \texttt{rpart}, \texttt{gbm}, \texttt{ada}, \texttt{glmboost}, \texttt{gamboost}, \texttt{blackboost}, \texttt{ctree}, \texttt{sparseLDA}, \texttt{sddaLDA}, \texttt{sddaQDA}	\texttt{glmnet}, \texttt{lasso}, \texttt{lars}, \texttt{spls}, \texttt{earth}, \texttt{fda},   \texttt{bagEarth}, \texttt{bagFDA} , \texttt{pam} and others. Many of the functions have an ancillary method called \texttt{predictors} that returns a vector indicating which predictors were used in the final model.
 
-In many cases, using these models with built--in feature selection will be more efficient than algorithms where the search routine for the right predictors is external to the model (see Section 2). Built--in feature selection typically couples the predictor search algorithm with the parameter  estimation and are usually optimize with a single objective function (e.g. error rates or likelihood). 
+In many cases, using these models with built--in feature selection will be more efficient than algorithms where the search routine for the right predictors is external to the model (see Section 2). Built--in feature selection typically couples the predictor search algorithm with the parameter  estimation and are usually optimized with a single objective function (e.g. error rates or likelihood). 
 
 
 \section{Feature Selection Using Search Algorithms}
@@ -215,9 +215,13 @@ p <- 40
 sigma <- 1
 set.seed(1)
 sim <- mlbench.friedman1(n, sd = sigma)
-x <- cbind(sim$x,  matrix(rnorm(n * p), nrow = n))
+colnames(sim$x) <- c(paste("real", 1:5, sep = ""),
+                     paste("bogus", 1:5, sep = ""))
+bogus <- matrix(rnorm(n * p), nrow = n)
+colnames(bogus) <- paste("bogus", 5+(1:ncol(bogus)), sep = "")
+x <- cbind(sim$x, bogus)
 y <- sim$y
-colnames(x) <- paste("var", 1:ncol(x), sep = "")
+
 @ 
 Of the \Sexpr{ncol(x)} predictors, there are \Sexpr{ncol(x)-5} pure noise variables: 5 are uniform on [0, 1] and \Sexpr{p} are random univariate standard normals. The predictors are centered and scaled:
 <<preProc>>=
@@ -280,15 +284,80 @@ dev.off()
 
 \subsection{Helper Functions}\label{S:helpers}
 
-To use feature elimination for an arbitrary model, a set of functions must be passed to \texttt{rfe} for each of the steps in Algorithm  \ref{A:rfe2}. This section defines those functions and uses the existing random forest functions as an illustrative example.
+To use feature elimination for an arbitrary model, a set of functions
+must be passed to \texttt{rfe} for each of the steps in Algorithm
+\ref{A:rfe2}. 
+
+This section defines those functions and uses the
+existing random forest functions as an illustrative
+example. \texttt{caret} contains a list called \texttt{rfFuncs}, but
+this document will use a more simple version that will be better for
+illustrating the ideas at play. The functions used here are collected
+in a list called \texttt{rfRFE}.
+
+<<rfeAlt, results = hide, echo = FALSE>>=
+rfRFE <-  list(summary = defaultSummary,
+                 fit = function(x, y, first, last, ...)
+                 {
+                   library(randomForest)
+                   randomForest(x, y, importance = first, ...)
+                 },
+                 pred = function(object, x)
+                 {
+                   predict(object, x)
+                 },
+                 rank = function(object, x, y)
+                 {
+                   vimp <- varImp(object)
+
+                   if(is.factor(y))
+                     {
+                       if(all(levels(y) %in% colnames(vimp)))
+                         {
+                           avImp <- apply(vimp[, levels(y), drop = TRUE],
+                                          1,
+                                          mean)
+                           vimp$Overall <- avImp
+                         }
+
+                     }
+                   
+                   vimp <- vimp[
+                                order(
+                                      vimp$Overall,
+                                      decreasing = TRUE)
+                                ,,
+                                drop = FALSE]
+                   
+                   vimp$var <- rownames(vimp)                  
+                   vimp
+                 },
+                 selectSize = pickSizeBest,
+                 selectVar = pickVars)
+@ 
+
 
 \subsubsection{The \texttt{summary} Function}\label{S:summary}
 
-The \texttt{summary} function takes the observed and predicted values and computes one or more performance metrics (see line \ref{A:summary}). The input is a data frame with columns \texttt{obs} and \texttt{pred}. The output should be a named vector of numeric variables. Note that the \texttt{metric} argument of the \texttt{rfe} function should reference one of the names of the output of \texttt{summary}.
+The \texttt{summary} function takes the observed and predicted values
+and computes one or more performance metrics (see line
+\ref{A:summary}). The input is a data frame with columns \texttt{obs}
+and \texttt{pred}. The output should be a named vector of numeric
+variables. Note that the \texttt{metric} argument of the \texttt{rfe}
+function should reference one of the names of the output of
+\texttt{summary}. The example function is:
+<<rfSummary>>=
+rfRFE$summary
+@ 
+
+Two functions in \texttt{caret} that can be used as the summary
+funciton are \texttt{defaultSummary} and \texttt{twoClassSummary} (for
+classification probelms with two classes). 
+
 
 \subsubsection{The \texttt{fit} Function}\label{S:fit}
 
-This function builds the model based on the current data set (lines line \ref{A:fit0},  \ref{A:fit1} and \ref{A:fit2}). The arguments for the function must be:
+This function builds the model based on the current data set (lines\ref{A:fit0},  \ref{A:fit1} and \ref{A:fit2}). The arguments for the function must be:
 \begin{itemize}
 \item \texttt{x}: the current training set of predictor data with the appropriate subset of variables
 \item \texttt{y}: the current outcome data (either a numeric or factor vector)
@@ -298,7 +367,7 @@ This function builds the model based on the current data set (lines line \ref{A:
 \end{itemize}
 The function should return a model object that can be used to generate predictions. For random forest, the fit function is simple:
 <<rfModel>>=
-rfFuncs$fit
+rfRFE$fit
 @ 
 For feature selection without re--ranking at each iteration, the random forest variable importances only need to be computed on the first iterations when all of the predictors are in the model. This can be accomplished using  \texttt{importance = first}.
 
@@ -311,7 +380,7 @@ This function returns a vector of predictions (numeric or factors) from the curr
 \end{itemize}
 For random forests, the function is a simple wrapper for the predict function:
 <<rfPredict>>=
-rfFuncs$pred
+rfRFE$pred
 @ 
 For classification, it is probably a good idea to ensure that the resulting factor variables of predictions has the same levels as the input data.
 
@@ -327,7 +396,7 @@ The function should return a data frame with a column called \texttt{vars} that 
 
 For random forests, the function below uses \texttt{caret}'s \texttt{varImp} function to extract the random forest importances and orders them. For classification, \texttt{randomForest} will produce a column of importances for each class. In this case, the default ranking function orders the predictors by the averages importance across the classes.
 <<rfRank>>=
-rfFuncs$rank
+rfRFE$rank
 @ 
 
 \subsubsection{The \texttt{selectSize} Function}
@@ -408,7 +477,7 @@ This function should return a character string of predictor names (of length \te
 
 For random forests, only the first importance calculation (line \ref{A:rank0}) is used since these are the rankings on the full set of predictors. These importances are averaged and the top predictors are returned.
 <<rfSelectVar>>=
-rfFuncs$selectVar
+rfRFE$selectVar
 @ 
 Note that if the predictor rankings are recomputed at each iteration (line \ref{A:rank1}) the user will need to write their own selection function to use the other ranks.
 
@@ -416,7 +485,7 @@ Note that if the predictor rankings are recomputed at each iteration (line \ref{
 
 For random forest, we fit the same series of model sizes as the linear model. The option to save all the resampling results across subset sizes was changed for this model and are used to show the lattice plot function capabilities in Figure \ref{F:rf2}.
 <<rf>>=
-ctrl$functions <- rfFuncs
+ctrl$functions <- rfRFE
 ctrl$returnResamp <- "all"
 set.seed(10)
 rfProfile <- rfe(x, y,
@@ -529,7 +598,7 @@ have been filtered using the \texttt{filter} function described
 above. The output of the \texttt{fit} function should be a fitted model.
 
 
-With some data sets, no predictors will survive the filter. In these cases, a model with predictors cannot be computed, but the lack of viable predictors should not be ignored in the final results. To account for this issue, \texttt{caret} contains a model function called \texttt{nullModel} that fits a simple model that is independent of any of the predictors. For problems where the outcome is numeric, the function predicts every sample using the simple mean o the training set outcomes. For classification, the model predicts all samples using the most prevalent class in the training data.
+With some data sets, no predictors will survive the filter. In these cases, a model with predictors cannot be computed, but the lack of viable predictors should not be ignored in the final results. To account for this issue, \texttt{caret} contains a model function called \texttt{nullModel} that fits a simple model that is independent of any of the predictors. For problems where the outcome is numeric, the function predicts every sample using the simple mean of the training set outcomes. For classification, the model predicts all samples using the most prevalent class in the training data.
 
 This function can be used in the \texttt{fit} component function to
 ``error-trap'' cases where no predictors are selected. For example,
@@ -570,6 +639,49 @@ used, but a few others are erroneous retained.
 
 Similar to \texttt{rfe}, there are methods for \texttt{predictors},
 \texttt{densityplot}, \texttt{histogram} and \texttt{varImp}.
+
+\section{Visualizing Resampling Results}
+
+As shown in the main \texttt{caret} vignette, the \texttt{resamples}
+class can be used to compare the resampling results of objects
+resulting from either \texttt{train()}, \texttt{rfe()} or \texttt{sbf()}.
+
+First, the resample results are collected together:
+<<resamps1>>=
+bootValues <- resamples(
+                        list(lmRFE = lmProfile, 
+                             rfRFE = rfProfile, 
+                             rfFilter = rfWithFilter))
+@ 
+After this, there are several Lattice plot methods: \texttt{xyplot},
+\texttt{dotplot}, \texttt{densityplot}, \texttt{bwplot},
+\texttt{splom} and \texttt{parallel}. Figure \ref{F:resamps1} show a
+parallel coordinate of the bootstrapped $R^2$ values. 
+
+The \texttt{diff} function can be applied to these objects to produce
+confidence intervals and hypothesis testing on the differences:
+<<resamps2>>=
+differences <- diff(bootValues)
+summary(differences)
+@ 
+There are several plot methods for the differences: 
+\texttt{dotplot}, \texttt{densityplot}, \texttt{bwplot} and
+\texttt{levelplot}. 
+
+\begin{figure}
+   \begin{center}		
+<<resamps3, echo = FALSE, results = hide>>=
+pdf("resamps1.pdf", width = 5, height = 5)
+   trellis.par.set(caretTheme())
+   print(parallel(bootValues, metric = "Rsquared"))
+dev.off()
+@
+      \includegraphics[clip]{resamps1}
+      \caption{Parallel coordinate of the bootstrapped $R^2$ values
+        from the random forests model with univariate filters and the RFE models using linear least squares and random forests. These plots were generated using \texttt{parallel(bootValues, metric = "Rsquared")}}
+      \label{F:resamps1} 
+    \end{center}
+\end{figure}
 
 
 \section{Session Information}
