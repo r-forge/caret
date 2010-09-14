@@ -385,6 +385,16 @@ defaultSummary <- function(data, lev = NULL, model = NULL)
     postResample(data[,"pred"], data[,"obs"])
   }
 
+twoClassSummary <- function(data, lev = NULL, model = NULL)
+  {
+    out <- c(sensitivity(data[, "pred"], data[, "obs"], lev[1]),
+             specificity(data[, "pred"], data[, "obs"], lev[2]),
+             aucRoc(roc(data[, lev[1]], data$obs, positive = lev[1])))
+    
+    names(out) <- c("Sens", "Spec", "ROC")
+    out
+  }
+
 ## make this object oriented
 getClassLevels <- function(x) 
   {
@@ -479,6 +489,7 @@ workerData <- function(data, ctrl, loop, method, lvls, workers = 1, caretVerbose
                                worker = NULL,
                                isLOO = ifelse(ctrl$method == "LOOCV",
                                  TRUE, FALSE),              ## constant across the workers
+                               classProbs = ctrl$classProbs,## constant across the workers
                                func = ctrl$summaryFunction, ## constant across the workers
                                caretVerbose = caretVerbose, ## constant across the workers
                                dots = d),                   ## constant across the workers
@@ -563,9 +574,9 @@ workerData <- function(data, ctrl, loop, method, lvls, workers = 1, caretVerbose
 
 workerTasks <- function(x)
   {
+  
     ## If this function is being executed remotly, check to see if the package is loaded
     if(!("caret" %in% loadedNamespaces())) library(caret)
-
 
     ## This function recreates the model specifications
     expand <- function(fixed, seq)
@@ -626,8 +637,8 @@ workerTasks <- function(x)
       } else {
         
         for(i in 1:numResamples)
-          {
-           args <- list(data = x$data[x$index[[i]],],
+          {            
+            args <- list(data = x$data[x$index[[i]],],
                          method = x$method,
                          tuneValue = x$fixed,
                          obsLevels = x$obsLevels)
@@ -635,7 +646,14 @@ workerTasks <- function(x)
 
             modelObj <- do.call(createModel, args)
 
-            holdBack <-  x$data[-x$index[[i]],]
+            ## Check to see if the index is the entire data set
+            ## and number of resamples is 1.
+            ## If yes, then make holdback the entire data set to
+            ## get apparent error rate
+            if(length(x$index) == 1 & length(x$index[[1]]) == nrow(x$data))
+              {
+                holdBack <-  if(all.equal(sort(x$index[[1]]), seq(along  = x$data$.outcome))) x$data else x$data[-x$index[[i]],]
+              } else holdBack <-  x$data[-x$index[[i]],]
             observed <- holdBack$.outcome
             holdBack$.outcome <- NULL
             if(any(colnames(holdBack) == ".modelWeights")) holdBack$.modelWeights <- NULL
@@ -646,7 +664,14 @@ workerTasks <- function(x)
                                                     modelObj,
                                                     holdBack,
                                                     x$seq)
-#           browser()
+            if(x$classProbs)
+              {
+                probValues <- caret:::probFunction(x$method,
+                                                   modelObj,
+                                                   holdBack,
+                                                   x$seq)
+              }
+
             if(!x$isLOO)
               {
 
@@ -661,20 +686,33 @@ workerTasks <- function(x)
                                         },
                                         y = observed,
                                         lv = x$obsLevels)
-                   
-                    thisResample <- do.call("rbind",
-                                            lapply(predicted,
-                                                   x$func,
-                                                   lev = x$obsLevels,
-                                                   model = x$method))
-                    thisResample <- cbind(thisResample, params)
+                    if(x$classProbs)
+                      {
+                        for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
+                      }
+
+                    thisResample <-  lapply(predicted,
+                                            x$func,
+                                            lev = x$obsLevels,
+                                            model = x$method)
+
+                    pNames <- names(thisResample[[1]])
+                    ##On 9/10/10 10:24 AM, "Hadley Wickham" <hadley@rice.edu> wrote:
+                    thisResample <-matrix(unlist(thisResample),
+                                          nrow = length(thisResample),
+                                          dimnames = list(NULL, NULL),
+                                          byrow = TRUE)
+                    colnames(thisResample) <- pNames
+                    thisResample <- cbind(as.data.frame(thisResample), params)
                     thisResample$Resample <- names(x$index)[i]                  
                   } else {
                     if(is.factor(observed)) predicted <- factor(as.character(predicted),
                                                                 levels = x$obsLevels)
-                    thisResample <- x$func(
-                                           data.frame(pred = predicted,
-                                                      obs = observed),
+                    tmp <-  data.frame(pred = predicted,
+                                       obs = observed)
+                    if(x$classProbs) tmp <- cbind(tmp, probValues)
+                                        #browser()
+                    thisResample <- x$func(tmp,
                                            lev = x$obsLevels,
                                            model = x$method)
                     thisResample <- as.data.frame(t(thisResample))
@@ -846,3 +884,40 @@ useMathSymbols <- function(x)
     if(x == "Rsquared") x <- expression(R^2)
     x
   }
+
+depth2cp <- function(x, depth)
+  {
+    out <- approx(x[,"nsplit"], x[,"CP"], depth)$y
+    out[depth > max(x[,"nsplit"])] <- min(x[,"CP"]) * .99
+    out
+  }
+
+
+
+
+
+gamFormula <- function(data, smoother = "s", cut = 10, df = 0, span = .5, degree = 1)
+  {
+    nzv <- nearZeroVar(data)
+    if(length(nzv) > 0) data <- data[, -nzv, drop = FALSE]
+
+    numValues <- sort(apply(data, 2, function(x) length(unique(x))))
+    prefix <- rep("", ncol(data))
+    suffix <- rep("", ncol(data))
+    prefix[numValues > cut] <- paste(smoother, "(", sep = "")
+    if(smoother == "s")
+      {
+        
+        suffix[numValues > cut] <- if(df == 0) ")" else paste(", df=", df, ")", sep = "")
+      } else {
+        suffix[numValues > cut] <- paste(", span=", span, ",degree=", degree, ")", sep = "")
+      }
+    rhs <- paste(prefix, names(numValues), suffix, sep = "")
+    rhs <- paste(rhs, collapse = "+")
+    form <- as.formula(paste(".outcome~", rhs, sep = ""))
+    form
+  }
+
+
+
+
