@@ -44,17 +44,27 @@ train.default <- function(x, y,
       classLevels <- levels(y)
       if(length(classLevels) > 2 & (method %in% c("gbm", "glmboost", "ada", "gamboost", "blackboost", "penalized", "glm",
                                                   "earth", "nodeHarvest", "glmrob", "plr", "GAMens", "rocc",
-                                                  "logforest", "logreg")))
+                                                  "logforest", "logreg", "gam", "gamLoess", "gamSpline")))
         stop("This model is only implemented for two class problems")
       if(length(classLevels) < 3 & (method %in% c("vbmpRadial")))
         stop("This model is only implemented for 3+ class problems")      
       if(metric %in% c("RMSE", "Rsquared")) 
         stop(paste("Metric", metric, "not applicable for classification models"))
+      if(trControl$classProbs & any(!modelInfo$probModel))
+        {
+          warning("Class probabilities were requested for a model that does not implement them")
+          trControl$classProbs <- FALSE
+        }
     } else {
       if(!any(modelInfo$forReg)) stop("wrong model type for regression")
       if(metric %in% c("Accuracy", "Kappa")) 
         stop(paste("Metric", metric, "not applicable for regression models"))         
       classLevels <- NA
+      if(trControl$classProbs)
+        {
+          warning("cannnot compute class probabilities for regression")
+          trControl$classProbs <- FALSE
+        }   
     }
   
   if(trControl$method == "oob" & !(method %in% c("rf", "treebag", "cforest", "bagEarth", "bagFDA")))
@@ -66,7 +76,7 @@ train.default <- function(x, y,
                                                          oob = NULL,
                                                          cv = createFolds(y, trControl$number, returnTrain = TRUE),
                                                          loocv = createFolds(y, length(y), returnTrain = TRUE),
-                                                         boot = createResample(y, trControl$number),
+                                                         boot =, boot632 = createResample(y, trControl$number),
                                                          test = createDataPartition(y, 1, trControl$p),
                                                          lgocv = createDataPartition(y, trControl$number, trControl$p))
 
@@ -190,6 +200,12 @@ train.default <- function(x, y,
       ## get phoney performance to obtain the names of the outputs
       testOutput <- data.frame(pred = sample(y, min(10, length(y))),
                                obs = sample(y, min(10, length(y))))
+
+      if(trControl$classProbs)
+        {
+          for(i in seq(along = classLevels)) testOutput[, classLevels[i]] <- runif(nrow(testOutput))
+        }
+      
       perfNames <- names(trControl$summaryFunction(testOutput,
                                                    classLevels,
                                                    method))
@@ -235,7 +251,7 @@ train.default <- function(x, y,
  
   if(trControl$method != "oob")
     {
-      resampleResults <- do.call("rbind", listOutput)
+      resampleResults <- rbind.fill(listOutput)
       colnames(resampleResults) <- gsub("^\\.", "", colnames(resampleResults))
       if(trControl$method == "LOOCV")
         {
@@ -246,7 +262,7 @@ train.default <- function(x, y,
                                     looSummary,
                                     func = trControl$summaryFunction,
                                     param = trainInfo$model$param)
-          resampleResults <- do.call("rbind", resampleResults)
+          resampleResults <- rbind.fill(resampleResults)
           
 
         }
@@ -254,10 +270,35 @@ train.default <- function(x, y,
                                         trainInfo$model$param,
                                         trControl$method)
     } else {
-      performance <- do.call("rbind", listOutput)
+      performance <- rbind.fill(listOutput)
       colnames(performance) <- gsub("^\\.", "", colnames(performance))
     }
 
+  if(trControl$method == "boot632")
+    {
+      if(trControl$verboseIter)
+        {
+          cat("Calculating apparent performance values\n")
+          flush.console()
+        }
+      argList$X <- lapply(argList$X,
+                          function(object)
+                          {
+                            object$index <- list(Apparent = seq(along = object$data$.outcome))
+                            object$caretVerbose <- FALSE
+                            object
+                          })
+      apparent <-   do.call(trControl$computeFunction, argList)
+      apparent <- do.call("rbind", apparent)
+      colnames(apparent) <- gsub("^\\.", "", colnames(apparent))
+      for(p in seq(along = perfNames))
+        {
+          const <- 1-exp(-1)
+          performance[, perfNames[p]] <- (const * performance[, perfNames[p]]) +  ((1-const) * apparent[, perfNames[p]])
+        }
+    }
+
+  
   paramNames <- trainInfo$model$param
 
   if(trControl$verboseIter)
