@@ -380,7 +380,11 @@
                      lvq = 
                      {
                        library(class)      
-                       lvq3(trainX, trainY, lvqinit(trainX, trainY, k = tuneValue$.k), ...)
+                       lvq3(trainX, trainY,
+                            lvqinit(trainX, trainY,
+                                    size = tuneValue$.size,
+                                    k = tuneValue$.k),
+                            ...)
                      },         
                      rpart = 
                      {
@@ -475,6 +479,7 @@
                                            degree = tuneValue$.degree,
                                            nprune = tuneValue$.nprune),
                                       theDots)
+                       if(type == "Classification") modelArgs$glm <- list(family=binomial)
                        
                        tmp <- do.call("earth", modelArgs)
 
@@ -1440,6 +1445,39 @@
                                      ntrees = tuneValue$.ntrees,
                                      nleaves = tuneValue$.nleaves,
                                      ...)
+                     },
+                     gam =
+                     {
+                       library(mgcv)
+                       mgcv:::gam(gamFormula(data[,!(names(data) %in% ".outcome")]),
+                                  data = data,
+                                  family = if(type == "Regression") gaussian() else  binomial(),
+                                  select = tuneValue$.select,
+                                  method = tuneValue$.method,
+                                  ...)
+                     },
+                     gamLoess =
+                     {
+                       library(gam)
+                       gam:::gam(gamFormula(data[,!(names(data) %in% ".outcome")],
+                                            smoother = "lo",
+                                            span = tuneValue$.span,
+                                            degree = tuneValue$.degree),
+                                 data = data,
+                                 family = if(type == "Regression") gaussian() else  binomial(),
+                                 ...)
+                                 
+                     },
+                     gamSpline =
+                     {
+                       library(gam)
+                       gam:::gam(gamFormula(data[,!(names(data) %in% ".outcome")],
+                                            smoother = "s",
+                                            df = tuneValue$.df),
+                                 data = data,
+                                 family = if(type == "Regression") gaussian() else  binomial(),
+                                 ...)
+                                 
                      }
                      )
   
