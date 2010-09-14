@@ -26,7 +26,13 @@ modelLookup <- function(model = NULL)
             ## fda
             'fda', 'fda', 
             ## foba
-            'foba', 'foba', 
+            'foba', 'foba',
+            ## gam
+            'gam', 'gam',
+            ## gamLoess
+            'gamLoess', 'gamLoess',
+            ## gamSpline
+            'gamSpline',
             ## gamboost
             'gamboost', 'gamboost', 
             ## GAMens
@@ -94,7 +100,7 @@ modelLookup <- function(model = NULL)
             ## lssvmRadial
             'lssvmRadial', 
             ## lvq
-            'lvq', 
+            'lvq', 'lvq',
             ## M5Rules
             'M5Rules', 
             ## mars
@@ -231,7 +237,13 @@ modelLookup <- function(model = NULL)
               ## fda
               'nprune', 'degree', 
               ## foba
-              'k', 'lambda', 
+              'k', 'lambda',
+              ## gam
+              'select', 'method',
+              ## gamLoess
+              'span', 'degree',
+              ## gamSpline
+              'df',
               ## gamboost
               'mstop', 'prune', 
               ## GAMens
@@ -299,7 +311,7 @@ modelLookup <- function(model = NULL)
               ## lssvmRadial
               'sigma', 
               ## lvq
-              'k', 
+              'size', 'k', 
               ## M5Rules
               'pruned', 
               ## mars
@@ -448,6 +460,12 @@ modelLookup <- function(model = NULL)
               ## foba
               '#Variables Retained',
               'L2 Penalty',
+              ## gam
+              'Feature Selection', 'Method',
+              ## gamLoess
+              'Span', 'Degree',
+              ## gamSpline
+              'Degrees of Freedom',
               ## gamboost
               '# Boosting Iterations',
               'AIC Prune?',
@@ -529,7 +547,7 @@ modelLookup <- function(model = NULL)
               ## lssvmRadial
               'Sigma',
               ## lvq
-              '#Prototypes',
+              'Codebook Size', '#Prototypes',
               ## M5Rules
               'Pruned',
               ## mars
@@ -682,8 +700,8 @@ modelLookup <- function(model = NULL)
              TRUE, FALSE, 
              ## cforest
              FALSE, 
-             ## ctree
-             TRUE, 
+             ## ctree actually is a sequential model, but treeresponse can't do probs from multiple models
+             FALSE, 
              ## ctree2
              FALSE, 
              ## earth
@@ -695,7 +713,13 @@ modelLookup <- function(model = NULL)
              ## fda
              FALSE, FALSE, 
              ## foba
-             TRUE, FALSE, 
+             TRUE, FALSE,
+             ## gam
+             FALSE, FALSE,
+             ## gamLoess
+             FALSE, FALSE,
+             ## gamSpline
+             FALSE,
              ## gamboost
              TRUE, FALSE, 
              ## GAMens
@@ -763,7 +787,7 @@ modelLookup <- function(model = NULL)
              ## lssvmRadial
              FALSE, 
              ## lvq
-             FALSE, 
+             FALSE, FALSE, 
              ## M5Rules
              FALSE, 
              ## mars
@@ -899,7 +923,13 @@ modelLookup <- function(model = NULL)
                 ## fda
                 FALSE, FALSE, 
                 ## foba
-                TRUE, TRUE, 
+                TRUE, TRUE,
+                ## gam
+                TRUE, TRUE,
+                ## gamLoess
+                TRUE, TRUE,
+                ## gamSpline
+                TRUE,
                 ## gamboost
                 TRUE, TRUE, 
                 ## GAMens
@@ -967,7 +997,7 @@ modelLookup <- function(model = NULL)
                 ## lssvmRadial
                 FALSE, 
                 ## lvq
-                FALSE, 
+                FALSE, FALSE, 
                 ## M5Rules
                 TRUE, 
                 ## mars
@@ -1104,7 +1134,13 @@ modelLookup <- function(model = NULL)
                   ## fda
                   TRUE, TRUE, 
                   ## foba
-                  FALSE, FALSE, 
+                  FALSE, FALSE,
+                  ## gam
+                  TRUE, TRUE,
+                  ## gamLoess
+                  TRUE, TRUE,
+                  ## gamSpline
+                  TRUE,
                   ## gamboost
                   TRUE, TRUE, 
                   ## GAMens
@@ -1172,7 +1208,7 @@ modelLookup <- function(model = NULL)
                   ## lssvmRadial
                   TRUE, 
                   ## lvq
-                  TRUE, 
+                  TRUE, TRUE, 
                   ## M5Rules
                   FALSE, 
                   ## mars
@@ -1309,7 +1345,13 @@ modelLookup <- function(model = NULL)
                     ## fda
                     TRUE, TRUE, 
                     ## foba
-                    FALSE, FALSE, 
+                    FALSE, FALSE,
+                    ## gam
+                    TRUE, TRUE,
+                    ## gamLoess
+                    TRUE, TRUE,
+                    ## gamSpline
+                    TRUE,
                     ## gamboost
                     TRUE, TRUE, 
                     ## GAMens
@@ -1377,7 +1419,7 @@ modelLookup <- function(model = NULL)
                     ## lssvmRadial
                     FALSE, 
                     ## lvq
-                    FALSE, 
+                    FALSE, FALSE, 
                     ## M5Rules
                     FALSE, 
                     ## mars
