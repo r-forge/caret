@@ -80,12 +80,12 @@
 
       optValues <- paste(names(finalTune), "=", format(finalTune, digits = digits))
       optString <- paste(
-                         "\nThe final ",
-                         ifelse(numParam, "values", "value"),
-                         " used in the model ",
-                         ifelse(numParam, "were ", "was "),
+                         "The final ",
+                         ifelse(numParam > 1, "values", "value"),
+                         " used for the model ",
+                         ifelse(numParam > 1, "were ", "was "),
                          stringFunc(optValues),
-                         ".\n",
+                         ".",
                          sep = "")
 
       
@@ -105,7 +105,32 @@
       rmCols <- names(sdCheck)[sdCheck]
       tuneAcc <- tuneAcc[, !(names(tuneAcc) %in% rmCols)]	
     }
-  
+
+  params <- modelLookup(x$method)$parameter
+  if(!all(params == "parameter"))
+    {
+      numVals <- apply(tuneAcc[, params, drop = FALSE], 2, function(x) length(unique(x)))
+      if(any(numVals < 2))
+        {
+          constString <- NULL
+          for(i in seq(along = numVals))
+            {
+              if(numVals[i] == 1)
+                constString <- c(constString,
+                                 paste("Tuning parameter '",
+                                       names(numVals)[i],
+                                       "' was held contant at a value of ",
+                                       ifelse(is.character(tuneAcc[1,names(numVals)[i]]) |
+                                              is.factor(tuneAcc[1,names(numVals)[i]]),
+                                              paste("'", tuneAcc[1,names(numVals)[i]], "'", sep = ""),
+                                              tuneAcc[1,names(numVals)[i]]),
+                                       sep = ""))
+            }
+          discard <- names(numVals)[which(numVals == 1)]
+          tuneAcc <- tuneAcc[, !(names(tuneAcc) %in% discard), drop = FALSE]
+
+        } else constString <- NULL
+    } else constString <- NULL
   
   printList <- lapply(
                       tuneAcc, 
@@ -121,6 +146,14 @@
   
   print(printMat, quote = FALSE, print.gap = 2)
   cat("\n")
+
+  if(!is.null(constString))
+    {
+      cat(paste(constString, collapse = "\n"))
+      cat("\n")
+    }
+
+  
   if(dim(tuneAcc)[1] > 1)
     {
       cat(x$metric, "was used to select the optimal model using")
@@ -140,7 +173,7 @@
                      tolerance = " a tolerance rule.\n"))
         }
     }
-      
+  
   cat(optString)
   
   if(details)
