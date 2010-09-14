@@ -1,4 +1,68 @@
 -------------------
+Version: 4.63
+Date: 2010-09-13
+
+Added bootstrap 632 rule to trainControl.
+
+Updated print.train so that constant parameters are not
+shown in the table (but a note is written below the table 
+instead).
+
+Adapted varImp.gam to work with either mgcv or gam packages.
+
+Expanded the tuning parameters for lvq
+
+-------------------
+Version: 4.62
+Date: 2010-09-08
+
+Added mgcv:::gam (with smoothing splines and feature 
+selection) and gam:::gam (with basic splines and loess) 
+smoothers. For these models, a formula is derived
+from the data where "near zero variance" predictors
+(see ?nearZerVar) are excluded and predictors with
+less than 10 distinct values are entered as linear 
+(i.e. unsmoothed) terms.
+
+-------------------
+Version: 4.61
+Date: 2010-09-05
+
+Changed earth fit for classification models to use the 
+glm argument with a binomial family. 
+
+Added varImp.multinom, which is based on the absolute
+values of the model coefficients
+
+-------------------
+Version: 4.60
+Date: 2010-09-02
+
+The feature selection vignette was updated slightly (again).
+
+-------------------
+Version: 4.59
+Date: 2010-09-01
+
+Updated rfe() and sbf() to include class probabilities 
+in performance calculations.
+
+Also, the names of the resampling indices were harmonized
+across train(), rfe() and sbf().
+
+The feature selection vignette was updated slightly.
+
+-------------------
+Version: 4.58
+Date: 2010-08-28
+
+Added the ability to include class probabilities in 
+performance calculations. See ?trainControl and 
+?twoClassSummary.
+
+Updated and restructured the main vignette.
+ 
+-------------------
 Version: 4.57
 Date: 2010-08-25
 
