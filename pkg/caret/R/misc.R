@@ -459,7 +459,7 @@ splitIndicies <- function(n, k)
 ## Note that the number of workers is need so that we can minimize the number of copies of the
 ## raw data. We only need one per worker.
 
-workerData <- function(data, ctrl, loop, method, lvls, workers = 1, caretVerbose, ...)
+workerData <- function(data, ctrl, loop, method, lvls, pp, workers = 1, caretVerbose, ...)
   {
 
     index <- ctrl$index
@@ -491,6 +491,9 @@ workerData <- function(data, ctrl, loop, method, lvls, workers = 1, caretVerbose
                                  TRUE, FALSE),              ## constant across the workers
                                classProbs = ctrl$classProbs,## constant across the workers
                                func = ctrl$summaryFunction, ## constant across the workers
+                               preProc = list(options = pp, ## constant across the workers
+                                              thresh = ctrl$PCAthresh,
+                                              ica = ctrl$ICAcomp),                
                                caretVerbose = caretVerbose, ## constant across the workers
                                dots = d),                   ## constant across the workers
                           m = method,
@@ -619,6 +622,7 @@ workerTasks <- function(x)
         args <- list(data = x$data,
                      method = x$method,
                      tuneValue = x$fixed,
+                     pp = x$preProc,
                      obsLevels = x$obsLevels)
         if(length(x$dots) > 0) args <- c(args, x$dots)
 
@@ -627,11 +631,11 @@ workerTasks <- function(x)
         ## NOTE: in the case of oob resampling, we return the summarized performance
         ## instead of the predicted values
         out <- switch(
-                      class(modelObj)[1],
-                      randomForest = rfStats(modelObj),
-                      RandomForest = cforestStats(modelObj),
-                      bagEarth =, bagFDA = bagEarthStats(modelObj),
-                      regbagg =, classbagg = ipredStats(modelObj))
+                      class(modelObj$fit)[1],
+                      randomForest = rfStats(modelObj$fit),
+                      RandomForest = cforestStats(modelObj$fit),
+                      bagEarth =, bagFDA = bagEarthStats(modelObj$fit),
+                      regbagg =, classbagg = ipredStats(modelObj$fit))
         out <- cbind(as.data.frame(t(out)), params)
         
       } else {
@@ -641,6 +645,7 @@ workerTasks <- function(x)
             args <- list(data = x$data[x$index[[i]],],
                          method = x$method,
                          tuneValue = x$fixed,
+                         pp = x$preProc,
                          obsLevels = x$obsLevels)
             if(length(x$dots) > 0) args <- c(args, x$dots)
 
@@ -660,16 +665,18 @@ workerTasks <- function(x)
 
             ## If we have seqeuntial parameters, predicted is a list, otherwise
             ## it is a vector            
-            predicted <- caret:::predictionFunction(x$method,
-                                                    modelObj,
-                                                    holdBack,
-                                                    x$seq)
+            predicted <- caret:::predictionFunction(method = x$method,
+                                                    modelFit = modelObj$fit,
+                                                    newdata = holdBack,
+                                                    preProc = modelObj$preProc,
+                                                    param = x$seq)
             if(x$classProbs)
               {
-                probValues <- caret:::probFunction(x$method,
-                                                   modelObj,
-                                                   holdBack,
-                                                   x$seq)
+                probValues <- caret:::probFunction(method = x$method,
+                                                    modelFit = modelObj$fit,
+                                                    newdata = holdBack,
+                                                    preProc = modelObj$preProc,
+                                                    param = x$seq)
               }
 
             if(!x$isLOO)
