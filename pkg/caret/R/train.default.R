@@ -4,7 +4,8 @@
   }
 
 train.default <- function(x, y, 
-                          method = "rf", 
+                          method = "rf",
+                          preProcess = NULL,
                           ...,
                           weights = NULL,
                           metric = ifelse(is.factor(y), "Accuracy", "RMSE"),
@@ -33,6 +34,10 @@ train.default <- function(x, y,
                                       "only setup to use predictors that are",
                                       "either 0 or 1"))
     }
+
+  if(!is.null(preProcess) && !(all(preProcess %in% c("center", "scale", "pca", "ica", "spatialSign"))))
+    stop('pre-processing methods are limited to center, scale, pca, ica and spatialSign')
+
   
   if(modelType == "Classification")
     {     
@@ -75,13 +80,14 @@ train.default <- function(x, y,
                                                          tolower(trControl$method),
                                                          oob = NULL,
                                                          cv = createFolds(y, trControl$number, returnTrain = TRUE),
+                                                         repeatedcv = createMultiFolds(y, trControl$number, trControl$repeats),
                                                          loocv = createFolds(y, length(y), returnTrain = TRUE),
                                                          boot =, boot632 = createResample(y, trControl$number),
                                                          test = createDataPartition(y, 1, trControl$p),
                                                          lgocv = createDataPartition(y, trControl$number, trControl$p))
 
 
-  if(trControl$method != "oob") names(trControl$index) <- prettySeq(trControl$index)
+  if(trControl$method != "oob" & is.null(trControl$index)) names(trControl$index) <- prettySeq(trControl$index)
   
   ## Combine the features and classes into one df
   trainData <- as.data.frame(x)
@@ -232,13 +238,14 @@ train.default <- function(x, y,
   ## workerData will split up the data need for the jobs
   argList <- list(X =
                   workerData(
-                             trainData,
-                             trControl,
-                             trainInfo,
-                             method,
-                             classLevels,
-                             trControl$workers,
-                             trControl$verboseIter,
+                             data = trainData,
+                             ctrl = trControl,
+                             loop = trainInfo,
+                             method = method,
+                             lvls = classLevels,
+                             pp = preProcess,
+                             workers = trControl$workers,
+                             caretVerbose = trControl$verboseIter,
                              ...),
                   FUN = workerTasks)
 
@@ -396,12 +403,18 @@ train.default <- function(x, y,
     }
     
   ## Make the final model based on the tuning results
-  finalModel <- createModel(
-                            trainData, 
+  finalModel <- createModel(data = trainData, 
                             method = method, 
-                            bestTune, 
-                            obsLevels = classLevels, 
+                            tuneValue = bestTune, 
+                            obsLevels = classLevels,
+                            pp = list(options = preProcess,
+                                      thresh = trControl$PCAthresh,
+                                      ica = trControl$ICAcomp),
                             ...)
+
+  ## get pp info
+  pp <- finalModel$preProc
+  finalModel <- finalModel$fit
   
   ## Remove this and check for other places it is reference
   ## replaced by tuneValue
@@ -430,6 +443,7 @@ train.default <- function(x, y,
                  metric = metric,
                  control = trControl,
                  finalModel = finalModel,
+                 preProcess = pp,
                  trainingData = outData,
                  resample = byResample,
                  perfNames = perfNames,
