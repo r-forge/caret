@@ -109,14 +109,16 @@ sbf <- function (x, ...) UseMethod("sbf")
   numFeat <- ncol(x)
   classLevels <- levels(y)
 
-  if(is.null(sbfControl$index))
-    sbfControl$index <- switch(tolower(sbfControl$method),
-                               cv = createFolds(y, sbfControl$number, returnTrain = TRUE),
-                               loocv = createFolds(y, length(y), returnTrain = TRUE),
-                               boot = createResample(y, sbfControl$number),
-                               test = createDataPartition(y, 1, sbfControl$p),
-                               lgocv = createDataPartition(y, sbfControl$number, sbfControl$p))
-  names(sbfControl$index) <- prettySeq(sbfControl$index)
+  if(is.null(sbfControl$index)) sbfControl$index <- switch(
+                                                           tolower(sbfControl$method),
+                                                           cv = createFolds(y, sbfControl$number, returnTrain = TRUE),
+                                                           repeatedcv = createMultiFolds(y, sbfControl$number, sbfControl$repeats),
+                                                           loocv = createFolds(y, length(y), returnTrain = TRUE),
+                                                           boot =, boot632 = createResample(y, sbfControl$number),
+                                                           test = createDataPartition(y, 1, sbfControl$p),
+                                                           lgocv = createDataPartition(y, sbfControl$number, sbfControl$p))
+
+  if(is.null(names(sbfControl$index))) names(sbfControl$index) <- prettySeq(sbfControl$index)
   
   ## check summary function and metric
   testOutput <- data.frame(pred = sample(y, min(10, length(y))),
@@ -352,7 +354,8 @@ predict.sbf <- function(object, newdata = NULL, ...)
 sbfControl <- function(functions = NULL,
                        method = "boot",
                        saveDetails = FALSE,
-                       number = ifelse(method == "cv", 10, 25),
+                       number = ifelse(method %in% c("cv", "repeatedcv"), 10, 25),
+                       repeats = ifelse(method %in% c("cv", "repeatedcv"), 1, number),
                        verbose = TRUE,
                        returnResamp = "all",
                        p = .75,
@@ -366,6 +369,7 @@ sbfControl <- function(functions = NULL,
        method = method,
        saveDetails = saveDetails,
        number = number,
+       repeats = repeats,
        returnResamp = returnResamp,
        verbose = verbose,
        p = p,
