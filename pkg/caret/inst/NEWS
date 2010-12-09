@@ -1,4 +1,110 @@
 -------------------
+Version: 4.71
+Date: 2010-12-08
+
+A new function for RFE with gam:::gam was added.
+
+"Down-sampling" was implemented with bag() so that, for 
+classification models, each class has the same number of classes
+as the smallest class.
+
+Added a new class, dummyVars, that creates an entire set of
+binary dummy variables (instead of the reduced, full rank set).
+The initial code was suggested by Gabor Grothendieck on R-Help.
+The predict method is used to create dummy variables for any
+data set.
+
+Bug fixes:
+ - varImp.gam() failed to recognize objects from mgcv
+ - a small fix to test a logical vector filterVarImp()
+ - when diff.resamples calculated the number of comparisons,
+   the "models" argument was ignored.
+
+-------------------
+Version: 4.70
+Date: 2010-11-09
+
+Added a warning to train when class levels are not valid R variable
+names.
+
+Fixed a bug in the variable importance function for multinom objects.
+
+Added p-value adjustments to summary.diff.resamples. Confidence intervals
+in dotplot.diff.resamples are adjusted accordingly if the Bonferroni is
+used.
+
+For dotplot.resamples(), no point was plotted when the upper and/or
+lower interval values were NaN. Now, the point is plotted but without
+the interval bars.
+
+Updated print.rfe to correctly describe new resampling methods.
+
+-------------------
+Version: 4.69
+Date: 2010-10-28
+
+Fixed a bug in predict.rfe where an error was thrown even though
+the required predictors were in newdata.
+
+Changed preProcess() so that centering and scaling are both automatic
+when PCA or ICA are requested.
+
+-------------------
+Version: 4.68
+Date: 2010-10-21
+
+Added two functions, checkResamples() and checkConditionalX() that
+identify predictor data with degenerate distributions when conditioned
+on a factor.
+
+Added a high content screening data set (segmentedData) from Hill et 
+al. Impact of image segmentation on high-content screening data quality 
+for SK-BR-3 cells. BMC bioinformatics (2007) vol. 8 (1) pp. 340.
+
+Fixed bugs in how sbf objects were printed (when using repeated 
+CV) and classification models with earth and classProbs = TRUE. 
+
+
+-------------------
+Version: 4.67
+Date: 2010-10-13
+
+Added predict.rfe
+
+Added imputation using bagged regression trees to 
+preProcess().
+
+Fixed bug in varImp.rfe that caused incorrect results
+(thanks to Lawrence Mosley for the find).
+
+
+-------------------
+Version: 4.65
+Date: 2010-10-08
+
+Fixed a bug where train() would not allow knn imputation.
+
+filterVarImp() and roc() now check for missing values and
+use complete data for each predictor (instead of case-
+wise deletion across all predictors).
+
+-------------------
+Version: 4.64
+Date: 2010-10-06
+
+Fixed bug introduced in the last version with
+createDataPartition(... list = FALSE).
+
+Fixed a bug predicting class probabilities when using 
+earth/glm models
+
+Fixed a bug that occurred when train() was used with
+ctree or ctree2 methods.
+
+Fixed bugs in rfe() and sbf() when running in
+parallel; not all the resampling results were saved
+
+-------------------
 Version: 4.63
 Date: 2010-09-19
 
