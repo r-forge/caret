@@ -371,14 +371,19 @@ dotplot.resamples <- function (x, data = NULL, models = x$models, metric = x$met
   results <- lapply(plotData,
                     function(x, cl)
                     {
-                      ttest <- t.test(x$value, conf.level = cl)
-                      out <- c(ttest$conf.int, ttest$estimate)
-                      names(out) <- c("LowerLimit", "UpperLimit", "Estimate")
+                      ttest <- try(t.test(x$value, conf.level = cl),
+                                   silent = TRUE)
+                      if(class(ttest)[1] == "htest")
+                        {
+                          out <- c(ttest$conf.int, ttest$estimate)
+                          names(out) <- c("LowerLimit", "UpperLimit", "Estimate")
+                        } else out <- rep(NA, 3)
                       out
                     },
                     cl = conf.level)
   results <- do.call("rbind", results)
   results <- melt(results)
+  results <- results[!is.nan(results$value),]
   tmp <- strsplit(as.character(results$X1), "~", fixed = TRUE)
   results$Model <- unlist(lapply(tmp, function(x) x[1]))
   results$Metric <- unlist(lapply(tmp, function(x) x[2]))
@@ -389,7 +394,6 @@ dotplot.resamples <- function (x, data = NULL, models = x$models, metric = x$met
          {
            plotTheme <- trellis.par.get()
            y <- as.numeric(y)
-           
            vals <- aggregate(x, list(group = y), function(x) c(min = min(x), mid = median(x), max = max(x)))
            
            panel.dotplot(vals$x[,"mid"], vals$group,
@@ -424,12 +428,18 @@ diff.resamples <- function(x,
                            models = x$models,
                            metric = x$metrics,
                            test = t.test,
+                           confLevel = 0.95,
+                           adjustment = "bonferroni",
                            ...)
   {
 
     allDif <- vector(mode = "list", length = length(metric))
     names(allDif) <- metric
 
+    x$models <- x$models[x$models %in% models]
+    p <- length(x$models)
+    ncomp <- choose(p, 2)
+    if(adjustment == "bonferroni") confLevel <- 1 - ((1 - confLevel)/ncomp)
     allStats <- allDif
     
     for(h in seq(along = metric))
@@ -457,7 +467,7 @@ diff.resamples <- function(x,
               }
           }
 
-        stats <- apply(dif, 2, function(x, tst, ...) tst(x, ...), tst = test, ...)
+        stats <- apply(dif, 2, function(x, tst, ...) tst(x, ...), tst = test, conf.level = confLevel, ...)
         
         allDif[[h]] <- dif
         allStats[[h]] <- stats
@@ -466,6 +476,8 @@ diff.resamples <- function(x,
                      list(
                           call = match.call(),
                           difs = allDif,
+                          confLevel = confLevel,
+                          adjustment = adjustment,
                           statistics = allStats,
                           models = models,
                           metric = metric),
@@ -509,6 +521,7 @@ print.diff.resamples <- function(x, ...)
     cat("Models:", paste(x$models, collapse = ", "), "\n")
     cat("Metrics:", paste(x$metric, collapse = ", "), "\n")
     cat("Number of differences:",  ncol(x$difs[[1]]), "\n")
+    cat("p-value adjustment:",  x$adjustment, "\n")    
     invisible(x)
   }
 
@@ -553,6 +566,7 @@ summary.diff.resamples <- function(object, digits = max(3, getOption("digits") -
                 }
             }
         }
+      pvals[lower.tri(pvals)] <- p.adjust(pvals[lower.tri(pvals)], method = object$adjustment)
       asText <- matrix("", nrow = length(object$models), ncol = length( object$models))
       meanDiff2 <- format(meanDiff, digits = digits)
       pvals2 <- matrix(format.pval(pvals, digits = digits), nrow = length( object$models))
@@ -567,6 +581,7 @@ summary.diff.resamples <- function(object, digits = max(3, getOption("digits") -
   out <- structure(
                    list(
                         call = match.call(),
+                        adjustment = object$adjustment,
                         table = all),
                    class = "summary.diff.resamples")
   out
@@ -630,6 +645,10 @@ print.summary.diff.resamples <- function(x, ...)
   {
     cat("\nCall:\n", deparse(x$call), "\n\n", sep = "")
 
+    if(x$adjustment != "none")
+      cat("p-value adjustment:", x$adjustment, "\n")
+
+    
     cat("Upper diagonal: estimates of the difference\n",
         "Lower diagonal: p-value for H0: difference = 0\n\n",
         sep = "")
@@ -673,10 +692,16 @@ dotplot.diff.resamples <- function(x, data = NULL, metric = x$metric[1], ...)
     names(plotData)[1:3] <- c("Estimate", "LowerLimit", "UpperLimit")
     plotData$Difference <- gsub(".diff.", " - ", colnames(x$difs[[metric]]), fixed = TRUE)
     plotData <- melt(plotData, id.vars = "Difference")
-    plotData
+    xText <- paste("Difference in",
+                   caret:::useMathSymbols(metric),
+                   "\nConfidence Level",
+                   round(x$confLevel, 3),
+                   ifelse(x$adjustment == "bonferroni",
+                          " (multiplicity adjusted)",
+                          " (no multiplicity adjustment)"))
     dotplot(Difference ~ value,
             data = plotData,
-            xlab = paste("Difference in", caret:::useMathSymbols(metric)),
+            xlab = xText,
             panel = function(x, y)
             {
               plotTheme <- trellis.par.get()
@@ -711,9 +736,6 @@ dotplot.diff.resamples <- function(x, data = NULL, metric = x$metric[1], ...)
                                  col = plotTheme$plot.line$col[1],
                                  lwd = plotTheme$plot.line$lwd[1])
                 }
-
-              
-              
             },
             ...)
   }
