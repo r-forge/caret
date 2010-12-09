@@ -23,7 +23,7 @@ preProcess(x, ...)
 
 \arguments{
   \item{x}{a matrix or data frame. All variables must be numeric.}
-  \item{method}{a character vector specifying the type of processing. Possible values are "center", "scale", "knnImpute", "pca" "ica" and "spatialSign" (see Details below)}
+  \item{method}{a character vector specifying the type of processing. Possible values are "center", "scale", "knnImpute", "bagImpute", "pca" "ica" and "spatialSign" (see Details below)}
   \item{thresh}{a cutoff for the cumulative percent of variance to be retained by PCA}
   \item{na.remove}{a logical; should missing values be removed from the calculations?}
   \item{object}{an object of class \code{preProcess}}
@@ -35,9 +35,9 @@ preProcess(x, ...)
 \details{
 The operations are applied in this order: imputation, centering, scaling, PCA, ICA then spatial sign. 
 
-If PCA is requested but scaling is not, the values will still be scaled. Similarly, when ICA is requested, the data are automatically centered.
+If PCA is requested but centering and scaling are not, the values will still be centered and scaled. Similarly, when ICA is requested, the data are automatically centered and scaled.
 
-$k$-nearest neighbor imputation is carried out by finding the k closest samples (Euclidian distance) in the training set.
+$k$-nearest neighbor imputation is carried out by finding the k closest samples (Euclidian distance) in the training set. Imputation via bagging fits a bagged tree model for each predictor (as a function of all the others). This method is simple, accurate and accepts missing values, but it has much higher computational cost.
 
 A warning is thrown if both PCA and ICA are requested. ICA, as implemented bt the \code{\link[fastICA]{fastICA}} package automatically does a PCA decomposition prior to finding the ICA scores.
 
