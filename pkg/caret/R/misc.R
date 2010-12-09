@@ -65,21 +65,21 @@ bagEarthStats <- function(x) apply(x$oob, 2, function(x) quantile(x, probs = .5)
 
 tuneScheme <- function(model, grid, useOOB = FALSE)
 {
-                                        # this function extracts information about the requested model and figures 
-                                        # out the details about how the tuning process should be executed
+  ## this function extracts information about the requested model and figures 
+  ## out the details about how the tuning process should be executed
 
   modelInfo <- modelLookup(model)
   
-                                        # a little hack hre to change when this goes into production:
+  ## a little hack hre to change when this goes into production:
   
   if(all(is.na(grid)) & !is.null(grid$.parameter)) grid <- data.frame(.parameter = "none")
   
-                                        # some models have "sequential" parameters where several different models can be
-                                        # derived form one R object. For example, in gbm models you can fit a model with
-                                        # 500 trees and get predictions for any mode with <= 500 trees from the same object
+  ## some models have "sequential" parameters where several different models can be
+  ## derived form one R object. For example, in gbm models you can fit a model with
+  ## 500 trees and get predictions for any mode with <= 500 trees from the same object
 
-                                        # if we don't have any of these types of parameters, use a basic looping strategy
-                                        # i.e. scheme = "basic"
+  ## if we don't have any of these types of parameters, use a basic looping strategy
+  ## i.e. scheme = "basic"
   if(!any(modelInfo$seq) | useOOB) 
     return(
            list(
@@ -90,14 +90,14 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                 constant = names(grid), 
                 vary = NULL))
 
-                                        # I've included a pruning technique for models in the mboost packages. This wouldn't
-                                        # easily lend itself to a sequential version, so use the basic approach if any 
-                                        # prune = "yes"
+  ## I've included a pruning technique for models in the mboost packages. This wouldn't
+  ## easily lend itself to a sequential version, so use the basic approach if any 
+  ## prune = "yes"
   if(model %in% c("glmboost", "gamboost") && any(grid$.prune == "yes")) modelInfo$seq <- FALSE
 
-                                        # some models have sequential parameters, but if the tune grid is manually specified
-                                        # and there is only 1 value of the sequential parameter(s), we should use the basic
-                                        # approach
+  ## some models have sequential parameters, but if the tune grid is manually specified
+  ## and there is only 1 value of the sequential parameter(s), we should use the basic
+  ## approach
   
   paramVary <- unlist(lapply(grid, function(u) length(unique(u)) > 1))
   paramVary <- data.frame(
@@ -110,19 +110,19 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
 
   scheme <- if(any(modelInfo$varyingSeq)) "seq" else "basic"
 
-                                        # if we do have sequential parameters (with more than one value), we need to figure
-                                        # out what parmeters we should loop over, their values and the values of the 
-                                        # sequential parameters for each loop
+  ## if we do have sequential parameters (with more than one value), we need to figure
+  ## out what parmeters we should loop over, their values and the values of the 
+  ## sequential parameters for each loop
 
   if(scheme == "seq")
     {
       constant <- as.character(modelInfo$column)[!modelInfo$varyingSeq]
       vary <- as.character(modelInfo$column)[modelInfo$varyingSeq] 
       
-                                        # The data frame loop is the combination(s) of tuning parameters that we will
-                                        # be looping over. For each combination in loop, the list seqParam will provide the
-                                        # value(s) of the sequential parameter that should be evaluated for the same R model
-                                        # object      
+      ## The data frame loop is the combination(s) of tuning parameters that we will
+      ## be looping over. For each combination in loop, the list seqParam will provide the
+      ## value(s) of the sequential parameter that should be evaluated for the same R model
+      ## object      
       
       switch(model,
              logitBoost = 
@@ -192,17 +192,24 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
              },
+
+             ## About ctree ...
+             ## It used to be a seqeuntial model, but teh prediciotn function cannot create
+             ## class probabilities in a sequential manner (as it can for predicting the class or
+             ## regression output). I left this code here in case that changes, but the seq
+             ## flag by modelLookup has been changed to FALSE so this next block never gets
+             ## executed.
              ctree = 
              {
-                                        # there is an exception here:
-                                        # There does not appear to be a way to tell what value of mincriterion was used
-                                        # when looking at an object of class BinaryTree. We want to fit a model with the 
-                                        # smallest mincriterion (the largest tree in the tuning grid), then derive the 
-                                        # predictions from the smaller trees.
+               ## there is an exception here:
+               ## There does not appear to be a way to tell what value of mincriterion was used
+               ## when looking at an object of class BinaryTree. We want to fit a model with the 
+               ## smallest mincriterion (the largest tree in the tuning grid), then derive the 
+               ## predictions from the smaller trees.
                
-                                        # Unlike the other models in this function, the seqParam vector *will* include the 
-                                        # parameter corresponding to the largest tree ( = smallest  mincriterion), but we
-                                        # will remove this value from the vector in the prediction function
+               ## Unlike the other models in this function, the seqParam vector *will* include the 
+               ## parameter corresponding to the largest tree ( = smallest  mincriterion), but we
+               ## will remove this value from the vector in the prediction function
                loop <- data.frame(.mincriterion = min(grid$.mincriterion))
                seqParam <- list(grid[order(grid$.mincriterion), ".mincriterion",drop = FALSE])
              },
@@ -387,6 +394,8 @@ defaultSummary <- function(data, lev = NULL, model = NULL)
 
 twoClassSummary <- function(data, lev = NULL, model = NULL)
   {
+    if(!all(levels(data[, "pred"]) == levels(data[, "obs"])))
+      stop("levels of observed and predicted data do not match")
     out <- c(sensitivity(data[, "pred"], data[, "obs"], lev[1]),
              specificity(data[, "pred"], data[, "obs"], lev[2]),
              aucRoc(roc(data[, lev[1]], data$obs, positive = lev[1])))
@@ -493,7 +502,8 @@ workerData <- function(data, ctrl, loop, method, lvls, pp, workers = 1, caretVer
                                func = ctrl$summaryFunction, ## constant across the workers
                                preProc = list(options = pp, ## constant across the workers
                                               thresh = ctrl$PCAthresh,
-                                              ica = ctrl$ICAcomp),                
+                                              ica = ctrl$ICAcomp,
+                                              k = ctrl$k),                
                                caretVerbose = caretVerbose, ## constant across the workers
                                dots = d),                   ## constant across the workers
                           m = method,
@@ -572,12 +582,10 @@ workerData <- function(data, ctrl, loop, method, lvls, pp, workers = 1, caretVer
 ## instead of a matrix because the columns may not be of the same mode. For example, we also
 ## return an indicator for which resample data set the prediction is for and also the model
 ## specification for each prediction. In general, these columns would not be the same format.
-## todo: In the future, I plan to (optionally) add the ability to return class probabilites if the
-## use asks for them.
 
 workerTasks <- function(x)
   {
-  
+
     ## If this function is being executed remotly, check to see if the package is loaded
     if(!("caret" %in% loadedNamespaces())) library(caret)
 
@@ -639,7 +647,7 @@ workerTasks <- function(x)
         out <- cbind(as.data.frame(t(out)), params)
         
       } else {
-        
+      
         for(i in 1:numResamples)
           {            
             args <- list(data = x$data[x$index[[i]],],
@@ -681,14 +689,12 @@ workerTasks <- function(x)
 
             if(!x$isLOO)
               {
-
                 if(!is.null(x$seq))
                   {
                     predicted <- lapply(predicted,
                                         function(x, y, lv)
                                         {
-                                          if(is.factor(x)) y <- factor(as.character(y),
-                                                                       levels = lv)
+                                          if(!is.factor(x) & is.character(x)) x <- factor(as.character(x), levels = lv)
                                           data.frame(pred = x, obs = y)
                                         },
                                         y = observed,
@@ -697,6 +703,7 @@ workerTasks <- function(x)
                       {
                         for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
                       }
+
 
                     thisResample <-  lapply(predicted,
                                             x$func,
@@ -711,6 +718,7 @@ workerTasks <- function(x)
                                           byrow = TRUE)
                     colnames(thisResample) <- pNames
                     thisResample <- cbind(as.data.frame(thisResample), params)
+                 
                     thisResample$Resample <- names(x$index)[i]                  
                   } else {
                     if(is.factor(observed)) predicted <- factor(as.character(predicted),
@@ -718,7 +726,8 @@ workerTasks <- function(x)
                     tmp <-  data.frame(pred = predicted,
                                        obs = observed)
                     if(x$classProbs) tmp <- cbind(tmp, probValues)
-                                        #browser()
+
+
                     thisResample <- x$func(tmp,
                                            lev = x$obsLevels,
                                            model = x$method)
@@ -903,7 +912,7 @@ depth2cp <- function(x, depth)
 
 
 
-gamFormula <- function(data, smoother = "s", cut = 10, df = 0, span = .5, degree = 1)
+gamFormula <- function(data, smoother = "s", cut = 10, df = 0, span = .5, degree = 1, y = ".outcome")
   {
     nzv <- nearZeroVar(data)
     if(length(nzv) > 0) data <- data[, -nzv, drop = FALSE]
@@ -921,7 +930,7 @@ gamFormula <- function(data, smoother = "s", cut = 10, df = 0, span = .5, degree
       }
     rhs <- paste(prefix, names(numValues), suffix, sep = "")
     rhs <- paste(rhs, collapse = "+")
-    form <- as.formula(paste(".outcome~", rhs, sep = ""))
+    form <- as.formula(paste(y, rhs, sep = "~"))
     form
   }
 
