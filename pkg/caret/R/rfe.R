@@ -80,10 +80,12 @@ rfeIter <- function(x, y,
 
 rfeWrapper <- function(X)
   {
+ 
     ## iterate over the resampling iterations
     index <- X$index
     X$index <- NULL
     out <- vector(mode = "list", length = length(index))
+    
     for(i in seq(along = index))
       {
         out[[i]] <- do.call("rfeChunk",
@@ -97,6 +99,9 @@ rfeWrapper <- function(X)
 
 rfeChunk <- function(inTrain, x, y, cntl, sizes, ...)
   {
+    library(plyr)
+    if(!("caret" %in% loadedNamespaces())) library(caret)
+
     findMatch <- function(x, y)
       {
         if(length(x) != length(y)) return(FALSE)
@@ -140,7 +145,7 @@ rfe <- function (x, ...) UseMethod("rfe")
            rfeControl = rfeControl(), ...)
 {
   funcCall <- match.call(expand.dots = TRUE)
-  require(caret)
+  if(!("caret" %in% loadedNamespaces())) library(caret)
 
   if(nrow(x) != length(y)) stop("there should be the same number of samples in x and y")
   numFeat <- ncol(x)
@@ -202,19 +207,21 @@ rfe <- function (x, ...) UseMethod("rfe")
   ## Append the extra objects needed to do the work (See the parallel examples in
   ## ?train to see examples
   if(!is.null(rfeControl$computeArgs)) argList <- c(argList, rfeControl$computeArgs)
- 
-  rfeResults <- do.call(rfeControl$computeFunction, argList)
   
+  rfeResults <- do.call(rfeControl$computeFunction, argList)
+
   rfePred <- lapply(rfeResults,
                     function(x) lapply(x,
-                                       function(y) y$pred))[[1]]
-  rfePred <- rbind.fill(rfePred)
+                                       function(y) y$pred))
+  rfePred <- do.call("rbind", lapply(rfePred, function(x) rbind.fill(x)))
 
   selectedVars <- lapply(rfeResults,
                          function(x) lapply(x,
-                                            function(y) y$selectedVars))[[1]]
+                                            function(y) y$selectedVars))
 
-  #########################################################################
+  selectedVars <- do.call("c", selectedVars)
+
+#########################################################################
 
   subsets <- sort(unique(rfePred$subset), decreasing = TRUE)
 
@@ -334,15 +341,18 @@ print.rfe <- function(x, top = 5, digits = max(3, getOption("digits") - 3), ...)
 
   cat("\nRecursive feature selection\n\n")
 
-  cat("Outer resamping method was",
-      x$control$number,
-      "iterations of",
-      switch(x$control$method,
-             "boot" = "the bootstrap.",
-             "LGOCV" = "leave group out cross-validation.",
-             "LOOCV" = "leave one out cross-validation.",
-             "cv" = "cross-validation."),
-      "\n")
+  resampleN <- unlist(lapply(x$control$index, length))
+  numResamp <- length(resampleN)
+  
+  resampName <- switch(tolower(x$control$method),
+                       boot = paste("Bootstrap (", numResamp, " reps)", sep = ""),
+                       boot632 = paste("Bootstrap 632 Rule (", numResamp, " reps)", sep = ""),
+                       cv = paste("Cross-Validation (", x$control$number, " fold)", sep = ""),
+                       repeatedcv = paste("Cross-Validation (", x$control$number, " fold, repeated ",
+                         x$control$repeats, " times)", sep = ""),
+                       lgocv = paste("Repeated Train/Test Splits (", numResamp, " reps, ",
+                         round(x$control$p, 2), "%)", sep = ""))
+  cat("Outer resamping method:", resampName, "\n")      
 
   cat("\nResampling performance over subset size:\n\n")
   x$results$Selected <- ""
@@ -564,6 +574,65 @@ treebagFuncs <- list(summary = defaultSummary,
                      selectVar = pickVars)
 
 
+
+
+gamFuncs <- list(summary = defaultSummary,
+                 fit = function(x, y, first, last, ...)
+                 {
+                   loaded <- search()
+                   gamLoaded <- any(loaded == "package:gam")
+                   if(gamLoaded) detach(package:gam)
+                   library(mgcv)
+                   dat <- if(is.data.frame(x)) x else as.data.frame(x)
+                   dat$y <- y
+                   args <- list(formula = caret:::gamFormula(x, smoother = "s", y = "y"),
+                                data = dat,
+                                family = if(!is.factor(y)) gaussian else  binomial)
+                   do.call("gam", args)
+                 },
+                 pred = function(object, x)
+                 {
+                                        #browser()
+                   loaded <- search()
+                   gamLoaded <- any(loaded == "package:gam")
+                   if(gamLoaded) detach(package:gam)
+                   library(mgcv)
+                   rsp <- predict(object, newdata = x, type = "response")
+                   if(object$family$family == "binomial")
+                     {
+                       lvl <- levels(object$model$y)
+                       out <- data.frame(p1 = rsp,
+                                         p2 = 1-rsp,
+                                         pred = factor(ifelse(rsp > .5, lvl[2], lvl[1]),
+                                           levels = lvl))
+                       colnames(out)[1:2] <- make.names(lvl)
+                       out
+                     } else out <- data.frame(pred = rsp)
+                   out
+                   
+                 },
+                 rank = function(object, x, y)
+                 {
+
+                   loaded <- search()
+                   gamLoaded <- any(loaded == "package:gam")
+                   if(gamLoaded) detach(package:gam)
+                   library(mgcv)
+                   vimp <- varImp(object)
+                   vimp$var <- rownames(vimp)
+                   if(any(!(colnames(x) %in% rownames(vimp))))
+                     {
+                       missing <- colnames(x)[!(colnames(x) %in% rownames(vimp))]
+                       tmpdf <- data.frame(var = missing,
+                                           Overall = rep(0, length(missing)))
+                       vimp <- rbind(vimp, tmpdf)
+                     }
+                   vimp
+                 },
+                 selectSize = pickSizeBest,
+                 selectVar = pickVars)
+
+
 rfFuncs <-  list(summary = defaultSummary,
                  fit = function(x, y, first, last, ...)
                  {
@@ -769,10 +838,13 @@ predictors.rfe <- function(x, ...) x$optVariables
 
 varImp.rfe <- function(object, drop = FALSE, ...)
   {
-
-    sizeIndex <- which(object$results$Variables == object$optsize)
-    getImp <- function(u, i) u[[i]]
-    imp <- lapply(object$variables, getImp, i = sizeIndex)
+    getImp <- function(u, best)
+      {
+        sizes <- unlist(lapply(u, nrow))
+        bestSubsetSize <- which(sizes == best)
+        u[[bestSubsetSize]]
+      }
+    imp <- lapply(object$variables, getImp, best = object$optsize)
     k <- length(imp)
     imp <- do.call("rbind", imp)
     if(drop) imp <- subset(imp, var %in% object$optVar)
@@ -785,4 +857,31 @@ varImp.rfe <- function(object, drop = FALSE, ...)
 
   }
 
+predict.rfe <- function(object, newdata, ...)
+  {
+    if(length(list(...)) > 0)
+      warning("... are ignored for predict.rfe")
 
+    if(inherits(object, "rfe.formula"))
+      {
+        newdata <- as.data.frame(newdata)
+        rn <- row.names(newdata)
+        Terms <- delete.response(object$terms)
+        m <- model.frame(Terms, newdata, na.action = na.omit, 
+                         xlev = object$xlevels)
+        if (!is.null(cl <- attr(Terms, "dataClasses"))) 
+          .checkMFClasses(cl, m)
+        keep <- match(row.names(m), rn)
+        newdata <- model.matrix(Terms, m, contrasts = object$contrasts)
+        xint <- match("(Intercept)", colnames(newdata), nomatch = 0)
+        if (xint > 0)  newdata <- newdata[, -xint, drop = FALSE]   
+      }
+
+    checkCols <- object$optVar %in% colnames(newdata) 
+    if(!all(checkCols))
+      stop(paste("missing columns from newdata:",
+                 paste(object$optVar[!checkCols], collapse = ", ")))
+    
+    newdata <- newdata[, object$optVar, drop = FALSE]
+    object$control$functions$pred(object$fit, newdata)
+  }
