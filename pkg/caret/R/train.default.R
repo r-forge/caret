@@ -35,8 +35,8 @@ train.default <- function(x, y,
                                       "either 0 or 1"))
     }
 
-  if(!is.null(preProcess) && !(all(preProcess %in% c("center", "scale", "pca", "ica", "spatialSign"))))
-    stop('pre-processing methods are limited to center, scale, pca, ica and spatialSign')
+  if(!is.null(preProcess) && !(all(preProcess %in% c("center", "scale", "pca", "ica", "spatialSign", "knnImpute", "bagImpute")))) 
+    stop('pre-processing methods are limited to center, scale, pca, ica, knnImpute, bagImpute and spatialSign')
 
   
   if(modelType == "Classification")
@@ -47,6 +47,15 @@ train.default <- function(x, y,
       ## important with multiclass systems where one or more classes have low sample sizes
       ## relative to the others
       classLevels <- levels(y)
+
+      if(any(classLevels != make.names(classLevels)))
+         {
+           warning(paste("At least one of the class levels are not valid R variables names;",
+                         "This may cause errors if class probabilities are generated because",
+                         "the variables names will be converted to:",
+                         paste(make.names(classLevels), collapse = ", ")))
+         }
+      
       if(length(classLevels) > 2 & (method %in% c("gbm", "glmboost", "ada", "gamboost", "blackboost", "penalized", "glm",
                                                   "earth", "nodeHarvest", "glmrob", "plr", "GAMens", "rocc",
                                                   "logforest", "logreg", "gam", "gamLoess", "gamSpline")))
@@ -255,7 +264,7 @@ train.default <- function(x, y,
 
   ## Get the predictions (or summaries for OOB)
   listOutput <- do.call(trControl$computeFunction, argList)
- 
+
   if(trControl$method != "oob")
     {
       resampleResults <- rbind.fill(listOutput)
@@ -409,7 +418,8 @@ train.default <- function(x, y,
                             obsLevels = classLevels,
                             pp = list(options = preProcess,
                                       thresh = trControl$PCAthresh,
-                                      ica = trControl$ICAcomp),
+                                      ica = trControl$ICAcomp,
+                                      k = trControl$k),
                             ...)
 
   ## get pp info
