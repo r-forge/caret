@@ -6,7 +6,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
   
   
   if(method %in% c(
-                   "svmradial", "svmpoly",
+                   "svmradial", "svmpoly", "svmRadialCost",
                    "svmRadial", "svmPoly", "svmLinear",
                    "gaussprRadial", "gaussprPoly", "gaussprLinear",
                    "lssvmRadial", "lssvmLinear",
@@ -17,6 +17,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
       obsLevels <- switch(method,
                           svmradial =, svmpoly =, 
                           svmRadial =, svmPoly =, svmLinear =,
+                          svmRadialCost =, 
                           gaussprRadial =, gaussprPoly =, gaussprLinear =,
                           lssvmRadial =, lssvmLinear =
                           {
@@ -26,7 +27,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
 
                           Linda =, QdaCov = names(modelFit@prior),
                           
-                          ctree =, cforest =
+                          ctree =, ctree2 =, cforest =
                           {
                             library(party)
                             levels(modelFit@data@get("response")[,1])
@@ -59,15 +60,25 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                         out
                         
                       },
-                      
+
+                      svmLinear =, svmlinear =,
                       svmradial =, svmpoly =,
                       svmRadial =, svmPoly =,
                       lssvmRadial =,
-                      gaussprRadial =, gaussprPoly =
+                      gaussprRadial =, gaussprPoly =,
+                      svmRadialCost =
                       {
                         library(kernlab)
                         
                         out <- predict(modelFit, newdata, type="probabilities")
+                        ## There are times when the SVM probability model will
+                        ## produce negative class probabilities, so we
+                        ## induce vlaues between 0 and 1
+                        if(any(out < 0))
+                          {
+                            out[out < 0] <- 0
+                            out <- t(apply(out, 1, function(x) x/sum(x)))
+                          }
                         out <- out[, lev(modelFit), drop = FALSE]
                         out
                       },
@@ -131,7 +142,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                           }                        
                         out
                       },
-                      rf =, treebag  =, parRF =
+                      rf =, treebag  =, parRF =, Boruta = 
                       {
                         library(randomForest)
                         out <- predict(modelFit, newdata, type = "prob")            
@@ -218,6 +229,14 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                         out
                       },
 
+                      gcvEarth =
+                      {
+                        library(earth)
+                        out <- predict(modelFit, newdata, type= "response")
+                        out <- cbind(1-out, out)
+                        colnames(out) <-  modelFit$obsLevels
+                        out
+                      },
                       
                       fda =
                       {
@@ -356,6 +375,13 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                         out <- predict(modelFit, newdata, type = "response")
                         out <- cbind(1-out, out)
                         ## glm models the second factor level. See Details in ?glm
+                        dimnames(out)[[2]] <-  modelFit$obsLevels
+                        out
+                      },
+                      plsGlmBinomial =
+                      {                      
+                        out <- predict(modelFit$FinalModel, newdata, type = "response")
+                        out <- cbind(1-out, out)
                         dimnames(out)[[2]] <-  modelFit$obsLevels
                         out
                       },

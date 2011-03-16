@@ -54,7 +54,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                            },
                            
-                           rf =, parRF =
+                           rf =, parRF =, Boruta = 
                            {
                              if(modelFit$problemType == "Classification")
                                {
@@ -69,7 +69,8 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                            svmRadial =, svmPoly =, svmLinear =,
                            rvmRadial =, rvmPoly =, rvmLinear =,
                            lssvmRadial =, lssvmPoly =, lssvmLinear =,
-                           gaussprRadial =, gaussprPoly =, gaussprLinear =
+                           gaussprRadial =, gaussprPoly =, gaussprLinear =,
+                           svmRadialCost =
                            {
                              library(kernlab)
                              if(is.character(lev(modelFit)))
@@ -148,7 +149,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                            },
 
-                           pcr=, pls =,
+                           pcr=, pls =
                            {
                              library(pls)
                              
@@ -278,6 +279,19 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                            },
                            
+                           gcvEarth =
+                           {
+                             library(earth)
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 out <- as.character(predict(modelFit, newdata,  type = "class"))
+                               } else {
+                                 out <- predict(modelFit, newdata)
+                               }
+                             if(is.matrix(out)) out <- out[,1]
+                             out
+                           },
+                           
                            bagEarth = 
                            {
                              library(earth)
@@ -402,7 +416,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              predict(modelFit, as.matrix(newdata), type = "class")
                            },
 
-                           logitBoost =,
+                           logitBoost =
                            {
                              library(caTools)
 
@@ -732,9 +746,9 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                  ## use best Tune
                                  if(modelFit$problemType == "Classification")
                                    {
-                                     out <- as.character(predict(modelFit, newdata)[[modelFit$.cut.off.growth]])
+                                     out <- as.character(predict(modelFit, newdata)[[modelFit$cut.off.growth]])
                                    } else {
-                                     out <- predict(modelFit, newdata)[,modelFit$.cut.off.growth]
+                                     out <- predict(modelFit, newdata)[,modelFit$cut.off.growth]
                                    }
                                }
                              out
@@ -761,7 +775,9 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                            qrf =
                            {
                              library(quantregForest)
-                             predict(modelFit, newdata, quantiles = .5)
+                             out <- predict(modelFit, newdata, quantiles = .5)
+                             if(is.matrix(out)) out <- out[,1]
+                             out
                            },
                            scrda =
                            {
@@ -852,8 +868,23 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                      as.character(predict(modelFit, newData = newdata))
                                    }
                                } else predict(modelFit, newData = newdata)
-                           }
-                           )
+                           },
+                           plsGlmBinomial =, plsGlmGaussian =, plsGlmGamma =, plsGlmPoisson =
+                           {
+                             library(plsRglm)
+                             out <- predict(modelFit$FinalModel, newdata = newdata, type = "response")
+                             ## glm models the second factor level. See Details in ?glm
+                             if(modelFit$family$family == "binomial")
+                               {
+                                 out <- ifelse(out> .5, modelFit$obsLevel[2], modelFit$obsLevel[1])
+                               }
+                             out
+                           },
+                           qrnn =
+                           {
+                             library(qrnn)
+                             qrnn.predict(as.matrix(newdata), modelFit)[,1]
+                           })
   predictedValue
 }
 
