@@ -1,30 +1,32 @@
-preProcess <- function(x, ...)
-  UseMethod("preProcess")
+preProcess <- function(x, ...) UseMethod("preProcess")
 
 preProcess.default <- function(x, method = c("center", "scale"),
-                               thresh = 0.95, na.remove = TRUE, k = 5,
+                               thresh = 0.95,
+                               na.remove = TRUE,
+                               k = 5,
                                knnSummary = mean,
+                               outcome = NULL,
+                               fudge = .2,
+                               numUnique = 3,
+                               verbose = FALSE,
                                ...)
 {
 
+  if(any(method %in% "range") & any(method %in% c("center", "scale", "BoxCox")))
+    stop("centering, scaling and/or Box-Cox transformations are inconsistent with scaling to a range of [0, 1]")
+  
   if(all(c("pca", "ica") %in% method))
     {
       warning("fastICA automatically uncorrelates the data using PCA. method = 'pca' is not needed")
       method <- method[method != "pca"]
     }
 
-  if(any(method == "spatialSign") & !(any(method == "scale"))) method  <- c(method, "scale")
-  if(any(method == "spatialSign") & !(any(method == "center"))) method  <- c(method, "center")
+  if(any(method %in% c("pca", "ica", "knnImpute", "spatialSign")) & !(any(method == "scale"))) method  <- c(method, "scale")
+  if(any(method %in% c("pca", "ica", "knnImpute", "spatialSign")) & !(any(method == "center"))) method  <- c(method, "center")
   
-  if(any(method == "pca") & !(any(method == "scale"))) method  <- c(method, "scale")
-  if(any(method == "pca") & !(any(method == "center"))) method  <- c(method, "center")
-  
-  if(any(method == "ica") & !(any(method == "scale"))) method  <- c(method, "scale")
-  if(any(method == "ica") & !(any(method == "center"))) method  <- c(method, "center")
-
   if(any(method == "knnImpute") & any(method == "bagImpute"))
     stop("please pick only one imputation method")
-    
+  
   method <- unique(method)
   
   ## the row.norm option in fastICA states: "logical value indicating whether rows
@@ -49,9 +51,40 @@ preProcess.default <- function(x, method = c("center", "scale"),
     }
   
   theCall <- match.call(expand.dots = TRUE)
-  if(any(method  %in% c("center", "knnImpute"))) centerValue <- apply(x, 2, mean, na.rm = na.remove) else centerValue <- NULL
-  if(any(method %in% c("scale", "knnImpute"))) scaleValue <- apply(x, 2, sd, na.rm = na.remove) else scaleValue <- NULL
 
+
+  
+  if(any(method == "BoxCox"))
+    {
+      if(verbose) cat("Estimating Box-Cox transformations for the predictors...")
+      bc <- lapply(x,
+                   BoxCoxTrans,
+                   fudge = fudge,
+                   na.rm = na.remove,
+                   numUnique = numUnique,
+                   x = if(is.null(outcome)) rep(1, nrow(x)) else outcome)
+      if(verbose) cat(" applying them to training data\n")
+      ## Find a better way of doing this
+      for(i in seq(along = bc)) x[,i] <- predict(bc[[i]], x[,i])
+    } else bc <- NULL
+
+  if(any(method  %in% c("center")))
+    {
+      if(verbose) cat("Calculating means for centering\n")
+      centerValue <- apply(x, 2, mean, na.rm = na.remove) 
+    } else centerValue <- NULL
+  if(any(method %in% c("scale")))
+    {
+      if(verbose) cat("Calculating standard deviations for scaling\n")
+      scaleValue <- apply(x, 2, sd, na.rm = na.remove)
+    } else scaleValue <- NULL
+
+  if(any(method == "range"))
+    {
+      ranges <- apply(x, 2, function(x) c(min(x, na.rm = na.remove), max(x, na.rm = na.remove)))
+    } else ranges <- NULL
+
+  
   if(any(scaleValue == 0))
     {
       warning(
@@ -67,17 +100,20 @@ preProcess.default <- function(x, method = c("center", "scale"),
 
   if(any(method == "bagImpute"))
     {
+      if(verbose) cat("Computing bagging models for each predictor...")
       bagModels <- as.list(colnames(x))
       names(bagModels) <- colnames(x)
       bagModels <- lapply(bagModels,
                           bagImp,
-                          x = x)    
+                          x = x)
+      if(verbose) cat(" done\n")
     } else bagModels <- NULL
   
-  x <- x[complete.cases(x),]
+  x <- x[complete.cases(x),,drop = FALSE]
   
   if(any(method == "pca"))
     {
+       if(verbose) cat("Computing PCA loadings\n")
       tmp <- prcomp(x, scale = TRUE, retx = FALSE)
       cumVar <- cumsum(tmp$sdev^2/sum(tmp$sdev^2)) 
       numComp <- max(2, which.max(cumVar > thresh))
@@ -89,6 +125,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
 
   if(any(method == "ica"))
     {
+      if(verbose) cat("Computing ICA loadings\n")
       set.seed(1)
       library(fastICA)
       x <- sweep(x, 2, centerValue, "-")
@@ -107,8 +144,10 @@ preProcess.default <- function(x, method = c("center", "scale"),
   
   out <- list(call = theCall,
               dim = dim(x),
+              bc = bc,
               mean = centerValue,
               std = scaleValue,
+              ranges = ranges,
               rotation = rot,
               method = method,
               thresh = thresh,
@@ -118,7 +157,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
               knnSummary = knnSummary,
               bagImp = bagModels,
               cols = cols,
-              data = if(any(method == "knnImpute")) scale(x[complete.cases(x),]) else NULL)
+              data = if(any(method == "knnImpute")) scale(x[complete.cases(x),,drop = FALSE]) else NULL)
   structure(out, class = "preProcess")
   
 }
@@ -154,6 +193,7 @@ predict.preProcess <- function(object, newdata, ...)
             }
         }
     }
+  
   if(!is.null(object$rotation))
     {
       if(!all(names(object$rotation) %in% dataNames))
@@ -164,14 +204,40 @@ predict.preProcess <- function(object, newdata, ...)
 
 
   oldClass <- class(newdata)
+
+
+  if(!is.null(object$bc))
+    {
+      lam <- unlist(lapply(object$bc, function(x) x$lambda))
+      lamIndex <- which(!is.na(lam))
+      if(length(lamIndex) > 0)
+        {
+          for(i in names(lamIndex))
+            {
+              tt<- newdata[,i]
+              tt <- tt[!is.na(tt)]
+              if(any(tt <= 0))
+                {
+                  cat(i, "\n")
+                }
+              newdata[,i] <- predict(object$bc[[i]], newdata[,i])
+            }
+        }
+    }
+
+  if(any(object$method == "range"))
+    {
+      newdata <- sweep(newdata, 2, object$ranges[1,], "-")
+      newdata <- sweep(newdata, 2, object$ranges[2,] - object$ranges[1,], "/")
+    }
+  
+  if(any(object$method == "center")) newdata <- sweep(newdata, 2, object$mean, "-")
+  if(any(object$method %in% c("scale"))) newdata <- sweep(newdata, 2, object$std, "/")
+  
   cc <- complete.cases(newdata)
   if(any(object$method == "knnImpute") && any(!cc))
     {
-      
-      ## First, center and scale
       hasMiss <- newdata[!cc,,drop = FALSE]      
-      hasMiss <- sweep(hasMiss, 2, object$mean, "-")
-      hasMiss <- sweep(hasMiss, 2, object$std, "/")
 
       hasMiss <- apply(hasMiss,
                        1,
@@ -182,9 +248,6 @@ predict.preProcess <- function(object, newdata, ...)
                        foo = object$knnSummary)
       hasMiss <- t(hasMiss)
 
-      ## Transform back
-      hasMiss <- sweep(hasMiss, 2, object$std, "*")
-      hasMiss <- sweep(hasMiss, 2, object$mean, "+")
       newdata[!cc,] <- hasMiss
     }
   
@@ -208,8 +271,6 @@ predict.preProcess <- function(object, newdata, ...)
     }
   
   
-  if(any(object$method == "center")) newdata <- sweep(newdata, 2, object$mean, "-")
-  if(any(object$method %in% c("scale"))) newdata <- sweep(newdata, 2, object$std, "/")
   if(any(object$method == "pca"))
     {
       newdata <-if(is.matrix(newdata)) newdata %*% object$rotation else as.matrix(newdata) %*% object$rotation
@@ -232,10 +293,11 @@ predict.preProcess <- function(object, newdata, ...)
 
 print.preProcess <- function(x, ...)
 {
-  cat("\nCall:\n", deparse(x$call), "\n\n", sep = "")
+  cat("\nCall:\n", truncateText(deparse(x$call, width.cutoff = 500)), "\n\n", sep = "")
   cat("Created from", x$dim[1], "samples and", x$dim[2], "variables\n")
 
   pp <- x$method
+  pp <- gsub("BoxCox", "Box-Cox transformation", pp)  
   pp <- gsub("scale", "scaled", pp)
   pp <- gsub("center", "centered", pp)
   pp <- gsub("pca", "principal component signal extraction", pp)
@@ -243,10 +305,23 @@ print.preProcess <- function(x, ...)
   pp <- gsub("spatialSign", "spatial sign transformation", pp)
   pp <- gsub("knnImpute", paste(x$k, "nearest neighbor imputation"), pp)
   pp <- gsub("bagImpute", "bagged tree imputation", pp)  
+  pp <- gsub("range", "re-scaling to [0, 1]", pp)  
 
-  cat("Pre-processing:",
-      paste(pp, collapse = ", "),
-      "\n")
+  ppText <- paste("Pre-processing:", paste(pp, collapse = ", "))
+  cat(truncateText(ppText), "\n\n")
+
+  if(any(x$method == "BoxCox"))
+    {
+      cat("Lambda estimates for Box-Cox transformation:\n")
+      if(length(x$bc) < 11)
+         {
+           lmbda <- unlist(lapply(x$bc, function(x) x$lambda))
+           naLmbda <- sum(is.na(lmbda))
+           cat(paste(round(lmbda[!is.na(lmbda)], 2), collapse = ", "))
+           if(naLmbda > 0) cat(" (#NA: ", naLmbda, ")\n", sep = "")
+         } else print(summary(unlist(lapply(x$bc, function(x) x$lambda))))
+      cat("\n")
+    }
   
   if(any(x$method == "pca"))
     {
@@ -337,6 +412,61 @@ if(FALSE)
     data3 <- predict(pp1, testData)
     data4 <- predict(pp2, testData)
     splom(~cbind(data[1:10,"a_aro"], data3[, "a_aro"], data4[,"a_aro"]))
+
+
+    #############
+    ## BC tests
+
+    data(BloodBrain)
+
+    data <- bbbDescr[, 1:10]
+    pp01 <- preProcess(data, c("BoxCox"))
+    pp01
+
+    test01 <- predict(pp01, data)
+    tmp01 <- BoxCoxTrans(data$tpsa)
+    all.equal(predict(tmp01, data$tpsa), test01$tpsa)
+    all.equal(predict(tmp01, data$tpsa), 2*(sqrt(data$tpsa) - 1))   
+
+    data <- bbbDescr[, 1:10]
+    data$tpsa[7:10] <- NA
+    pp02 <- preProcess(data, c("BoxCox"))
+    pp02
+
+    data <- bbbDescr[, 1:10]
+    pp03 <- preProcess(data, c("BoxCox"), outcome = logBBB)
+
+    data <- bbbDescr[, 1:10]
+    pp04 <- preProcess(data, c("center", "BoxCox"))
+    pp04
+
+    test04 <- predict(pp04, data)
+    tmp04 <- BoxCoxTrans(data$tpsa)
+    all.equal(predict(tmp04, data$tpsa) - mean(predict(tmp04, data$tpsa)), test04$tpsa)
+
+
+    library(caret)
+    data(BloodBrain)
+
+    data <- bbbDescr[, -nearZeroVar(bbbDescr)]
+    data2 <- data
+    data2[1, 1:20] <- NA
+    data2[2:10, 4] <- NA
+
+    trainData <- data2[11:nrow(data2),]
+    testData <- data2[1:10,]
+    
+    set.seed(1)
+    pp05 <- preProcess(trainData, method = c("BoxCox", "bagImpute"), verbose = TRUE)
+    pp06 <- preProcess(trainData, method = c("BoxCox", "knnImpute"), verbose = TRUE)
+
+    test05 <- predict(pp05, testData)
+    test06 <- predict(pp06, testData)
+    splom(~cbind(sqrt(data[1:10,"a_aro"]), test05[, "a_aro"], test06[,"a_aro"]))
+    splom(~cbind(sqrt(data[1:10,"tpsa"]), test05[, "tpsa"], test06[,"tpsa"]), groups = c("NA", rep("good", 9)))
+    
+    
+
     
   }
 
