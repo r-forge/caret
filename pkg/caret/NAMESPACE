@@ -155,7 +155,16 @@ export(
        dummyVars.default,
        predict.dummyVars,
        contr.dummy,
-       gamFuncs
+       gamFuncs,
+       R2,
+       RMSE,
+       BoxCoxTrans,
+       ldaBag,
+       plsBag,
+       nbBag,
+       ctreeBag,
+       svmBag,
+       nnetBag
        )
 
 S3method(confusionMatrix, default)
@@ -182,6 +191,8 @@ S3method(resamples,       default)
 S3method(icr,             default)
 S3method(bag,             default)
 S3method(dummyVars,       default)
+S3method(BoxCoxTrans,     default)
+
 
 S3method(train,   formula)
 S3method(pcaNNet, formula)
@@ -266,6 +277,7 @@ S3method(print, icr)
 S3method(print, bag)
 S3method(print, prcomp.resamples)
 S3method(print, dummyVars)
+S3method(print, BoxCoxTrans)
 
 S3method(predict, PLS)
 S3method(predict, plsda)
@@ -285,6 +297,7 @@ S3method(predict, icr)
 S3method(predict, bag)
 S3method(predict, rfe)
 S3method(predict, dummyVars)
+S3method(predict, BoxCoxTrans)
 
 S3method(summary, bagEarth)
 S3method(summary, bagFDA)
