@@ -1,69 +1,67 @@
-makeCubistFiles <- function(x, y,
+cubistType <- function (x, ...) UseMethod("cubistType")
+cubistType.numeric <- function(x, ...) "continuous."
+cubistType.factor <- function(x, ...) paste(paste(levels(x), collapse = ","), ".", sep = "")
+cubistType.character <- function(x, ...) paste(paste(unique(x), collapse = ","), ".", sep = "")
+cubistType.ordered <- function(x, ...) paste("[ordered]", paste(levels(x), collapse = ","), ".", sep = "")
+cubistType.matrix <- function(x, ...)
+{
+  if(is.numeric(x)) out <- rep("continuous.", ncol(x))
+  if(is.character(x)) out <- apply(x, 2, cubistType)
+  out
+}
+
+cubistType.data.frame <- function(x, ...) unlist(lapply(x, cubistType))
+
+
+makeCubistFiles2 <- function(x, y,
                             testX = NULL, testY = NULL,
                             ylab = "outcome",
-                            prefix = NULL)
+                            prefix = NULL,
+                            cubist = "cubist",
+                            numCom = 1, nn = 5, rules = 5)
   {
-    if(is.null(prefix)) prefix <- paste("data", format(Sys.time(), "%Y%m%d_%H%M%S"), sep = "_")
+    if(is.null(prefix)) prefix <- paste("data", format(Sys.time(), "%Y%m%d%H%M%S"), sep = "_")
     ## check for consistent train and test sizes
     ## check for commas in rownames
     
-    if(!is.numeric(y)) stop("outcome variable must be numeric")
+    #if(!is.numeric(y)) stop("outcome variable must be numeric")
     call <- match.call()
     ## See http://www.rulequest.com/cubist-win.html
     ## for file sepcifications
     
     if(nrow(x) != length(y)) stop("the number of samples in x and y must be the same")
 
-
-    #########################################################
-    ## Determine variable types
+  fileHeader <- paste("| autmatically created using", R.version.string,
+                            "on",  format(Sys.time(), "%a %b %d %H:%M:%S %Y"),
+                      "\n| Call: ", paste(deparse(call), collapse = ""), "\n")
     
-    if(is.matrix(x))
-      {
-        if(is.numeric(x))
-          {
-            varType <- rep("continuous", ncol(x))
-          } else {
-            varType <- rep("discrete", ncol(x))
-          }
-      } else {
-        foo <- function(x) if(is.numeric(x)) "continuous" else "discrete"
-        varType <- unlist(lapply(x, foo))
-      }
-
     #########################################################
     ## Setup and write names attributes
-    
-    nameData <- c(ylab, "sample_ids:label")
-    nameData <- c(nameData,
-                  paste(ylab, "continuous", sep = ":")) ## can also use "target" ?
-    nameData <- c(nameData,
-                  paste(names(varType),
-                        varType,
-                        sep = ":"))
-    nameData <- as.matrix(nameData, ncol = 1)
 
-    cat(paste(nameData, collapse = "\n"),
-        file = paste(prefix, ".names", sep = ""))
+
+    dataTypes <- cubistType(x)
+    dataTypes <- c(dataTypes, "continuous.")
+    if(any(names(dataTypes) == ylab)) stop("the outcome label is in the 'x' data. please pick another name")
+    names(dataTypes)[length(dataTypes)] <- ylab                            
+    nameFileData <- paste(names(dataTypes), dataTypes, sep = "\t")
+    nameFileData <- paste(nameFileData, collapse = "\n")
+    nameFileData <- paste(fileHeader, nameFileData, sep = "\n")
+    cat(nameFileData, file = paste(prefix, ".names", sep = ""))
     
     if(!file.exists(paste(prefix, ".names", sep = "")))
       stop(paste("error creating", paste(prefix, ".names", sep = "")))
 
+    
     #########################################################
     ## Setup and write training data
 
-    train.ids <- rownames(x)
-    if(is.null(train.ids)) train.ids <- paste("sample", 1:nrow(x), sep = "")
-
-    if(any(duplicated(train.ids))) stop("please use unique row names in training set")
-
-    train.data <- data.frame(sample = train.ids,
-                             .outcome = y)
-    train.data <- cbind(train.data, x)
-    if(length(nameData) -1 != ncol(train.data)) stop("problem creating the files - incompatible dimensions")
-
-    write.table(train.data,
+    if(!is.data.frame(x)) x <- as.data.frame(x)
+     train <- x
+    train$.outcome <- y
+ 
+    write.table(train,
                 sep = ",",
+                na = "?",
                 file = paste(prefix, ".data", sep = ""),
                 quote = FALSE,
                 row.names = FALSE,
@@ -71,45 +69,43 @@ makeCubistFiles <- function(x, y,
     
     if(!file.exists(paste(prefix, ".data", sep = "")))
       stop(paste("error creating", paste(prefix, ".data", sep = "")))
-    
-    if(!is.null(testX))
+
+     #########################################################
+    ## Optionally write test data
+
+    if(!is.null(testX) & !is.null(testY))
       {
-
-        #########################################################
-        ## Setup and write training data
-
-        test.ids <- rownames(testX)
-        if(is.null(test.ids)) test.ids <- paste("sample", nrow(x) + (1:nrow(testX)), sep = "")
-
-        if(any(duplicated(test.ids))) stop("please use unique row names in test set")
-
-        if(is.null(testY)) testY <- rep(0, nrow(testX))
+        if(!is.data.frame(testX)) testX <- as.data.frame(testX)
+        test <- testX
+        test$.outcome <- testY
         
-        test.data <- data.frame(sample = test.ids,
-                                .outcome = testY)
-        test.data <- cbind(test.data, testX)
-        if(length(nameData) - 1 != ncol(test.data))
-          stop("problem creating the files - incompatible dimensions between training and test")
-
-        write.table(test.data,
+        write.table(test,
                     sep = ",",
-                    file = paste(prefix, ".cases", sep = ""),
+                    na = "?",
+                    file = paste(prefix, ".test", sep = ""),
                     quote = FALSE,
                     row.names = FALSE,
                     col.names = FALSE)
         
-        if(!file.exists(paste(prefix, ".cases", sep = "")))
-          stop(paste("error creating", paste(prefix, ".cases", sep = "")))
+        if(!file.exists(paste(prefix, ".test", sep = "")))
+          stop(paste("error creating", paste(prefix, ".test", sep = "")))
       }
-
+     #########################################################
+    ## Write out system commands
+        run <- paste(cubist,
+                     "-f", prefix,
+                     "-C", numCom,
+                     "-n", nn,
+                     "-a",
+                     "-r", rules)
+    cat("To run the cubist model,  use:\n\n\t", run, "\n")
     
-    #########################################################
-    ##     
+    
   }
 
 fitCubist <- function(path = NULL, prefix = "model", numCom = 1, nn = 5, rules = 5)
   {
-    if(is.null(path)) path <- "/grid/gro/vol/ccdev/cscoe/Cubist/PfeCubistModel/bin/PfeCubistModel64"
+    if(is.null(path)) path <- "~/Downloads/Cubist/cubist"
     fitCall <- paste(path,
                      "-f", prefix,
                      "-C", numCom,
@@ -128,9 +124,9 @@ fitCubist <- function(path = NULL, prefix = "model", numCom = 1, nn = 5, rules =
     invisible(fitCall)
   }
 
-cubistPred <- function(path = NULL, prefix = "model", cleanup = TRUE)
+cubistPred <- function(path = NULL, prefix = "model", cleanup = FALSE)
   {
-    if(is.null(path)) path <- "/grid/gro/vol/ccdev/cscoe/Cubist/PfeCubistPredict/bin/PfeCubistPredict64"
+    if(is.null(path)) path <- "~/Downloads/Cubist/cubist"
     
     predCall <- paste(path,"-f", prefix,
                       ">", paste(prefix, ".csv", sep = ""))
@@ -139,11 +135,20 @@ cubistPred <- function(path = NULL, prefix = "model", cleanup = TRUE)
                      intern = FALSE)
     if(doPred == 0)
       {
-        if(!file.exists(paste(prefix, ".csv", sep = "")))
-          stop("csv file was not created")
+        if(!file.exists(paste(prefix, ".pred", sep = "")))
+          stop(".pred file was not created")
       } else stop("system call returned an error")
 
-    ret <- read.csv(paste(prefix, ".csv", sep = ""))
+   # tmp <- read.delim(paste(prefix, ".pred", sep = ""), sep = "\n", header = FALSE, stringsAsFactors = FALSE)
+   # startRow <- grep("--", tmp$V1) - 1
+    ret <- read.delim(paste(prefix, ".pred", sep = ""),
+                      skip = 6,
+                      sep = "\n",
+                      stringsAsFactors = FALSE,
+                      header = FALSE)[,1]
+    splitUp <- strsplit(ret, " ")
+    obs <- as.numeric(unlist(lapply(splitUp, function(x)x[x != ""][1])))
+    pred <- as.numeric(unlist(lapply(splitUp, function(x)x[x != ""][2])))
     if(cleanup)
       {
         try(unlink(paste(prefix, ".data", sep = "")), silent = TRUE)
@@ -153,7 +158,61 @@ cubistPred <- function(path = NULL, prefix = "model", cleanup = TRUE)
         try(unlink(paste(prefix, ".csv", sep = "")), silent = TRUE)
         try(unlink(paste(prefix, ".cases", sep = "")), silent = TRUE)
       }
-    ret
+    data.frame(obs = obs, pred = pred)
   }
 
 
+
+QuinlanAttributes <- function (x, ...) UseMethod("QuinlanAttributes")
+QuinlanAttributes.numeric <- function(x, ...) "continuous."
+QuinlanAttributes.factor <- function(x, ...) paste(paste(levels(x), collapse = ","), ".", sep = "")
+QuinlanAttributes.character <- function(x, ...) paste(paste(unique(x), collapse = ","), ".", sep = "")
+QuinlanAttributes.ordered <- function(x, ...) paste("[ordered]", paste(levels(x), collapse = ","), ".", sep = "")
+QuinlanAttributes.matrix <- function(x, ...) apply(x, 2, QuinlanDescription)
+QuinlanAttributes.data.frame <- function(x, ...) unlist(lapply(x,  QuinlanDescription))
+
+
+formatAttributes <- function(x)
+  {
+    ## gsub special chars with escapes
+    x
+  }
+
+makeNamesFile <- function(x, y, label = "outcome", comments = TRUE)
+  {
+    if(comments)
+      {
+        call <- match.call()
+        out <- paste("| Generated using ", R.version.string, "\n",
+                     "| on ", format(Sys.time(), "%a %b %d %H:%M:%S %Y"), "\n",
+                     "| function call: ", paste(deparse(call)),
+                     sep = "")
+      } else out <- ""
+
+    out <- paste(out,
+                 "\n", label, ".\n",
+                 "\n", label, ": continuous.",
+                 sep = "")
+    varData <- QuinlanAttributes(x)
+    varData <- paste(names(varData), ": ", varData, sep = "", collapse = "\n")
+    out <- paste(out, "\n", varData, sep = "")
+    out
+
+
+  }
+
+
+makeDataFile <- function(x, y)
+  {
+    if(!is.data.frame(x)) x <- as.data.frame(x)
+    x <- cbind(y, x)
+    out <- capture.output(
+                          write.table(x,
+                                      sep = ",",
+                                      na = "?",
+                                      file = "",
+                                      quote = FALSE,
+                                      row.names = FALSE,
+                                      col.names = FALSE))
+    paste(out, collapse = "\n")
+  }
