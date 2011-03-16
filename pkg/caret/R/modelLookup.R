@@ -10,7 +10,9 @@ modelLookup <- function(model = NULL)
             ## bagFDA
             'bagFDA', 'bagFDA', 
             ## blackboost
-            'blackboost', 'blackboost', 
+            'blackboost', 'blackboost',
+            ## Boruta
+            'Boruta',
             ## cforest
             'cforest', 
             ## ctree
@@ -44,7 +46,9 @@ modelLookup <- function(model = NULL)
             ## gaussprRadial
             'gaussprRadial', 
             ## gbm
-            'gbm', 'gbm', 'gbm', 
+            'gbm', 'gbm', 'gbm',
+            ## gcvEarth
+            'gcvEarth',
             ## glm
             'glm', 
             ## glmboost
@@ -142,7 +146,15 @@ modelLookup <- function(model = NULL)
             ## plr
             'plr', 'plr', 
             ## pls
-            'pls', 
+            'pls',
+            ## pls glm binomial
+            'plsGlmBinomial',
+            ## pls glm Gaussian
+            'plsGlmGaussian',
+            ## pls glm Gamma
+            'plsGlmGamma',
+            ## pls glm Poisson
+            'plsGlmPoisson',            
             ## plsTest
             'plsTest', 
             ## ppr
@@ -150,7 +162,9 @@ modelLookup <- function(model = NULL)
             ## qda
             'qda', 
             ## QdaCov
-            'QdaCov', 
+            'QdaCov',
+            ## qrnn
+            'qrnn', 'qrnn', 'qrnn',
             ## qrf
             'qrf', 
             ## rda
@@ -206,7 +220,9 @@ modelLookup <- function(model = NULL)
             ## svmradial
             'svmradial', 'svmradial', 
             ## svmRadial
-            'svmRadial', 'svmRadial', 
+            'svmRadial', 'svmRadial',
+            ## svmRadialCost
+            'svmRadialCost',              
             ## treebag
             'treebag', 
             ## vbmpRadial
@@ -221,7 +237,9 @@ modelLookup <- function(model = NULL)
               ## bagFDA
               'nprune', 'degree', 
               ## blackboost
-              'mstop', 'maxdepth', 
+              'mstop', 'maxdepth',
+              ## Boruta
+              'mtry',
               ## cforest
               'mtry', 
               ## ctree
@@ -255,7 +273,9 @@ modelLookup <- function(model = NULL)
               ## gaussprRadial
               'sigma', 
               ## gbm
-              'n.trees', 'interaction.depth', 'shrinkage', 
+              'n.trees', 'interaction.depth', 'shrinkage',
+              ## gcvEarth
+              'degree',
               ## glm
               'parameter', 
               ## glmboost
@@ -353,7 +373,15 @@ modelLookup <- function(model = NULL)
               ## plr
               'lambda', 'cp', 
               ## pls
-              'ncomp', 
+              'ncomp',
+              ## pls glm binomial
+              'nt',   
+              ## pls glm Gaussian
+              'nt',   
+              ## pls glm Gamma
+              'nt',   
+              ## pls glm Poisson
+              'nt',   
               ## plsTest
               'ncomp', 
               ## ppr
@@ -361,7 +389,9 @@ modelLookup <- function(model = NULL)
               ## qda
               'parameter', 
               ## QdaCov
-              'parameter', 
+              'parameter',
+            ## qrnn
+            'n.hidden', 'penalty', 'bag',              
               ## qrf
               'mtry', 
               ## rda
@@ -417,7 +447,9 @@ modelLookup <- function(model = NULL)
               ## svmradial
               'C', 'sigma', 
               ## svmRadial
-              'C', 'sigma', 
+              'C', 'sigma',
+              ## svmRadialCost
+              'C',               
               ## treebag
               'parameter', 
               ## vbmpRadial
@@ -439,6 +471,8 @@ modelLookup <- function(model = NULL)
               ## blackboost
               '#Trees',
               'Max Tree Depth',
+              ## Boruta
+              '#Randomly Selected Predictors',
               ## cforest
               '#Randomly Selected Predictors',
               ## ctree
@@ -484,6 +518,8 @@ modelLookup <- function(model = NULL)
               '#Trees',
               'Interaction Depth',
               'Learning Rate',
+              ## gcvEarth
+              '#Retained Terms',
               ## glm
               'none',
               ## glmboost
@@ -601,6 +637,14 @@ modelLookup <- function(model = NULL)
               'Complexity Parameter',
               ## pls
               '#Components',
+               ## pls glm binomial
+              '#Components',
+              ## pls glm Gaussian
+              '#Components',
+              ## pls glm Gamma
+              '#Components',
+              ## pls glm Poisson
+              '#Components',      
               ## plsTest
               '#Components',
               ## ppr
@@ -609,6 +653,8 @@ modelLookup <- function(model = NULL)
               'none',
               ## QdaCov
               'none',
+            ## qrnn
+             '#Hidden Units', ' Weight Decay', 'Bagged Models?',                     
               ## qrf
               '#Randomly Selected Predictors',
               ## rda
@@ -683,6 +729,8 @@ modelLookup <- function(model = NULL)
               ## svmRadial
               'Cost',
               'Sigma',
+              ## svmRadialCost
+              'Cost',
               ## treebag
               'none',
               ## vbmpRadial
@@ -697,7 +745,9 @@ modelLookup <- function(model = NULL)
              ## bagFDA
              FALSE, FALSE, 
              ## blackboost
-             TRUE, FALSE, 
+             TRUE, FALSE,
+             ## Boruta
+             FALSE,
              ## cforest
              FALSE, 
              ## ctree actually is a sequential model, but treeresponse can't do probs from multiple models
@@ -731,7 +781,9 @@ modelLookup <- function(model = NULL)
              ## gaussprRadial
              FALSE, 
              ## gbm
-             TRUE, FALSE, FALSE, 
+             TRUE, FALSE, FALSE,
+             ## gcvEarth
+             FALSE,
              ## glm
              FALSE, 
              ## glmboost
@@ -829,7 +881,15 @@ modelLookup <- function(model = NULL)
              ## plr
              FALSE, FALSE, 
              ## pls
-             TRUE, 
+             TRUE,
+               ## pls glm binomial
+              FALSE,
+              ## pls glm Gaussian
+              FALSE,
+              ## pls glm Gamma
+              FALSE,
+              ## pls glm Poisson
+              FALSE,                
              ## plsTest
              FALSE, 
              ## ppr
@@ -837,7 +897,9 @@ modelLookup <- function(model = NULL)
              ## qda
              FALSE, 
              ## QdaCov
-             FALSE, 
+             FALSE,
+            ## qrnn
+            FALSE, FALSE, FALSE,                 
              ## qrf
              FALSE, 
              ## rda
@@ -893,7 +955,9 @@ modelLookup <- function(model = NULL)
              ## svmradial
              FALSE, FALSE, 
              ## svmRadial
-             FALSE, FALSE, 
+             FALSE, FALSE,
+             ## svmRadialCost
+             FALSE,               
              ## treebag
              FALSE, 
              ## vbmpRadial
@@ -907,7 +971,9 @@ modelLookup <- function(model = NULL)
                 ## bagFDA
                 FALSE, FALSE, 
                 ## blackboost
-                TRUE, TRUE, 
+                TRUE, TRUE,
+                ## Boruta
+                TRUE,
                 ## cforest
                 TRUE, 
                 ## ctree
@@ -941,7 +1007,9 @@ modelLookup <- function(model = NULL)
                 ## gaussprRadial
                 TRUE, 
                 ## gbm
-                TRUE, TRUE, TRUE, 
+                TRUE, TRUE, TRUE,
+                ## gcvEarth
+                TRUE,
                 ## glm
                 TRUE, 
                 ## glmboost
@@ -1039,7 +1107,15 @@ modelLookup <- function(model = NULL)
                 ## plr
                 FALSE, FALSE, 
                 ## pls
-                TRUE, 
+                TRUE,
+              ## pls glm binomial
+              FALSE,
+              ## pls glm Gaussian
+              TRUE,
+              ## pls glm Gamma
+              TRUE,
+              ## pls glm Poisson
+              TRUE,                          
                 ## plsTest
                 TRUE, 
                 ## ppr
@@ -1047,7 +1123,9 @@ modelLookup <- function(model = NULL)
                 ## qda
                 FALSE, 
                 ## QdaCov
-                FALSE, 
+                FALSE,
+            ## qrnn
+             TRUE, TRUE, TRUE,                
                 ## qrf
                 TRUE, 
                 ## rda
@@ -1104,6 +1182,8 @@ modelLookup <- function(model = NULL)
                 TRUE, TRUE, 
                 ## svmRadial
                 TRUE, TRUE, 
+                ## svmRadialCost
+                TRUE,
                 ## treebag
                 TRUE, 
                 ## vbmpRadial
@@ -1118,7 +1198,9 @@ modelLookup <- function(model = NULL)
                   ## bagFDA
                   TRUE, TRUE, 
                   ## blackboost
-                  TRUE, TRUE, 
+                  TRUE, TRUE,
+                  ## Boruta
+                  TRUE,
                   ## cforest
                   TRUE, 
                   ## ctree
@@ -1152,7 +1234,9 @@ modelLookup <- function(model = NULL)
                   ## gaussprRadial
                   TRUE, 
                   ## gbm
-                  TRUE, TRUE, TRUE, 
+                  TRUE, TRUE, TRUE,
+                  ## gcvEarth
+                  TRUE,
                   ## glm
                   TRUE, 
                   ## glmboost
@@ -1250,7 +1334,15 @@ modelLookup <- function(model = NULL)
                   ## plr
                   TRUE, TRUE, 
                   ## pls
-                  TRUE, 
+                  TRUE,
+              ## pls glm binomial
+              TRUE,
+              ## pls glm Gaussian
+              FALSE,
+              ## pls glm Gamma
+              FALSE,
+              ## pls glm Poisson
+              FALSE,                          
                   ## plsTest
                   TRUE, 
                   ## ppr
@@ -1258,7 +1350,9 @@ modelLookup <- function(model = NULL)
                   ## qda
                   TRUE, 
                   ## QdaCov
-                  TRUE, 
+                  TRUE,
+            ## qrnn
+             FALSE, FALSE, FALSE,                  
                   ## qrf
                   FALSE, 
                   ## rda
@@ -1315,6 +1409,8 @@ modelLookup <- function(model = NULL)
                   TRUE, TRUE, 
                   ## svmRadial
                   TRUE, TRUE, 
+                  ## svmRadialCost
+                  TRUE,
                   ## treebag
                   TRUE, 
                   ## vbmpRadial
@@ -1329,7 +1425,9 @@ modelLookup <- function(model = NULL)
                     ## bagFDA
                     TRUE, TRUE, 
                     ## blackboost
-                    TRUE, TRUE, 
+                    TRUE, TRUE,
+                    ## Boruta
+                    TRUE,
                     ## cforest
                     TRUE, 
                     ## ctree
@@ -1363,7 +1461,9 @@ modelLookup <- function(model = NULL)
                     ## gaussprRadial
                     TRUE, 
                     ## gbm
-                    TRUE, TRUE, TRUE, 
+                    TRUE, TRUE, TRUE,
+                    ## gcvEarth
+                    TRUE,
                     ## glm
                     TRUE, 
                     ## glmboost
@@ -1461,7 +1561,15 @@ modelLookup <- function(model = NULL)
                     ## plr
                     TRUE, TRUE, 
                     ## pls
-                    TRUE, 
+                    TRUE,
+              ## pls glm binomial
+              TRUE,
+              ## pls glm Gaussian
+              FALSE,
+              ## pls glm Gamma
+              FALSE,
+              ## pls glm Poisson
+              FALSE,                        
                     ## plsTest
                     TRUE, 
                     ## ppr
@@ -1469,7 +1577,9 @@ modelLookup <- function(model = NULL)
                     ## qda
                     TRUE, 
                     ## QdaCov
-                    TRUE, 
+                    TRUE,
+            ## qrnn
+             FALSE, FALSE, FALSE,                        
                     ## qrf
                     FALSE, 
                     ## rda
@@ -1526,6 +1636,8 @@ modelLookup <- function(model = NULL)
                     TRUE, TRUE, 
                     ## svmRadial
                     TRUE, TRUE, 
+                    ## svmRadialCost
+                    TRUE,
                     ## treebag
                     TRUE, 
                     ## vbmpRadial
