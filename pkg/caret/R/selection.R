@@ -14,7 +14,6 @@ byComplexity <- function(x, model)
            },
            hda =
            {
-             
              x[order(x$newdim, -x$lambda, x$gamma),] 
            },           
            gbm =
@@ -23,16 +22,38 @@ byComplexity <- function(x, model)
              # complexity faster than number of splits
              x[order(x$n.trees, x$interaction.depth, x$shrinkage),] 
            },
+           bstTree =
+           {
+             x[order(x$mstop, x$maxdepth, x$nu),] 
+           },
+           bstLs =, bstSm = 
+           {
+             x[order(x$mstop, x$nu),] 
+           },            
            rf =, rfNWS =, rfLSF =, parRF =, gpls =, pcr =, pls =, PLS =, pam =, cforest =,
            nb =, rpart =, ctree2 =, logitBoost=, J48 =, LMT =, ppr =, mda =, pda =, pda2 =,
-           lars =, lars2 =, Linda =, QdaCov =, icr =, qrf =,Boruta =
+           lars =, lars2 =, Linda =, QdaCov =, icr =, qrf =,Boruta =,
+           leapForward=, leapBackward=, leapSeq = 
            {
              x[order(x[,1]),]
            },
-           M5Rules =, JRip =
+           JRip =
            {
              x[order(x[,1], decreasing = TRUE),]
-           },           
+           },
+           M5Rules =
+           {
+             x$pruned <- factor(as.character(x$pruned), levels = c("Yes", "No"))
+             x$smoothed <- factor(as.character(x$smoothed), levels = c("Yes", "No"))
+             x[order(x$pruned, x$smoothed),]
+           },
+           M5 =
+           {
+             x$pruned <- factor(as.character(x$pruned), levels = c("Yes", "No"))
+             x$smoothed <- factor(as.character(x$smoothed), levels = c("Yes", "No"))
+             x$rules <- factor(as.character(x$rules), levels = c("Yes", "No"))
+             x[order(x$pruned, x$smoothed, x$rules),]
+           },             
            svmradial =, svmRadial =
            {
              # If the cost is high, the decision boundary will work hard to
@@ -165,6 +186,10 @@ byComplexity <- function(x, model)
            plsGlmBinomial =, plsGlmGaussian =, plsGlmGamma =, plsGlmPoisson =
            {
              x[order(x$nt),]
+           },
+           cubist =
+           {
+             x[order(x$committees,  x$neighbors),]
            },
            logreg = x[order(x$ntrees, x$treesize),],
            logicBag = x[order(x$ntrees, x$nleaves),],
