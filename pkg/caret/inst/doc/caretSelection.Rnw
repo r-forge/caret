@@ -96,9 +96,9 @@ The algorithm has an optional step (line \ref{A:rerank}) where the predictor ran
 \begin{algorithm}
    \caption{Recursive feature elimination}
    \label{A:rfe}
-   \SetLine
-   \restylealgo{plain}
-   \dontprintsemicolon
+   \SetAlgoLined
+   \RestyleAlgo{plain}
+   \DontPrintSemicolon
 
 
     \vspace*{3pt} Tune/train the model on the training set using all predictors\vspace*{3pt}\; 
@@ -148,9 +148,9 @@ While this will provide better estimates of performance, it is more computationa
 \begin{algorithm}
    \caption{Recursive feature elimination incorporating resampling}
    \label{A:rfe2}
-   \SetLine
-   \restylealgo{plain}
-   \dontprintsemicolon
+   \SetAlgoLined
+   \RestyleAlgo{plain}
+   \DontPrintSemicolon
 
    \For{Each Resampling Iteration\nllabel{A:outer}}{
 	
@@ -396,7 +396,7 @@ This function is used to return the predictors in the order of the most importan
 \item \texttt{x}: the current set of predictor set for the training samples
 \item \texttt{y}: the current training outcomes
 \end{itemize}
-The function should return a data frame with a column called \texttt{vars} that has the current variable names. The first row should be the most important predictor etc. Other columns can be included in the output and will be returned in the final \texttt{rfe} object.
+The function should return a data frame with a column called \texttt{var} that has the current variable names. The first row should be the most important predictor etc. Other columns can be included in the output and will be returned in the final \texttt{rfe} object.
 
 For random forests, the function below uses \texttt{caret}'s \texttt{varImp} function to extract the random forest importances and orders them. For classification, \texttt{randomForest} will produce a column of importances for each class. In this case, the default ranking function orders the predictors by the averages importance across the classes.
 <<rfRank>>=

@@ -137,6 +137,30 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
              },
+             leapForward = , leapBackward =, leapSeq =
+             {
+               grid <- grid[order(grid$.nvmax, decreasing = TRUE),, drop = FALSE]
+               loop <- grid[1,,drop = FALSE]
+               seqParam <- list(grid[-1,,drop = FALSE])
+             },             
+             cubist = 
+             {
+               grid <- grid[order(-grid$.committees, grid$.neighbors, decreasing = TRUE),, drop = FALSE]
+               
+               uniqueCom <- unique(grid$.committees)
+               
+               loop <- data.frame(.committees = uniqueCom)
+               loop$.neighbors <- NA
+               
+               seqParam <- vector(mode = "list", length = length(uniqueCom))
+               
+               for(i in seq(along = uniqueCom))
+                 {
+                   subK <- grid[grid$.committees == uniqueCom[i],".neighbors"]
+                   loop$.neighbors[loop$.committees == uniqueCom[i]] <- subK[which.max(subK)]
+                   seqParam[[i]] <- data.frame(.neighbors = subK[-which.max(subK)])
+                 }
+             },            
              earth = 
              {
                grid <- grid[order(grid$.degree, grid$.nprune, decreasing = TRUE),, drop = FALSE]
@@ -174,6 +198,40 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                    seqParam[[i]] <- data.frame(.n.trees = subTrees[subTrees != loop$.n.trees[i]])
                  }         
              },
+             bstTree = 
+             {
+               loop <- aggregate(grid$.mstop, 
+                                 list(
+                                      .maxdepth = grid$.maxdepth, 
+                                      .nu = grid$.nu),
+                                 max)
+               loop <- decoerce(loop, grid, TRUE)                  
+               names(loop)[3] <- ".mstop"
+               seqParam <- vector(mode = "list", length = nrow(loop))
+               for(i in seq(along = loop$.mstop))
+                 {
+                   index <- which(
+                                  grid$.maxdepth == loop$.maxdepth[i] & 
+                                  grid$.nu == loop$.nu[i])
+                   subTrees <- grid[index, ".mstop"] 
+                   seqParam[[i]] <- data.frame(.mstop = subTrees[subTrees != loop$.mstop[i]])
+                 }         
+             },
+             bstLs =, bstSm =  
+             {
+               loop <- aggregate(grid$.mstop, 
+                                 list(.nu = grid$.nu),
+                                 max)
+               loop <- decoerce(loop, grid, TRUE)                  
+               names(loop)[2] <- ".mstop"
+               seqParam <- vector(mode = "list", length = nrow(loop))
+               for(i in seq(along = loop$.mstop))
+                 {
+                   index <- which(grid$.nu == loop$.nu[i])
+                   subTrees <- grid[index, ".mstop"] 
+                   seqParam[[i]] <- data.frame(.mstop = subTrees[subTrees != loop$.mstop[i]])
+                 }         
+             },              
              rpart = 
              {
                grid <- grid[order(grid$.maxdepth, decreasing = TRUE),, drop = FALSE]
@@ -425,7 +483,7 @@ getClassLevels <- function(x)
                                         "rvmRadial", "rvmPoly", "rvmLinear",
                                         "lssvmRadial", "lssvmPoly", "lssvmLinear",
                                         "gaussprRadial", "gaussprPoly", "gaussprLinear",
-                                        "ctree", "ctree2", "cforest",
+                                        "ctree", "ctree2", "cforest", "svmRadialCost",
                                         "penalized", "Linda", "QdaCov")))
       
       {
@@ -433,6 +491,7 @@ getClassLevels <- function(x)
                             penalized = NULL,
                             svmradial =, svmpoly =, svmlinear =, 
                             rvmradial =, rvmpoly =, svmlinear =,
+                            svmradialcost = ,
                             lssvmradial =, lssvmpoly =,  lssvmlinear =,
                             gaussprpadial =, gaussprpoly =, gaussprlinear =
                             {
@@ -486,6 +545,15 @@ workerData <- function(data, ctrl, loop, method, lvls, pp, workers = 1, caretVer
   {
 
     index <- ctrl$index
+    if(!is.null(pp))
+      {
+        pp <- list(options = pp, ## constant across the workers
+                   thresh = ctrl$PCAthresh,
+                   ica = ctrl$ICAcomp,
+                   k = ctrl$k)
+      }
+
+
     
     if(loop$scheme != "oob")
       {
@@ -514,10 +582,7 @@ workerData <- function(data, ctrl, loop, method, lvls, pp, workers = 1, caretVer
                                  TRUE, FALSE),              ## constant across the workers
                                classProbs = ctrl$classProbs,## constant across the workers
                                func = ctrl$summaryFunction, ## constant across the workers
-                               preProc = list(options = pp, ## constant across the workers
-                                              thresh = ctrl$PCAthresh,
-                                              ica = ctrl$ICAcomp,
-                                              k = ctrl$k),                
+                               preProc = pp,                
                                caretVerbose = caretVerbose, ## constant across the workers
                                dots = d),                   ## constant across the workers
                           m = method,
@@ -949,5 +1014,11 @@ gamFormula <- function(data, smoother = "s", cut = 10, df = 0, span = .5, degree
   }
 
 
+varSeq <- function(x)
+  {
+    vars <- apply(summary(x)$which, 1, function(x) names(which(x)))
+    vars <- lapply(vars, function(x) x[x != "(Intercept)"])
+    vars
+  }
 
 

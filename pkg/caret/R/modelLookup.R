@@ -13,12 +13,20 @@ modelLookup <- function(model = NULL)
             'blackboost', 'blackboost',
             ## Boruta
             'Boruta',
+            ## bstTree
+            'bstTree', 'bstTree', 'bstTree',
+             ## bstLs
+            'bstLs', 'bstLs',
+             ## bstSm
+            'bstSm', 'bstSm',           
             ## cforest
             'cforest', 
             ## ctree
             'ctree', 
             ## ctree2
-            'ctree2', 
+            'ctree2',
+            ## Cubist
+            'cubist', 'cubist',            
             ## earth
             'earth', 'earth', 
             ## earthTest
@@ -80,7 +88,13 @@ modelLookup <- function(model = NULL)
             ## lasso
             'lasso', 
             ## lda
-            'lda', 
+            'lda',
+            ## leapForward
+            'leapForward',
+            ## leapBackward
+            'leapBackward',
+            ## leapSeq
+            'leapSeq',
             ## Linda
             'Linda', 
             ## lm
@@ -105,8 +119,10 @@ modelLookup <- function(model = NULL)
             'lssvmRadial', 
             ## lvq
             'lvq', 'lvq',
+            ## M5
+            'M5', 'M5', 'M5',             
             ## M5Rules
-            'M5Rules', 
+            'M5Rules', 'M5Rules', 
             ## mars
             'mars', 'mars', 
             ## mda
@@ -114,7 +130,7 @@ modelLookup <- function(model = NULL)
             ## multinom
             'multinom', 
             ## nb
-            'nb', 
+            'nb', 'nb', 
             ## neuralnet
             'neuralnet', 'neuralnet', 'neuralnet', 
             ## nnet
@@ -240,12 +256,20 @@ modelLookup <- function(model = NULL)
               'mstop', 'maxdepth',
               ## Boruta
               'mtry',
+              ## bstTree
+              'mstop', 'maxdepth', 'nu',
+              ## bstLs
+              'mstop', 'nu',
+              ## bstSm
+              'mstop', 'nu',              
               ## cforest
               'mtry', 
               ## ctree
               'mincriterion', 
               ## ctree2
-              'maxdepth', 
+              'maxdepth',
+              ## Cubist
+              'committees', 'neighbors', 
               ## earth
               'nprune', 'degree', 
               ## earthTest
@@ -307,7 +331,13 @@ modelLookup <- function(model = NULL)
               ## lasso
               'fraction', 
               ## lda
-              'parameter', 
+              'parameter',
+              ## leapForward
+              'nvmax',
+              ## leapBackward
+              'nvmax',
+              ## leapSeq
+              'nvmax',
               ## Linda
               'parameter', 
               ## lm
@@ -331,9 +361,11 @@ modelLookup <- function(model = NULL)
               ## lssvmRadial
               'sigma', 
               ## lvq
-              'size', 'k', 
+              'size', 'k',
+              ## M5
+              'pruned', 'smoothed', 'rules',
               ## M5Rules
-              'pruned', 
+              'pruned', 'smoothed', 
               ## mars
               'nprune', 'degree', 
               ## mda
@@ -341,7 +373,7 @@ modelLookup <- function(model = NULL)
               ## multinom
               'decay', 
               ## nb
-              'usekernel', 
+              'fL', 'usekernel', 
               ## neuralnet
               'layer1', 'layer2', 'layer3', 
               ## nnet
@@ -390,8 +422,8 @@ modelLookup <- function(model = NULL)
               'parameter', 
               ## QdaCov
               'parameter',
-            ## qrnn
-            'n.hidden', 'penalty', 'bag',              
+              ## qrnn
+              'n.hidden', 'penalty', 'bag',              
               ## qrf
               'mtry', 
               ## rda
@@ -463,33 +495,41 @@ modelLookup <- function(model = NULL)
               ## bag
               '#Randomly Selected Predictors',
               ## bagEarth
-              '#Retained Terms',
+              '#Terms',
               'Product Degree',
               ## bagFDA
-              '#Retained Terms',
+              '#Terms',
               'Product Degree',
               ## blackboost
               '#Trees',
               'Max Tree Depth',
               ## Boruta
               '#Randomly Selected Predictors',
+              ## bstTree
+              '# Boosting Iterations', 'Max Tree Depth', 'Shrinkage',
+              ## bstLs
+              '# Boosting Iterations', 'Shrinkage',
+              ## bstSm
+              '# Boosting Iterations', 'Shrinkage',                
               ## cforest
               '#Randomly Selected Predictors',
               ## ctree
               'P-Value Threshold',
               ## ctree2
               'Max Tree Depth',
+              ## Cubist
+              '#Committees', '#Instances', 
               ## earth
-              '#Retained Terms',
+              '#Terms',
               'Product Degree',
               ## earthTest
-              '#Retained Terms',
+              '#Terms',
               'Product Degree',
               ## enet
               'Fraction of Full Solution',
               'Weight Decay',
               ## fda
-              '#Retained Terms',
+              '#Terms',
               'Product Degree',
               ## foba
               '#Variables Retained',
@@ -519,7 +559,7 @@ modelLookup <- function(model = NULL)
               'Interaction Depth',
               'Learning Rate',
               ## gcvEarth
-              '#Retained Terms',
+              '#Terms',
               ## glm
               'none',
               ## glmboost
@@ -557,6 +597,12 @@ modelLookup <- function(model = NULL)
               'Fraction of Full Solution',
               ## lda
               'none',
+              ## leapForward
+              'Maximum Size of Subsets',
+              ## leapBackward
+              'Maximum Size of Subsets',
+              ## leapSeq
+              'Maximum Size of Subsets',
               ## Linda
               'none',
               ## lm
@@ -584,17 +630,19 @@ modelLookup <- function(model = NULL)
               'Sigma',
               ## lvq
               'Codebook Size', '#Prototypes',
+              ## M5
+              'Pruned', 'Smoothed', 'Rules',
               ## M5Rules
-              'Pruned',
+              'Pruned', 'Smoothed',
               ## mars
-              '#Retained Terms',
+              '#Terms',
               'Product Degree',
               ## mda
               '#Subclasses Per Class',
               ## multinom
               'Weight Decay',
               ## nb
-              'Distribution Type',
+              'Laplace Correction', 'Distribution Type',
               ## neuralnet
               '#Hidden Units in Layer 1',
               '#Hidden Units in Layer 2',
@@ -637,7 +685,7 @@ modelLookup <- function(model = NULL)
               'Complexity Parameter',
               ## pls
               '#Components',
-               ## pls glm binomial
+              ## pls glm binomial
               '#Components',
               ## pls glm Gaussian
               '#Components',
@@ -653,8 +701,8 @@ modelLookup <- function(model = NULL)
               'none',
               ## QdaCov
               'none',
-            ## qrnn
-             '#Hidden Units', ' Weight Decay', 'Bagged Models?',                     
+              ## qrnn
+              '#Hidden Units', ' Weight Decay', 'Bagged Models?',                     
               ## qrf
               '#Randomly Selected Predictors',
               ## rda
@@ -748,12 +796,20 @@ modelLookup <- function(model = NULL)
              TRUE, FALSE,
              ## Boruta
              FALSE,
+             ## bstTree
+             TRUE, FALSE, FALSE,
+             ## bstLm
+             TRUE, FALSE,
+             ## bstSm
+             TRUE, FALSE,             
              ## cforest
              FALSE, 
              ## ctree actually is a sequential model, but treeresponse can't do probs from multiple models
              FALSE, 
              ## ctree2
-             FALSE, 
+             FALSE,
+             ## Cubist
+             FALSE, TRUE, 
              ## earth
              TRUE, FALSE, 
              ## earthTest
@@ -815,7 +871,13 @@ modelLookup <- function(model = NULL)
              ## lasso
              TRUE, 
              ## lda
-             FALSE, 
+             FALSE,
+             ## leapForward
+             TRUE,
+             ## leapBackward
+             TRUE,
+             ## leapSeq
+             TRUE,
              ## Linda
              FALSE, 
              ## lm
@@ -839,9 +901,11 @@ modelLookup <- function(model = NULL)
              ## lssvmRadial
              FALSE, 
              ## lvq
-             FALSE, FALSE, 
+             FALSE, FALSE,
+             ## M5
+             FALSE, FALSE, FALSE,           
              ## M5Rules
-             FALSE, 
+             FALSE, FALSE, 
              ## mars
              FALSE, FALSE, 
              ## mda
@@ -849,7 +913,7 @@ modelLookup <- function(model = NULL)
              ## multinom
              FALSE, 
              ## nb
-             FALSE, 
+             FALSE, FALSE, 
              ## neuralnet
              FALSE, FALSE, FALSE, 
              ## nnet
@@ -882,14 +946,14 @@ modelLookup <- function(model = NULL)
              FALSE, FALSE, 
              ## pls
              TRUE,
-               ## pls glm binomial
-              FALSE,
-              ## pls glm Gaussian
-              FALSE,
-              ## pls glm Gamma
-              FALSE,
-              ## pls glm Poisson
-              FALSE,                
+             ## pls glm binomial
+             FALSE,
+             ## pls glm Gaussian
+             FALSE,
+             ## pls glm Gamma
+             FALSE,
+             ## pls glm Poisson
+             FALSE,                
              ## plsTest
              FALSE, 
              ## ppr
@@ -898,8 +962,8 @@ modelLookup <- function(model = NULL)
              FALSE, 
              ## QdaCov
              FALSE,
-            ## qrnn
-            FALSE, FALSE, FALSE,                 
+             ## qrnn
+             FALSE, FALSE, FALSE,                 
              ## qrf
              FALSE, 
              ## rda
@@ -974,12 +1038,20 @@ modelLookup <- function(model = NULL)
                 TRUE, TRUE,
                 ## Boruta
                 TRUE,
+                ## bstTree
+                TRUE, TRUE, TRUE,
+                ## bstLm
+                TRUE, TRUE,
+                ## bstSm
+                TRUE, TRUE,                
                 ## cforest
                 TRUE, 
                 ## ctree
                 TRUE, 
                 ## ctree2
-                TRUE, 
+                TRUE,
+                ## Cubist
+                TRUE, TRUE,
                 ## earth
                 TRUE, TRUE, 
                 ## earthTest
@@ -1041,7 +1113,13 @@ modelLookup <- function(model = NULL)
                 ## lasso
                 TRUE, 
                 ## lda
-                FALSE, 
+                FALSE,
+                ## leapForward
+                TRUE,
+                ## leapBackward
+                TRUE,
+                ## leapSeq
+                TRUE,
                 ## Linda
                 FALSE, 
                 ## lm
@@ -1065,9 +1143,11 @@ modelLookup <- function(model = NULL)
                 ## lssvmRadial
                 FALSE, 
                 ## lvq
-                FALSE, FALSE, 
+                FALSE, FALSE,
+                ## M5
+                TRUE, TRUE, TRUE,                
                 ## M5Rules
-                TRUE, 
+                TRUE, TRUE,
                 ## mars
                 TRUE, TRUE, 
                 ## mda
@@ -1075,7 +1155,7 @@ modelLookup <- function(model = NULL)
                 ## multinom
                 FALSE, 
                 ## nb
-                FALSE, 
+                FALSE, FALSE, 
                 ## neuralnet
                 TRUE, TRUE, TRUE, 
                 ## nnet
@@ -1108,14 +1188,14 @@ modelLookup <- function(model = NULL)
                 FALSE, FALSE, 
                 ## pls
                 TRUE,
-              ## pls glm binomial
-              FALSE,
-              ## pls glm Gaussian
-              TRUE,
-              ## pls glm Gamma
-              TRUE,
-              ## pls glm Poisson
-              TRUE,                          
+                ## pls glm binomial
+                FALSE,
+                ## pls glm Gaussian
+                TRUE,
+                ## pls glm Gamma
+                TRUE,
+                ## pls glm Poisson
+                TRUE,                          
                 ## plsTest
                 TRUE, 
                 ## ppr
@@ -1124,8 +1204,8 @@ modelLookup <- function(model = NULL)
                 FALSE, 
                 ## QdaCov
                 FALSE,
-            ## qrnn
-             TRUE, TRUE, TRUE,                
+                ## qrnn
+                TRUE, TRUE, TRUE,                
                 ## qrf
                 TRUE, 
                 ## rda
@@ -1201,12 +1281,20 @@ modelLookup <- function(model = NULL)
                   TRUE, TRUE,
                   ## Boruta
                   TRUE,
+                  ## bstTree
+                  TRUE, TRUE, TRUE,
+                  ## bstLm
+                  TRUE, TRUE,
+                  ## bstSm
+                  TRUE, TRUE,                  
                   ## cforest
                   TRUE, 
                   ## ctree
                   TRUE, 
                   ## ctree2
-                  TRUE, 
+                  TRUE,
+                  ## Cubist
+                  FALSE, FALSE,
                   ## earth
                   TRUE, TRUE, 
                   ## earthTest
@@ -1268,7 +1356,13 @@ modelLookup <- function(model = NULL)
                   ## lasso
                   FALSE, 
                   ## lda
-                  TRUE, 
+                  TRUE,
+                  ## leapForward
+                  FALSE,
+                  ## leapBackward
+                  FALSE,
+                  ## leapSeq
+                  FALSE,
                   ## Linda
                   TRUE, 
                   ## lm
@@ -1292,9 +1386,11 @@ modelLookup <- function(model = NULL)
                   ## lssvmRadial
                   TRUE, 
                   ## lvq
-                  TRUE, TRUE, 
+                  TRUE, TRUE,
+                  ## M5
+                  FALSE, FALSE, FALSE,                 
                   ## M5Rules
-                  FALSE, 
+                  FALSE, FALSE,
                   ## mars
                   FALSE, FALSE, 
                   ## mda
@@ -1302,7 +1398,7 @@ modelLookup <- function(model = NULL)
                   ## multinom
                   TRUE, 
                   ## nb
-                  TRUE, 
+                  TRUE, TRUE,
                   ## neuralnet
                   FALSE, FALSE, FALSE, 
                   ## nnet
@@ -1335,14 +1431,14 @@ modelLookup <- function(model = NULL)
                   TRUE, TRUE, 
                   ## pls
                   TRUE,
-              ## pls glm binomial
-              TRUE,
-              ## pls glm Gaussian
-              FALSE,
-              ## pls glm Gamma
-              FALSE,
-              ## pls glm Poisson
-              FALSE,                          
+                  ## pls glm binomial
+                  TRUE,
+                  ## pls glm Gaussian
+                  FALSE,
+                  ## pls glm Gamma
+                  FALSE,
+                  ## pls glm Poisson
+                  FALSE,                          
                   ## plsTest
                   TRUE, 
                   ## ppr
@@ -1351,8 +1447,8 @@ modelLookup <- function(model = NULL)
                   TRUE, 
                   ## QdaCov
                   TRUE,
-            ## qrnn
-             FALSE, FALSE, FALSE,                  
+                  ## qrnn
+                  FALSE, FALSE, FALSE,                  
                   ## qrf
                   FALSE, 
                   ## rda
@@ -1428,12 +1524,20 @@ modelLookup <- function(model = NULL)
                     TRUE, TRUE,
                     ## Boruta
                     TRUE,
+                    ## bstTree
+                    FALSE, FALSE, FALSE,
+                    ## bstLs
+                    FALSE, FALSE,
+                    ## bstSm
+                    FALSE, FALSE,                    
                     ## cforest
                     TRUE, 
                     ## ctree
                     TRUE, 
                     ## ctree2
-                    TRUE, 
+                    TRUE,
+                    ## Cubist
+                    FALSE, FALSE,
                     ## earth
                     TRUE, TRUE, 
                     ## earthTest
@@ -1495,7 +1599,13 @@ modelLookup <- function(model = NULL)
                     ## lasso
                     FALSE, 
                     ## lda
-                    TRUE, 
+                    TRUE,
+                    ## leapForward
+                    FALSE,
+                    ## leapBackward
+                    FALSE,
+                    ## leapSeq
+                    FALSE,
                     ## Linda
                     TRUE, 
                     ## lm
@@ -1519,9 +1629,11 @@ modelLookup <- function(model = NULL)
                     ## lssvmRadial
                     FALSE, 
                     ## lvq
-                    FALSE, FALSE, 
+                    FALSE, FALSE,
+                    ## M5
+                    FALSE, FALSE, FALSE,                    
                     ## M5Rules
-                    FALSE, 
+                    FALSE, FALSE,
                     ## mars
                     FALSE, FALSE, 
                     ## mda
@@ -1529,7 +1641,7 @@ modelLookup <- function(model = NULL)
                     ## multinom
                     TRUE, 
                     ## nb
-                    TRUE, 
+                    TRUE, TRUE,
                     ## neuralnet
                     FALSE, FALSE, FALSE, 
                     ## nnet
@@ -1562,14 +1674,14 @@ modelLookup <- function(model = NULL)
                     TRUE, TRUE, 
                     ## pls
                     TRUE,
-              ## pls glm binomial
-              TRUE,
-              ## pls glm Gaussian
-              FALSE,
-              ## pls glm Gamma
-              FALSE,
-              ## pls glm Poisson
-              FALSE,                        
+                    ## pls glm binomial
+                    TRUE,
+                    ## pls glm Gaussian
+                    FALSE,
+                    ## pls glm Gamma
+                    FALSE,
+                    ## pls glm Poisson
+                    FALSE,                        
                     ## plsTest
                     TRUE, 
                     ## ppr
@@ -1578,8 +1690,8 @@ modelLookup <- function(model = NULL)
                     TRUE, 
                     ## QdaCov
                     TRUE,
-            ## qrnn
-             FALSE, FALSE, FALSE,                        
+                    ## qrnn
+                    FALSE, FALSE, FALSE,                        
                     ## qrf
                     FALSE, 
                     ## rda

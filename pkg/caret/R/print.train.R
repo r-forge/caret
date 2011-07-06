@@ -27,14 +27,30 @@
     {
       chDim <- dim(x$trainingData)
       chDim[2] <- chDim[2] - 1
+     if(x$modelType == "Classification")
+        {
+          lev <- caret:::getClassLevels(x)
+          if(is.character(lev)) chDim <- c(chDim, length(lev))
+        } else lev <- NULL      
       chDim <- format(chDim)
       cat(
           chDim[1], 
           " samples\n", 
           chDim[2],
-          " predictors\n\n",
-          sep = "")    
+          " predictors\n",
+          sep = "")
+      if(is.character(lev))
+        {
+      cat(
+          chDim[3], 
+          "classes:",
+          paste("'", lev, "'", sep = "", collapse = ", "),
+          "\n")
+        }
+      cat("\n")
+ 
     }
+
   if(!is.null(x$preProc))
     {
       ## Make things look a little nicer:

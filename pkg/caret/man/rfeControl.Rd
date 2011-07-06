@@ -15,6 +15,7 @@ rfeControl(functions = NULL,
            returnResamp = "all",
            p = .75,
            index = NULL,
+           timingSamps = 0,
            workers = 1,
            computeFunction = lapply,
            computeArgs = NULL)
@@ -31,6 +32,7 @@ rfeControl(functions = NULL,
   \item{returnResamp}{A character string indicating how much of the resampled summary metrics should be saved. Values can be ``final'', ``all'' or ``none''}
   \item{p}{For leave-group out cross-validation: the training percentage}
   \item{index}{a list with elements for each external resampling iteration. Each list element is the sample rows used for training at that iteration.}
+  \item{timingSamps}{the number of training set samples that will be used to measure the time for predicting samples (zero indicates that the prediction time should not be estimated).}
   \item{workers}{an integer that specifies how many machines/processors will be used}
   \item{computeFunction}{a function that is \code{\link[base]{lapply}} or emulates \code{lapply}. It must have arguments \code{X}, \code{FUN} and \code{...}. \code{computeFunction} can be used to build models in parallel. See the examples in \code{\link{rfe}}.}
   \item{computeArgs}{Extra arguments to pass into the \code{...} slore in \code{computeFunction}. See the examples in \code{\link{rfe}}.}
@@ -70,7 +72,7 @@ The \code{rank} function is used to return the predictors in the order of the mo
             training samples}
       \item{\code{y}}{ the current training outcomes}
 }
-The function should return a data frame with a column called \code{vars} that has the current variable names. The first row should be the most important predictor etc. Other columns can be included in the output and will be returned in the final \code{rfe} object.
+The function should return a data frame with a column called \code{var} that has the current variable names. The first row should be the most important predictor etc. Other columns can be included in the output and will be returned in the final \code{rfe} object.
 
 The \code{selectSize} function determines the optimal number of predictors based on the resampling output. Inputs for the function are:
 \itemize{

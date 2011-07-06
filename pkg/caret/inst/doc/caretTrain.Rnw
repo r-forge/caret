@@ -136,9 +136,9 @@ More formally:
 
 \begin{algorithm}[H]
    \label{A:tune}
-   \SetLine
-   \restylealgo{plain}
-   \dontprintsemicolon
+   \SetAlgoLined
+   \RestyleAlgo{plain}
+   \DontPrintSemicolon
   Define  sets of model parameter values to evaluate \nllabel{A:grid}\;
   \For{each parameter set}{
 
@@ -412,7 +412,8 @@ seqModList <- paste(paste("\\\\texttt{", unique(subset(modelLookup(), seq)$model
 
 \item [] Alternate model training schemes can be used by passing
   \texttt{nk} and/or \texttt{pmethod} to the \texttt{earth}
-  function. 
+  function. Also, using \texttt{method = 'gcvEearth'} will use the
+  basic GCV pruning procedure and only tune the degree.
 
 \item [] Also, there may be cases where the message such as
   ``specified 'nprune' 29 is greater than the number of available
@@ -561,7 +562,11 @@ There is additional functionality in \texttt{train} that is described in the nex
       &
          \texttt{ada} & 
             {\tt \href{http://cran.r-project.org/web/packages/ada/index.html}{ada}}       & 
-            \texttt{maxdepth}, \texttt{iter}, \texttt{nu} & \\            
+            \texttt{maxdepth}, \texttt{iter}, \texttt{nu} & \\           
+      &
+         \texttt{bstTree} & 
+            {\tt \href{http://cran.r-project.org/web/packages/bst/index.html}{bst}}       & 
+            \texttt{maxdepth}, \texttt{mstop}, \texttt{nu} & \\                   
      
 \rowcolor[rgb]{.95, .95, .95}               
       Other Boosted Models &
@@ -572,7 +577,15 @@ There is additional functionality in \texttt{train} that is described in the nex
          &      
          \texttt{gamboost} & 
             {\tt \href{http://cran.r-project.org/web/packages/mboost/index.html}{mboost}}       &          
-            \texttt{mstop} & \\      
+            \texttt{mstop} & \\   
+      &
+         \texttt{bstLs} & 
+            {\tt \href{http://cran.r-project.org/web/packages/bst/index.html}{bst}}       & 
+            \texttt{mstop}, \texttt{nu} & \\    
+       &
+         \texttt{bstSm} & 
+            {\tt \href{http://cran.r-project.org/web/packages/bst/index.html}{bst}}       & 
+           \texttt{mstop}, \texttt{nu} & \\               
 
      Random Forests & 
          \texttt{rf} & 
@@ -587,6 +600,11 @@ There is additional functionality in \texttt{train} that is described in the nex
             {\tt \href{http://cran.r-project.org/web/packages/party/index.html}{party}}     & 
             \texttt{mtry} & \\     
 
+                  & 
+         \texttt{Boruta} & 
+            {\tt \href{http://cran.r-project.org/web/packages/Boruta/index.html}{Boruta}}     & 
+            \texttt{mtry} & \\                 
+            
             \rowcolor[rgb]{.95, .95, .95}   
       Bagging&
          \texttt{treebag} & 
@@ -617,7 +635,13 @@ There is additional functionality in \texttt{train} that is described in the nex
       Multivariate Adaptive Regression Splines &
          \texttt{earth}, \texttt{mars} & 
              {\tt \href{http://cran.r-project.org/web/packages/earth/index.html}{earth}}      & 
-            \texttt{degree}, \texttt{nprune} & \\            
+            \texttt{degree}, \texttt{nprune} & \\    
+ 
+\rowcolor[rgb]{.95, .95, .95}             
+&
+         \texttt{gcvEarth} & 
+             {\tt \href{http://cran.r-project.org/web/packages/earth/index.html}{earth}}      & 
+            \texttt{degree} & \\                  
 
      Bagged MARS &
          \texttt{bagEarth} & 
@@ -669,6 +693,10 @@ There is additional functionality in \texttt{train} that is described in the nex
             {\tt \href{http://cran.r-project.org/web/packages/kernlab/index.html}{kernlab}}      & 
             \texttt{sigma}, \texttt{C} & \\             
  &
+         \texttt{svmRadialCost} & 
+            {\tt \href{http://cran.r-project.org/web/packages/kernlab/index.html}{kernlab}}      & 
+            \texttt{C} & \\   
+ &
          \texttt{svmPoly} & 
             {\tt \href{http://cran.r-project.org/web/packages/kernlab/index.html}{kernlab}}      & 
             \texttt{scale}, \texttt{degree}, \texttt{C} & \\            
@@ -709,6 +737,23 @@ There is additional functionality in \texttt{train} that is described in the nex
          \texttt{lmStepAIC} & 
              {\tt \href{http://cran.r-project.org/web/packages/MASS/index.html}{MASS}}       & 
             None & \\  
+            
+            
+\rowcolor[rgb]{.95, .95, .95}                     
+            &
+         \texttt{leapForward} & 
+             {\tt \href{http://cran.r-project.org/web/packages/leaps/index.html}{leaps}}       & 
+            \texttt{nvmax} & \\  
+\rowcolor[rgb]{.95, .95, .95}                     
+            &
+         \texttt{leapBackward} & 
+             {\tt \href{http://cran.r-project.org/web/packages/leaps/index.html}{leaps}}       & 
+            \texttt{nvmax}  & \\  
+\rowcolor[rgb]{.95, .95, .95}                     
+            &
+         \texttt{leapSeq} & 
+             {\tt \href{http://cran.r-project.org/web/packages/leaps/index.html}{leaps}}       & 
+            \texttt{nvmax}  & \\              
 
        Principal Component Regression&
          \texttt{pcr} & 
@@ -736,15 +781,31 @@ There is additional functionality in \texttt{train} that is described in the nex
       Quantile Regression Forests &
          \texttt{qrf} & 
              {\tt \href{http://cran.r-project.org/web/packages/quantregForest/index.html}{quantregForest}}       & 
-            \texttt{mtry} & \\                 
+            \texttt{mtry} & \\      
+            
+        Quantile Regression Neural Networks &
+        \texttt{qrnn} &
+         {\tt \href{http://cran.r-project.org/web/packages/qrnn/index.html}{qrnn}}    & 
+            \texttt{n.hidden}, \texttt{penalty}, \texttt{bag}  & \\             
                    
  \rowcolor[rgb]{.95, .95, .95}   
       Rule--Based Models &
          \texttt{M5Rules} & 
             {\tt \href{http://cran.r-project.org/web/packages/RWeka/index.html}{RWeka}}    & 
-            \texttt{pruned}  & \\             
-
-
+            \texttt{pruned}, \texttt{smoothed}   & \\             
+            
+ \rowcolor[rgb]{.95, .95, .95}   
+       &
+         \texttt{M5} & 
+            {\tt \href{http://cran.r-project.org/web/packages/RWeka/index.html}{RWeka}}    & 
+            \texttt{pruned}, \texttt{smoothed}, \texttt{rules}    & \\   
+            
+ \rowcolor[rgb]{.95, .95, .95}   
+      &
+         \texttt{cubist} & 
+            {\tt \href{http://cran.r-project.org/web/packages/Cubist/index.html}{Cubist}}    & 
+            \texttt{committees}, \texttt{neighbors}  & \\    
+            
       Projection Pursuit Regression  &
          \texttt{ppr} & 
             \texttt{stats}       & 
@@ -982,7 +1043,7 @@ There is additional functionality in \texttt{train} that is described in the nex
       Naive Bayes &
          \texttt{nb} & 
             {\tt \href{http://cran.r-project.org/web/packages/klaR/index.html}{klaR}}     & 
-            \texttt{usekernel} & \\
+            \texttt{usekernel}, \texttt{fL} & \\
 
 \rowcolor[rgb]{.95, .95, .95}   
       Generalized Partial Least Squares&
@@ -1100,8 +1161,8 @@ gbmFit
 The function \texttt{trainControl}, generates parameters that further
 control how models are resampled with possible values: 
 \begin{itemize}
-\item \texttt{method}: The resampling method: \texttt{boot},
-  \texttt{cv}, \texttt{LOOCV}, \texttt{LGOCV}  and \texttt{oob}. The
+\item \texttt{method}: The resampling method: \texttt{boot}, \texttt{boot632},
+  \texttt{cv}, \texttt{LOOCV}, \texttt{LGOCV}, \texttt{repeatedcv}  and \texttt{oob}. The
   last value, out--of--bag estimates, can only be used by random
   forest, bagged trees, bagged earth, bagged flexible discriminant
   analysis, or conditional tree forest models. GBM models are not
@@ -1408,7 +1469,7 @@ pdf(paste(getwd(), "/svm1.pdf", sep = ""), width = 5, height = 5)
 dev.off()
 pdf(paste(getwd(), "/svm2.pdf", sep = ""), width = 5, height = 5)
    trellis.par.set(caretTheme(), warn = FALSE)
-   print(plot(svmFit, xTrans = function(u) log(u, base = 10)))
+   print(plot(svmFit, xTrans = function(u) log(u, base = 2)))
 dev.off()
 pdf(paste(getwd(), "/gbm1.pdf", sep = ""), width = 5, height = 5)
    trellis.par.set(caretTheme(), warn = FALSE)
@@ -1930,7 +1991,7 @@ employed.
 > rpartFit <- train(bbbDescr, logBBB,
 +                   "rpart", 
 +                   tuneLength = 16,
-+                   trControl = trainControl(method = "LGOCV", index = tmp))
++                   trControl = trainControl(method = "LGOCV", index = tmp, timingSamps = 50))
 \end{Sinput}
 \begin{Soutput}
 Fitting: maxdepth=16 
@@ -1939,7 +2000,7 @@ Fitting: maxdepth=16
 > ctreeFit <- train(bbbDescr, logBBB,
 +                  "ctree2",
 +                   tuneLength = 10,
-+                   trControl = trainControl(method = "LGOCV", index = tmp))
++                   trControl = trainControl(method = "LGOCV", index = tmp, timingSamps = 50))
 \end{Sinput}
 \begin{Soutput}
 Fitting: maxdepth=1 
@@ -1957,7 +2018,7 @@ Fitting: maxdepth=10
 > earthFit <- train(bbbDescr, logBBB,
 +                   "earth",
 +                   tuneLength = 20,
-+                   trControl = trainControl(method = "LGOCV", index = tmp))
++                   trControl = trainControl(method = "LGOCV", index = tmp, timingSamps = 50))
 \end{Sinput}
 \begin{Soutput}
 Fitting: degree=1, nprune=76 
@@ -1966,7 +2027,7 @@ Fitting: degree=1, nprune=76
 \begin{Sinput}
 > m5Fit <- train(bbbDescr, logBBB,
 +                "M5Rules",
-+                trControl = trainControl(method = "LGOCV", index = tmp))    
++                trControl = trainControl(method = "LGOCV", index = tmp, timingSamps = 50))    
 \end{Sinput}
 \begin{Soutput}
 Fitting: pruned=Yes 

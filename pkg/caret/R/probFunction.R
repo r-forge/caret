@@ -42,7 +42,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
 
   
   classProb <- switch(method,
-                      lda =, rda =, slda =, qda =
+                      lda =, rda =, slda1 =, qda =
                       {
                         switch(method,
                                lda =, qda =  library(MASS),
