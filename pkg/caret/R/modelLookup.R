@@ -2,7 +2,9 @@
 modelLookup <- function(model = NULL)
 {
   mods <- c(## ada
-            'ada', 'ada', 'ada', 
+            'ada', 'ada', 'ada',
+            ## avnnet
+            'avNNet', 'avNNet', 'avNNet',               
             ## bag
             'bag', 
             ## bagEarth
@@ -64,7 +66,7 @@ modelLookup <- function(model = NULL)
             ## glmnet
             'glmnet', 'glmnet', 
             ## glmrob
-            'glmrob', 
+##            'glmrob', 
             ## glmStepAIC
             'glmStepAIC', 
             ## gpls
@@ -164,13 +166,13 @@ modelLookup <- function(model = NULL)
             ## pls
             'pls',
             ## pls glm binomial
-            'plsGlmBinomial',
+##            'plsGlmBinomial',
             ## pls glm Gaussian
-            'plsGlmGaussian',
+##            'plsGlmGaussian',
             ## pls glm Gamma
-            'plsGlmGamma',
+##            'plsGlmGamma',
             ## pls glm Poisson
-            'plsGlmPoisson',            
+##            'plsGlmPoisson',            
             ## plsTest
             'plsTest', 
             ## ppr
@@ -245,7 +247,9 @@ modelLookup <- function(model = NULL)
             'vbmpRadial')
 
   pNames <- c(## ada
-              'iter', 'maxdepth', 'nu', 
+              'iter', 'maxdepth', 'nu',
+              ## avnnet
+              'size', 'decay', 'bag',              
               ## bag
               'vars', 
               ## bagEarth
@@ -307,7 +311,7 @@ modelLookup <- function(model = NULL)
               ## glmnet
               'lambda', 'alpha', 
               ## glmrob
-              'parameter', 
+##              'parameter', 
               ## glmStepAIC
               'parameter', 
               ## gpls
@@ -407,13 +411,13 @@ modelLookup <- function(model = NULL)
               ## pls
               'ncomp',
               ## pls glm binomial
-              'nt',   
+##              'nt',   
               ## pls glm Gaussian
-              'nt',   
+##              'nt',   
               ## pls glm Gamma
-              'nt',   
+##              'nt',   
               ## pls glm Poisson
-              'nt',   
+##              'nt',   
               ## plsTest
               'ncomp', 
               ## ppr
@@ -492,6 +496,10 @@ modelLookup <- function(model = NULL)
               '#Trees',
               'Max Tree Depth',
               'Learning Rate',
+              ## avnnet
+              '#Hidden Units',
+              'Weight Decay',
+              'Bagging',
               ## bag
               '#Randomly Selected Predictors',
               ## bagEarth
@@ -569,7 +577,7 @@ modelLookup <- function(model = NULL)
               'Regularization Parameter',
               'Mixing Percentage',
               ## glmrob
-              'none',
+##              'none',
               ## glmStepAIC
               'none',
               ## gpls
@@ -686,13 +694,13 @@ modelLookup <- function(model = NULL)
               ## pls
               '#Components',
               ## pls glm binomial
-              '#Components',
+##              '#Components',
               ## pls glm Gaussian
-              '#Components',
+##              '#Components',
               ## pls glm Gamma
-              '#Components',
+##              '#Components',
               ## pls glm Poisson
-              '#Components',      
+##              '#Components',      
               ## plsTest
               '#Components',
               ## ppr
@@ -785,7 +793,9 @@ modelLookup <- function(model = NULL)
               'Theta Estimated')
 
   isSeq <- c(## ada
-             FALSE, FALSE, FALSE, 
+             FALSE, FALSE, FALSE,
+             ## avnnet
+             FALSE, FALSE, FALSE,             
              ## bag
              FALSE, 
              ## bagEarth
@@ -847,7 +857,7 @@ modelLookup <- function(model = NULL)
              ## glmnet
              TRUE, FALSE, 
              ## glmrob
-             FALSE, 
+##             FALSE, 
              ## glmStepAIC
              FALSE, 
              ## gpls
@@ -947,13 +957,13 @@ modelLookup <- function(model = NULL)
              ## pls
              TRUE,
              ## pls glm binomial
-             FALSE,
+##             FALSE,
              ## pls glm Gaussian
-             FALSE,
+##             FALSE,
              ## pls glm Gamma
-             FALSE,
+##             FALSE,
              ## pls glm Poisson
-             FALSE,                
+##             FALSE,                
              ## plsTest
              FALSE, 
              ## ppr
@@ -1027,7 +1037,9 @@ modelLookup <- function(model = NULL)
              ## vbmpRadial
              FALSE)
   isRegMod <- c(## ada
-                FALSE, FALSE, FALSE, 
+                FALSE, FALSE, FALSE,
+                ## avnnet
+                TRUE, TRUE, TRUE,                 
                 ## bag
                 TRUE, 
                 ## bagEarth
@@ -1089,7 +1101,7 @@ modelLookup <- function(model = NULL)
                 ## glmnet
                 TRUE, TRUE, 
                 ## glmrob
-                TRUE, 
+##                TRUE, 
                 ## glmStepAIC
                 TRUE, 
                 ## gpls
@@ -1189,13 +1201,13 @@ modelLookup <- function(model = NULL)
                 ## pls
                 TRUE,
                 ## pls glm binomial
-                FALSE,
+##                FALSE,
                 ## pls glm Gaussian
-                TRUE,
+##                TRUE,
                 ## pls glm Gamma
-                TRUE,
+##                TRUE,
                 ## pls glm Poisson
-                TRUE,                          
+##                TRUE,                          
                 ## plsTest
                 TRUE, 
                 ## ppr
@@ -1270,7 +1282,9 @@ modelLookup <- function(model = NULL)
                 FALSE)
 
   isClassMod <- c(## ada
-                  TRUE, TRUE, TRUE, 
+                  TRUE, TRUE, TRUE,
+                  ## avnnet
+                  TRUE, TRUE, TRUE,                  
                   ## bag
                   TRUE, 
                   ## bagEarth
@@ -1332,7 +1346,7 @@ modelLookup <- function(model = NULL)
                   ## glmnet
                   TRUE, TRUE, 
                   ## glmrob
-                  TRUE, 
+##                  TRUE, 
                   ## glmStepAIC
                   TRUE, 
                   ## gpls
@@ -1432,13 +1446,13 @@ modelLookup <- function(model = NULL)
                   ## pls
                   TRUE,
                   ## pls glm binomial
-                  TRUE,
+##                  TRUE,
                   ## pls glm Gaussian
-                  FALSE,
+##                  FALSE,
                   ## pls glm Gamma
-                  FALSE,
+##                  FALSE,
                   ## pls glm Poisson
-                  FALSE,                          
+##                  FALSE,                          
                   ## plsTest
                   TRUE, 
                   ## ppr
@@ -1513,7 +1527,9 @@ modelLookup <- function(model = NULL)
                   TRUE)
 
   hasProbModel <- c(## ada
-                    TRUE, TRUE, TRUE, 
+                    TRUE, TRUE, TRUE,
+                    ## avnnet
+                    TRUE, TRUE, TRUE,                     
                     ## bag
                     TRUE, 
                     ## bagEarth
@@ -1575,7 +1591,7 @@ modelLookup <- function(model = NULL)
                     ## glmnet
                     TRUE, TRUE, 
                     ## glmrob
-                    TRUE, 
+##                    TRUE, 
                     ## glmStepAIC
                     TRUE, 
                     ## gpls
@@ -1675,13 +1691,13 @@ modelLookup <- function(model = NULL)
                     ## pls
                     TRUE,
                     ## pls glm binomial
-                    TRUE,
+##                    TRUE,
                     ## pls glm Gaussian
-                    FALSE,
+##                    FALSE,
                     ## pls glm Gamma
-                    FALSE,
+##                    FALSE,
                     ## pls glm Poisson
-                    FALSE,                        
+##                    FALSE,                        
                     ## plsTest
                     TRUE, 
                     ## ppr
