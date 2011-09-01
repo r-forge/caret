@@ -6,22 +6,17 @@
 trainControl(method = "boot", 
              number = ifelse(method \%in\% c("cv", "repeatedcv"), 10, 25),
              repeats = ifelse(method \%in\% c("cv", "repeatedcv"), 1, number),
-             verboseIter = TRUE, 
+             verboseIter = FALSE, 
              returnData = TRUE, 
              returnResamp = "final",
              p = 0.75, 
              classProbs = FALSE,
              summaryFunction = defaultSummary,
              selectionFunction = "best",
-             PCAthresh = 0.95,
-             ICAcomp = 3,
-             k = 5,
+             preProcOptions = list(thresh = 0.95, ICAcomp = 3, k = 5),
              index = NULL,
              timingSamps = 0,
-             workers = 1,
-             predictionBounds = rep(FALSE, 2),
-             computeFunction = lapply,
-             computeArgs = NULL)
+             predictionBounds = rep(FALSE, 2))
 }
 \arguments{
   \item{method}{The resampling method: \code{boot}, \code{boot632}, \code{cv}, \code{repeatedcv},
@@ -36,15 +31,10 @@ trainControl(method = "boot",
   \item{classProbs}{a logical; should class probabilities be computed for classification models (along with predicted values) in each resample?}
   \item{summaryFunction}{a function to compute performance metrics across resamples. The arguments to the function should be the same as those in \code{\link{defaultSummary}}.}
   \item{selectionFunction}{the function used to select the optimal tuning parameter. This can be a name of the function or the function itself. See \code{\link{best}} for details and other options.}
-  \item{PCAthresh}{When invoking \code{\link{train}} with the \code{preProcess = "pca"} option, this parameter allows the user to determine how many PCA components should be kept on the basis of the cumulative amount of variance explained. See \code{\link{preProcess}} for more details.}
-  \item{ICAcomp}{When invoking \code{\link{train}} with the \code{preProcess = "ica"} option, this parameter allows the user to determine how many ICA components should be kept. See \code{\link{preProcess}} for more details.}
-  \item{k}{When invoking \code{\link{train}} with the \code{preProcess = "knnImpute"} option, this parameter allows the user to determine how many neighbors should be used for imputation. See \code{\link{preProcess}} for more details.}
+  \item{preProcOptions}{A list of options to pass to \code{\link{preProcess}}. The type of pre-processing (e.g. center, scaling etc) is passed in via the \code{preProc} option in \code{\link{train}}.}
   \item{index}{a list with elements for each resampling iteration. Each list element is the sample rows used for training at that iteration.}
   \item{timingSamps}{the number of training set samples that will be used to measure the time for predicting samples (zero indicates that the prediction time should not be estimated.}
-  \item{workers}{an integer that specifies how many machines/processors will be used}
   \item{predictionBounds}{a logical or numeric vector of length 2 (regression only). If logical, the predictions can be constrained to be within the limit of the training set outcomes. For example, a value of \code{c(TRUE, FALSE)} would only constrain the lower end of predictions. If numeric, specific bounds can be used. For example, if \code{c(10, NA)}, values below 10 would be predicted as 10 (with no constraint in the upper side).}
-  \item{computeFunction}{a function that is \code{\link[base]{lapply}} or emulates \code{lapply}. It must have arguments \code{X}, \code{FUN} and \code{...}. \code{computeFunction} can be used to build models in parallel. See the examples in \code{link{train}}.}
-  \item{computeArgs}{Extra arguments to pass into the \code{...} slot in \code{computeFunction}. See the examples in \code{\link{train}}.}
 }
 
 \value{
