@@ -128,10 +128,7 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
                         <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> adding new models as they are released<br /></p>
                       </li>
                       <li style="line-height: 25px; padding-left: 27px; text-indent: -9px; " class="full-width">
-                        <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> bootstrap 632 (and 632+) estimators<br /></p>
-                      </li>
-                      <li style="line-height: 25px; padding-left: 27px; text-indent: -9px; " class="full-width">
-                        <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> resampled ROC AUC estimates (which I do not think are very helpful, but we won’t know until we see them)<br /></p>
+                        <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> bootstrap  632+ estimator<br /></p>
                       </li>
                       <li style="line-height: 25px; padding-left: 27px; text-indent: -9px; " class="full-width">
                         <p style="padding-bottom: 0pt; text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> variable importance metrics for some other models</p>
@@ -172,8 +169,7 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
               <div class="style">
                 <p style="padding-top: 0pt; " class="paragraph_style"><span class="style_6">Parallel Execution of </span><span class="style_1">caret</span><span class="style_6"> functions</span><br /></p>
                 <p class="paragraph_style"><br /></p>
-                <p class="paragraph_style">Parameter tuning in <span class="style_1">caret</span> is done via resampling; every candidate model is evaluated many times using the bootstrap or cross-validation. The <span class="style_7">train </span>function in <span class="style_1">caret</span> allows these fits to be computed on separate cores on the same machine or on different computers. Any parallel computing technique can be used, such as NetworkSpaces or MPI. See the examples in <span class="style_7">train</span> (by typing <br /></p>
-                <p class="paragraph_style"><span class="style_7">?train</span>) that demonstrate this using MPI and NWS.<br /></p>
+                <p class="paragraph_style">Parameter tuning in <span class="style_1">caret</span> is done via resampling; every candidate model is evaluated many times using the bootstrap or cross-validation. The <span class="style_7">train</span>, <span class="style_7">rfe</span> and <span class="style_7">sbf</span> functions in <span class="style_1">caret</span> allows these fits to be computed on separate cores on the same machine or on different computers. As of version 4.99 pf the package, the <span class="style_7">foreach </span>package is used for parallelizm. See the examples in <span class="style_7">train</span> (by typing <span class="style_7">?train</span>) that demonstrate this using the <span class="style_7">multicore </span> package (and others).<br /></p>
               </div>
             </div>
           </div>
