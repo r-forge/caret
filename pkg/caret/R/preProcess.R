@@ -2,6 +2,7 @@ preProcess <- function(x, ...) UseMethod("preProcess")
 
 preProcess.default <- function(x, method = c("center", "scale"),
                                thresh = 0.95,
+                               pcaComp = NULL,
                                na.remove = TRUE,
                                k = 5,
                                knnSummary = mean,
@@ -12,6 +13,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
                                ...)
 {
 
+  if(is.null(method)) stop("NULL values of 'method' are not allowed")
   if(any(method %in% "range") & any(method %in% c("center", "scale", "BoxCox")))
     stop("centering, scaling and/or Box-Cox transformations are inconsistent with scaling to a range of [0, 1]")
   
@@ -113,10 +115,13 @@ preProcess.default <- function(x, method = c("center", "scale"),
   
   if(any(method == "pca"))
     {
-       if(verbose) cat("Computing PCA loadings\n")
+      if(verbose) cat("Computing PCA loadings\n")
       tmp <- prcomp(x, scale = TRUE, retx = FALSE)
-      cumVar <- cumsum(tmp$sdev^2/sum(tmp$sdev^2)) 
-      numComp <- max(2, which.max(cumVar > thresh))
+      if(is.null(pcaComp))
+        {
+          cumVar <- cumsum(tmp$sdev^2/sum(tmp$sdev^2)) 
+          numComp <- max(2, which.max(cumVar > thresh))
+        } else numComp <- pcaComp
       rot <- tmp$rotation[,1:numComp]
     } else {
       rot <- NULL
@@ -150,6 +155,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
               rotation = rot,
               method = method,
               thresh = thresh,
+              pcaComp = pcaComp,
               numComp = numComp,
               ica = ica,
               k = k,
@@ -258,6 +264,8 @@ predict.preProcess <- function(object, newdata, ...)
                            2,
                            function(x) any(is.na(x)))
       missingVars <- names(missingVars)[missingVars]
+      ## ipred's bagging procedure only allows for data frames
+      if(!is.data.frame(hasMiss)) hasMiss <- as.data.frame(hasMiss)
       for(i in seq(along = missingVars))
         {
           preds <- predict(object$bagImp[[missingVars[i]]]$model,
@@ -324,8 +332,14 @@ print.preProcess <- function(x, ...)
   
   if(any(x$method == "pca"))
     {
-      cat("PCA needed", x$numComp, "components to capture", round(x$thresh*100, 2),
-          "percent of the variance\n")
+      if(is.null(x$pcaComp))
+        {
+          cat("PCA needed", x$numComp, ifelse(x$numComp > 1, "components", "component"),
+              "to capture", round(x$thresh*100, 2),
+              "percent of the variance\n")
+        } else {
+          cat("PCA used", x$pcaComp, ifelse(x$pcaComp > 1, "components", "component"), "as specified.\n")
+        }
     }
   if(any(x$method == "ica"))
     {
@@ -359,6 +373,7 @@ bagImp <- function(var, x, B = 10)
     ## (y, X) interface, but the latter would have to
     ## do case-wise deletion of samples from the
     ## training set.
+    if(!is.data.frame(x)) x <- as.data.frame(x)
     mod <- bagging(as.formula(paste(var, "~.")),
                    data = x,
                    nbagg = B)
