@@ -61,24 +61,28 @@
                    "nodeHarvest", "Linda", "QdaCov", "stepLDA", "stepQDA",
                    "parRF", "plr", "rocc", "foba", "partDSA", "hda", "icr", "Boruta",
                    "plsGlmBinomial", "plsGlmGaussian", "plsGlmGamma", "plsGlmPoisson",
-                   "bstTree", 'bstLs', 'bstSm',
+                   "bstTree", 'bstLs', 'bstSm', 'avNNet', 'ridge',
                    "qrf", "scrda", "bag", "hdda", "logreg", "logforest", "logicBag", "qrnn"))
     {
       trainX <- data[,!(names(data) %in% ".outcome"), drop = FALSE]
       trainY <- data[,".outcome"]
-      if(!is.null(pp))
+      if(!is.null(pp$options))
         {
-          ppObj <- preProcess(trainX, method = pp$options, thresh = pp$thresh, n.comp = pp$ica, k = pp$k)
+          pp$x <- trainX
+          ppObj <- do.call("preProcess", pp)
+          ppObj$call <- "scrubed"
           trainX <- predict(ppObj, trainX)
           data <- trainX
           data$.outcome <- trainY
         } else ppObj <- NULL
     } else {
-      if(!is.null(pp))
+      if(!is.null(pp$options))
         {
           y <- data$.outcome
           data$.outcome <- NULL
-          ppObj <- preProcess(data, method = pp$options, thresh = pp$thresh, n.comp = pp$ica, k = pp$k)
+          pp$x <- data
+          ppObj <- do.call("preProcess", pp)
+          ppObj$call <- "scrubed"
           data <- predict(ppObj, data)
           data$.outcome <- y
         } else ppObj <- NULL
@@ -396,6 +400,25 @@
                                             ...)
                        out
                      },
+                     avNNet =
+                     {      
+                       library(nnet)
+                       if(!is.null(modelWeights))
+                         {
+                           out <- avNNet(modFormula,
+                                         data = data,
+                                         weights = modelWeights,                                       
+                                         size = tuneValue$.size,
+                                         decay = tuneValue$.decay,
+                                         bag = tuneValue$.bag,
+                                         ...)
+                         } else out <- avNNet(trainX, trainY,
+                                              size = tuneValue$.size,
+                                              decay = tuneValue$.decay,
+                                              bag = tuneValue$.bag,
+                                              ...)
+                       out
+                     },                     
                      pcaNNet =
                      {
                        ## todo: this needs to be tested
@@ -563,8 +586,26 @@
                      bagEarth =
                      {
                        library(earth)
-                       bagEarth(trainX, trainY, degree = tuneValue$.degree,
-                                nprune = tuneValue$.nprune, ...)
+                       
+                       #glmVal <- if(type == "Classification") list(family=binomial) else NULL
+                       #bagEarth(trainX, trainY, degree = tuneValue$.degree,
+                       #         glm = glmVal,
+                       #         nprune = tuneValue$.nprune, ...)
+                       theDots <- list(...)
+                       theDots$keepxy <- TRUE 
+                       
+                       modelArgs <- c(
+                                      list(
+                                           x = trainX,
+                                           y = trainY,
+                                           degree = tuneValue$.degree),
+                                      theDots)
+                       if(type == "Classification") modelArgs$glm <- list(family=binomial)
+                       
+                       tmp <- do.call("bagEarth", modelArgs)
+
+                       tmp$call["degree"] <-  tuneValue$.degree
+                       tmp
                      },
                      
                      bagFDA =
@@ -874,11 +915,11 @@
                        
                        theDots <- list(...)
                        
-                       if(any(names(theDots) == "control"))
+                       if(any(names(theDots) == "controls"))
                          {
-                           theDots$control@gtctrl@mtry <- as.integer(tuneValue$.mtry) 
-                           ctl <- theDots$control
-                           theDots$control <- NULL
+                           theDots$controls@gtctrl@mtry <- as.integer(tuneValue$.mtry) 
+                           ctl <- theDots$controls
+                           theDots$controls <- NULL
                            
                          } else ctl <- cforest_control(mtry = tuneValue$.mtry)
                        
@@ -889,13 +930,13 @@
                                       list(
                                            formula = modFormula,
                                            data = data,
-                                           control = ctl),
+                                           controls = ctl),
                                       theDots)
                        
                        out <- do.call("cforest", modelArgs)
                        out        
                      },
-                     enet =, lasso =
+                     enet =, lasso =, ridge =
                      {
                        library(elasticnet)
                        lmbda <- if(method == "lasso") 0 else tuneValue$.lambda
@@ -1362,7 +1403,6 @@
                      },
                      parRF =
                      {
-                       library(foreach)
                        library(randomForest)
                        
                        workers <- getDoParWorkers()
