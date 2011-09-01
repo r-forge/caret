@@ -194,7 +194,9 @@ modelLookup <- function(model = NULL)
             ## rfLSF
             'rfLSF', 
             ## rfNWS
-            'rfNWS', 
+            'rfNWS',
+            ## ridge reg
+            'ridge',
             ## rlm
             'rlm', 
             ## rocc
@@ -439,7 +441,9 @@ modelLookup <- function(model = NULL)
               ## rfLSF
               'mtry', 
               ## rfNWS
-              'mtry', 
+              'mtry',
+              ## ridge
+              'lambda',
               ## rlm
               'parameter', 
               ## rocc
@@ -725,6 +729,8 @@ modelLookup <- function(model = NULL)
               '#Randomly Selected Predictors',
               ## rfNWS
               '#Randomly Selected Predictors',
+              ## ridge
+              'Penalty',
               ## rlm
               'none',
               ## rocc
@@ -985,7 +991,9 @@ modelLookup <- function(model = NULL)
              ## rfLSF
              FALSE, 
              ## rfNWS
-             FALSE, 
+             FALSE,
+             ## ridge
+             FALSE,
              ## rlm
              FALSE, 
              ## rocc
@@ -1229,7 +1237,9 @@ modelLookup <- function(model = NULL)
                 ## rfLSF
                 TRUE, 
                 ## rfNWS
-                TRUE, 
+                TRUE,
+                ## ridge
+                TRUE,
                 ## rlm
                 TRUE, 
                 ## rocc
@@ -1474,7 +1484,9 @@ modelLookup <- function(model = NULL)
                   ## rfLSF
                   TRUE, 
                   ## rfNWS
-                  TRUE, 
+                  TRUE,
+                  ## ridge
+                  FALSE,
                   ## rlm
                   FALSE, 
                   ## rocc
@@ -1719,7 +1731,9 @@ modelLookup <- function(model = NULL)
                     ## rfLSF
                     TRUE, 
                     ## rfNWS
-                    TRUE, 
+                    TRUE,
+                    ## ridge
+                    FALSE,
                     ## rlm
                     FALSE, 
                     ## rocc

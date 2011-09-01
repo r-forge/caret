@@ -94,7 +94,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                            },
                            
-                           nnet =, multinom =, pcaNNet =
+                           avNNet =, nnet =, multinom =, pcaNNet =
                            {
                              library(nnet)
                              if(modelFit$problemType == "Classification")
@@ -427,6 +427,12 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                    }
                                }
                              out
+                           },
+
+                           ridge =
+                           {
+                             library(elasticnet)
+                             predict(modelFit, as.matrix(newdata), s = 1, mode = "fraction")$fit
                            },
 
                            sddaLDA =, sddaQDA =
