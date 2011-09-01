@@ -66,6 +66,10 @@ Max Kuhn
 \code{\link{sbfControl}}
 }
 \examples{
+\dontshow{
+library(doMC)
+registerDoMC(2)
+}
 data(BloodBrain)
 
 ## Use a GAM is the filter, then fit a random forest model
@@ -76,6 +80,32 @@ RFwithGAM <- sbf(bbbDescr, logBBB,
 RFwithGAM
 
 predict(RFwithGAM, bbbDescr[1:10,])
+
+\dontshow{
+registerDoSEQ()
+}
+
+## classification example with parallel processing
+\dontrun{
+library(doMC)
+
+## Note: if the underlying model also uses foreach, the
+## number of cores specified above will double (along with
+## the memory requirements)
+registerDoMC(cores = 2)
+
+data(mdrr)
+mdrrDescr <- mdrrDescr[,-nearZeroVar(mdrrDescr)]
+mdrrDescr <- mdrrDescr[, -findCorrelation(cor(mdrrDescr), .8)]
+
+set.seed(1)
+filteredNB <- sbf(mdrrDescr, mdrrClass,
+                 sbfControl = sbfControl(functions = nbSBF,
+                                         verbose = FALSE, 
+                                         method = "repeatedcv",
+                                         repeats = 5))
+confusionMatrix(filteredNB)
+}
 
 }
 
