@@ -81,7 +81,7 @@ byComplexity <- function(x, model)
            {
              x[order(x$degree, x$scale),]
            },           
-           nnet =, pcaNNet =
+           avNNet =, nnet =, pcaNNet =
            {
              x[order(x$size, -x$decay),]
            },
@@ -134,6 +134,10 @@ byComplexity <- function(x, model)
            {
              x[order(x$fraction, -x$lambda),]
            },
+           ridge =
+           {
+             x[order(-x$lambda),]
+           },           
            lasso =
            {
              x[order(x$fraction),]
