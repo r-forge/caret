@@ -254,82 +254,37 @@ train.default <- function(x, y,
                     sep = ""))
     }
 
-  ## TODO: pass a flag into argList that is LOO = TRUE/FALSE. If TRUE, then
-  ## run default summary on the output of listOutput. Otherwise, the returned
-  ## value will be the summarized performance metrics
-
-  ## Now, we setup arguments to lapply (or similar functions) executed via do.call
-  ## workerData will split up the data need for the jobs
-  argList <- list(X =
-                  workerData(
-                             data = trainData,
-                             ctrl = trControl,
-                             loop = trainInfo,
-                             method = method,
-                             lvls = classLevels,
-                             pp = preProcess,
-                             workers = trControl$workers,
-                             caretVerbose = trControl$verboseIter,
-                             ...),
-                  FUN = workerTasks)
-
-  ## Append the extra objects needed to do the work (See the parallel examples in
-  ## ?train to see examples
-  if(!is.null(trControl$computeArgs)) argList <- c(argList, trControl$computeArgs)
-
-  ## Get the predictions (or summaries for OOB)
-  listOutput <- do.call(trControl$computeFunction, argList)
-
-  if(trControl$method != "oob")
+  if(trControl$method == "oob")
     {
-      resampleResults <- rbind.fill(listOutput)
-      colnames(resampleResults) <- gsub("^\\.", "", colnames(resampleResults))
+       tmp <- oobTrainWorkflow(dat = trainData, info = trainInfo, method = method,
+                              ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+      performance <- tmp
+    } else {
+
       if(trControl$method == "LOOCV")
         {
-          paramValues <- resampleResults[, trainInfo$model$param, drop = FALSE]
-          allVars <- factor(apply(paramValues, 1, function(x) paste(x, collapse = ":")))
-          resampleResults <- split(resampleResults, allVars)
-          resampleResults <- lapply(resampleResults,
-                                    looSummary,
-                                    func = trControl$summaryFunction,
-                                    param = trainInfo$model$param)
-          resampleResults <- rbind.fill(resampleResults)
-          
-
+          tmp <- looTrainWorkflow(dat = trainData, info = trainInfo, method = method,
+                                  ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+          performance <- tmp
+        } else {
+          tmp <- nominalTrainWorkflow(dat = trainData, info = trainInfo, method = method,
+                                      ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+          performance <- tmp$performance
+          resampleResults <- tmp$resample
         }
-      performance <- performanceSummary(resampleResults,
-                                        trainInfo$model$param,
-                                        trControl$method)
-    } else {
-      performance <- rbind.fill(listOutput)
-      colnames(performance) <- gsub("^\\.", "", colnames(performance))
     }
-
-  if(trControl$method == "boot632")
+    
+    ## TODO we used to give resampled results for LOO
+  if(!(trControl$method %in% c("LOOCV", "oob")))
     {
-      if(trControl$verboseIter)
+      if(modelType == "Classification" && length(grep("^\\cell", colnames(resampleResults))) > 0)
         {
-          cat("Calculating apparent performance values\n")
-          flush.console()
-        }
-      argList$X <- lapply(argList$X,
-                          function(object)
-                          {
-                            object$index <- list(Apparent = seq(along = object$data$.outcome))
-                            object$caretVerbose <- FALSE
-                            object
-                          })
-      apparent <-   do.call(trControl$computeFunction, argList)
-      apparent <- do.call("rbind", apparent)
-      colnames(apparent) <- gsub("^\\.", "", colnames(apparent))
-      for(p in seq(along = perfNames))
-        {
-          const <- 1-exp(-1)
-          performance[, perfNames[p]] <- (const * performance[, perfNames[p]]) +  ((1-const) * apparent[, perfNames[p]])
-        }
-    }
-
-  
+          resampledCM <- resampleResults[, !(names(resampleResults) %in% perfNames)]
+          resampleResults <- resampleResults[, -grep("^\\cell", colnames(resampleResults))]
+          #colnames(resampledCM) <- gsub("^\\.", "", colnames(resampledCM))
+        } else resampledCM <- NULL
+    } else resampledCM <- NULL
+    
   paramNames <- trainInfo$model$param
 
   if(trControl$verboseIter)
@@ -390,7 +345,6 @@ train.default <- function(x, y,
   ## Save some or all of the resampling summary metrics
   if(!(trControl$method %in% c("LOOCV", "oob")))
     {
-      
       byResample <- switch(trControl$returnResamp,
                            none = NULL,
                            all =
@@ -430,10 +384,8 @@ train.default <- function(x, y,
 
   if(!is.null(preProcess))
     {
-      ppOpt <- list(options = preProcess,
-                    thresh = trControl$PCAthresh,
-                    ica = trControl$ICAcomp,
-                    k = trControl$k)
+      ppOpt <- list(method = preProcess)
+      if(length(trControl$preProcOptions) > 0) ppOpt <- c(ppOpt,trControl$preProcOptions)
     } else ppOpt <- NULL
   
   finalTime <- system.time(
@@ -469,25 +421,27 @@ train.default <- function(x, y,
   times <- list(everything = endTime - startTime,
                 final = finalTime)
 
-  out <- structure(list(
-                 method = method,
-                 modelType = modelType,
-                 results = performance,
-                 bestTune = bestTune,
-                 call = funcCall, 
-                 dots = list(...),
-                 metric = metric,
-                 control = trControl,
-                 finalModel = finalModel,
-                 preProcess = pp,
-                 trainingData = outData,
-                 resample = byResample,
-                 perfNames = perfNames,
-                 maximize = maximize,
-                 yLimits = if(is.numeric(y)) range(y) else NULL,
-                 times = times
-                 ), 
-            class = "train")
+  out <- structure(
+                   list(
+                        method = method,
+                        modelType = modelType,
+                        results = performance,
+                        bestTune = bestTune,
+                        call = funcCall, 
+                        dots = list(...),
+                        metric = metric,
+                        control = trControl,
+                        finalModel = finalModel,
+                        preProcess = pp,
+                        trainingData = outData,
+                        resample = byResample,
+                        resampledCM = resampledCM,
+                        perfNames = perfNames,
+                        maximize = maximize,
+                        yLimits = if(is.numeric(y)) range(y) else NULL,
+                        times = times
+                        ), 
+                   class = "train")
   if(trControl$timingSamps > 0)
     {
       pData <- lapply(x, function(x, n) sample(x, n, replace = TRUE), n = trControl$timingSamps)
