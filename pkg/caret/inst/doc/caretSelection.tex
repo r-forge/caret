@@ -75,7 +75,7 @@
 
 Many models that can be accessed using \texttt{caret}'s \texttt{train} function produce prediction equations that do not necessarily use all the predictors. These models are thought to have built--in feature selection and include \texttt{rpart}, \texttt{gbm}, \texttt{ada}, \texttt{glmboost}, \texttt{gamboost}, \texttt{blackboost}, \texttt{ctree}, \texttt{sparseLDA}, \texttt{sddaLDA}, \texttt{sddaQDA}	\texttt{glmnet}, \texttt{lasso}, \texttt{lars}, \texttt{spls}, \texttt{earth}, \texttt{fda},   \texttt{bagEarth}, \texttt{bagFDA} , \texttt{pam} and others. Many of the functions have an ancillary method called \texttt{predictors} that returns a vector indicating which predictors were used in the final model.
 
-In many cases, using these models with built--in feature selection will be more efficient than algorithms where the search routine for the right predictors is external to the model (see Section 2). Built--in feature selection typically couples the predictor search algorithm with the parameter  estimation and are usually optimize with a single objective function (e.g. error rates or likelihood). 
+In many cases, using these models with built--in feature selection will be more efficient than algorithms where the search routine for the right predictors is external to the model (see Section 2). Built--in feature selection typically couples the predictor search algorithm with the parameter  estimation and are usually optimized with a single objective function (e.g. error rates or likelihood). 
 
 
 \section{Feature Selection Using Search Algorithms}
@@ -96,9 +96,9 @@ The algorithm has an optional step (line \ref{A:rerank}) where the predictor ran
 \begin{algorithm}
    \caption{Recursive feature elimination}
    \label{A:rfe}
-   \SetLine
-   \restylealgo{plain}
-   \dontprintsemicolon
+   \SetAlgoLined
+   \RestyleAlgo{plain}
+   \DontPrintSemicolon
 
 
     \vspace*{3pt} Tune/train the model on the training set using all predictors\vspace*{3pt}\; 
@@ -109,7 +109,9 @@ The algorithm has an optional step (line \ref{A:rerank}) where the predictor ran
 
      \For{Each subset size $S_i$, $i=1\ldots S$}{
 
-         \vspace*{3pt} Keep the $S_i$ most important variables \vspace*{3pt}\;		  
+         \vspace*{3pt} Keep the $S_i$ most important variables \vspace*{3pt}\;
+         
+         \vspace*{3pt} [Optional] Pre--process the data\;
 			
          \vspace*{3pt} Tune/train the model on the training set using $S_i$ predictors \nllabel{A:resample}\vspace*{3pt}\;
 
@@ -146,9 +148,9 @@ While this will provide better estimates of performance, it is more computationa
 \begin{algorithm}
    \caption{Recursive feature elimination incorporating resampling}
    \label{A:rfe2}
-   \SetLine
-   \restylealgo{plain}
-   \dontprintsemicolon
+   \SetAlgoLined
+   \RestyleAlgo{plain}
+   \DontPrintSemicolon
 
    \For{Each Resampling Iteration\nllabel{A:outer}}{
 	
@@ -162,7 +164,9 @@ While this will provide better estimates of performance, it is more computationa
 
      \For{Each subset size $S_i$, $i=1\ldots S$}{
 
-         \vspace*{3pt} Keep the $S_i$ most important variables \vspace*{3pt}\;		  
+         \vspace*{3pt} Keep the $S_i$ most important variables \vspace*{3pt}\;	
+         
+         \vspace*{3pt} [Optional] Pre--process the data\;
 			
          \vspace*{3pt} Tune/train the model on the training set using $S_i$ predictors\nllabel{A:fit1}\vspace*{3pt}\;
 
@@ -210,9 +214,13 @@ In the simulation used here:
 > sigma <- 1
 > set.seed(1)
 > sim <- mlbench.friedman1(n, sd = sigma)
-> x <- cbind(sim$x,  matrix(rnorm(n * p), nrow = n))
+> colnames(sim$x) <- c(paste("real", 1:5, sep = ""),
++                      paste("bogus", 1:5, sep = ""))
+> bogus <- matrix(rnorm(n * p), nrow = n)
+> colnames(bogus) <- paste("bogus", 5+(1:ncol(bogus)), sep = "")
+> x <- cbind(sim$x, bogus)
 > y <- sim$y
-> colnames(x) <- paste("var", 1:ncol(x), sep = "")
+> 
 \end{Sinput}
 \end{Schunk}
 Of the 50 predictors, there are 45 pure noise variables: 5 are uniform on [0, 1] and 40 are random univariate standard normals. The predictors are centered and scaled:
@@ -244,24 +252,24 @@ As previously mentioned, to fit linear models, the \texttt{lmFuncs} set of funct
 \begin{Soutput}
 Recursive feature selection
 
-Outer resamping method was 10 iterations of cross-validation. 
+Outer resampling method: Cross-Validation (10 fold) 
 
 Resampling performance over subset size:
 
  Variables  RMSE Rsquared RMSESD RsquaredSD Selected
-         1 3.473   0.5285 0.4706     0.1219         
-         2 3.134   0.6161 0.5937     0.1757         
-         3 2.954   0.6770 0.9152     0.2242        *
-         4 3.055   0.6520 0.9889     0.2359         
-         5 3.229   0.6188 0.8714     0.1966         
-        10 3.493   0.5549 0.9811     0.2098         
-        15 3.754   0.5010 1.1806     0.2243         
-        20 3.893   0.4725 1.0039     0.2026         
-        25 4.306   0.4009 0.9284     0.1870         
-        50 4.306   0.4009 0.9284     0.1870         
+         1 3.576   0.5443 0.6591     0.2583         
+         2 3.158   0.6063 0.7479     0.2266         
+         3 2.756   0.6902 0.8575     0.2210        *
+         4 2.861   0.6716 0.8978     0.2270         
+         5 2.974   0.6434 0.9337     0.2298         
+        10 3.123   0.6183 0.9932     0.2463         
+        15 3.338   0.5848 1.1901     0.2650         
+        20 3.464   0.5707 1.1822     0.2603         
+        25 3.716   0.5266 1.1359     0.2521         
+        50 3.716   0.5266 1.1359     0.2521         
 
 The top 3 variables (out of 3):
-   var4, var5, var2
+   real4, real5, real2
 \end{Soutput}
 \end{Schunk}
 The output shows that the  best subset size was estimated to be 3 predictors. This set includes informative variables but did not include them all. The \texttt{predictors} function can be used to get a text string of variable names that were picked in the final model. The \texttt{lmProfile} is a list of class \texttt{"rfe"} that contains an object \texttt{fit} that is the final linear model with the remaining terms. The model can be used to get predictions for future or test samples. 
@@ -271,7 +279,7 @@ The output shows that the  best subset size was estimated to be 3 predictors. Th
 > predictors(lmProfile)
 \end{Sinput}
 \begin{Soutput}
-[1] "var4" "var5" "var2"
+[1] "real4" "real5" "real2"
 \end{Soutput}
 \begin{Sinput}
 > lmProfile$fit
@@ -281,24 +289,24 @@ Call:
 lm(formula = y ~ ., data = tmp)
 
 Coefficients:
-(Intercept)         var4         var5         var2  
+(Intercept)        real4        real5        real2  
      14.613        2.625        1.967        1.648  
 \end{Soutput}
 \begin{Sinput}
 > lmProfile$resample
 \end{Sinput}
 \begin{Soutput}
-          RMSE  Rsquared Variables
- [1,] 3.640221 0.5471438         3
- [2,] 2.270739 0.7953448         3
- [3,] 2.425445 0.6704767         3
- [4,] 3.195171 0.8108668         3
- [5,] 4.994849 0.2072672         3
- [6,] 2.184304 0.7963478         3
- [7,] 2.602312 0.8716050         3
- [8,] 1.968237 0.9170471         3
- [9,] 2.714145 0.7397995         3
-[10,] 3.548103 0.4141139         3
+   Variables     RMSE  Rsquared Resample
+3          3 2.940756 0.5542831   Fold01
+13         3 2.704529 0.6583788   Fold02
+23         3 4.599872 0.2181731   Fold03
+33         3 2.601659 0.8478823   Fold04
+43         3 1.979220 0.8571701   Fold05
+53         3 2.978896 0.8301785   Fold06
+63         3 3.371253 0.4721770   Fold07
+73         3 2.828167 0.7755102   Fold08
+83         3 2.097941 0.7372942   Fold09
+93         3 1.456698 0.9508685   Fold10
 \end{Soutput}
 \end{Schunk}
 
@@ -315,15 +323,51 @@ There are also several plot methods to visualize the results. \texttt{plot(lmPro
 
 \subsection{Helper Functions}\label{S:helpers}
 
-To use feature elimination for an arbitrary model, a set of functions must be passed to \texttt{rfe} for each of the steps in Algorithm  \ref{A:rfe2}. This section defines those functions and uses the existing random forest functions as an illustrative example.
+To use feature elimination for an arbitrary model, a set of functions
+must be passed to \texttt{rfe} for each of the steps in Algorithm
+\ref{A:rfe2}. 
+
+This section defines those functions and uses the
+existing random forest functions as an illustrative
+example. \texttt{caret} contains a list called \texttt{rfFuncs}, but
+this document will use a more simple version that will be better for
+illustrating the ideas at play. The functions used here are collected
+in a list called \texttt{rfRFE}.
+
+
 
 \subsubsection{The \texttt{summary} Function}\label{S:summary}
 
-The \texttt{summary} function takes the observed and predicted values and computes one or more performance metrics (see line \ref{A:summary}). The input is a data frame with columns \texttt{obs} and \texttt{pred}. The output should be a named vector of numeric variables. Note that the \texttt{metric} argument of the \texttt{rfe} function should reference one of the names of the output of \texttt{summary}.
+The \texttt{summary} function takes the observed and predicted values
+and computes one or more performance metrics (see line
+\ref{A:summary}). The input is a data frame with columns \texttt{obs}
+and \texttt{pred}. The output should be a named vector of numeric
+variables. Note that the \texttt{metric} argument of the \texttt{rfe}
+function should reference one of the names of the output of
+\texttt{summary}. The example function is:
+\begin{Schunk}
+\begin{Sinput}
+> rfRFE$summary
+\end{Sinput}
+\begin{Soutput}
+function (data, lev = NULL, model = NULL) 
+{
+    if (is.character(data$obs)) 
+        data$obs <- factor(data$obs, levels = lev)
+    postResample(data[, "pred"], data[, "obs"])
+}
+<environment: namespace:caret>
+\end{Soutput}
+\end{Schunk}
+
+Two functions in \texttt{caret} that can be used as the summary
+funciton are \texttt{defaultSummary} and \texttt{twoClassSummary} (for
+classification probelms with two classes). 
+
 
 \subsubsection{The \texttt{fit} Function}\label{S:fit}
 
-This function builds the model based on the current data set (lines line \ref{A:fit0},  \ref{A:fit1} and \ref{A:fit2}). The arguments for the function must be:
+This function builds the model based on the current data set (lines\ref{A:fit0},  \ref{A:fit1} and \ref{A:fit2}). The arguments for the function must be:
 \begin{itemize}
 \item \texttt{x}: the current training set of predictor data with the appropriate subset of variables
 \item \texttt{y}: the current outcome data (either a numeric or factor vector)
@@ -334,7 +378,7 @@ This function builds the model based on the current data set (lines line \ref{A:
 The function should return a model object that can be used to generate predictions. For random forest, the fit function is simple:
 \begin{Schunk}
 \begin{Sinput}
-> rfFuncs$fit
+> rfRFE$fit
 \end{Sinput}
 \begin{Soutput}
 function (x, y, first, last, ...) 
@@ -342,7 +386,6 @@ function (x, y, first, last, ...)
     library(randomForest)
     randomForest(x, y, importance = first, ...)
 }
-<environment: namespace:caret>
 \end{Soutput}
 \end{Schunk}
 For feature selection without re--ranking at each iteration, the random forest variable importances only need to be computed on the first iterations when all of the predictors are in the model. This can be accomplished using  \texttt{importance = first}.
@@ -357,14 +400,13 @@ This function returns a vector of predictions (numeric or factors) from the curr
 For random forests, the function is a simple wrapper for the predict function:
 \begin{Schunk}
 \begin{Sinput}
-> rfFuncs$pred
+> rfRFE$pred
 \end{Sinput}
 \begin{Soutput}
 function (object, x) 
 {
     predict(object, x)
 }
-<environment: namespace:caret>
 \end{Soutput}
 \end{Schunk}
 For classification, it is probably a good idea to ensure that the resulting factor variables of predictions has the same levels as the input data.
@@ -377,12 +419,12 @@ This function is used to return the predictors in the order of the most importan
 \item \texttt{x}: the current set of predictor set for the training samples
 \item \texttt{y}: the current training outcomes
 \end{itemize}
-The function should return a data frame with a column called \texttt{vars} that has the current variable names. The first row should be the most important predictor etc. Other columns can be included in the output and will be returned in the final \texttt{rfe} object.
+The function should return a data frame with a column called \texttt{var} that has the current variable names. The first row should be the most important predictor etc. Other columns can be included in the output and will be returned in the final \texttt{rfe} object.
 
 For random forests, the function below uses \texttt{caret}'s \texttt{varImp} function to extract the random forest importances and orders them. For classification, \texttt{randomForest} will produce a column of importances for each class. In this case, the default ranking function orders the predictors by the averages importance across the classes.
 \begin{Schunk}
 \begin{Sinput}
-> rfFuncs$rank
+> rfRFE$rank
 \end{Sinput}
 \begin{Soutput}
 function (object, x, y) 
@@ -399,7 +441,6 @@ function (object, x, y)
     vimp$var <- rownames(vimp)
     vimp
 }
-<environment: namespace:caret>
 \end{Soutput}
 \end{Schunk}
 
@@ -475,16 +516,15 @@ This function should return a character string of predictor names (of length \te
 For random forests, only the first importance calculation (line \ref{A:rank0}) is used since these are the rankings on the full set of predictors. These importances are averaged and the top predictors are returned.
 \begin{Schunk}
 \begin{Sinput}
-> rfFuncs$selectVar
+> rfRFE$selectVar
 \end{Sinput}
 \begin{Soutput}
 function (y, size) 
 {
-    imp <- lapply(y, function(x) x[[1]])
-    imp <- do.call("rbind", imp)
-    finalImp <- aggregate(imp$Overall, list(var = imp$var), mean, 
-        na.rm = TRUE)
-    finalImp <- finalImp[order(finalImp$x, decreasing = TRUE), 
+    finalImp <- ddply(y[, c("Overall", "var")], .(var), function(x) mean(x$Overall, 
+        na.rm = TRUE))
+    names(finalImp)[2] <- "Overall"
+    finalImp <- finalImp[order(finalImp$Overall, decreasing = TRUE), 
         ]
     as.character(finalImp$var[1:size])
 }
@@ -498,7 +538,7 @@ Note that if the predictor rankings are recomputed at each iteration (line \ref{
 For random forest, we fit the same series of model sizes as the linear model. The option to save all the resampling results across subset sizes was changed for this model and are used to show the lattice plot function capabilities in Figure \ref{F:rf2}.
 \begin{Schunk}
 \begin{Sinput}
-> ctrl$functions <- rfFuncs
+> ctrl$functions <- rfRFE
 > ctrl$returnResamp <- "all"
 > set.seed(10)
 > rfProfile <- rfe(x, y,
@@ -509,24 +549,24 @@ For random forest, we fit the same series of model sizes as the linear model. Th
 \begin{Soutput}
 Recursive feature selection
 
-Outer resamping method was 10 iterations of cross-validation. 
+Outer resampling method: Cross-Validation (10 fold) 
 
 Resampling performance over subset size:
 
  Variables  RMSE Rsquared RMSESD RsquaredSD Selected
-         1 3.768   0.4025 0.3996     0.1628         
-         2 3.107   0.6291 0.5292     0.1538         
-         3 2.879   0.7014 0.5282     0.1741         
-         4 2.875   0.7333 0.4653     0.1346        *
-         5 3.104   0.7002 0.3718     0.1514         
-        10 3.148   0.7123 0.3036     0.1317         
-        15 3.309   0.6828 0.3918     0.1161         
-        20 3.421   0.6435 0.3255     0.1375         
-        25 3.573   0.6199 0.3633     0.1471         
-        50 3.555   0.6297 0.4062     0.1155         
+         1 3.740   0.4728 0.4797     0.2525         
+         2 3.012   0.6547 0.6914     0.2389         
+         3 2.568   0.8000 0.6687     0.1271        *
+         4 2.926   0.7241 0.7196     0.1671         
+         5 3.173   0.6718 0.6466     0.2158         
+        10 3.192   0.7047 0.6753     0.2202         
+        15 3.310   0.6904 0.6280     0.2122         
+        20 3.329   0.6817 0.5920     0.2227         
+        25 3.463   0.6863 0.6078     0.2366         
+        50 3.520   0.6746 0.5846     0.2335         
 
-The top 4 variables (out of 4):
-   var4, var5, var2, var1
+The top 3 variables (out of 3):
+   real4, real5, real2
 \end{Soutput}
 \end{Schunk}
 
@@ -611,7 +651,7 @@ have been filtered using the \texttt{filter} function described
 above. The output of the \texttt{fit} function should be a fitted model.
 
 
-With some data sets, no predictors will survive the filter. In these cases, a model with predictors cannot be computed, but the lack of viable predictors should not be ignored in the final results. To account for this issue, \texttt{caret} contains a model function called \texttt{nullModel} that fits a simple model that is independent of any of the predictors. For problems where the outcome is numeric, the function predicts every sample using the simple mean o the training set outcomes. For classification, the model predicts all samples using the most prevalent class in the training data.
+With some data sets, no predictors will survive the filter. In these cases, a model with predictors cannot be computed, but the lack of viable predictors should not be ignored in the final results. To account for this issue, \texttt{caret} contains a model function called \texttt{nullModel} that fits a simple model that is independent of any of the predictors. For problems where the outcome is numeric, the function predicts every sample using the simple mean of the training set outcomes. For classification, the model predicts all samples using the most prevalent class in the training data.
 
 This function can be used in the \texttt{fit} component function to
 ``error-trap'' cases where no predictors are selected. For example,
@@ -660,20 +700,20 @@ generalized additive model approach described in Section \ref{S:filter}.
 \begin{Soutput}
 Selection By Filter
 
-Outer resamping method was 10 iterations of cross-validation. 
+Outer resampling method: Cross-Validation (10 fold) 
 
 Resampling performance:
 
   RMSE Rsquared RMSESD RsquaredSD
- 4.133   0.2799 0.4713     0.1818
+ 4.028   0.3465 0.6911     0.1861
 
 Using the training set, 7 variables were selected:
-   var1, var2, var3, var21, var23...
+   real1, real2, real3, bogus16, bogus18...
 
 During resampling, the top 5 selected variables (out of a possible 14):
-   var1 (100%), var3 (100%), var42 (100%), var2 (90%), var23 (60%)
+   bogus37 (100%), real1 (100%), real3 (100%), real2 (90%), bogus16 (70%)
 
-On average, 6.4 variables were selected (min = 5, max = 9)
+On average, 6.5 variables were selected (min = 5, max = 9)
 \end{Soutput}
 \end{Schunk}
 
@@ -686,21 +726,81 @@ used, but a few others are erroneous retained.
 Similar to \texttt{rfe}, there are methods for \texttt{predictors},
 \texttt{densityplot}, \texttt{histogram} and \texttt{varImp}.
 
+\section{Visualizing Resampling Results}
+
+As shown in the main \texttt{caret} vignette, the \texttt{resamples}
+class can be used to compare the resampling results of objects
+resulting from either \texttt{train()}, \texttt{rfe()} or \texttt{sbf()}.
+
+First, the resample results are collected together:
+\begin{Schunk}
+\begin{Sinput}
+> bootValues <- resamples(
++                         list(lmRFE = lmProfile, 
++                              rfRFE = rfProfile, 
++                              rfFilter = rfWithFilter))
+\end{Sinput}
+\end{Schunk}
+After this, there are several Lattice plot methods: \texttt{xyplot},
+\texttt{dotplot}, \texttt{densityplot}, \texttt{bwplot},
+\texttt{splom} and \texttt{parallel}. Figure \ref{F:resamps1} show a
+parallel coordinate of the bootstrapped $R^2$ values. 
+
+The \texttt{diff} function can be applied to these objects to produce
+confidence intervals and hypothesis testing on the differences:
+\begin{Schunk}
+\begin{Sinput}
+> differences <- diff(bootValues)
+> summary(differences)
+\end{Sinput}
+\begin{Soutput}
+Call:
+summary.diff.resamples(object = differences)
+
+p-value adjustment: bonferroni 
+Upper diagonal: estimates of the difference
+Lower diagonal: p-value for H0: difference = 0
+
+RMSE 
+         lmRFE   rfRFE     rfFilter
+lmRFE             0.1879   -1.2723 
+rfRFE    1.00000           -1.4602 
+rfFilter 0.01296 3.846e-05         
+
+Rsquared 
+         lmRFE    rfRFE     rfFilter
+lmRFE             -0.1098    0.3437 
+rfRFE    0.133123            0.4535 
+rfFilter 0.006593 1.888e-05         
+\end{Soutput}
+\end{Schunk}
+There are several plot methods for the differences: 
+\texttt{dotplot}, \texttt{densityplot}, \texttt{bwplot} and
+\texttt{levelplot}. 
+
+\begin{figure}
+   \begin{center}		
+      \includegraphics[clip]{resamps1}
+      \caption{Scatterplot matrix of the bootstrapped $R^2$ values
+        from the random forests model with univariate filters and the RFE models using linear least squares and random forests. These plots were generated using \texttt{parallel(splom, metric = "Rsquared")}}
+      \label{F:resamps1} 
+    \end{center}
+\end{figure}
+
 
 \section{Session Information}
 
 \begin{itemize}\raggedright
-  \item R version 2.11.0 Patched (2010-05-11 r51982), \verb|x86_64-apple-darwin9.8.0|
+  \item R version 2.13.1 Patched (2011-08-02 r56617), \verb|x86_64-apple-darwin9.8.0|
   \item Locale: \verb|en_US.UTF-8/en_US.UTF-8/C/C/en_US.UTF-8/en_US.UTF-8|
-  \item Base packages: base, datasets, graphics, grDevices, grid,
-    methods, splines, stats, tools, utils
-  \item Other packages: akima~0.5-4, caret~4.45, class~7.3-2,
-    e1071~1.5-24, ellipse~0.3-5, gam~1.03, gbm~1.6-3.1, Hmisc~3.8-0,
-    ipred~0.8-8, kernlab~0.9-10, klaR~0.6-3, lattice~0.18-5,
-    MASS~7.3-5, mlbench~2.0-0, nnet~7.3-1, pls~2.1-0, plyr~0.1.9,
-    proxy~0.4-6, randomForest~4.5-34, reshape~0.8.3, rpart~3.1-46,
-    survival~2.35-8
-  \item Loaded via a namespace (and not attached): cluster~1.12.3
+  \item Base packages: base, datasets, graphics, grDevices, methods,
+    splines, stats, utils
+  \item Other packages: caret~4.99, cluster~1.14.0, codetools~0.2-8,
+    doMC~1.2.2, foreach~1.3.2, gam~1.04.1, Hmisc~3.8-3,
+    iterators~1.0.5, lattice~0.19-31, mlbench~2.1-0, multicore~0.1-5,
+    plyr~1.5.2, randomForest~4.6-2, reshape~0.8.4, survival~2.36-9
+  \item Loaded via a namespace (and not attached): compiler~2.13.1,
+    grid~2.13.1, tools~2.13.1
 \end{itemize}
 \section{References}
 
