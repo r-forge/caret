@@ -73,7 +73,7 @@
 \section{Introduction}
 
 
-The \texttt{caret} package (short for {\bf{\color{blue}{c}}}lassification {\bf{\color{blue}{a}}}nd {\bf{\color{blue}{re}}}gression {\bf{\color{blue}{t}}}raining) contains functions to streamline the model training process for complex regression and classification problems. The package utilizes a number of R packages but tries not to load them all at package start-up\footnote{By adding formal package dependencies, the package startup time can be greatly decreased}. The package ``suggests'' field includes: \texttt{ada}, \texttt{affy}, \texttt{caTools}, \texttt{class}, \texttt{e1071,}, \texttt{earth ($\ge$ 2.2-3)}, \texttt{elasticnet}, \texttt{ellipse}, \texttt{fastICA}, \texttt{foba}, \texttt{foreach}, \texttt{gam}, \texttt{GAMens ($\ge$ 1.1.1),}, \texttt{gbm}, \texttt{glmnet}, \texttt{gpls}, \texttt{grid}, \texttt{hda}, \texttt{HDclassif}, \texttt{ipred}, \texttt{kernlab}, \texttt{klaR}, \texttt{lars}, \texttt{MASS}, \texttt{mboost}, \texttt{mda}, \texttt{mgcv}, \texttt{mlbench}, \texttt{neuralnet}, \texttt{nnet}, \texttt{nodeHarvest}, \texttt{pamr,}, \texttt{partDSA}, \texttt{party}, \texttt{penalized}, \texttt{pls}, \texttt{proxy}, \texttt{quantregForest}, \texttt{randomForest}, \texttt{rda}, \texttt{relaxo}, \texttt{rocc}, \texttt{rpart}, \texttt{rrcov}, \texttt{RWeka ($\ge$ 0.4-1)}, \texttt{sda}, \texttt{SDDA}, \texttt{sparseLDA ($\ge$ 0.1-1),}, \texttt{spls}, \texttt{stepPlr}, \texttt{superpc}, \texttt{vbmp}. \texttt{caret} loads packages as needed and assumes that they are installed. Install \texttt{caret} using 
+The \texttt{caret} package (short for {\bf{\color{blue}{c}}}lassification {\bf{\color{blue}{a}}}nd {\bf{\color{blue}{re}}}gression {\bf{\color{blue}{t}}}raining) contains functions to streamline the model training process for complex regression and classification problems. The package utilizes a number of R packages but tries not to load them all at package start-up\footnote{By adding formal package dependencies, the package startup time can be greatly decreased}. The package ``suggests'' field includes: \texttt{ada}, \texttt{affy}, \texttt{Boruta}, \texttt{bst}, \texttt{caTools}, \texttt{class}, \texttt{Cubist}, \texttt{doMC}, \texttt{e1071,}, \texttt{earth ($\ge$ 2.2-3)}, \texttt{elasticnet}, \texttt{ellipse}, \texttt{fastICA}, \texttt{foba}, \texttt{gam}, \texttt{GAMens ($\ge$ 1.1.1),}, \texttt{gbm}, \texttt{glmnet}, \texttt{gpls}, \texttt{grid}, \texttt{hda}, \texttt{HDclassif}, \texttt{Hmisc}, \texttt{ipred}, \texttt{kernlab}, \texttt{klaR}, \texttt{lars}, \texttt{leaps}, \texttt{LogicForest,}, \texttt{logicFS}, \texttt{LogicReg}, \texttt{MASS}, \texttt{mboost}, \texttt{mda}, \texttt{mgcv}, \texttt{mlbench}, \texttt{neuralnet}, \texttt{nnet}, \texttt{nodeHarvest}, \texttt{pamr,}, \texttt{partDSA}, \texttt{party ($\ge$ 0.9-99992)}, \texttt{penalized}, \texttt{pls}, \texttt{proxy}, \texttt{qrnn}, \texttt{quantregForest}, \texttt{randomForest}, \texttt{RANN}, \texttt{rda}, \texttt{relaxo}, \texttt{rocc}, \texttt{rpart}, \texttt{rrcov}, \texttt{RWeka ($\ge$ 0.4-1)}, \texttt{sda}, \texttt{SDDA}, \texttt{sparseLDA ($\ge$ 0.1-1),}, \texttt{spls}, \texttt{stepPlr}, \texttt{superpc}, \texttt{vbmp}. \texttt{caret} loads packages as needed and assumes that they are installed. Install \texttt{caret} using 
 \begin{Verbatim}
 install.packages("caret", dependencies = c("Depends", "Suggests"))
 \end{Verbatim}
@@ -82,7 +82,11 @@ to ensure that all the needed packages are installed.
 
 \section{Example Data}
 
-There are a few data sets included in \texttt{caret}. The first three are computational chemistry problems where the object is to relate the molecular structure of compounds (via molecular descriptors) to some property of interest (\href{ http://dx.doi.org/10.1016/S1359-6446(99)01451-8}{Blake (2000)}, Clark and Pickett (2000). The fourth data set listed is a typical spectroscopy data set from chemometrics. The last data set is a pattern recognition problem with a large number of classes, some of which do not have many observations.
+There are a few data sets included in \texttt{caret}. The first four
+are computational chemistry problems where the object is to relate the
+molecular structure of compounds (via molecular descriptors) to some
+property of interest (\href{http://dx.doi.org/10.1016/S1359-6446(99)01451-8}{Blake (2000)}, Clark and Pickett (2000). Similar data sets can be found in the
+\texttt{QSARdata} R pacakge. 
 
 \subsection{Blood--Brain Barrier Data}
 
@@ -95,6 +99,14 @@ From  \href{http://pubs.acs.org/cgi-bin/abstract.cgi/jmcmar/2004/47/i22/abs/jm04
 values).'' A set of 255 descriptors (MOE2D and QikProp) were generated. To classify the data, we used a cutoff of $2^{2.5}$ to determine activity.
 
 Using \texttt{data(cox2)} exposes three R objects: \texttt{cox2Descr} is a data frame with the descriptor data, \texttt{cox2IC50} is a numeric vector of IC50 assay values and \texttt{cox2Class} is a factor vector with the activity results.
+
+
+\subsection{DHFR Inhibition}
+  
+\href{http://www.springerlink.com/content/q5m5xp1q356p2071/}{Sutherland and Weaver (2004)} discuss QSAR models for dihydrofolate reductase (DHFR) inhibition. This data set contains values for 325 compounds. For each compound, 228 molecular descriptors have been calculated. Additionally, each samples is designated as ``active'' or``inactive''.
+
+The data frame \texttt{dhfr} contains a column called \texttt{Y} with the outcome classification. The remainder of the columns are molecular descriptor values.
+
 
 \subsection{Multidrug Resistance Reversal (MDRR) Agent Data}
 
@@ -148,11 +160,74 @@ oilType
 
 As a note, the paper states on page 32 that there are 37 unknown samples while the table on pages 33 and 34 shows that there are 34 unknowns. 
 
+\subsection{German Credit Data}
+
+Data from Dr. Hans Hofmann of the University of Hamburg and stored at
+the \href{http://archive.ics.uci.edu/ml/datasets/Statlog+%28German+Credit+Data%29}{UC Irvine Machine Learning Repository}.
+
+These data have two classes for the credit worthiness: good or bad. There are predictors related to attributes, such as: checking account status, duration, credit history, purpose of the loan, amount of the loan, savings accounts or bonds, employment duration, Installment rate in percentage of disposable income, personal information, other debtors/guarantors, residence duration, property, age, other installment plans, housing, number of existing credits, job information, Number of people being liable to provide maintenance for, telephone, and foreign worker status.
+
+Many of these predictors are discrete and have been expanded into several 0/1 indicator variables
+
+\subsection{Kelly Blue Book resale data for 2005 model year GM cars}
+
+\href{http://www.amstat.org/publications/jse/v16n3/datasets.kuiper.html}{Kuiper (2008)} collected data on Kelly Blue Book resale data for 804 GM cars (2005 model year). 
+
+\texttt{cars} is data frame of the suggested retail price (column Price) and various characteristics of each car (columns Mileage, Cylinder, Doors, Cruise, Sound, Leather, Buick, Cadillac, Chevy, Pontiac, Saab, Saturn, convertible, coupe, hatchback, sedan and wagon)
+
+\subsection{Cell Body Segmentation Data}
+
+\href{http://www.biomedcentral.com/1471-2105/8/340}{Hill, LaPan, Li and Haney (2007)} develop models to predict which cells in a high content screen were well segmented. The data consists of 119 imaging measurements on 2019. The original analysis used 1009 for training and 1010 as a test set (see the column called Case).
+
+The outcome class is contained in a factor variable called Class with levels ``PS'' for poorly segmented and ``WS'' for well segmented.
+
+
+
+\section{Creating Dummy Variables}
+
+The function \texttt{dummyVars} can be used to generate a complete (less than full rank parameterized) set of dummy variables from one or more factors. The function takes a formula and a data set and outputs an object that can be used to create the dummy variables using the predict method.
+
+ 
+
+For example, the \texttt{etitanic} data set in the \texttt{earth} includes two factors: \texttt{pclass} with levels 1st, 2nd, 3rd and \texttt{sex} with levels female, male. The base R function \texttt{model.matrix} would generate the following variables:
+\begin{Schunk}
+\begin{Sinput}
+> library(earth)
+> data(etitanic)
+> head(model.matrix(survived ~ ., data = etitanic))
+\end{Sinput}
+\begin{Soutput}
+  (Intercept) pclass2nd pclass3rd sexmale     age sibsp parch
+1           1         0         0       0 29.0000     0     0
+2           1         0         0       1  0.9167     1     2
+3           1         0         0       0  2.0000     1     2
+4           1         0         0       1 30.0000     1     2
+5           1         0         0       0 25.0000     1     2
+6           1         0         0       1 48.0000     0     0
+\end{Soutput}
+\end{Schunk}
+Using \texttt{dummyVars}:'
+\begin{Schunk}
+\begin{Sinput}
+> dummies <- dummyVars(survived ~ ., data = etitanic)
+> head(predict(dummies, newdata = etitanic))
+\end{Sinput}
+\begin{Soutput}
+  pclass.1st pclass.2nd pclass.3rd sex.female sex.male     age sibsp parch
+1          1          0          0          1        0 29.0000     0     0
+2          1          0          0          0        1  0.9167     1     2
+3          1          0          0          1        0  2.0000     1     2
+4          1          0          0          0        1 30.0000     1     2
+5          1          0          0          1        0 25.0000     1     2
+6          1          0          0          0        1 48.0000     0     0
+\end{Soutput}
+\end{Schunk}
+Note there is no intercept and each factor has a dummy variable for each level, so this parameterization may not be useful for some model functions, such as \texttt{lm}.
 
 
 \section{Data Pre--Processing Functions}
 
-\texttt{caret} includes several functions to pre--process the predictor data.  Assumes that all of the data are numeric (i.e. factors have been converted to dummy variables via \texttt{model.matrix} or other means).
+\texttt{caret} includes several functions to pre--process the predictor data.  Assumes that all of the data are numeric (i.e. factors have been converted to dummy variables via \texttt{model.matrix}, \texttt{dummaryVars}  or other means).
 
 \subsection{Zero-- and Near Zero--Variance Predictors}
 
@@ -218,8 +293,8 @@ While there are some models that thrive on correlated predictors (such as \textt
 Given a correlation matrix, the \texttt{findCorrelation} function uses the following algorithm to flag predictors for removal:
 
 \begin{algorithm}[H]
-	\SetLine
-	\restylealgo{boxed}
+	\SetAlgoLined
+	\RestyleAlgo{boxed}
 	\Repeat{no correlations are above a threshold}{
 	Find the pair of predictors with the largest absolute correlation;
 	
@@ -336,7 +411,7 @@ These types of dependencies can arise when large numbers of binary chemical fing
 
 \subsection{Centering and Scaling}
 
-The \texttt{preProcess} class can be used for many operations on predictors, including centering and scaling\footnote{Two functions, \texttt{processData} and \texttt{applyProcessing}, are being replaced by \texttt{preProcess}. They are still in the package, but will not be in upcoming versions}. The functiontextt{preProcess} estimates the required parameters for each operation and \texttt{predict.preProcess} is used to apply them to specific data sets.
+The \texttt{preProcess} class can be used for many operations on predictors, including centering and scaling. The function \texttt{preProcess} estimates the required parameters for each operation and \texttt{predict.preProcess} is used to apply them to specific data sets.
 
 
 In the example below, the half of the MDRR data are used to estimate the location and scale of the predictors. The function \texttt{preProcess} doesn't actually pre--process the data. \texttt{predict.preProcess} is used to pre--process this and other data sets.
@@ -356,6 +431,24 @@ In the example below, the half of the MDRR data are used to estimate the locatio
 \end{Schunk}
 \end{small}
 
+The \texttt{preProcess} option \texttt{"ranges"} scales the data to the interval [0, 1].
+
+\subsection{Imputation}
+
+\texttt{preProcess} can be used to impute data sets based only on
+information in the training set. One method of doing this is with
+$K$--nearest neighbors. For an arbitrary sample, the $k$ closest
+neighbors are found in the training set and the value for the
+predictor is imputed using these values (e.g. using the mean). Using
+this approach will automatically trigger \texttt{preProcess} to center
+and scale the data, regardless of what is in the \texttt{method}
+argument. Alternatively, bagged trees can also be used to impute. For
+each predictor in the data, a bagged tree is created using all of the
+other predictors in the training set. When a new sample has a missing
+predictor value, the bagged model is used to predict the value. While,
+in theory, this is a more powerful method of imputing, the
+computational costs are much higher than the nearest neighbor technique.
+
 \subsection{Transforming Predictors}
 
 In some cases, there is a need to use principal component analysis (PCA) to transform the data to a smaller sub--space where the new variable are uncorrelated with one another. The \texttt{preProcess} class can apply this transformation by including \texttt{"pca"} in the \texttt{method} argument. Doing this will also force scaling of the predictors. Note that when PCA is requested, \texttt{predict.preProcess} changes the column names to \texttt{PC1},  \texttt{PC2} and so on.
@@ -366,6 +459,8 @@ such that the components are independent (as opposed to uncorrelated in
 PCA). The new variables will be labeled as  \texttt{IC1},  \texttt{IC2} and so on.
 
 The ``spatial sign" transformation (\href{http://pubs.acs.org/cgi-bin/abstract.cgi/jcisd8/2006/46/i03/abs/ci050498u.html}{Serneels {\it et al}, 2006}) projects the data for a predictor to the unit circle in $p$ dimensions, where $p$ is the number of predictors. Essentially, a vector of data is divided by its norm. Figures \ref{f:descSplom} and \ref{f:descSplomTrans} show two centered and scaled descriptors from the MDRR data before and after the spatial sign transformation. The predictors should be centered and scaled before applying this transformation.
+
+Another option, \texttt{"BoxCox"} will estimate a Box--Cox transformation on the {\em predictors} if the data are greater than zero.
 
 This transformation can also be applied using the \texttt{preProcess} class.
 
@@ -524,7 +619,7 @@ matrix is created for each class and used with the \texttt{spls} function in the
 \begin{figure}
    \begin{center}		
       \includegraphics[clip, width = .9\textwidth]{plsProbs}
-\caption{A comparison of two methods for computing class probabilities for PLS classification models on the MDRR data. Using a 5 component PLS model, the test set sample class probabilities were predicted using either the softmax function or Bayes rule. The histograms show the distributions of the active class probabilities for both methods and the true class of the samples. While Bayes rule takes more time to compute (0.64 seconds compared to 0.011 seconds for softmax), the probabilities using Bayes rule appear more appropriate since they encompass the full scale. The softmax probabilities are close to the middle of the distribution and rarely show high confidence in the predicted class. Both techniques show approximately the same accuracy (0.8 for Bayes and 0.77 for softmax) and Kappa values (0.58 for Bayes and 0.52 for softmax).}
+\caption{A comparison of two methods for computing class probabilities for PLS classification models on the MDRR data. Using a 5 component PLS model, the test set sample class probabilities were predicted using either the softmax function or Bayes rule. The histograms show the distributions of the active class probabilities for both methods and the true class of the samples. While Bayes rule takes more time to compute (0.99 seconds compared to 0.009 seconds for softmax), the probabilities using Bayes rule appear more appropriate since they encompass the full scale. The softmax probabilities are close to the middle of the distribution and rarely show high confidence in the predicted class. Both techniques show approximately the same accuracy (0.8 for Bayes and 0.77 for softmax) and Kappa values (0.58 for Bayes and 0.52 for softmax).}
       \label{f:plsProbs}       
    \end{center}
 \end{figure}  
@@ -535,9 +630,20 @@ Multivariate adaptive regression splines (MARS) models, like classification/regr
 
 Also, flexible discriminant analysis is a generalization of linear discriminant analysis that can use non--linear features as inputs. One way of doing this is the use MARS--type features to classify samples. The function \texttt{bagFDA} fits FDA models of a set of bootstrap samples and aggregates the predictions to reduce noise.  
 
+This function is deprecated in favor of the \texttt{bag} function.
+
 \subsection{Neural Networks with a Principal Component Step}
 
-Neural networks can be affected by severe amounts of multicollinearity in the predictors. the function \texttt{pcaNNet} is a wrapper around the \texttt{preProcess} and \texttt{nnet} functions that will run principal component analysis on the predictors before using them as inputs into a neural network. The function will keep enough components that will capture some pre-defined threshold on the cumulative proportion of variance (see the \texttt{thresh} argument). For new samples, the same transformation is applied to the new predictor values (based on the loadings from the training set). The function is available for both regression and classification. 
+Neural networks can be affected by severe amounts of multicollinearity
+in the predictors. The function \texttt{pcaNNet} is a wrapper around
+the \texttt{preProcess} and \texttt{nnet} functions that will run
+principal component analysis on the predictors before using them as
+inputs into a neural network. The function will keep enough components
+that will capture some pre-defined threshold on the cumulative
+proportion of variance (see the \texttt{thresh}
+argument). For new samples, the same transformation is applied to the new predictor values (based on the loadings from the training set). The function is available for both regression and classification. 
+
+This function is deprecated in favor of the \texttt{train} function using \texttt{method = "nnet"} and \texttt{preProc = "pca"}.
 
 \subsection{Class Distance Calculations}
 
@@ -597,15 +703,18 @@ between the new latent variable and the outcomes.
 \section{Session Information}
 
 \begin{itemize}\raggedright
-  \item R version 2.11.0 Patched (2010-05-11 r51982), \verb|x86_64-apple-darwin9.8.0|
+  \item R version 2.13.1 Patched (2011-08-02 r56617), \verb|x86_64-apple-darwin9.8.0|
   \item Locale: \verb|en_US.UTF-8/en_US.UTF-8/C/C/en_US.UTF-8/en_US.UTF-8|
   \item Base packages: base, datasets, graphics, grDevices, grid,
-    methods, splines, stats, tools, utils
-  \item Other packages: caret~4.45, class~7.3-2, e1071~1.5-24,
-    ellipse~0.3-5, gbm~1.6-3.1, ipred~0.8-8, kernlab~0.9-10,
-    klaR~0.6-3, lattice~0.18-5, MASS~7.3-5, mlbench~2.0-0, nnet~7.3-1,
-    pls~2.1-0, plyr~0.1.9, proxy~0.4-6, randomForest~4.5-34,
-    reshape~0.8.3, rpart~3.1-46, survival~2.35-8
+    methods, splines, stats, utils
+  \item Other packages: caret~4.99, class~7.3-3, cluster~1.14.0,
+    codetools~0.2-8, doMC~1.2.2, e1071~1.5-26, earth~3.2-1,
+    ellipse~0.3-5, foreach~1.3.2, gbm~1.6-3.1, ipred~0.8-11,
+    iterators~1.0.5, kernlab~0.9-12, klaR~0.6-5, lattice~0.19-31,
+    leaps~2.9, MASS~7.3-14, mlbench~2.1-0, multicore~0.1-5, nnet~7.3-1,
+    plotmo~1.2-6, plotrix~3.2-2, pls~2.1-0, plyr~1.5.2, proxy~0.4-6,
+    randomForest~4.6-2, reshape~0.8.4, rpart~3.1-50, survival~2.36-9
+  \item Loaded via a namespace (and not attached): tools~2.13.1
 \end{itemize}
 \section{References}
 
@@ -621,14 +730,27 @@ between the new latent variable and the outcomes.
 
    \item Clark, D. E., Pickett, S. D. (2000), ``Computational methods for the prediction of 'drug--likeness','' {\it Drug Discov Today}, 5, 49--58.
 
+     
+     \item Hill, LaPan, Li and Haney (2007). ``Impact of image
+       segmentation on high-content screening data quality for SK-BR-3
+       cells'', {\it BMC Bioinformatics}, Vol. 8, pg. 340
+       
 	\item Irizarry, RA, Bolstad BM, Collin, F, Cope, LM, Hobbs, B, and, Speed, TP (2003), ``Summaries of Affymetrix Genechip probe level data,''  {\it Nucleic Acids Research}, 31, e15
 
+        \item Kuiper, S. (2008). ``Introduction to Multiple Regression:
+          How Much Is Your Car Worth?'', {\it Journal of Statistics Education}, Vol. 16,  
+          
    \item Mente, S. R., Lombardo, F. (2005), ``A recursive-partitioning model for blood--brain barrier permeation,'' {\it Journal of Computer--Aided Molecular Design}, 19, 465--481.
 
 
    \item Serneels, S., De Nolf, E. and Van Espen, P. J. (2006), ``Spatial sign preprocessing: a simple way to impart moderate robustness to multivariate estimators,'' {\it Journal of Chemical Information and Modeling}, 46, 1402--1409.
 
    \item Sutherland, J.J., O'Brien L.A. and Weaver D.F. (2004), ``A comparison of methods for modeling quantitative structure-activity relationships,'' {\it Journal of Medicinal Chemistry}, 47, 5541--5554.
+     
+     \item Sutherland, J.J. and Weaver,
+       D.F. (2004). ``Three-dimensional quantitative
+       structure-activity and structure-selectivity relationships of
+       dihydrofolate reductase inhibitors'',{\it  Journal of Computer-Aided Molecular Design}, Vol. 18, pg. 309--331.
 
    \item Svetnik, V., Wang, T., Tong, C., Liaw, A., Sheridan, R. P. and Song, Q. (2005), ``Boosting: An ensemble learning tool for compound classification and QSAR modeling,'' {\it Journal of Chemical Information and Modeling}, 45, 786 --799.
 
