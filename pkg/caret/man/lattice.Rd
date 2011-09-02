@@ -39,9 +39,7 @@ Using \code{horizontal = FALSE} in \code{stripplot} works.
 \seealso{\code{\link{train}}, \code{\link{trainControl}}, \code{\link[lattice:histogram]{histogram}}, \code{\link[lattice:histogram]{densityplot}}, \code{\link[lattice:xyplot]{xyplot}}, \code{\link[lattice:xyplot]{stripplot}}}
 \examples{
 \dontshow{
-library(doMC)
-registerDoMC(2)
-}
+
 library(mlbench)
 data(BostonHousing)
 
@@ -64,9 +62,6 @@ xyplot(rpartFit,
 stripplot(rpartFit,
           horizontal = FALSE,
           jitter = TRUE)
-\dontshow{
-registerDoSEQ()
-}
 
 }
 
