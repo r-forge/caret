@@ -41,7 +41,9 @@ rfeIter(x, y,
   \item{\dots}{options to pass to the model fitting function (ignored in \code{predict.rfe})}
 }
 \details{
-This function implements backwards selection of predictors based on predictor importance ranking. The predictors are ranked and the less important ones are sequentially eliminated. The package vignette for feature selection has detailed descriptions of the algorithms.
+This function implements backwards selection of predictors based on predictor importance ranking. The predictors are ranked and the less important ones are sequentially eliminated prior to modeling. The goal is to find a subset of predictors that can be used to produce an accurate model. The package vignette for feature selection has detailed descriptions of the algorithms.
+
+\code{rfe} can be used with "explicit parallelism", where different resamples (e.g. cross-validation group) can be split up and run on multiple machines or processors. By default, \code{rfe} will use a single processor on the host machine. As of version 4.99 of this package, the framework used for parallel processing uses the \pkg{foreach} package. To run the resamples in parallel, the code for \code{rfe} does not change; prior to the call to \code{rfe}, a parallel backend is registered with \pkg{foreach} (see the examples below). 
 
 \code{rfeIter} is the basic algorithm while \code{rfe} wraps these operations inside of resampling. To avoid selection bias, it is better to use the function \code{rfe} than \code{rfeIter}.
 }

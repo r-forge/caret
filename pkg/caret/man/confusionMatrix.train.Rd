@@ -6,11 +6,14 @@
 \description{
 Using a \code{\link{train}}, \code{\link{rfe}}, \code{\link{sbf}} object, determine a confusion matrix based on the resampling procedure}
 \usage{
-\method{confusionMatrix}{train}(data, norm = "overall", dnn = c("Prediction", "Reference"), ...)
+\method{confusionMatrix}{train}(data, norm = "overall", 
+                dnn = c("Prediction", "Reference"), ...)
 
-\method{confusionMatrix}{rfe}(data, norm = "overall", dnn = c("Prediction", "Reference"), ...)
+\method{confusionMatrix}{rfe}(data, norm = "overall", 
+                dnn = c("Prediction", "Reference"), ...)
 
-\method{confusionMatrix}{sbf}(data, norm = "overall", dnn = c("Prediction", "Reference"), ...)
+\method{confusionMatrix}{sbf}(data, norm = "overall", 
+                dnn = c("Prediction", "Reference"), ...)
 
 }
 \arguments{

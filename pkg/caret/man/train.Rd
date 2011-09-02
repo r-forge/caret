@@ -169,7 +169,7 @@ In some cases, models may require control arguments. These can be passed via the
 
 The vignette entitled "caret Manual -- Model Building" has more details and examples related to this function.
 
-\code{train} can be used with "explicit parallelism", where different resamples (e.g. cross-validation group) can be split up and run on multiple machines or processors. By default, \code{train} will use a single processor on the host machine. To use more, the \code{computeFunction} and \code{computeArgs} arguments in \code{\link{trainControl}} can be used. \code{computeFunction} is used to pass a function that takes arguments named \code{X} and \code{FUN}. Internally, \code{train} will pass the data and modeling functions through using these arguments. By default, \code{train} uses \code{\link[base]{lapply}}. Alternatively, any function that emulates \code{\link[base]{lapply}} but distributes jobs across multiple machines/processors can be used. Arguments to such a function can be passed (if needed) via the \code{computeArgs} argument in \code{\link{trainControl}}. Examples are given below using the \pkg{Rmpi} package (via \pkg{snow}) and NetworkSpaces (via the \pkg{nws} package).
+\code{train} can be used with "explicit parallelism", where different resamples (e.g. cross-validation group) and models can be split up and run on multiple machines or processors. By default, \code{train} will use a single processor on the host machine. As of version 4.99 of this package, the framework used for parallel processing uses the \pkg{foreach} package. To run the resamples in parallel, the code for \code{train} does not change; prior to the call to \code{train}, a parallel backend is registered with \pkg{foreach} (see the examples below). 
 }
 
 
@@ -205,10 +205,6 @@ The vignette entitled "caret Manual -- Model Building" has more details and exam
 
 \seealso{\code{\link{trainControl}}, \code{\link{createGrid}}, \code{\link{createFolds}}}
 \examples{
-\dontshow{
-library(doMC)
-registerDoMC(2)
-}
 
 #######################################
 ## Classification Example
@@ -299,11 +295,6 @@ usingMC <-  train(medv ~ .,
 ## library(doSMP) and so on
 
 }
-
-\dontshow{
-registerDoSEQ()
-}
-
 
 }
 \keyword{models}
