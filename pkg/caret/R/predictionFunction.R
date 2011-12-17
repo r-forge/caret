@@ -1,4 +1,4 @@
-predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL)
+predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL, custom = NULL)
 {
   if(any(colnames(newdata) == ".outcome")) newdata$.outcome <- NULL
 
@@ -8,12 +8,13 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
   if(!is.null(preProc)) newdata <- predict(preProc, newdata)
   
   predictedValue <- switch(method,
-                           lda =, rda =, gpls =, slda =, qda =
+                           lda =, rda =, gpls =, slda =, qda =, rrlda = 
                            {
                              switch(method,
                                     lda =, qda = library(MASS),
                                     rda        = library(klaR),
                                     gpls       = library(gpls),
+                                    rrlda      = library(rrlda),
                                     slda       = library(ipred))
                              out <- as.character(predict(modelFit, newdata)$class)
                              out
@@ -35,21 +36,14 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              
                              if(!is.null(param))
                                {
-                                 tmp <- vector(mode = "list", length = nrow(param) + 1)
-                                 tmp[[1]] <- out
+                                 preds <- predict(modelFit, newdata, type = "response", n.trees = param$.n.trees)
                                  
-                                 for(j in seq(along = param$.n.trees))
+                                 if(modelFit$problemType == "Classification")
                                    {
-                                     if(modelFit$problemType == "Classification")
-                                       {
-                                         gbmProb <- predict(modelFit, newdata, type = "response", n.trees = param$.n.trees[j])
-                                         tmp[[j+1]] <- ifelse(gbmProb >= .5, modelFit$obsLevels[1], modelFit$obsLevels[2])
-                                         ## to correspond to gbmClasses definition above
-                                       } else {
-                                         tmp[[j+1]]  <- predict(modelFit, newdata, type = "response", n.trees = param$.n.trees[j])
-                                       }
+                                     preds <- ifelse(preds >= .5, modelFit$obsLevels[1], modelFit$obsLevels[2])
                                    }
-                                 out <- if(modelFit$problemType == "Classification") lapply(tmp, as.character) else tmp
+                                 out <- c(list(out), as.list(as.data.frame(preds)))
+                                 out <- if(modelFit$problemType == "Classification") lapply(out, as.character) else out
                                }
                              out
                            },
@@ -106,7 +100,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                            },
                            
-                           rpart =
+                           rpart2 =
                            {
                              library(rpart)
                              
@@ -141,6 +135,41 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                              
                            },
+
+                           rpart =
+                           {
+                             library(rpart)
+                             
+                             if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
+
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 out <- as.character(predict(modelFit, newdata, type="class"))
+                               } else {
+                                 out  <- predict(modelFit, newdata, type="vector")
+
+                               }
+
+                             if(!is.null(param))
+                               {
+                                 tmp <- vector(mode = "list", length = nrow(param) + 1)
+                                 tmp[[1]] <- out
+                                
+                                 for(j in seq(along = param$.cp))
+                                   {
+                                     prunedFit <- prune.rpart(modelFit, cp = param$.cp[j])
+                                     if(modelFit$problemType == "Classification")
+                                       {
+                                         tmp[[j+1]] <- as.character(predict(prunedFit, newdata, type="class"))
+                                       } else {
+                                         tmp[[j+1]]  <- predict(prunedFit, newdata, type="vector")
+                                       }
+                                   }
+                                 out <- if(modelFit$problemType == "Classification") lapply(tmp, as.character) else tmp
+                               }
+                             out
+                             
+                           },
                            
                            lvq =
                            {
@@ -149,7 +178,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                            },
 
-                           pcr=, pls =
+                           pcr=, pls =, simpls =, widekernelpls =
                            {
                              library(pls)
                              
@@ -158,7 +187,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                  if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
                                  out <- predict(modelFit, newdata, type="class")
                                  
-                               } else as.vector(predict(modelFit, newdata, ncomp = max(modelFit$ncomp)))
+                               } else as.vector(pls:::predict.mvr(modelFit, newdata, ncomp = max(modelFit$ncomp)))
 
                              if(!is.null(param))
                                {
@@ -567,22 +596,12 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
 
                              if(!is.null(param))
                                {
-                                 
                                  if(length(modelFit$obsLevels) < 2)
                                    {
                                      out <- as.list(as.data.frame(predict(modelFit, newdata, s = param$.lambda)))
                                    } else {
-                                     tmp <- predict(modelFit, newdata, s = param$.lambda, type = "class")
-                                     if(length(modelFit$obsLevels) == 2)
-                                       {
-                                         tmp <- apply(tmp, 1, function(x, y) y[x], y = modelFit$obsLevels)
-                                         out <- as.list(as.data.frame(t(tmp), stringsAsFactors = FALSE))
-                                       } else {
-                                         tmp <- predict(modelFit, newdata, s = param$.lambda, type = "class")
-                                         ## When predicting one sample, it downclasses the results to a vector..
-                                         if(nrow(newdata) == 1) tmp <- matrix(tmp, nrow = 1)
-                                         out <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
-                                       }
+                                     out <- predict(modelFit, newdata, s = param$.lambda, type = "class")
+                                     out <- as.list(as.data.frame(out, stringsAsFactors = FALSE))
                                    }
                                } else {
                                  
@@ -593,9 +612,9 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt)[,1]
                                    } else {
                                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt, type = "class")[,1]
-                                     if(length(modelFit$obsLevels) == 2) out <- modelFit$obsLevels[out]
                                    }
                                }
+                             out
                            },
                            relaxo =
                            {
@@ -1001,7 +1020,24 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                }
                              
                              out
-                           })
+                           },
+                           ORFridge =, ORFpls =, ORFsvm =, ORFlog =
+                           {
+                             library(obliqueRF)
+                             as.character(predict(modelFit, newdata))                             
+                           },
+                           evtree =
+                           {
+                             library(evtree)
+                             out <- predict(modelFit, newdata)
+                             if(is.factor(out)) out <- as.character(out)
+                             out
+                           },
+                           custom =
+                           {
+                             custom(object = modelFit, newdata = newdata)
+                           }
+                           )
   predictedValue
 }
 

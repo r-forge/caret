@@ -1,7 +1,7 @@
-probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL)
+probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL, custom = NULL)
 {
   
-  if(!any(modelLookup(method)$probModel))
+  if(method != "custom" && !any(modelLookup(method)$probModel))
     stop("no probability method for this model")
   
   
@@ -42,12 +42,13 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
 
   
   classProb <- switch(method,
-                      lda =, rda =, slda =, qda =
+                      lda =, rda =, slda =, qda =, rrlda = 
                       {
                         switch(method,
                                lda =, qda =  library(MASS),
                                rda        =  library(klaR),
                                slda       = library(ipred),
+                               rrlda      = library(rrlda),
                                sparseLDA  = library(sparseLDA))
                         
                         out <- predict(modelFit, newdata)$posterior
@@ -88,24 +89,20 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                         library(gbm)
                         out <- predict(modelFit, newdata, type = "response",
                                        n.trees = modelFit$tuneValue$.n.trees)
-                        out <- cbind(out, 1-out)
-                        dimnames(out)[[2]] <-  modelFit$obsLevels
+                        out <- data.frame(a = out, b = 1-out)
+                        names(out) <-  modelFit$obsLevels
                         if(!is.null(param))
                           {
-                            tmp <- vector(mode = "list", length = nrow(param) + 1)
-                            tmp[[1]] <- out
-                            
-                            for(j in seq(along = param$.n.trees))
-                              {
-                                if(modelFit$problemType == "Classification")
-                                  {
-                                    gbmProb <- predict(modelFit, newdata, type = "response", n.trees = param$.n.trees[j])
-                                    gbmProb <- cbind(gbmProb, 1-gbmProb)
-                                    dimnames(gbmProb)[[2]] <-  modelFit$obsLevels
-                                    tmp[[j+1]] <- as.data.frame(gbmProb)
-                                  }
-                              }
-                            out <- tmp
+                            preds <- predict(modelFit, newdata, type = "response", n.trees = param$.n.trees)
+                            preds <- as.list(as.data.frame(preds))
+                            preds <- lapply(preds,
+                                            function(x, lev = modelFit$obsLevels)
+                                            {
+                                              out <- data.frame(a = x, b = 1 - x)
+                                              colnames(out) <- lev
+                                              out
+                                            })
+                            out <- c(list(out), preds)                
                           }
                         out
                       },
@@ -148,7 +145,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                         out <- predict(modelFit, newdata, type = "prob")            
                         out
                       },
-                      rpart =
+                      rpart2 =
                       {
                         library(randomForest)
                         if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
@@ -168,7 +165,27 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                             out <- tmp
                           }                            
                         out
-                      },                      
+                      },
+                      rpart =
+                      {
+                        library(rpart)
+                        if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
+                        out <- predict(modelFit, newdata, type = "prob")
+
+                        if(!is.null(param))
+                          {
+                            tmp <- vector(mode = "list", length = nrow(param) + 1)
+                            tmp[[1]] <- out
+                            for(j in seq(along = param$.cp))
+                              {
+                                prunedFit <- prune.rpart(modelFit, cp = param$.cp[j])
+                                tmpProb <- predict(prunedFit, newdata, type = "prob")
+                                tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels])
+                              }
+                            out <- tmp
+                          }                              
+                        out
+                      },                          
                       gpls =
                       {
                         library(gpls)
@@ -219,7 +236,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                             for(j in seq(along = param$.nprune))
                               {
                                 prunedFit <- update(modelFit, nprune = param$.nprune[j])
-                                tmp2 <- predict(modelFit, newdata, type= "response")
+                                tmp2 <- predict(prunedFit, newdata, type= "response")
                                 tmp2 <- cbind(1-tmp2, tmp2)
                                 colnames(tmp2) <-  modelFit$obsLevels
                                 tmp[[j+1]] <- tmp2
@@ -529,13 +546,29 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                             out <- predict(modelFit, newData = newdata, type = "prob")
                           }
                         out
-                      }
+                      },
+                      ORFridge =, ORFpls =, ORFsvm =, ORFlog =
+                      {
+                        library(obliqueRF)
+                        out <- predict(modelFit, newdata, type = "prob")            
+                        out
+                      },
+                      evtree =
+                      {
+                        library(evtree)
+                        out <- predict(modelFit, newdata, type = "prob")            
+                        out
+                      },
+                      custom =
+                      {
+                        custom(object = modelFit, newdata = newdata)
+                      }                      
                       )
 
   if(!is.data.frame(classProb) & is.null(param))
     {
       classProb <- as.data.frame(classProb)
-      classProb <- classProb[, obsLevels]
+      if(!is.null(obsLevels)) classprob <- classProb[, obsLevels]
     }
   classProb
 }
