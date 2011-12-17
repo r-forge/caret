@@ -34,7 +34,9 @@ modelLookup <- function(model = NULL)
             ## earthTest
             'earthTest', 'earthTest', 
             ## enet
-            'enet', 'enet', 
+            'enet', 'enet',
+            ## evtree
+            'evtree',
             ## fda
             'fda', 'fda', 
             ## foba
@@ -138,7 +140,15 @@ modelLookup <- function(model = NULL)
             ## nnet
             'nnet', 'nnet', 
             ## nodeHarvest
-            'nodeHarvest', 'nodeHarvest', 
+            'nodeHarvest', 'nodeHarvest',
+            ## obliqueRF
+            'ORFridge',
+            ## obliqueRF
+            'ORFpls',
+            ## obliqueRF
+            'ORFsvm',
+            ## obliqueRF
+            'ORFlog',            
             ## obliqueTree
             'obliqueTree', 'obliqueTree', 
             ## OneR
@@ -202,7 +212,11 @@ modelLookup <- function(model = NULL)
             ## rocc
             'rocc', 
             ## rpart
-            'rpart', 
+            'rpart2',
+            ## rpart2
+            'rpart',
+            ## rrlda
+            'rrlda', 'rrlda',
             ## rvmLinear
             'rvmLinear', 
             ## rvmPoly
@@ -216,7 +230,9 @@ modelLookup <- function(model = NULL)
             ## sddaLDA
             'sddaLDA', 
             ## sddaQDA
-            'sddaQDA', 
+            'sddaQDA',
+            ## simpls
+            'simpls',            
             ## slda
             'slda', 
             ## smda
@@ -246,7 +262,9 @@ modelLookup <- function(model = NULL)
             ## treebag
             'treebag', 
             ## vbmpRadial
-            'vbmpRadial')
+            'vbmpRadial',
+            ## widekernelpls
+            'widekernelpls')
 
   pNames <- c(## ada
               'iter', 'maxdepth', 'nu',
@@ -281,7 +299,9 @@ modelLookup <- function(model = NULL)
               ## earthTest
               'nprune', 'degree', 
               ## enet
-              'fraction', 'lambda', 
+              'fraction', 'lambda',
+              ## evtree
+              'alpha',
               ## fda
               'nprune', 'degree', 
               ## foba
@@ -385,7 +405,12 @@ modelLookup <- function(model = NULL)
               ## nnet
               'size', 'decay', 
               ## nodeHarvest
-              'maxinter', 'mode', 
+              'maxinter', 'mode',
+              ## obliqueRF
+              'mtry',
+              'mtry',
+              'mtry',
+              'mtry',
               ## obliqueTree
               'oblique.splits', 'variable.selection', 
               ## OneR
@@ -448,8 +473,12 @@ modelLookup <- function(model = NULL)
               'parameter', 
               ## rocc
               'xgenes', 
+              ## rpart2
+              'maxdepth',
               ## rpart
-              'maxdepth', 
+              'cp',
+              ## rrlda
+              'lambda', 'alpha',
               ## rvmLinear
               'parameter', 
               ## rvmPoly
@@ -463,7 +492,9 @@ modelLookup <- function(model = NULL)
               ## sddaLDA
               'parameter', 
               ## sddaQDA
-              'parameter', 
+              'parameter',
+              ## simpls
+              'ncomp',              
               ## slda
               'parameter', 
               ## smda
@@ -493,7 +524,9 @@ modelLookup <- function(model = NULL)
               ## treebag
               'parameter', 
               ## vbmpRadial
-              'estimateTheta')
+              'estimateTheta',
+              ## widekernelpls
+              'ncomp')
 
 
   pLabel <- c(## ada
@@ -526,7 +559,7 @@ modelLookup <- function(model = NULL)
               ## cforest
               '#Randomly Selected Predictors',
               ## ctree
-              'P-Value Threshold',
+              '1 - P-Value Threshold',
               ## ctree2
               'Max Tree Depth',
               ## Cubist
@@ -540,6 +573,8 @@ modelLookup <- function(model = NULL)
               ## enet
               'Fraction of Full Solution',
               'Weight Decay',
+              ## evtree
+              "Complexity Parameter",
               ## fda
               '#Terms',
               'Product Degree',
@@ -665,6 +700,11 @@ modelLookup <- function(model = NULL)
               ## nodeHarvest
               'Maximum Interaction Depth',
               'Prediction Mode',
+              ## obliqueRF
+              '# Randomly Selected Predictors',
+              '# Randomly Selected Predictors',
+              '# Randomly Selected Predictors',
+              '# Randomly Selected Predictors',            
               ## obliqueTree
               'Oblique Splits',
               'Variable Selection Method',
@@ -735,8 +775,13 @@ modelLookup <- function(model = NULL)
               'none',
               ## rocc
               '#Variables Retained',
-              ## rpart
+              ## rpart2
               'Max Tree Depth',
+              ## rpart
+              'Complexity Parameter',
+              ## rrlda
+              'Penalty Parameter',
+              'Robustness Parameter',
               ## rvmLinear
               'none',
               ## rvmPoly
@@ -753,6 +798,8 @@ modelLookup <- function(model = NULL)
               'none',
               ## sddaQDA
               'none',
+              ## simpls
+              '#Components',              
               ## slda
               'none',
               ## smda
@@ -796,7 +843,10 @@ modelLookup <- function(model = NULL)
               ## treebag
               'none',
               ## vbmpRadial
-              'Theta Estimated')
+              'Theta Estimated',
+              ## widekernelpls
+              '#Components'
+              )
 
   isSeq <- c(## ada
              FALSE, FALSE, FALSE,
@@ -831,7 +881,9 @@ modelLookup <- function(model = NULL)
              ## earthTest
              FALSE, FALSE, 
              ## enet
-             TRUE, FALSE, 
+             TRUE, FALSE,
+             ## evtree
+             FALSE,
              ## fda
              FALSE, FALSE, 
              ## foba
@@ -935,7 +987,12 @@ modelLookup <- function(model = NULL)
              ## nnet
              FALSE, FALSE, 
              ## nodeHarvest
-             FALSE, FALSE, 
+             FALSE, FALSE,
+             ## obliqueRF
+             FALSE,
+             FALSE,
+             FALSE,
+             FALSE,
              ## obliqueTree
              FALSE, FALSE, 
              ## OneR
@@ -998,8 +1055,12 @@ modelLookup <- function(model = NULL)
              FALSE, 
              ## rocc
              FALSE, 
+             ## rpart2
+             TRUE,
              ## rpart
-             TRUE, 
+             TRUE,
+             ## rrlda
+             FALSE, FALSE,
              ## rvmLinear
              FALSE, 
              ## rvmPoly
@@ -1013,7 +1074,9 @@ modelLookup <- function(model = NULL)
              ## sddaLDA
              FALSE, 
              ## sddaQDA
-             FALSE, 
+             FALSE,
+             ## simpls
+             TRUE,             
              ## slda
              FALSE, 
              ## smda
@@ -1043,7 +1106,10 @@ modelLookup <- function(model = NULL)
              ## treebag
              FALSE, 
              ## vbmpRadial
-             FALSE)
+             FALSE,
+             ## widekernelpls
+             TRUE
+             )
   isRegMod <- c(## ada
                 FALSE, FALSE, FALSE,
                 ## avnnet
@@ -1077,7 +1143,9 @@ modelLookup <- function(model = NULL)
                 ## earthTest
                 TRUE, TRUE, 
                 ## enet
-                TRUE, TRUE, 
+                TRUE, TRUE,
+                ## evtree
+                TRUE,
                 ## fda
                 FALSE, FALSE, 
                 ## foba
@@ -1181,7 +1249,12 @@ modelLookup <- function(model = NULL)
                 ## nnet
                 TRUE, TRUE, 
                 ## nodeHarvest
-                TRUE, TRUE, 
+                TRUE, TRUE,
+                ## obliqueRF
+                FALSE,
+                FALSE,
+                FALSE,
+                FALSE,
                 ## obliqueTree
                 FALSE, FALSE, 
                 ## OneR
@@ -1244,8 +1317,12 @@ modelLookup <- function(model = NULL)
                 TRUE, 
                 ## rocc
                 FALSE, 
+                ## rpart2
+                TRUE,
                 ## rpart
-                TRUE, 
+                TRUE,
+                ## rrlda
+                FALSE, FALSE,
                 ## rvmLinear
                 TRUE, 
                 ## rvmPoly
@@ -1259,7 +1336,9 @@ modelLookup <- function(model = NULL)
                 ## sddaLDA
                 FALSE, 
                 ## sddaQDA
-                FALSE, 
+                FALSE,
+                ## simpls
+                TRUE,                
                 ## slda
                 FALSE, 
                 ## smda
@@ -1289,7 +1368,10 @@ modelLookup <- function(model = NULL)
                 ## treebag
                 TRUE, 
                 ## vbmpRadial
-                FALSE)
+                FALSE,
+                ## widekernelpls
+                TRUE
+                )
 
   isClassMod <- c(## ada
                   TRUE, TRUE, TRUE,
@@ -1324,7 +1406,9 @@ modelLookup <- function(model = NULL)
                   ## earthTest
                   FALSE, FALSE, 
                   ## enet
-                  FALSE, FALSE, 
+                  FALSE, FALSE,
+                  ## evtree
+                  TRUE,
                   ## fda
                   TRUE, TRUE, 
                   ## foba
@@ -1428,7 +1512,12 @@ modelLookup <- function(model = NULL)
                   ## nnet
                   TRUE, TRUE, 
                   ## nodeHarvest
-                  TRUE, TRUE, 
+                  TRUE, TRUE,
+                  ## obliqueRF
+                  TRUE,
+                  TRUE,
+                  TRUE,
+                  TRUE,
                   ## obliqueTree
                   TRUE, TRUE, 
                   ## OneR
@@ -1491,8 +1580,12 @@ modelLookup <- function(model = NULL)
                   FALSE, 
                   ## rocc
                   TRUE, 
+                  ## rpart2
+                  TRUE,
                   ## rpart
-                  TRUE, 
+                  TRUE,
+                  ## rrlda
+                  TRUE, TRUE,
                   ## rvmLinear
                   FALSE, 
                   ## rvmPoly
@@ -1506,9 +1599,11 @@ modelLookup <- function(model = NULL)
                   ## sddaLDA
                   TRUE, 
                   ## sddaQDA
-                  TRUE, 
+                  TRUE,
+                  ## simpls
+                  FALSE,                   
                   ## slda
-                  TRUE, 
+                  TRUE,                 
                   ## smda
                   TRUE, TRUE, TRUE, 
                   ## sparseLDA
@@ -1536,7 +1631,10 @@ modelLookup <- function(model = NULL)
                   ## treebag
                   TRUE, 
                   ## vbmpRadial
-                  TRUE)
+                  TRUE,
+                  ## widekernelpls
+                  FALSE
+                  )
 
   hasProbModel <- c(## ada
                     TRUE, TRUE, TRUE,
@@ -1571,7 +1669,9 @@ modelLookup <- function(model = NULL)
                     ## earthTest
                     FALSE, FALSE, 
                     ## enet
-                    FALSE, FALSE, 
+                    FALSE, FALSE,
+                    ## evtree
+                    TRUE,
                     ## fda
                     TRUE, TRUE, 
                     ## foba
@@ -1675,7 +1775,12 @@ modelLookup <- function(model = NULL)
                     ## nnet
                     TRUE, TRUE, 
                     ## nodeHarvest
-                    TRUE, TRUE, 
+                    TRUE, TRUE,
+                    ## obliqueRF
+                    TRUE,
+                    TRUE,
+                    TRUE,
+                    TRUE,
                     ## obliqueTree
                     TRUE, TRUE, 
                     ## OneR
@@ -1738,8 +1843,12 @@ modelLookup <- function(model = NULL)
                     FALSE, 
                     ## rocc
                     FALSE, 
+                    ## rpart2
+                    TRUE,
                     ## rpart
-                    TRUE, 
+                    TRUE,
+                    ## rrlda does not generate probabilities, only discrim values
+                    FALSE, FALSE,
                     ## rvmLinear
                     FALSE, 
                     ## rvmPoly
@@ -1753,7 +1862,9 @@ modelLookup <- function(model = NULL)
                     ## sddaLDA
                     TRUE, 
                     ## sddaQDA
-                    TRUE, 
+                    TRUE,
+                    ## simpls
+                    FALSE,
                     ## slda
                     TRUE, 
                     ## smda
@@ -1783,7 +1894,10 @@ modelLookup <- function(model = NULL)
                     ## treebag
                     TRUE, 
                     ## vbmpRadial
-                    TRUE)
+                    TRUE,
+                    ## widekernelpls
+                    FALSE
+                    )
   
   
   paramKey <- data.frame(model = mods,
