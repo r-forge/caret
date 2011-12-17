@@ -25,7 +25,8 @@ train.default <- function(x, y,
   ## for whether the model is used for regression, classification, the parameter name
   ## and label and whether the model can be fit sequentially (i.e. multiple models can
   ## be derived from the same R object).
-  modelInfo <- modelLookup(method)
+
+  modelInfo <- if(method != "custom") modelLookup(method) else NULL
 
   if(method %in% c("logreg", "logforest", "logicBag"))
     {
@@ -36,13 +37,17 @@ train.default <- function(x, y,
                                       "either 0 or 1"))
     }
 
+  ## Some models that use RWeka start multiple threads and this conflicts with multicore:
+  if(any(search() == "package:doMC") && getDoParRegistered() && method %in% c("J48", "M5Rules", "M5", "LMT", "JRip", "OneR", "PART"))
+    warning("Models using Weka will not work with parallel processing with multicore/doMC")
+  flush.console()
+  
   if(!is.null(preProcess) && !(all(preProcess %in% c("center", "scale", "pca", "ica", "BoxCox", "spatialSign", "knnImpute", "bagImpute", "range")))) 
     stop('pre-processing methods are limited to center, scale, range, pca, ica, knnImpute, bagImpute and spatialSign')
-
   
   if(modelType == "Classification")
     {     
-      if(!any(modelInfo$forClass)) stop("wrong model type for classification")
+      if(method != "custom" && !any(modelInfo$forClass)) stop("wrong model type for classification")
       ## We should get and save the class labels to ensure that predictions are coerced      
       ## to factors that have the same levels as the original data. This is especially 
       ## important with multiclass systems where one or more classes have low sample sizes
@@ -66,17 +71,29 @@ train.default <- function(x, y,
         stop("This model is only implemented for 3+ class problems")      
       if(metric %in% c("RMSE", "Rsquared")) 
         stop(paste("Metric", metric, "not applicable for classification models"))
-      if(trControl$classProbs & any(!modelInfo$probModel))
+      if(method == "custom" && trControl$classProbs)
         {
-          warning("Class probabilities were requested for a model that does not implement them")
-          trControl$classProbs <- FALSE
+          if(is.null(trControl$custom$probability))
+            {
+              warning("Class probabilities were requested for a model that does not implement them")
+              trControl$classProbs <- FALSE
+            }
         }
+      if(method != "custom" && trControl$classProbs)
+        {
+          if(any(!modelInfo$probModel))
+             {
+              warning("Class probabilities were requested for a model that does not implement them")
+              trControl$classProbs <- FALSE
+             }
+        }
+      
       if(method %in% c("svmLinear", "svmRadial", "svmPoly") & any(names(list(...)) == "class.weights"))
          warning("since class weights are requested, SVM class probabilities cannot be generated")
          
          
     } else {
-      if(!any(modelInfo$forReg)) stop("wrong model type for regression")
+      if(method != "custom" && !any(modelInfo$forReg)) stop("wrong model type for regression")
       if(metric %in% c("Accuracy", "Kappa")) 
         stop(paste("Metric", metric, "not applicable for regression models"))         
       classLevels <- NA
@@ -101,6 +118,7 @@ train.default <- function(x, y,
                                                          test = createDataPartition(y, 1, trControl$p),
                                                          lgocv = createDataPartition(y, trControl$number, trControl$p))
 
+  if(trControl$method == "oob" & method == "custom") stop("out-of-bag resampling is not allowed for custom models")
 
   if(trControl$method != "oob" & is.null(trControl$index)) names(trControl$index) <- prettySeq(trControl$index)
   
@@ -122,25 +140,41 @@ train.default <- function(x, y,
 
   ## If no default training grid is specified, get one. We have to pass in the formula
   ## and data for some models (rpart, pam, etc - see manual for more details)
-  if(is.null(tuneGrid))
+  if(method != "custom")
     {
-      tuneGrid <- createGrid(method, tuneLength, trainData)
-    } else {
-      if(is.function(tuneGrid))
+      if(is.null(tuneGrid))
         {
-          if(length(formals(tuneGrid)) == 2
-             && names(formals(tuneGrid)) == c("len", "data"))
-            {
-              tuneGrid <- tuneGrid(tuneLength, trainData)
-            } else stop("If a function, tuneGrid should have arguments len and data")
+          tuneGrid <- createGrid(method, tuneLength, trainData)
         } else {
-          ## Check tuneing parameter names
-          tuneNames <- modelLookup(method)$parameter
-          tuneNames <- paste(".", sort(tuneNames), sep = "")
-          goodNames <- all.equal(tuneNames, sort(names(tuneGrid)))
-          if(!is.logical(goodNames) || !goodNames)
-            stop(paste("The tuning parameter grid must have columns",
-                       paste(tuneNames, collapse = ", ")))
+          if(is.function(tuneGrid))
+            {
+              if(length(formals(tuneGrid)) == 2
+                 && names(formals(tuneGrid)) == c("len", "data"))
+                {
+                  tuneGrid <- tuneGrid(tuneLength, trainData)
+                } else stop("If a function, tuneGrid should have arguments len and data")
+            } else {
+              ## Check tuneing parameter names
+              tuneNames <- modelLookup(method)$parameter
+              tuneNames <- paste(".", sort(tuneNames), sep = "")
+              goodNames <- all.equal(tuneNames, sort(names(tuneGrid)))
+              if(!is.logical(goodNames) || !goodNames)
+                stop(paste("The tuning parameter grid must have columns",
+                           paste(tuneNames, collapse = ", ")))
+            }
+        }
+    } else {
+      if(is.data.frame(trControl$custom$parameters))
+        {
+          if(!all(grepl("^\\.", names(trControl$custom$parameters)))) stop("all columns of tuning parameters must start with a '.'")
+          tuneGrid <- trControl$custom$parameters        
+
+        } else {
+          if(is.function(trControl$custom$parameters))
+            {
+              tuneGrid <- trControl$custom$parameters(trainData, tuneLength) 
+              if(!all(grepl("^\\.", names(tuneGrid)))) stop("all columns of tuning parameters must start with a '.'")
+            } else stop("the parameters element should be either a function or a data frame")
         }
     }
 
@@ -234,7 +268,11 @@ train.default <- function(x, y,
       if(trControl$classProbs)
         {
           for(i in seq(along = classLevels)) testOutput[, classLevels[i]] <- runif(nrow(testOutput))
+        } else {
+          if(metric == "ROC" & !trControl$classProbs)
+            stop("train()'s use of ROC codes requires class probabilities. See the classProbs option of trainControl()")
         }
+      
       
       perfNames <- names(trControl$summaryFunction(testOutput,
                                                    classLevels,
@@ -265,7 +303,7 @@ train.default <- function(x, y,
         {
           tmp <- looTrainWorkflow(dat = trainData, info = trainInfo, method = method,
                                   ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
-          performance <- tmp
+          performance <- tmp$performance
         } else {
           tmp <- nominalTrainWorkflow(dat = trainData, info = trainInfo, method = method,
                                       ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
@@ -297,13 +335,24 @@ train.default <- function(x, y,
   perfCols <- perfCols[!(perfCols %in% paramNames)]
 
   ## Sort the tuning parameters from least complex to most complex
-  performance <- byComplexity(performance, method)
-
+  if(is.null(trControl$custom))
+    {
+      performance <- byComplexity(performance, method)
+    } else {
+      performance <- trControl$custom$sort(performance) 
+    }
+  
   if(trControl$verboseIter)
     {
-      mod <- modelLookup(method)
-      if(!all(mod$label == "none"))
+      if(method != "custom")
         {
+          mod <- modelLookup(method)
+          if(!all(mod$label == "none"))
+            {
+              cat("Selecting tuning parameters\n")
+              flush.console()
+            }
+        } else {
           cat("Selecting tuning parameters\n")
           flush.console()
         }
@@ -384,16 +433,18 @@ train.default <- function(x, y,
 
   if(!is.null(preProcess))
     {
-      ppOpt <- list(method = preProcess)
+      ppOpt <- list(options = preProcess)
       if(length(trControl$preProcOptions) > 0) ppOpt <- c(ppOpt,trControl$preProcOptions)
     } else ppOpt <- NULL
-  
+
   finalTime <- system.time(
                            finalModel <- createModel(data = trainData, 
                                                      method = method, 
                                                      tuneValue = bestTune, 
                                                      obsLevels = classLevels,
                                                      pp = ppOpt,
+                                                     last = TRUE,
+                                                     custom = trControl$custom$model,
                                                      ...))
 
   ## get pp info
@@ -426,6 +477,7 @@ train.default <- function(x, y,
                         method = method,
                         modelType = modelType,
                         results = performance,
+                        pred = tmp$predictions,
                         bestTune = bestTune,
                         call = funcCall, 
                         dots = list(...),
