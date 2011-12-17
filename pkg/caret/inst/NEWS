@@ -1,3 +1,182 @@
+Version: 5.09-012
+Date: 2011-12-10
+
+BUGS:
+
+ - Fixed a bug which occurred when plsda() models were used with class
+   probabilities
+
+CHANGES:
+
+ - As of 8/15/11, the glmnet() function was updated to return a
+   character vector. Because of this, train() required modification and
+   a version requirement was put in the package description file.
+
+-------------------
+Version: 5.09-006
+Date: 2011-12-6
+
+CHANGES:
+
+ - Shea X made a suggestion and provided code to improve the speed of
+   prediction when sequential parameters are used for gbm() models.
+
+ - Andrew Ziem suggested an error check with metric = "ROC" and
+   classProbs = FALSE.
+
+BUGS:
+
+ - Andrew Ziem found a bug in how train() obtained earth() class
+   probabilities
+
+
+-------------------
+Version: 5.08-011
+Date: 2011-11-24
+
+BUGS:
+
+ - Andrew Ziem found another small bug with parallel processing and
+   train() (functions in the caret namespace cannot be found).
+
+ - Ben Hoffman found a bug in pickSizeTolerance() that was fixed.
+
+ - Jiaye Yu found (and fixed) a bug in getting predictions back from
+   rfe()
+
+-------------------
+Version: 5.07-024
+Date: 2011-11-13
+
+BUGS: 
+
+ - Using 'saveDetails' in sbfControl() or rfeControl() will save the
+   predictions on the hold-out sets (Jiaye Yu wins the prize for
+   finding that one).
+
+ADDITIONS:
+
+ - trainControl() now has a logical to save the hold-out predictions.
+
+-------------------
+Version: 5.07-005
+Date: 2011-11-07
+
+ADDITIONS:
+
+ - type = "prob" was added for avNNet prediction.
+
+ - A warning was added when a model from RWeka is used with train() and
+   (it appears that) multicore is being used for parallel
+   processing. The session will crash, so don't do that.
+
+BUGS:
+
+ - A bug was fixed where the extrapolation limits were being applied
+   in predict.train but not in extractPrediction. Thanks to Antoine
+   Stevens for finding this.
+
+ - Modifications were made to some of the workflow code to expose
+   internal functions. When parallel processing was used with doMPI or
+   doSMP, foreach did not find some caret internals (but doMC did).
+
+
+-------------------
+Version: 5.07-001
+Date: 2011-10-21
+
+CHANGES:
+
+ - changed calls to predict.mvr since the pls package now has a
+   namespace.
+
+-------------------
+Version: 5.06-002
+Date: 2011-10-13
+
+CHANGES:
+
+ - a beta version of custom models with train() is included. The
+   "caretTrain" vignette was updated with a new section that defines
+   how to make custom models.
+
+-------------------
+Version: 5.05-004
+Date: 2011-10-11
+
+CHANGES:
+
+ - laying some of the groundwork for custom models
+ - updates to get away from deprecated (mean and sd on data frames)
+
+BUGS:
+
+ - The pre-processing in train() bug of the last version was not
+   entirely squashed. Now it is.
+
+-------------------
+Version: 5.04-007
+Date: 2011-09-26
+
+CHANGES:
+
+ - panel.lift() was moved out of the examples in ?lift and into the
+   package along with another function, panel.lift2.
+ - lift() now uses panel.lift2 by default
+
+ADDITIONS:
+
+ - Added robust regularized linear discriminant analysis from the
+   rrlda package
+ - Added evtree:::evtree
+
+BUGS:
+
+ - A weird bug was fixed that occurred when some models were run with
+   sequential parameters that were fixed to single values (thanks to
+   Antoine Stevens for finding this issue).
+ - Another bug was fixed where pre-processing with train() could fail
+
+-------------------
+Version: 5.03-003
+Date: 2011-09-23
+
+BUGS:
+
+ - pre-processing in train() did not occur for the final model fit =[
+
+-------------------
+Version: 5.02-011
+Date: 2011-09-19
+
+ADDITIONS:
+
+ - A function, lift(), was added to create lattice objects for lift plots.
+ - Several models were added from the obliqueRF package: 'ORFridge' (linear 
+   combinations created using L2 regularization), 'ORFpls' (using partial 
+   least squares),  'ORFsvm' (linear support vector machines), and  'ORFlog'
+   (using logistic regression). As of now, the package only support 
+   classification.
+
+CHANGES:
+
+ - Added regression models 'simpls' and 'widekernelpls'. These are new models
+   since both train() and plsr() have an argument called 'method', so the
+   computational algorithm could not be passed through using the three dots.
+ - Model 'rpart' was added that uses cp as the tuning parameter. To make the 
+   model codes more consistent, 'rpart' and 'ctree' correspond to the nominal
+   tuning parameters (cp and mincriterion, respectively) and 'rpart2' and 
+   'ctree2' are the alternate versions using 'maxdepth'. 
+ - The text for 'ctree's tuning parameter was changed to '1 - P-Value Threshold'
+
+BUGS:
+
+ - The argument 'controls' was not being properly passed through in models
+   'ctree' and 'ctree2'.
+
+-------------------
+Version: 5.01-001
+Date: 2011-08-02
 
 BUGS:
 
