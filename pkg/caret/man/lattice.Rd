@@ -64,6 +64,7 @@ stripplot(rpartFit,
           jitter = TRUE)
 
 }
+}
 
 \keyword{hplot} 
 
