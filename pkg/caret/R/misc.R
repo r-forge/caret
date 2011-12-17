@@ -76,7 +76,18 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
   ## this function extracts information about the requested model and figures 
   ## out the details about how the tuning process should be executed
 
-  modelInfo <- modelLookup(model)
+  if(model != "custom")
+    {
+      modelInfo <- modelLookup(model)
+    } else {
+      modelInfo <- data.frame(
+        model = "custom",
+        parameter = gsub("^\\.", "", names(grid)),
+        label = gsub("^\\.", "", names(grid)),
+        seq = FALSE, forReg = TRUE, forClass = TRUE,
+        probModel = TRUE)
+      ## TODO pass control in for probModel
+    }
   
   ## a little hack hre to change when this goes into production:
   
@@ -139,7 +150,7 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
              },             
-             pcr =, pls = 
+             pcr =, simpls =, widekernelpls =, pls = 
              {
                grid <- grid[order(grid$.ncomp, decreasing = TRUE),, drop = FALSE]
                loop <- grid[1,,drop = FALSE]
@@ -240,12 +251,18 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                    seqParam[[i]] <- data.frame(.mstop = subTrees[subTrees != loop$.mstop[i]])
                  }         
              },              
-             rpart = 
+             rpart2 = 
              {
                grid <- grid[order(grid$.maxdepth, decreasing = TRUE),, drop = FALSE]
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
              },
+             rpart = 
+             {
+               grid <- grid[order(grid$.cp, decreasing = FALSE),, drop = FALSE]
+               loop <- grid[1,,drop = FALSE]
+               seqParam <- list(grid[-1,,drop = FALSE])
+             },             
              glmboost =, gamboost =
              {
                grid <- grid[order(grid$.mstop, decreasing = TRUE),, drop = FALSE]
