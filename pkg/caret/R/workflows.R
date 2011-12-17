@@ -1,9 +1,8 @@
-## test with
-## class probs
-## seq factors
-## mpi
-## glmnet failed
-
+### In this file, there are a lot of functions form caret that are
+### references using the explicit namespace operator (:::). For some
+### reason, with some parallel processing technologies and foreach,
+### functions inside of caret cannot be found despite using the
+### ".packages" argument and calling the caret package via library().
 
 progress <- function(x)
   {
@@ -15,7 +14,7 @@ progress <- function(x)
 MeanSD <- function(x, exclude = NULL)
   {
     if(!is.null(exclude)) x <- x[, !(colnames(x) %in% exclude), drop = FALSE]
-    out <- c(colMeans(x), sd(x))
+    out <- c(colMeans(x), sapply(x, sd))
     names(out)[-(1:ncol(x))] <- paste(names(out)[-(1:ncol(x))], "SD", sep = "")
     out
   }
@@ -37,9 +36,11 @@ expandParameters <- function(fixed, seq)
 
 nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
   {
+    library(caret)
+    loadNamespace("caret")
     ppp <- list(options = ppOpts)
     ppp <- c(ppp, ctrl$preProcOptions)
-    
+   
     printed <- format(info$loop)
     colnames(printed) <- gsub("^\\.", "", colnames(printed))
 
@@ -49,12 +50,15 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
 
     resampleIndex <- ctrl$index
     if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
+
+    if(ctrl$savePredictions) allPred <- NULL
+
     
-    result <- foreach(iter = seq(along = resampleIndex), .combine = "rbind", .verbose = FALSE, .errorhandling = "stop") %:%
-      foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .errorhandling = "stop") %dopar%
+    result <- foreach(iter = seq(along = resampleIndex), .combine = "rbind", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %:%
+      foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
-      if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE])
+      if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE])
 
       if(names(resampleIndex)[iter] != "AllData")
         {
@@ -67,28 +71,31 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
       
       if(testing) cat("pre-model\n")
 
-      mod <- createModel(data = dat[modelIndex,,drop = FALSE ],
-                         method = method,
-                         tuneValue = info$loop[parm,,drop = FALSE],
-                         obsLevels = lev,
-                         p = ppp,
-                         ...)
+      mod <- caret:::createModel(data = dat[modelIndex,,drop = FALSE ],
+                                 method = method,
+                                 tuneValue = info$loop[parm,,drop = FALSE],
+                                 obsLevels = lev,
+                                 pp = ppp,
+                                 custom = ctrl$custom$model,
+                                 ...)
 
-      predicted <- predictionFunction(method = method,
-                                      modelFit = mod$fit,
-                                      newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
-                                      preProc = mod$preProc,
-                                      param = info$seqParam[[parm]])
+      predicted <- caret:::predictionFunction(method = method,
+                                              modelFit = mod$fit,
+                                              newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
+                                              preProc = mod$preProc,
+                                              param = info$seqParam[[parm]],
+                                              custom = ctrl$custom$prediction)
 
       
       if(testing) print(head(predicted))
       if(ctrl$classProbs)
         {
-          probValues <- probFunction(method = method,
-                                     modelFit = mod$fit,
-                                     newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
-                                     preProc = mod$preProc,
-                                     param = info$seqParam[[parm]])
+          probValues <- caret:::probFunction(method = method,
+                                             modelFit = mod$fit,
+                                             newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
+                                             preProc = mod$preProc,
+                                             param = info$seqParam[[parm]],
+                                             custom = ctrl$custom$probability)
           if(testing) print(head(probValues))
         }
 
@@ -96,6 +103,15 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
 
       if(!is.null(info$seq))
         {
+          ## merge the fixed and seq parameter values together
+          allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$seqParam[[parm]])
+          
+          ## For ctree, we had to repeat the first value
+          if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
+
+          ## For glmnet, we fit all the lambdas but x$fixed has an NA
+          if(method == "glmnet") allParam <- allParam[complete.cases(allParam),, drop = FALSE]
+          
           ## collate the predicitons across all the sub-models
           predicted <- lapply(predicted,
                               function(x, y, lv)
@@ -112,7 +128,17 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
             {
               for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
             }
-                    
+
+          if(ctrl$savePredictions)
+            {
+              tmpPred <- predicted
+              for(modIndex in seq(along = tmpPred)) tmpPred[[modIndex]] <- cbind(tmpPred[[modIndex]], allParam[modIndex,,drop = FALSE])
+              tmpPred <- do.call("rbind", tmpPred)
+              tmpPred$Resample <- names(resampleIndex)[iter]
+              allPred <- rbind(allPred, tmpPred)
+              rm(tmpPred)
+            }
+          
           ## get the performance for this resample for each sub-model
           thisResample <- lapply(predicted,
                                  ctrl$summaryFunction,
@@ -123,19 +149,10 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
           if(length(lev) > 1)
             {
               cells <- lapply(predicted,
-                              function(x) flatTable(x$pred, x$obs))
+                              function(x) caret:::flatTable(x$pred, x$obs))
               for(ind in seq(along = cells)) thisResample[[ind]] <- c(thisResample[[ind]], cells[[ind]])
             }
-          thisResample <- do.call("rbind", thisResample)
-  
-          allParam <- expandParameters(info$loop[parm,,drop = FALSE], info$seqParam[[parm]])
-          
-          ## For ctree, we had to repeat the first value
-          if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
-
-          ## For glmnet, we fit all the lambdas but x$fixed has an NA
-          if(method == "glmnet") allParam <- allParam[complete.cases(allParam),, drop = FALSE]
-          
+          thisResample <- do.call("rbind", thisResample)          
           thisResample <- cbind(allParam, thisResample)
  
         } else {
@@ -145,8 +162,19 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
           tmp <-  data.frame(pred = predicted,
                              obs = dat$.outcome[holdoutIndex],
                              stringsAsFactors = FALSE)
+          ## Sometimes the code above does not coerce the first
+          ## columnn to be named "pred" so force it
+          names(tmp)[1] <- "pred"
           if(ctrl$classProbs) tmp <- cbind(tmp, probValues)
 
+          if(ctrl$savePredictions)
+            {
+              tmpPred <- tmp
+              tmpPred <- cbind(tmpPred, info$loop[parm,,drop = FALSE])
+              tmpPred$Resample <- names(resampleIndex)[iter]
+              allPred <- rbind(allPred, tmpPred)
+              rm(tmpPred)
+            }
 
           ##################################
           thisResample <- ctrl$summaryFunction(tmp,
@@ -154,7 +182,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
                                                model = method)
 
           ## if classification, get the confusion matrix
-          if(length(lev) > 1) thisResample <- c(thisResample, flatTable(tmp$pred, tmp$obs))
+          if(length(lev) > 1) thisResample <- c(thisResample, caret:::flatTable(tmp$pred, tmp$obs))
           
           thisResample <- as.data.frame(t(thisResample))
           thisResample <- cbind(thisResample, info$loop[parm,,drop = FALSE])
@@ -163,7 +191,6 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
       thisResample$Resample <- names(resampleIndex)[iter]
       thisResample
     }
-
 
    if(ctrl$method %in% c("boot632"))
       {
@@ -181,7 +208,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
  
     out <- ddply(result[,!grepl("^cell|Resample", colnames(result)),drop = FALSE],
                  info$model$parameter,
-                 MeanSD, exclude = info$model$parameter)
+                 caret:::MeanSD, exclude = info$model$parameter)
     
     if(ctrl$method %in% c("boot632"))
       {
@@ -193,49 +220,54 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
         }
       }
     
-    list(performance = out, resamples = result)
+    list(performance = out, resamples = result, predictions = if(ctrl$savePredictions) allPred else NULL)
   }
 
 
 looTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
   {
+    library(caret)
+    
     ppp <- list(options = ppOpts)
     ppp <- c(ppp, ctrl$preProcOptions)
     
     printed <- format(info$loop)
     colnames(printed) <- gsub("^\\.", "", colnames(printed))
     
-    result <- foreach(iter = seq(along = ctrl$index), .combine = "rbind", .verbose = FALSE, .errorhandling = "stop") %:%
-      foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .errorhandling = "stop") %dopar%
+    result <- foreach(iter = seq(along = ctrl$index), .combine = "rbind", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %:%
+      foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
-      if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE])
+      if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE])
 
       if(testing) cat("pre-model\n")
       
-      mod <- createModel(data = dat[ctrl$index[[iter]],,drop = FALSE ],
-                         method = method,
-                         tuneValue = info$loop[parm,,drop = FALSE],
-                         obsLevels = lev,
-                         p = ppp,
-                         ...)
+      mod <- caret:::createModel(data = dat[ctrl$index[[iter]],,drop = FALSE ],
+                                 method = method,
+                                 tuneValue = info$loop[parm,,drop = FALSE],
+                                 obsLevels = lev,
+                                 pp = ppp,
+                                 custom = ctrl$custom$model,
+                                 ...)
       
       holdoutIndex <- -unique(ctrl$index[[iter]])
 
-      predicted <- predictionFunction(method = method,
-                                      modelFit = mod$fit,
-                                      newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
-                                      preProc = mod$preProc,
-                                      param = info$seqParam[[parm]])
+      predicted <- caret:::predictionFunction(method = method,
+                                              modelFit = mod$fit,
+                                              newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
+                                              preProc = mod$preProc,
+                                              param = info$seqParam[[parm]],
+                                              custom = ctrl$custom$prediction)
       
       if(testing) print(head(predicted))
       if(ctrl$classProbs)
         {
-          probValues <- probFunction(method = method,
-                                     modelFit = mod$fit,
-                                     newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
-                                     preProc = mod$preProc,
-                                     param = info$seqParam[[parm]])
+          probValues <- caret:::probFunction(method = method,
+                                             modelFit = mod$fit,
+                                             newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
+                                             preProc = mod$preProc,
+                                             param = info$seqParam[[parm]],
+                                             custom = ctrl$custom$probability)
           if(testing) print(head(probValues))
         }
 
@@ -260,8 +292,9 @@ looTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FAL
               for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
             }
           predicted <- do.call("rbind", predicted)
-          allParam <- expandParameters(info$loop, info$seqParam[[parm]])
+          allParam <- caret:::expandParameters(info$loop, info$seqParam[[parm]])
           predicted <- cbind(predicted, allParam)
+          ## if saveDetails then save and export 'predicted'
         } else {
           
           if(is.factor(dat$.outcome)) predicted <- factor(as.character(predicted),
@@ -281,33 +314,35 @@ looTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FAL
                  ctrl$summaryFunction,
                  lev = lev,
                  model = method)
-    out
+    list(performance = out, predictions = result)
   }
 
 
 oobTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, ...)
   {
+    library(caret)
     ppp <- list(options = ppOpts)
     ppp <- c(ppp, ctrl$preProcOptions)
     printed <- format(info$loop)
     colnames(printed) <- gsub("^\\.", "", colnames(printed))    
-    result <- foreach(parm = 1:nrow(info$loop), .combine = "rbind") %dopar%
+    result <- foreach(parm = 1:nrow(info$loop), .packages = "caret", .combine = "rbind") %dopar%
     {
       library(caret)
-      if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE])
+      if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE])
 
-      mod <- createModel(data = dat,
-                         method = method,
-                         tuneValue = info$loop[parm,,drop = FALSE],
-                         obsLevels = lev,
-                         p = ppp,
-                         ...)
+      mod <- caret:::createModel(data = dat,
+                                 method = method,
+                                 tuneValue = info$loop[parm,,drop = FALSE],
+                                 obsLevels = lev,
+                                 pp = ppp,
+                                 custom = ctrl$custom$model,
+                                 ...)
       out <- switch(
                     class(mod$fit)[1],
-                    randomForest = rfStats(mod$fit),
-                    RandomForest = cforestStats(mod$fit),
-                    bagEarth =, bagFDA = bagEarthStats(mod$fit),
-                    regbagg =, classbagg = ipredStats(mod$fit))
+                    randomForest = caret:::rfStats(mod$fit),
+                    RandomForest = caret:::cforestStats(mod$fit),
+                    bagEarth =, bagFDA = caret:::bagEarthStats(mod$fit),
+                    regbagg =, classbagg = caret:::ipredStats(mod$fit))
       cbind(as.data.frame(t(out)), info$loop[parm,,drop = FALSE])
     }
     names(result) <- gsub("^\\.", "", names(result))
@@ -319,27 +354,36 @@ oobTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, ...)
 
 nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
   {
+    library(caret)
     ppp <- list(options = ppOpts)
     ppp <- c(ppp, ctrl$preProcOptions)
     
     resampleIndex <- ctrl$index
     if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
 
-    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .errorhandling = "stop") %dopar%
+    if(ctrl$saveDetails) allPred <- NULL
+    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
 
       modelIndex <- resampleIndex[[iter]]
       holdoutIndex <- -unique(resampleIndex[[iter]])
       
-      sbfResults <- sbfIter(x[modelIndex,,drop = FALSE],
-                            y[modelIndex],
-                            x[holdoutIndex,,drop = FALSE],
-                            y[holdoutIndex],
-                            ctrl,
-                            ...)
+      sbfResults <- caret:::sbfIter(x[modelIndex,,drop = FALSE],
+                                    y[modelIndex],
+                                    x[holdoutIndex,,drop = FALSE],
+                                    y[holdoutIndex],
+                                    ctrl,
+                                    ...)
+      if(ctrl$saveDetails)
+        {
+          tmpPred <- sbfResults$pred
+          tmpPred$Resample <- names(resampleIndex)[iter]
+          allPred <- rbind(allPred, tmpPred)
+          rm(tmpPred)
+        }
       resamples <- ctrl$functions$summary(sbfResults$pred, lev = lev)
-      if(is.factor(y)) resamples <- c(resamples, flatTable(sbfResults$pred$pred, sbfResults$pred$obs))
+      if(is.factor(y)) resamples <- c(resamples, caret:::flatTable(sbfResults$pred$pred, sbfResults$pred$obs))
       resamples <- data.frame(t(resamples))
       resamples$Resample <- names(resampleIndex)[iter]
       
@@ -347,18 +391,18 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
     }
 
     resamples <- do.call("rbind", result[names(result) == "resamples"])
-    performance <- MeanSD(resamples[,!grepl("Resample", colnames(resamples)),drop = FALSE])
+    performance <- caret:::MeanSD(resamples[,!grepl("Resample", colnames(resamples)),drop = FALSE])
     
     if(ctrl$method %in% c("boot632"))
       {
         modelIndex <- 1:nrow(x)
         holdoutIndex <- modelIndex
-        appResults <- sbfIter(x[modelIndex,,drop = FALSE],
-                              y[modelIndex],
-                              x[holdoutIndex,,drop = FALSE],
-                              y[holdoutIndex],
-                              ctrl,
-                              ...)
+        appResults <- caret:::sbfIter(x[modelIndex,,drop = FALSE],
+                                      y[modelIndex],
+                                      x[holdoutIndex,,drop = FALSE],
+                                      y[holdoutIndex],
+                                      ctrl,
+                                      ...)
         apparent <- ctrl$functions$summary(appResults$pred, lev = lev)
         perfNames <- names(apparent)
 
@@ -369,38 +413,39 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
         
       }
     
-    list(performance = performance, everything = result)
+    list(performance = performance, everything = result, predictions = if(ctrl$saveDetails) allPred else NULL)
   }
 
 
 looSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
   {
+    library(caret)
     ppp <- list(options = ppOpts)
     ppp <- c(ppp, ctrl$preProcOptions)
     
     resampleIndex <- ctrl$index
 
     vars <- vector(mode = "list", length = length(y))
-    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .errorhandling = "stop") %dopar%
+    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
 
       modelIndex <- resampleIndex[[iter]]
       holdoutIndex <- -unique(resampleIndex[[iter]])
       
-      sbfResults <- sbfIter(x[modelIndex,,drop = FALSE],
-                            y[modelIndex],
-                            x[holdoutIndex,,drop = FALSE],
-                            y[holdoutIndex],
-                            ctrl,
-                            ...)
+      sbfResults <- caret:::sbfIter(x[modelIndex,,drop = FALSE],
+                                    y[modelIndex],
+                                    x[holdoutIndex,,drop = FALSE],
+                                    y[holdoutIndex],
+                                    ctrl,
+                                    ...)
 
       sbfResults
     }
     resamples <- do.call("rbind", result[names(result) == "pred"])
     performance <- ctrl$functions$summary(resamples, lev = lev)
     
-    list(performance = performance, everything = result)
+    list(performance = performance, everything = result, predictions = if(ctrl$saveDetails) resamples else NULL)
   }
 
 
@@ -408,13 +453,14 @@ looSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
 
 nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
   {
+    library(caret)
     ppp <- list(options = ppOpts)
     ppp <- c(ppp, ctrl$preProcOptions)
     
     resampleIndex <- ctrl$index
     if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(x))), resampleIndex)
 
-    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .errorhandling = "stop") %dopar%
+    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
 
@@ -426,25 +472,28 @@ nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
           modelIndex <- 1:nrow(x)
           holdoutIndex <- modelIndex
         }
-      
-      rfeResults <- rfeIter(x[modelIndex,,drop = FALSE],
-                            y[modelIndex],
-                            x[holdoutIndex,,drop = FALSE],
-                            y[holdoutIndex],
-                            sizes,
-                            ctrl,
-                            ...)
+
+      rfeResults <- caret:::rfeIter(x[modelIndex,,drop = FALSE],
+                                    y[modelIndex],
+                                    x[holdoutIndex,,drop = FALSE],
+                                    y[holdoutIndex],
+                                    sizes,
+                                    ctrl,
+                                    ...)
       resamples <- ddply(rfeResults$pred, .(Variables), ctrl$functions$summary, lev = lev)
+      
+      if(ctrl$saveDetails) rfeResults$pred$Resample <- names(resampleIndex)[iter]
+
       if(is.factor(y))
         {
-          cells <- ddply(rfeResults$pred, .(Variables), function(x) flatTable(x$pred, x$obs))
+          cells <- ddply(rfeResults$pred, .(Variables), function(x) caret:::flatTable(x$pred, x$obs))
           resamples <- merge(resamples, cells)
         }
           
       resamples$Resample <- names(resampleIndex)[iter]
       vars <- do.call("rbind", rfeResults$finalVariables)
       vars$Resample <- names(resampleIndex)[iter]
-      list(resamples = resamples, selectedVars = vars)
+      list(resamples = resamples, selectedVars = vars, predictions = if(ctrl$saveDetails) rfeResults$pred else NULL)
     }
     resamples <- do.call("rbind", result[names(result) == "resamples"])
     rownames(resamples) <- NULL
@@ -464,7 +513,7 @@ nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
     
     externPerf <- ddply(resamples[,!grepl("\\.cell|Resample", colnames(resamples)),drop = FALSE],
                         .(Variables),
-                        MeanSD,
+                        caret:::MeanSD,
                         exclude = "Variables")
     if(ctrl$method %in% c("boot632"))
       {
@@ -482,24 +531,25 @@ nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
 
 looRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
   {
+    library(caret)
     ppp <- list(options = ppOpts)
     ppp <- c(ppp, ctrl$preProcOptions)
     
     resampleIndex <- ctrl$index
-    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .errorhandling = "stop") %dopar%
+    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
 
       modelIndex <- resampleIndex[[iter]]
       holdoutIndex <- -unique(resampleIndex[[iter]])
       
-      rfeResults <- rfeIter(x[modelIndex,,drop = FALSE],
-                            y[modelIndex],
-                            x[holdoutIndex,,drop = FALSE],
-                            y[holdoutIndex],
-                            sizes,
-                            ctrl,
-                            ...)
+      rfeResults <- caret:::rfeIter(x[modelIndex,,drop = FALSE],
+                                    y[modelIndex],
+                                    x[holdoutIndex,,drop = FALSE],
+                                    y[holdoutIndex],
+                                    sizes,
+                                    ctrl,
+                                    ...)
       rfeResults
     }
     preds <- do.call("rbind", result[names(result) == "pred"])
