@@ -50,6 +50,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                            
                            rf =, parRF =, Boruta = 
                            {
+                             library(randomForest)
                              if(modelFit$problemType == "Classification")
                                {
                                  out <-  as.character(predict(modelFit, newdata))
@@ -171,6 +172,23 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              
                            },
                            
+                           lda2 = 
+                           {
+                             library(MASS)
+                             out <- as.character(predict(modelFit, newdata, dimen = modelFit$tuneValue$.dimen)$class)
+                             if(!is.null(param))
+                               {
+                                 tmp <- vector(mode = "list", length = nrow(param) + 1)
+                                 tmp[[1]] <- out
+                                 for(j in seq(along = param$.dimen))
+                                   {
+                                     tmp[[j+1]] <- as.character(predict(modelFit, newdata, dimen = param$.dimen[j])$class)
+                                   }
+                                 out <- tmp
+                               }                        
+                             out
+                           },
+                           
                            lvq =
                            {
                              library(class)
@@ -178,7 +196,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out
                            },
 
-                           pcr=, pls =, simpls =, widekernelpls =
+                           pcr=, pls =, simpls =, widekernelpls =, kernelpls = 
                            {
                              library(pls)
                              
@@ -214,6 +232,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                }
                              out
                            },
+                      
 
                            pam =
                            {
@@ -1032,6 +1051,59 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out <- predict(modelFit, newdata)
                              if(is.factor(out)) out <- as.character(out)
                              out
+                           },
+                           PenalizedLDA =
+                           {
+                             library(penalizedLDA)
+
+                             out0 <- predict(modelFit, newdata)$ypred
+                             out <- out0[,ncol(out0)]
+                             out <- modelFit$obsLevels[out]
+                             
+                             if(!is.null(param))
+                               {
+                                 tmp <- out0[, param$.K,drop = FALSE]
+                                 tmp <- apply(tmp, 2, function(x, l) l[x], l = modelFit$obsLevels)
+                                 out <- as.data.frame(cbind(out, tmp), stringsAsFactors = FALSE)                                 
+                               }
+                             
+                             out
+                           },
+                           rFerns =
+                           {
+                             library(rFerns)
+                             as.character(predict(modelFit, newdata))
+                           },
+                           xyf =, bdk =
+                           {
+                             library(kohonen)
+                             predict(modelFit, as.matrix(newdata))$prediction
+                           },
+                           mlp =, mlpWeightDecay =, rbf =, rbfDDA = 
+                           {
+                             library(RSNNS)
+                             out <- predict(modelFit, newdata)
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 out <- modelFit$obsLevels[apply(out, 1, which.max)]
+                               } else out <- out[,1]
+                             out
+                           },
+                           RRF =, RRFglobal =  
+                           {
+                             library(RRF)
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 out <-  as.character(predict(modelFit, newdata))
+                               } else {
+                                 out <- predict(modelFit, newdata)
+                               }
+                             out
+                           },
+                           krlsRadial =, krlsPoly =
+                           {
+                             library(KRLS)
+                             predict(modelFit, newdata)$fit[,1]
                            },
                            custom =
                            {

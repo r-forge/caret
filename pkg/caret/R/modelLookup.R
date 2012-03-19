@@ -10,7 +10,9 @@ modelLookup <- function(model = NULL)
             ## bagEarth
             'bagEarth', 'bagEarth', 
             ## bagFDA
-            'bagFDA', 'bagFDA', 
+            'bagFDA', 'bagFDA',
+            ## bdk
+            'bdk', 'bdk', 'bdk', 'bdk',
             ## blackboost
             'blackboost', 'blackboost',
             ## Boruta
@@ -82,9 +84,15 @@ modelLookup <- function(model = NULL)
             ## J48
             'J48', 
             ## JRip
-            'JRip', 
+            'JRip',
+            ## kernelpls
+            'kernelpls',
             ## knn
-            'knn', 
+            'knn',
+            ## krlsRadial
+            'krlsRadial', 'krlsRadial',
+            ## krlsPoly
+            'krlsPoly', 'krlsPoly',
             ## lars
             'lars', 
             ## lars2
@@ -93,6 +101,8 @@ modelLookup <- function(model = NULL)
             'lasso', 
             ## lda
             'lda',
+            ## lda2
+            'lda2',
             ## leapForward
             'leapForward',
             ## leapBackward
@@ -130,7 +140,11 @@ modelLookup <- function(model = NULL)
             ## mars
             'mars', 'mars', 
             ## mda
-            'mda', 
+            'mda',
+            ## mlp
+            'mlp',
+            ## mlpWeightDecay
+            'mlpWeightDecay', 'mlpWeightDecay',
             ## multinom
             'multinom', 
             ## nb
@@ -170,7 +184,9 @@ modelLookup <- function(model = NULL)
             ## pda2
             'pda2', 
             ## penalized
-            'penalized', 'penalized', 
+            'penalized', 'penalized',
+            ## PenalizedLDA
+            'PenalizedLDA', 'PenalizedLDA',
             ## plr
             'plr', 'plr', 
             ## pls
@@ -194,13 +210,19 @@ modelLookup <- function(model = NULL)
             ## qrnn
             'qrnn', 'qrnn', 'qrnn',
             ## qrf
-            'qrf', 
+            'qrf',
+            ## rbf
+            'rbf',
+            ## rbfDDA
+            'rbfDDA',
             ## rda
             'rda', 'rda', 
             ## relaxo
             'relaxo', 'relaxo', 
             ## rf
-            'rf', 
+            'rf',
+            ## rFerns
+            'rFerns',
             ## rfLSF
             'rfLSF', 
             ## rfNWS
@@ -215,6 +237,10 @@ modelLookup <- function(model = NULL)
             'rpart2',
             ## rpart2
             'rpart',
+            ## RRF
+            'RRF', 'RRF', 'RRF',
+            ## RRFglobal
+            'RRFglobal', 'RRFglobal',
             ## rrlda
             'rrlda', 'rrlda',
             ## rvmLinear
@@ -264,7 +290,9 @@ modelLookup <- function(model = NULL)
             ## vbmpRadial
             'vbmpRadial',
             ## widekernelpls
-            'widekernelpls')
+            'widekernelpls',
+            ## xyf
+            'xyf', 'xyf', 'xyf', 'xyf')
 
   pNames <- c(## ada
               'iter', 'maxdepth', 'nu',
@@ -275,7 +303,9 @@ modelLookup <- function(model = NULL)
               ## bagEarth
               'nprune', 'degree', 
               ## bagFDA
-              'nprune', 'degree', 
+              'nprune', 'degree',
+              ## bdk
+              'xdim', 'ydim', 'topo', 'xweight',              
               ## blackboost
               'mstop', 'maxdepth',
               ## Boruta
@@ -347,9 +377,15 @@ modelLookup <- function(model = NULL)
               ## J48
               'C', 
               ## JRip
-              'NumOpt', 
+              'NumOpt',
+              ## kernelpls
+              'ncomp',
               ## knn
-              'k', 
+              'k',
+              ## krlsRadial
+              'lambda', 'sigma',
+              ## krlsPoly
+              'lambda', 'degree',
               ## lars
               'fraction', 
               ## lars2
@@ -358,6 +394,8 @@ modelLookup <- function(model = NULL)
               'fraction', 
               ## lda
               'parameter',
+              ## lda
+              'dimen',
               ## leapForward
               'nvmax',
               ## leapBackward
@@ -395,7 +433,11 @@ modelLookup <- function(model = NULL)
               ## mars
               'nprune', 'degree', 
               ## mda
-              'subclasses', 
+              'subclasses',
+              ## mlp
+              'size',
+              ## mlpWeightDecay
+              'size', 'decay',
               ## multinom
               'decay', 
               ## nb
@@ -432,7 +474,9 @@ modelLookup <- function(model = NULL)
               ## pda2
               'df', 
               ## penalized
-              'lambda1', 'lambda2', 
+              'lambda1', 'lambda2',
+              ## PenalizedLDA
+              'lambda', 'K',
               ## plr
               'lambda', 'cp', 
               ## pls
@@ -456,13 +500,19 @@ modelLookup <- function(model = NULL)
               ## qrnn
               'n.hidden', 'penalty', 'bag',              
               ## qrf
-              'mtry', 
+              'mtry',
+              ## rbf
+              'size',
+              ## rbfDDA
+              'negativeThreshold',
               ## rda
               'gamma', 'lambda', 
               ## relaxo
               'lambda', 'phi', 
               ## rf
-              'mtry', 
+              'mtry',
+              ## rFerns
+              'depth',
               ## rfLSF
               'mtry', 
               ## rfNWS
@@ -477,6 +527,10 @@ modelLookup <- function(model = NULL)
               'maxdepth',
               ## rpart
               'cp',
+              ## RRF
+              'mtry', 'coefReg', 'coefImp',
+              ## RRFglobal
+              'mtry', 'coefReg',
               ## rrlda
               'lambda', 'alpha',
               ## rvmLinear
@@ -526,7 +580,9 @@ modelLookup <- function(model = NULL)
               ## vbmpRadial
               'estimateTheta',
               ## widekernelpls
-              'ncomp')
+              'ncomp',
+              ## xyf
+              'xdim', 'ydim', 'topo', 'xweight')
 
 
   pLabel <- c(## ada
@@ -545,6 +601,8 @@ modelLookup <- function(model = NULL)
               ## bagFDA
               '#Terms',
               'Product Degree',
+              ## bdk
+              'Rows', 'Columns', 'Topology', 'X Weight',
               ## blackboost
               '#Trees',
               'Max Tree Depth',
@@ -634,8 +692,16 @@ modelLookup <- function(model = NULL)
               'Confidence Threshold',
               ## JRip
               '# Optimizations',
+              ## kernelpls
+              '#Components',
               ## knn
               '#Neighbors',
+              ## krlsRadial
+              'Regularization Parameter',
+              'Sigma',
+              ## krlsPoly
+              'Regularization Parameter',
+              "Polynomial Degree",
               ## lars
               'Fraction',
               ## lars2
@@ -644,6 +710,8 @@ modelLookup <- function(model = NULL)
               'Fraction of Full Solution',
               ## lda
               'none',
+              ## lda2
+              '#Discriminant Functions',
               ## leapForward
               'Maximum Size of Subsets',
               ## leapBackward
@@ -686,6 +754,11 @@ modelLookup <- function(model = NULL)
               'Product Degree',
               ## mda
               '#Subclasses Per Class',
+              ## mlp
+              '#Hidden Units',
+              ## mlpWeightDecay
+              '#Hidden Units',
+              'Weight Decay',              
               ## multinom
               'Weight Decay',
               ## nb
@@ -732,6 +805,9 @@ modelLookup <- function(model = NULL)
               ## penalized
               'L1 Penalty',
               'L2 Penalty',
+              ## PenalizedLDA
+              'L1 Penalty',
+              '#Discriminant Functions',
               ## plr
               'L2 Penalty',
               'Complexity Parameter',
@@ -757,6 +833,10 @@ modelLookup <- function(model = NULL)
               '#Hidden Units', ' Weight Decay', 'Bagged Models?',                     
               ## qrf
               '#Randomly Selected Predictors',
+              ## rbf
+              '#Hidden Units',
+              ## rbfDDA
+              'Activation Limit for Conflicting Classes',
               ## rda
               'Gamma',
               'Lambda',
@@ -765,6 +845,8 @@ modelLookup <- function(model = NULL)
               'Relaxation Parameter',
               ## rf
               '#Randomly Selected Predictors',
+              ## rFerns
+              'Fern Depth',
               ## rfLSF
               '#Randomly Selected Predictors',
               ## rfNWS
@@ -779,6 +861,13 @@ modelLookup <- function(model = NULL)
               'Max Tree Depth',
               ## rpart
               'Complexity Parameter',
+              ## RRF
+              '#Randomly Selected Predictors',
+              'Regularization Value',
+              'Importance Coefficient',
+              ## RRFglobal
+              '#Randomly Selected Predictors',
+              'Regularization Value',
               ## rrlda
               'Penalty Parameter',
               'Robustness Parameter',
@@ -845,7 +934,9 @@ modelLookup <- function(model = NULL)
               ## vbmpRadial
               'Theta Estimated',
               ## widekernelpls
-              '#Components'
+              '#Components',
+              ## xyf
+              'Rows', 'Columns', 'Topology', 'X Weight'
               )
 
   isSeq <- c(## ada
@@ -857,7 +948,9 @@ modelLookup <- function(model = NULL)
              ## bagEarth
              FALSE, FALSE, 
              ## bagFDA
-             FALSE, FALSE, 
+             FALSE, FALSE,
+             ## bdk
+             FALSE, FALSE, FALSE, FALSE,
              ## blackboost
              TRUE, FALSE,
              ## Boruta
@@ -929,9 +1022,15 @@ modelLookup <- function(model = NULL)
              ## J48
              FALSE, 
              ## JRip
-             FALSE, 
+             FALSE,
+             ## kernelpls
+             TRUE,
              ## knn
-             FALSE, 
+             FALSE,
+             ## krlsRadial
+             FALSE, FALSE,
+             ## krlsPoly
+             FALSE, FALSE,
              ## lars
              TRUE, 
              ## lars2
@@ -940,6 +1039,8 @@ modelLookup <- function(model = NULL)
              TRUE, 
              ## lda
              FALSE,
+             ## lda2
+             TRUE,
              ## leapForward
              TRUE,
              ## leapBackward
@@ -977,7 +1078,11 @@ modelLookup <- function(model = NULL)
              ## mars
              FALSE, FALSE, 
              ## mda
-             FALSE, 
+             FALSE,
+             ## mlp
+             FALSE,
+             ## mlpWeightDecay
+             FALSE, FALSE,
              ## multinom
              FALSE, 
              ## nb
@@ -1014,7 +1119,9 @@ modelLookup <- function(model = NULL)
              ## pda2
              FALSE, 
              ## penalized
-             FALSE, FALSE, 
+             FALSE, FALSE,
+             ## PenalizedLDA
+             FALSE, TRUE,
              ## plr
              FALSE, FALSE, 
              ## pls
@@ -1038,13 +1145,19 @@ modelLookup <- function(model = NULL)
              ## qrnn
              FALSE, FALSE, FALSE,                 
              ## qrf
-             FALSE, 
+             FALSE,
+             ## rbf
+             FALSE,
+             ## rbfDDA
+             FALSE,
              ## rda
              FALSE, FALSE, 
              ## relaxo
              TRUE, FALSE, 
              ## rf
-             FALSE, 
+             FALSE,
+             ## rFerns
+             FALSE,
              ## rfLSF
              FALSE, 
              ## rfNWS
@@ -1059,6 +1172,10 @@ modelLookup <- function(model = NULL)
              TRUE,
              ## rpart
              TRUE,
+             ## RRF
+             FALSE, FALSE, FALSE,
+             ## RRFglobal
+             FALSE, FALSE,
              ## rrlda
              FALSE, FALSE,
              ## rvmLinear
@@ -1108,7 +1225,9 @@ modelLookup <- function(model = NULL)
              ## vbmpRadial
              FALSE,
              ## widekernelpls
-             TRUE
+             TRUE,
+             ## xyf
+             FALSE, FALSE, FALSE, FALSE
              )
   isRegMod <- c(## ada
                 FALSE, FALSE, FALSE,
@@ -1119,7 +1238,9 @@ modelLookup <- function(model = NULL)
                 ## bagEarth
                 TRUE, TRUE, 
                 ## bagFDA
-                FALSE, FALSE, 
+                FALSE, FALSE,
+                ## bdk
+                TRUE, TRUE, TRUE, TRUE,
                 ## blackboost
                 TRUE, TRUE,
                 ## Boruta
@@ -1191,15 +1312,23 @@ modelLookup <- function(model = NULL)
                 ## J48
                 FALSE, 
                 ## JRip
-                FALSE, 
+                FALSE,
+                ## kernelpls
+                TRUE,
                 ## knn
-                TRUE, 
+                TRUE,
+                ## krlsRadial
+                TRUE, TRUE,
+                ## krlsPoly
+                TRUE, TRUE,
                 ## lars
                 TRUE, 
                 ## lars2
                 TRUE, 
                 ## lasso
                 TRUE, 
+                ## lda
+                FALSE,
                 ## lda
                 FALSE,
                 ## leapForward
@@ -1239,7 +1368,11 @@ modelLookup <- function(model = NULL)
                 ## mars
                 TRUE, TRUE, 
                 ## mda
-                FALSE, 
+                FALSE,
+                ## mlp
+                TRUE,
+                ## mlpWeightDecay
+                TRUE, TRUE,
                 ## multinom
                 FALSE, 
                 ## nb
@@ -1276,7 +1409,9 @@ modelLookup <- function(model = NULL)
                 ## pda2
                 FALSE, 
                 ## penalized
-                TRUE, TRUE, 
+                TRUE, TRUE,
+                ## PenalizedLDA
+                FALSE, FALSE,
                 ## plr
                 FALSE, FALSE, 
                 ## pls
@@ -1300,13 +1435,19 @@ modelLookup <- function(model = NULL)
                 ## qrnn
                 TRUE, TRUE, TRUE,                
                 ## qrf
-                TRUE, 
+                TRUE,
+                ## rbf
+                FALSE,
+                ## rbfDDA
+                TRUE,
                 ## rda
                 FALSE, FALSE, 
                 ## relaxo
                 TRUE, TRUE, 
                 ## rf
-                TRUE, 
+                TRUE,
+                ## rFerns
+                FALSE,
                 ## rfLSF
                 TRUE, 
                 ## rfNWS
@@ -1321,6 +1462,10 @@ modelLookup <- function(model = NULL)
                 TRUE,
                 ## rpart
                 TRUE,
+                ## RRF
+                TRUE, TRUE, TRUE,
+                ## RRFglobal
+                TRUE, TRUE,
                 ## rrlda
                 FALSE, FALSE,
                 ## rvmLinear
@@ -1370,7 +1515,9 @@ modelLookup <- function(model = NULL)
                 ## vbmpRadial
                 FALSE,
                 ## widekernelpls
-                TRUE
+                TRUE,
+                ## xyf
+                TRUE, TRUE, TRUE, TRUE
                 )
 
   isClassMod <- c(## ada
@@ -1382,7 +1529,9 @@ modelLookup <- function(model = NULL)
                   ## bagEarth
                   TRUE, TRUE, 
                   ## bagFDA
-                  TRUE, TRUE, 
+                  TRUE, TRUE,
+                  ## bdk
+                  TRUE, TRUE, TRUE, TRUE,
                   ## blackboost
                   TRUE, TRUE,
                   ## Boruta
@@ -1454,15 +1603,23 @@ modelLookup <- function(model = NULL)
                   ## J48
                   TRUE, 
                   ## JRip
-                  TRUE, 
+                  TRUE,
+                  ## kernelpls
+                  TRUE,
                   ## knn
-                  TRUE, 
+                  TRUE,
+                  ## krlsRadial
+                  FALSE, FALSE,
+                  ## krlsPoly
+                  FALSE, FALSE,
                   ## lars
                   FALSE, 
                   ## lars2
                   FALSE, 
                   ## lasso
                   FALSE, 
+                  ## lda
+                  TRUE,
                   ## lda
                   TRUE,
                   ## leapForward
@@ -1502,7 +1659,10 @@ modelLookup <- function(model = NULL)
                   ## mars
                   FALSE, FALSE, 
                   ## mda
-                  TRUE, 
+                  TRUE,
+                  ## mlp
+                  TRUE,
+                  TRUE, TRUE,
                   ## multinom
                   TRUE, 
                   ## nb
@@ -1539,7 +1699,9 @@ modelLookup <- function(model = NULL)
                   ## pda2
                   TRUE, 
                   ## penalized
-                  FALSE, FALSE, 
+                  FALSE, FALSE,
+                  ## PenalizedLDA
+                  TRUE, TRUE,
                   ## plr
                   TRUE, TRUE, 
                   ## pls
@@ -1563,13 +1725,19 @@ modelLookup <- function(model = NULL)
                   ## qrnn
                   FALSE, FALSE, FALSE,                  
                   ## qrf
-                  FALSE, 
+                  FALSE,
+                  ## rbf
+                  TRUE,
+                  ## rbfDDA
+                  TRUE,
                   ## rda
                   TRUE, TRUE, 
                   ## relaxo
                   FALSE, FALSE, 
                   ## rf
-                  TRUE, 
+                  TRUE,
+                  ## rFerns
+                  TRUE,
                   ## rfLSF
                   TRUE, 
                   ## rfNWS
@@ -1584,6 +1752,10 @@ modelLookup <- function(model = NULL)
                   TRUE,
                   ## rpart
                   TRUE,
+                  ## RRF
+                  TRUE, TRUE, TRUE,
+                  ## RRFglobal
+                  TRUE, TRUE,
                   ## rrlda
                   TRUE, TRUE,
                   ## rvmLinear
@@ -1633,7 +1805,9 @@ modelLookup <- function(model = NULL)
                   ## vbmpRadial
                   TRUE,
                   ## widekernelpls
-                  FALSE
+                  FALSE,
+                  ## xyf
+                  TRUE, TRUE, TRUE, TRUE
                   )
 
   hasProbModel <- c(## ada
@@ -1645,7 +1819,9 @@ modelLookup <- function(model = NULL)
                     ## bagEarth
                     TRUE, TRUE, 
                     ## bagFDA
-                    TRUE, TRUE, 
+                    TRUE, TRUE,
+                    ## bdk
+                    TRUE, TRUE, TRUE, TRUE,
                     ## blackboost
                     TRUE, TRUE,
                     ## Boruta
@@ -1717,9 +1893,15 @@ modelLookup <- function(model = NULL)
                     ## J48
                     TRUE, 
                     ## JRip
-                    TRUE, 
+                    TRUE,
+                    ## kernelpls
+                    TRUE,
                     ## knn
-                    TRUE, 
+                    TRUE,
+                    ## krlsRadial
+                    FALSE, FALSE,
+                    ## krlsPoly
+                    FALSE, FALSE,
                     ## lars
                     FALSE, 
                     ## lars2
@@ -1727,6 +1909,8 @@ modelLookup <- function(model = NULL)
                     ## lasso
                     FALSE, 
                     ## lda
+                    TRUE,
+                    ## lda2
                     TRUE,
                     ## leapForward
                     FALSE,
@@ -1765,7 +1949,10 @@ modelLookup <- function(model = NULL)
                     ## mars
                     FALSE, FALSE, 
                     ## mda
-                    TRUE, 
+                    TRUE,
+                    ## mlp
+                    TRUE,
+                    TRUE, TRUE,
                     ## multinom
                     TRUE, 
                     ## nb
@@ -1802,7 +1989,9 @@ modelLookup <- function(model = NULL)
                     ## pda2
                     TRUE, 
                     ## penalized
-                    FALSE, FALSE, 
+                    FALSE, FALSE,
+                    ##  PenalizedLDA
+                    FALSE, FALSE,
                     ## plr
                     TRUE, TRUE, 
                     ## pls
@@ -1826,13 +2015,19 @@ modelLookup <- function(model = NULL)
                     ## qrnn
                     FALSE, FALSE, FALSE,                        
                     ## qrf
-                    FALSE, 
+                    FALSE,
+                    ## rbf
+                    TRUE,
+                    ## rbfDDA
+                    TRUE,
                     ## rda
                     TRUE, TRUE, 
                     ## relaxo
                     FALSE, FALSE, 
                     ## rf
-                    TRUE, 
+                    TRUE,
+                    ## rFerns
+                    FALSE,
                     ## rfLSF
                     TRUE, 
                     ## rfNWS
@@ -1847,6 +2042,10 @@ modelLookup <- function(model = NULL)
                     TRUE,
                     ## rpart
                     TRUE,
+                    ## RRF
+                    TRUE, TRUE, TRUE,
+                    ## RRFglobal
+                    TRUE, TRUE,
                     ## rrlda does not generate probabilities, only discrim values
                     FALSE, FALSE,
                     ## rvmLinear
@@ -1896,7 +2095,9 @@ modelLookup <- function(model = NULL)
                     ## vbmpRadial
                     TRUE,
                     ## widekernelpls
-                    FALSE
+                    FALSE,
+                    ## xyf
+                    TRUE, TRUE, TRUE, TRUE
                     )
   
   
