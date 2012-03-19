@@ -55,6 +55,26 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                         out
                       },
 
+                      lda2 = 
+                      {
+                        library(MASS)
+                        out <- predict(modelFit, newdata, dimen = modelFit$tuneValue$.dimen)$posterior
+                        if(!is.null(param))
+                          {
+                            tmp <- vector(mode = "list", length = nrow(param) + 1)
+                            tmp[[1]] <- out
+                            
+                            for(j in seq(along = param$.dimen))
+                              {
+                                tmpProb <- predict(modelFit, newdata, dimen = param$.dimen[j])$posterior
+                                tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels])
+                              }
+                            out <- tmp
+                          }                        
+                        out
+                      },
+                      
+
                       knn =
                       {
                         out <- predict(modelFit, newdata, type = "prob")
@@ -118,7 +138,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                           }
                         out
                       },
-                      pls =
+                      pls =, simpls =, widekernelpls =, kernelpls = 
                       {
                         library(pls)
                         if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
@@ -556,6 +576,25 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                       evtree =
                       {
                         library(evtree)
+                        out <- predict(modelFit, newdata, type = "prob")            
+                        out
+                      },
+                      xyf =, bdk =
+                      {
+                        library(kohonen)
+                        preds <- predict(modelFit, as.matrix(newdata))
+                        preds$unit.predictions[preds$unit.classif,]
+                      },
+                      mlp =, mlpWeightDecay =, rbf =, rbfDDA =   
+                      {
+                        library(RSNNS)
+                        out <- predict(modelFit, newdata)
+                        colnames(out) <- modelFit$obsLevels
+                        out
+                      },
+                      RRF =, RRFglobal =  
+                      {
+                        library(RRF)
                         out <- predict(modelFit, newdata, type = "prob")            
                         out
                       },

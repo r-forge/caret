@@ -30,9 +30,9 @@ byComplexity <- function(x, model)
            {
              x[order(x$mstop, x$nu),] 
            },            
-           rf =, rfNWS =, rfLSF =, parRF =, gpls =, pcr =, pls =, simpls =, widekernelpls =, PLS =, pam =, cforest =,
+           rFerns =, rf =, rfNWS =, rfLSF =, parRF =, gpls =, pcr =, pls =, simpls =, widekernelpls =, PLS =, pam =, cforest =,
            nb =, ctree2 =, logitBoost=, J48 =, LMT =, ppr =, mda =, pda =, pda2 =,
-           lars =, lars2 =, Linda =, QdaCov =, icr =, qrf =,Boruta =,
+           lars =, lars2 =, Linda =, QdaCov =, icr =, qrf =,Boruta =, kernelpls = , lda2 =,
            leapForward=, leapBackward=, leapSeq =, rpart2 =, ORFridge =, ORFpls =, ORFsvm =, ORFlog =, evtree =  
            {
              x[order(x[,1]),]
@@ -81,9 +81,17 @@ byComplexity <- function(x, model)
            {
              x[order(x$degree, x$scale),]
            },           
-           avNNet =, nnet =, pcaNNet =
+           avNNet =, nnet =, pcaNNet =, mlpWeightDecay = 
            {
              x[order(x$size, -x$decay),]
+           },
+           mlp =, rbf = 
+           {
+             x[order(x$size),]
+           },
+           rbfDDA =
+           {
+              x[order(-x$negativeThreshold),]
            },
            rrlda =
            {
@@ -145,7 +153,6 @@ byComplexity <- function(x, model)
            lasso =
            {
              x[order(x$fraction),]
-
            },
            superpc =
            {
@@ -199,6 +206,11 @@ byComplexity <- function(x, model)
            {
              x[order(x$committees,  x$neighbors),]
            },
+           RRFglobal =, RRF = x[order(x$coefReg),],
+           krlsRadial = x[order(x$lambda),],
+           krlsPoly = x[order(x$degree, x$lambda),],
+           xyf =, bdk = x[order(x$xdim,  x$ydim),],
+           PenalizedLDA = x[order(x$lambda, x$K),],
            logreg = x[order(x$ntrees, x$treesize),],
            logicBag = x[order(x$ntrees, x$nleaves),],
            neuralnet = x[order(x$layer1, x$layer2, x$layer3),],

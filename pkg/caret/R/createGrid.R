@@ -1,6 +1,14 @@
 "createGrid" <-
   function(method, len = 3, data = NULL)
 {
+
+  somDims <- function(x)
+    {
+      out <- expand.grid(.xdim = 1:x, .ydim = 2:(x+1),
+                         .xweight = seq(.5, .9, length = len))
+      out$.topo <- "hexagonal"
+      subset(out, .xdim>= .ydim)
+    }
   ## rpart needs its own function since we fit an initial model,
   ## read off the possible complexity parameters and use
   ## those values to devleop the grid. 
@@ -59,6 +67,22 @@
         } else out <- 10 ^((1:len) - 3)
       out
     }
+
+
+  
+  rbfTune2 <- function(data, len, center = TRUE)
+    {
+      library(kernlab)
+      ## this was changed to follow what kernlab does inside of ksvm and rvm:
+      sigmaEstimate <- try(
+                           sigest(.outcome ~ ., data, na.action = na.omit, scaled = TRUE),
+                           silent = TRUE)
+      if(!(class(sigmaEstimate) == "try-error"))
+        {
+          out <- seq(sigmaEstimate[1], sigmaEstimate[3], length = len)
+        } else out <- 10 ^((1:len) - 3)
+      1/out
+    }  
   
   marsSeq <- function(data, len)
     {
@@ -256,7 +280,7 @@
                       lvq = lvqGrid(data, len),
                       rpart = rpartTune(data, len),
                       rpart2 = rpart2Tune(data, len),
-                      pcr =, simpls =, widekernelpls =, pls =, plsTest =,PLS = data.frame(.ncomp = seq(1, min(dim(data)[2] - 1, len), by = 1)),
+                      pcr =, simpls =, widekernelpls =, pls =, kernelpls =, plsTest =,PLS = data.frame(.ncomp = seq(1, min(dim(data)[2] - 1, len), by = 1)),
                       pam = pamTune(data, len),
                       knn = data.frame(.k = (5:((2 * len)+4))[(5:((2 * len)+4))%%2 > 0]),
                       nb = data.frame(.usekernel = c(TRUE, FALSE), .fL = 0),
@@ -372,6 +396,21 @@
                                           .alpha = seq(.5, 1, length = len)),
                       leapForward =, leapBackward =, leapSeq = data.frame(.nvmax = 1:len),
                       evtree = data.frame(.alpha = seq(0, 1, length = len)),
+                      PenalizedLDA = data.frame(.lambda = 10 ^ seq(-1, -4, length = len), .K = length(levels(data$.outcome)) - 1),
+                      xyf =, bdk = somDims(len),
+                      rFerns = data.frame(.depth = unique(floor(seq(1, 16, length = len)))),
+                      mlp = data.frame(.size =  ((1:len) * 2) - 1),
+                      mlpWeightDecay = data.frame(.size =  ((1:len) * 2) - 1, .decay = c(0, 10 ^ seq(-1, -4, length = len - 1))),
+                      rbf = data.frame(.size =  ((1:len) * 2) + 9),
+                      rbfDDA = data.frame(.negativeThreshold =  10 ^(-(1:len))),
+                      RRFglobal = expand.grid(.mtry = if (!is.null(data$.outcome) && !is.factor(data$.outcome)) max(floor((ncol(data) - 1)/3), 1) else floor(sqrt((ncol(data)-1))),
+                                              .coefReg = seq(0.01, 1, length = len)),
+                      RRF = expand.grid(.mtry = if (!is.null(data$.outcome) && !is.factor(data$.outcome)) max(floor((ncol(data) - 1)/3), 1) else floor(sqrt((ncol(data)-1))),
+                                        .coefReg = seq(0.01, 1, length = len),
+                                        .coefImp = seq(0, 1, length = len)),
+                      krlsRadial = expand.grid(.lambda = NA, .sigma = rbfTune2(data, len)),
+                      krlsPoly = expand.grid(.lambda = NA, .degree = 1:3),
+                      lda2 <- data.frame(.dimen = 1:min(ncol(data)-1, length(levels(data$.outcome)) - 1)),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,

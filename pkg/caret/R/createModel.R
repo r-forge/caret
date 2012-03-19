@@ -56,7 +56,7 @@
                    'logitBoost', 'logreg', 'lssvmLinear', 'lssvmPoly',
                    'lssvmRadial', 'lvq', 'mars', 'nnet', 'nodeHarvest',
                    'ORFridge', 'ORFpls', 'ORFsvm', 'ORFlog',
-                   'pam', 'parRF', 'partDSA', 'pcaNNet',
+                   'pam', 'parRF', 'partDSA', 'pcaNNet', 'xyf', 'bdk',
                    'penalized', 'plr', 'pls', 'PLS', 'plsGlmBinomial',
                    'plsGlmGamma', 'plsGlmGaussian', 'plsGlmPoisson',
                    'plsTest', 'ppr', 'qda', 'QdaCov', 'qrf', 'qrnn',
@@ -65,8 +65,10 @@
                    'scrda', 'sda', 'sddaLDA', 'sddaQDA', 'simpls', 'slda',
                    'smda', 'sparseLDA', 'spls', 'stepLDA', 'stepQDA',
                    'superpc', 'svmLinear', 'svmpoly', 'svmPoly',
-                   'svmradial', 'svmRadial', 'svmRadialCost',
-                   'vbmpRadial', 'widekernelpls'))
+                   'svmradial', 'svmRadial', 'svmRadialCost', 'rFerns',
+                   'vbmpRadial', 'widekernelpls', 'PenalizedLDA',
+                   "mlp", "mlpWeightDecay", "rbf", "rbfDDA", "lda2",
+                   "RRF", "RRFglobal", "krlsRadial", "krlsPoly"))
     {
       trainX <- data[,!(names(data) %in% ".outcome"), drop = FALSE]
       trainY <- data[,".outcome"]
@@ -514,12 +516,12 @@
                        out <- do.call("rpart", modelArgs)
                        out
                      },                      
-                     pls =, simpls =, widekernelpls =, plsTest = 
+                     pls =, kernelpls =, simpls =, widekernelpls =, plsTest = 
                      {
 
                        library(pls)
                        plsMethod <- method
-                       if(plsMethod == "pls") plsMethod <- "kernelpls"
+                       if(plsMethod == "pls") plsMethod <- "oscorespls"
                                            
                        out <- if(type == "Classification")
                          {      
@@ -707,7 +709,7 @@
                        out
                                 
                      },                     
-                     lda = 
+                     lda =, lda2 =  
                      {
                        library(MASS)
                        lda(trainX, trainY, ...)     
@@ -913,7 +915,7 @@
                                            controls = ctl),
                                       theDots)
                        
-                       out <- do.call("ctree", modelArgs)
+                       out <- do.call("party:::ctree", modelArgs)
                        out        
                      },
 
@@ -1801,10 +1803,177 @@
                        out <- do.call("evtree", modelArgs)
                        out                           
                      },
+                     PenalizedLDA =
+                     {
+                       library(penalizedLDA)
+                       PenalizedLDA(as.matrix(trainX), as.numeric(trainY),
+                                    lambda = tuneValue$.lambda,
+                                    K = tuneValue$.K,
+                                    ...)
+                     },
+                     rFerns =
+                     {
+                       library(rFerns)
+                       rFerns(trainX, trainY, depth = tuneValue$.depth, ...)
+                     },
+                     xyf =
+                     {
+                       library(kohonen)
+                       xyf(as.matrix(trainX),
+                           Y = if(is.factor(trainY)) classvec2classmat(trainY) else trainY,
+                           xweight = tuneValue$.xweight,
+                           contin = !is.factor(trainY),
+                           grid = somgrid(tuneValue$.xdim, tuneValue$.ydim, tuneValue$.topo),
+                           ...)
+                     },
+                     bdk =
+                     {
+                       library(kohonen)
+                       bdk(as.matrix(trainX),
+                           Y = if(is.factor(trainY)) classvec2classmat(trainY) else trainY,
+                           xweight = tuneValue$.xweight,
+                           contin = !is.factor(trainY),
+                           grid = somgrid(tuneValue$.xdim, tuneValue$.ydim, tuneValue$.topo),
+                           ...)
+                     },
+                     mlp =
+                     {
+                       library(RSNNS)
+                       theDots <- list(...)
+                       theDots <- theDots[!(names(theDots) %in% c("size", "linOut"))]                   
+
+                       if(is.factor(trainY)) trainY <- decodeClassLabels(trainY)
+                       args <- list(x = trainX,
+                                    y = trainY,
+                                    size = tuneValue$.size,
+                                    linOut = is.na(obsLevels))
+                       args <- c(args, theDots)
+                       do.call("mlp", args)
+                     },
+                     mlpWeightDecay =
+                     {
+                       library(RSNNS)
+                       theDots <- list(...)
+                       theDots <- theDots[!(names(theDots) %in% c("size", "linOut"))]
+                       if(any(names(theDots) == "learnFunc"))
+                         {
+                           theDots$learnFunc <- NULL
+                           warning("Cannot over-ride 'learnFunc' argument for this model. BackpropWeightDecay is used.")
+                         }
+                       if(any(names(theDots) == "learnFuncParams"))
+                         {
+                           prms <- theDots$learnFuncParams
+                           prms[3] <-  tuneValue$.decay
+                           warning("Over-riding weight decay value in the 'learnFuncParams' argument you passed in. Other values are retained")
+                         } else prms <- c(0.2, tuneValue$.decay, 0.0, 0.0)    
+
+                       if(is.factor(trainY)) trainY <- decodeClassLabels(trainY)
+                       args <- list(x = trainX,
+                                    y = trainY,
+                                    learnFunc = "BackpropWeightDecay",
+                                    learnFuncParams = prms,                                
+                                    size = tuneValue$.size,
+                                    linOut = is.na(obsLevels))
+                       args <- c(args, theDots)
+                       do.call("mlp", args)
+                     },
+                     rbf =
+                     {
+                       library(RSNNS)
+                       theDots <- list(...)
+                       theDots <- theDots[!(names(theDots) %in% c("size", "linOut"))]
+                       if(any(names(theDots) == "learnFunc"))
+                         {
+                           theDots$learnFunc <- NULL
+                           warning("Cannot over-ride 'learnFunc' argument for this model. RadialBasisLearning is used.")
+                         }
+                       if(!any(names(theDots) == "initFuncParams"))
+                         {
+                           theDots$initFuncParams <- c(0, 1, 0, 0.02, 0.04)
+                           if(is.factor(trainY)) theDots$initFuncParams[1:2] <- c(-4, 4)
+                         }
+                       
+                       if(!any(names(theDots) == "learnFuncParams"))
+                         {
+                           theDots$learnFuncParams <- c(1e-8, 0, 1e-8, 0.1, 0.8)
+                         }
+                      
+
+                       if(is.factor(trainY)) trainY <- decodeClassLabels(trainY)
+                       args <- list(x = trainX,
+                                    y = trainY,                           
+                                    size = tuneValue$.size,
+                                    linOut = is.na(obsLevels))
+                       args <- c(args, theDots)
+                       do.call("rbf", args)
+                     },
+                     rbfDDA =
+                     {
+                       library(RSNNS)
+                       theDots <- list(...)
+                      
+                       if(any(names(theDots) == "learnFunc"))
+                         {
+                           theDots$learnFunc <- NULL
+                           warning("Cannot over-ride 'learnFunc' argument for this model. RBF-DDA is used.")
+                         }
+                       if(any(names(theDots) == "learnFuncParams"))
+                         {
+                           theDots$learnFuncParams[2] <- tuneValue$.negativeThreshold
+                         } else theDots$learnFuncParams <-c(0.4,  tuneValue$.negativeThreshold, 5)
+                       
+
+                       trainY <- decodeClassLabels(trainY)
+                       args <- list(x = trainX,
+                                    y = trainY)
+                       args <- c(args, theDots)
+                       do.call("rbfDDA", args)
+                     },
+                     RRFglobal =
+                     {
+                       library(RRF)
+                       RRF(trainX, trainY, mtry = tuneValue$.mtry, coefReg = tuneValue$.coefReg, ...)
+                     },
+                     RRF =
+                     {
+                       library(randomForest)
+                       library(RRF)
+                       theDots <- list(...)
+                       theDots$importance <- TRUE
+                       args <- list(x = trainX, y = trainY, mtry = tuneValue$.mtry)
+                       args <- c(args, theDots)                       
+                       firstFit <- do.call("randomForest", args)
+                       firstImp <- randomForest:::importance(firstFit)
+                       if(is.factor(trainY))
+                         {
+                           firstImp <- firstImp[,"MeanDecreaseGini"]/max(firstImp[,"MeanDecreaseGini"])
+                         } else firstImp <- firstImp[,"%IncMSE"]/max(firstImp[,"%IncMSE"])
+                       firstImp <- ((1 - tuneValue$.coefImp) * tuneValue$.coefReg) + (tuneValue$.coefImp * firstImp)
+                       
+                       RRF(trainX, trainY, mtry = tuneValue$.mtry, coefReg = firstImp, ...)
+                     },
+                     krlsRadial =
+                     {
+                       library(KRLS)
+                       krls(trainX, trainY, lambda = if(is.na(tuneValue$.lambda)) NULL else tuneValue$.lambda,
+                            sigma = tuneValue$.sigma, ...)
+                     },
+                     krlsPoly =
+                     {
+                       library(KRLS)
+                       if(!(tuneValue$.degree %in% 1:4)) stop("Degree should be either 1, 2, 3 or 4")
+                       krn <- switch(tuneValue$.degree,
+                                    '1' = "linear",
+                                    '2' = "poly2",
+                                    '3' = "poly3",
+                                    '4' = "poly4")
+                       krls(trainX, trainY, lambda = if(is.na(tuneValue$.lambda)) NULL else tuneValue$.lambda,
+                            whichkernel = krn, ...)
+                     },                      
                      custom =
                      {
                        custom(data = data,
-                              ## TOD weights
+                              ## TODO weights
                               parameter = tuneValue,
                               levels = obsLevels,
                               ## TODO pass this in...
