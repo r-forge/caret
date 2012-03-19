@@ -126,7 +126,7 @@ train.default <- function(x, y,
   trainData <- as.data.frame(x)
 
   ## Check mode for some models
-  if(!(method %in% c("rf", "rpart", "gbm", "treebag", "nb")))
+  if(!(method %in% c("rf", "rpart", "gbm", "treebag", "nb", "J48", "PART", "JRip", "OneR", "custom", "ctree", "cforest")))
     {
       isFactor <- lapply(trainData, is.factor)
       isCharacter <- lapply(trainData, is.character)
@@ -268,6 +268,7 @@ train.default <- function(x, y,
       if(trControl$classProbs)
         {
           for(i in seq(along = classLevels)) testOutput[, classLevels[i]] <- runif(nrow(testOutput))
+          testOutput[, classLevels] <- t(apply(testOutput[, classLevels], 1, function(x) x/sum(x)))
         } else {
           if(metric == "ROC" & !trControl$classProbs)
             stop("train()'s use of ROC codes requires class probabilities. See the classProbs option of trainControl()")
@@ -528,3 +529,7 @@ train.formula <- function (form, data, ..., weights, subset, na.action, contrast
   class(res) <- c("train", "train.formula")
   res
 }
+
+summary.train <- function(object, ...) summary(object$finalModel, ...)
+residuals.train <- function(object, ...) residuals(object$finalModel, ...)
+
