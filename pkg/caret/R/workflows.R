@@ -4,6 +4,7 @@
 ### functions inside of caret cannot be found despite using the
 ### ".packages" argument and calling the caret package via library().
 
+
 progress <- function(x)
   {
     cat("Fitting: ")
@@ -14,7 +15,7 @@ progress <- function(x)
 MeanSD <- function(x, exclude = NULL)
   {
     if(!is.null(exclude)) x <- x[, !(colnames(x) %in% exclude), drop = FALSE]
-    out <- c(colMeans(x), sapply(x, sd))
+    out <- c(colMeans(x, na.rm = TRUE), sapply(x, sd, na.rm = TRUE))
     names(out)[-(1:ncol(x))] <- paste(names(out)[-(1:ncol(x))], "SD", sep = "")
     out
   }
@@ -36,6 +37,7 @@ expandParameters <- function(fixed, seq)
 
 nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
   {
+    suppressPackageStartupMessages(library(foreach))
     library(caret)
     loadNamespace("caret")
     ppp <- list(options = ppOpts)
@@ -51,11 +53,8 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
     resampleIndex <- ctrl$index
     if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
 
-    if(ctrl$savePredictions) allPred <- NULL
-
-    
-    result <- foreach(iter = seq(along = resampleIndex), .combine = "rbind", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %:%
-      foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
+    result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %:%
+      foreach(parm = 1:nrow(info$loop), .combine = "c", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
       if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE])
@@ -133,11 +132,9 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
             {
               tmpPred <- predicted
               for(modIndex in seq(along = tmpPred)) tmpPred[[modIndex]] <- cbind(tmpPred[[modIndex]], allParam[modIndex,,drop = FALSE])
-              tmpPred <- do.call("rbind", tmpPred)
+              tmpPred <- rbind.fill(tmpPred)
               tmpPred$Resample <- names(resampleIndex)[iter]
-              allPred <- rbind(allPred, tmpPred)
-              rm(tmpPred)
-            }
+            } else tmpPred <- NULL
           
           ## get the performance for this resample for each sub-model
           thisResample <- lapply(predicted,
@@ -172,9 +169,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
               tmpPred <- tmp
               tmpPred <- cbind(tmpPred, info$loop[parm,,drop = FALSE])
               tmpPred$Resample <- names(resampleIndex)[iter]
-              allPred <- rbind(allPred, tmpPred)
-              rm(tmpPred)
-            }
+            } else tmpPred <- NULL
 
           ##################################
           thisResample <- ctrl$summaryFunction(tmp,
@@ -189,24 +184,32 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
 
         }
       thisResample$Resample <- names(resampleIndex)[iter]
-      thisResample
+   
+      list(resamples = thisResample, pred = tmpPred)
     }
 
-   if(ctrl$method %in% c("boot632"))
+    resamples <- rbind.fill(result[names(result) == "resamples"])
+    pred <- if(ctrl$savePredictions)  rbind.fill(result[names(result) == "pred"]) else NULL
+    if(ctrl$method %in% c("boot632"))
       {
         perfNames <- names(ctrl$summaryFunction(data.frame(obs = dat$.outcome, pred = sample(dat$.outcome)),
                                                 lev = lev,
                                                 model = method))
-        apparent <- subset(result, Resample == "AllData")
+        apparent <- subset(resamples, Resample == "AllData")
         apparent <- apparent[,!grepl("^\\.cell|Resample", colnames(apparent)),drop = FALSE]
         names(apparent)[which(names(apparent) %in% perfNames)] <- paste(names(apparent)[which(names(apparent) %in% perfNames)],
                                                                         "Apparent", sep = "")
         names(apparent) <- gsub("^\\.", "", names(apparent))
-        result <- subset(result, Resample != "AllData")
+        resamples <- subset(resamples, Resample != "AllData")
       }
-    names(result) <- gsub("^\\.", "", names(result))
- 
-    out <- ddply(result[,!grepl("^cell|Resample", colnames(result)),drop = FALSE],
+    names(resamples) <- gsub("^\\.", "", names(resamples))
+
+    if(any(!complete.cases(resamples[,!grepl("^cell|Resample", colnames(resamples)),drop = FALSE])))
+      {
+        warning("There were missing values in resampled performance measures.")
+
+      }
+    out <- ddply(resamples[,!grepl("^cell|Resample", colnames(resamples)),drop = FALSE],
                  info$model$parameter,
                  caret:::MeanSD, exclude = info$model$parameter)
     
@@ -220,7 +223,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
         }
       }
     
-    list(performance = out, resamples = result, predictions = if(ctrl$savePredictions) allPred else NULL)
+    list(performance = out, resamples = resamples, predictions = if(ctrl$savePredictions) pred else NULL)
   }
 
 
@@ -361,7 +364,6 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
     resampleIndex <- ctrl$index
     if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
 
-    if(ctrl$saveDetails) allPred <- NULL
     result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = "caret", .errorhandling = "stop") %dopar%
     {
       library(caret)
@@ -379,18 +381,17 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
         {
           tmpPred <- sbfResults$pred
           tmpPred$Resample <- names(resampleIndex)[iter]
-          allPred <- rbind(allPred, tmpPred)
-          rm(tmpPred)
-        }
+        } else tmpPred <- NULL
       resamples <- ctrl$functions$summary(sbfResults$pred, lev = lev)
       if(is.factor(y)) resamples <- c(resamples, caret:::flatTable(sbfResults$pred$pred, sbfResults$pred$obs))
       resamples <- data.frame(t(resamples))
       resamples$Resample <- names(resampleIndex)[iter]
       
-      list(resamples = resamples, selectedVars = sbfResults$variables)
+      list(resamples = resamples, selectedVars = sbfResults$variables, pred = tmpPred)
     }
 
-    resamples <- do.call("rbind", result[names(result) == "resamples"])
+    resamples <- rbind.fill(result[names(result) == "resamples"])
+    pred <- rbind.fill(result[names(result) == "pred"])
     performance <- caret:::MeanSD(resamples[,!grepl("Resample", colnames(resamples)),drop = FALSE])
     
     if(ctrl$method %in% c("boot632"))
@@ -413,7 +414,7 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
         
       }
     
-    list(performance = performance, everything = result, predictions = if(ctrl$saveDetails) allPred else NULL)
+    list(performance = performance, everything = result, predictions = if(ctrl$saveDetails) pred else NULL)
   }
 
 
