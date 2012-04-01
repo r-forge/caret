@@ -560,6 +560,54 @@ getClassLevels <- function(x)
     obsLevels
   }
 
+partRuleSummary <- function(x)
+  {
+    predictors <- all.vars(x$terms)
+    predictors <- predictors[predictors != as.character(x$terms[[2]])]
+    classes <- levels(x$predictions)
+    rules <- capture.output(print(x))
+    conditions <- grep("(<=|>=|<|>|=)", rules, value = TRUE)
+    classPred <- grep("\\)$", conditions, value = TRUE)
+    varUsage <- data.frame(Var = predictors,
+                           Overall = 0)
+    for(i in seq(along = predictors))
+      varUsage$Overall[i] <- sum(grepl(paste("^", predictors[i], sep = ""), conditions))
+
+    numClass <- rep(NA, length(classes))
+    names(numClass) <- classes
+    for(i in seq(along = classes))
+      numClass[i] <- sum(grepl(paste(":", classes[i], sep = " "), classPred))
+    
+    list(varUsage = varUsage,
+         numCond = length(conditions),
+         classes = numClass)
+         
+  }
+
+ripperRuleSummary <- function(x)
+  {
+    predictors <- all.vars(x$terms)
+    predictors <- predictors[predictors != as.character(x$terms[[2]])]
+    classes <- levels(x$predictions)
+    rules <- capture.output(print(x))
+    ## remove header
+    rules <- rules[-(1:min(which(rules == "")))]
+    conditions <- grep("(<=|>=|<|>|=)", rules, value = TRUE)
+    varUsage <- data.frame(Var = predictors,
+                           Overall = 0)
+    for(i in seq(along = predictors))
+      varUsage$Overall[i] <- sum(grepl(paste("\\(", predictors[i], sep = ""), conditions))
+
+    numClass <- rep(NA, length(classes))
+    names(numClass) <- classes
+    for(i in seq(along = classes))
+      numClass[i] <- sum(grepl(paste(x$terms[[2]], "=", classes[i], sep = ""), conditions))
+    
+    list(varUsage = varUsage,
+         numCond = length(conditions),
+         classes = numClass)
+         
+  }
 
 ##########################################################################################################
 
@@ -646,3 +694,4 @@ makeTable <- function(x)
                
 
   }
+
