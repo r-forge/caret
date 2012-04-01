@@ -211,7 +211,7 @@ print.confusionMatrix.train <- function(x, digits = 1, ...)
                      byClass = "\n(entries are percentages within the reference class)\n",
                      "")
   cat(normText, "\n")
-  if(x$norm != "none" & x$B > 1) print(round(x$table, digits)) else print(confusionMatrix(x$table))
+  if(x$norm == "none" & x$B == 1) print(confusionMatrix(x$table)) else print(round(x$table, digits))
   cat("\n")
   invisible(x)
 }
