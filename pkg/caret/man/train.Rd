@@ -352,7 +352,7 @@ By default, the function \code{\link{createGrid}} is used to define the candidat
 
 In some cases, models may require control arguments. These can be passed via the three dots argument. Note that some models can specify tuning parameters in the control objects. If specified, these values will be superseded by those given in the \code{\link{createGrid}} argument. 
 
-For several models (\code{rpart}, \code{rf}, \code{gbm}, \code{treebag}, \code{nb}, \code{J48}, \code{PART}, \code{JRip}, \code{OneR} and \code{custom}) factor predictors variables can be passed directly to the underlying modeling function using the interface \code{train(x, y)}. In these cases, it is possible for the models to treat factor variables in a manner different than most (i.e. not as a decomposed set of dummy variables). The formula interface to \code{train} will always convert the factors to dummy variables.
+For several models (\code{rpart}, \code{rf}, \code{gbm}, \code{treebag}, \code{nb}, \code{J48}, \code{PART}, \code{JRip}, \code{OneR}, \code{ctree}, \code{cforest} and \code{custom}) factor predictors variables can be passed directly to the underlying modeling function using the interface \code{train(x, y)}. In these cases, it is possible for the models to treat factor variables in a manner different than most (i.e. not as a decomposed set of dummy variables). The formula interface to \code{train} will always convert the factors to dummy variables.
 
 The vignette entitled "caret Manual -- Model Building" has more details and examples related to this function.
 
