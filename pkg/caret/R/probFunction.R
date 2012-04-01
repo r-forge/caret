@@ -48,11 +48,17 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                                lda =, qda =  library(MASS),
                                rda        =  library(klaR),
                                slda       = library(ipred),
-                               rrlda      = library(rrlda),
-                               sparseLDA  = library(sparseLDA))
+                               rrlda      = library(rrlda))
                         
                         out <- predict(modelFit, newdata)$posterior
                         out
+                      },
+
+                      sparseLDA =
+                      {                  
+                        library(sparseLDA)
+                        if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
+                        sparseLDA::predict.sda(modelFit, newdata)$posterior
                       },
 
                       lda2 = 
