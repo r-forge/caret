@@ -915,7 +915,7 @@
                                            controls = ctl),
                                       theDots)
                        
-                       out <- do.call("party:::ctree", modelArgs)
+                       out <- do.call(getFromNamespace("ctree", "party"), modelArgs)
                        out        
                      },
 
@@ -946,7 +946,7 @@
                                       theDots)
                      
                        
-                       out <- do.call("ctree", modelArgs)
+                       out <- do.call(getFromNamespace("ctree", "party"), modelArgs)
                        out        
                      },                     
                      
@@ -974,7 +974,7 @@
                                            controls = ctl),
                                       theDots)
                        
-                       out <- do.call("cforest", modelArgs)
+                       out <- do.call(getFromNamespace("cforest", "party"), modelArgs)
                        out        
                      },
                      enet =, lasso =, ridge =
