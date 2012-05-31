@@ -5,8 +5,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     
-    <meta name="Generator" content="iWeb 3.0.1" />
-    <meta name="iWeb-Build" content="local-build-20100601" />
+    <meta name="Generator" content="iWeb 3.0.4" />
+    <meta name="iWeb-Build" content="local-build-20120531" />
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
     <meta name="viewport" content="width=700" />
     <title>The caret Package</title>
@@ -59,7 +59,7 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
           <div style="height: 0px; line-height: 0px; " class="bumper"> </div>
           <div style="height: 1px; line-height: 1px; " class="tinyText"> </div>
           <div style="margin-left: 0px; margin-top: 317px; position: relative; width: 709px; z-index: 1; " class="style_SkipStroke shape-with-text flowDefining">
-            <div class="text-content style_External_709_1035" style="padding: 0px; ">
+            <div class="text-content style_External_709_910" style="padding: 0px; ">
               <div class="style">
                 <p style="padding-top: 0pt; " class="paragraph_style">The <span class="style_1">caret</span> package (short for <span class="style_2">C</span>lassification <span class="style_2">A</span>nd <span class="style_2">RE</span>gression <span class="style_2">T</span>raining) is a set of functions that attempt to streamline the process for creating predictive models. The package contains tools for:<br /></p>
                 <p class="paragraph_style"><br /></p>
@@ -113,8 +113,6 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
                 </ol>
                 <p class="paragraph_style_3">There is also a paper on caret in the <a title="http://www.jstatsoft.org/v28/i05" href="http://www.jstatsoft.org/v28/i05" class="style_4">Journal of Statistical Software</a>. The example data can be obtained <a title="Classification_and_Regression_Training_files/descr.RData" href="Classification_and_Regression_Training_files/descr.RData">here</a> (the predictors) and <a title="Classification_and_Regression_Training_files/mutagen.RData" href="Classification_and_Regression_Training_files/mutagen.RData">here</a> (the outcomes).<br /></p>
                 <p class="paragraph_style_3"><br /></p>
-                <p class="paragraph_style_3">At the <a title="http://www.mbswonline.com/" href="http://www.mbswonline.com/">Midwest Biopharmaceutical Statistics Workshop</a>, I gave a half-day short course called &quot;Predictive Modeling in R&quot;. The <a title="Classification_and_Regression_Training_files/MBSW.R" href="Classification_and_Regression_Training_files/MBSW.R">R code</a> and <a title="Classification_and_Regression_Training_files/Karthikeyan.txt" href="Classification_and_Regression_Training_files/Karthikeyan.txt">one of the data sets</a> are available (the biomarker data set cannot currently be released).<br /></p>
-                <p class="paragraph_style_3"><br /></p>
                 <p class="paragraph_style_3">The current release version can be found on <a title="http://cran.r-project.org/web/packages/caret/" href="http://cran.r-project.org/web/packages/caret/">CRAN</a>.<br /></p>
                 <p class="paragraph_style_3"><br /></p>
                 <p class="paragraph_style_3">You can always email <a title="mailto:max.kuhn@pfizer.com?subject=the caret package" href="mailto:max.kuhn@pfizer.com?subject=the%20caret%20package">me</a> with questions, comments or suggestions.<br /></p>
@@ -128,10 +126,13 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
                         <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> adding new models as they are released<br /></p>
                       </li>
                       <li style="line-height: 25px; padding-left: 27px; text-indent: -9px; " class="full-width">
-                        <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> bootstrap  632+ estimator<br /></p>
+                        <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> bootstrap 632+ estimator<br /></p>
                       </li>
                       <li style="line-height: 25px; padding-left: 27px; text-indent: -9px; " class="full-width">
-                        <p style="padding-bottom: 0pt; text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> variable importance metrics for some other models</p>
+                        <p style="text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> variable importance metrics <br /></p>
+                      </li>
+                      <li style="line-height: 25px; padding-left: 27px; text-indent: -9px; " class="full-width">
+                        <p style="padding-bottom: 0pt; text-indent: -9px; " class="paragraph_style_1"><span style="font-size: 18px; position: relative; top: 1px; " class="Bullet">•</span><span style="width: 3px; " class="inline-block"></span> additional feature selection routines</p>
                       </li>
                     </ol>
                   </li>
@@ -152,28 +153,29 @@ new NavBar('widget0', 'Scripts/Widgets/Navbar', 'Scripts/Widgets/SharedResources
           
 
 
-          <div style="height: 173px; width: 639px;  height: 173px; left: 30px; position: absolute; top: 42px; width: 639px; z-index: 1; " class="tinyText style_SkipStroke_2">
+          <div style="height: 173px; width: 639px;  height: 173px; left: 30px; position: absolute; top: 51px; width: 639px; z-index: 1; " class="tinyText style_SkipStroke_2">
             <img src="Classification_and_Regression_Training_files/droppedImage.jpg" alt="" style="border: none; height: 174px; width: 639px; " />
           </div>
           
 
 
-          <div style="height: 152px; width: 573px;  height: 152px; left: 68px; position: absolute; top: 1389px; width: 573px; z-index: 1; " class="tinyText style_SkipStroke_3 stroke_0">
+          <div style="height: 152px; width: 573px;  height: 152px; left: 68px; position: absolute; top: 1268px; width: 573px; z-index: 1; " class="tinyText style_SkipStroke_3 stroke_0">
             <img src="Classification_and_Regression_Training_files/droppedImage_1.jpg" alt="" style="border: none; height: 152px; width: 573px; " />
           </div>
           
 
 
-          <div id="id2" style="height: 242px; left: 3px; position: absolute; top: 1596px; width: 703px; z-index: 1; " class="style_SkipStroke shape-with-text">
+          <div id="id2" style="height: 242px; left: -2px; position: absolute; top: 1477px; width: 703px; z-index: 1; " class="style_SkipStroke shape-with-text">
             <div class="text-content style_External_703_242" style="padding: 0px; ">
               <div class="style">
                 <p style="padding-top: 0pt; " class="paragraph_style"><span class="style_6">Parallel Execution of </span><span class="style_1">caret</span><span class="style_6"> functions</span><br /></p>
                 <p class="paragraph_style"><br /></p>
-                <p class="paragraph_style">Parameter tuning in <span class="style_1">caret</span> is done via resampling; every candidate model is evaluated many times using the bootstrap or cross-validation. The <span class="style_7">train</span>, <span class="style_7">rfe</span> and <span class="style_7">sbf</span> functions in <span class="style_1">caret</span> allows these fits to be computed on separate cores on the same machine or on different computers. As of version 4.99 pf the package, the <span class="style_7">foreach </span>package is used for parallelism. See the examples in <span class="style_7">train</span> (by typing <span class="style_7">?train</span>) that demonstrate this using the <span class="style_7">multicore </span> package (and others).<br /></p>
+                <p class="paragraph_style">Parameter tuning in <span class="style_1">caret</span> is done via resampling; every candidate model is evaluated many times using the bootstrap or cross-validation. The <span class="style_7">train </span>function in <span class="style_1">caret</span> allows these fits to be computed on separate cores on the same machine or on different computers. Any parallel computing technique can be used, such as NetworkSpaces or MPI. See the examples in <span class="style_7">train</span> (by typing <br /></p>
+                <p class="paragraph_style"><span class="style_7">?train</span>) that demonstrate this using MPI and NWS.<br /></p>
               </div>
             </div>
           </div>
-          <div style="height: 485px; line-height: 485px; " class="spacer"> </div>
+          <div style="height: 491px; line-height: 491px; " class="spacer"> </div>
         </div>
         <div style="height: 150px; margin-left: 0px; position: relative; width: 700px; z-index: 15; " id="footer_layer">
           <div style="height: 0px; line-height: 0px; " class="bumper"> </div>
