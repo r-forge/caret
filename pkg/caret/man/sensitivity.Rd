@@ -34,12 +34,12 @@
 }
 \usage{
 sensitivity(data, ...)
-\method{sensitivity}{default}(data, reference, positive = levels(reference)[1], ...)
+\method{sensitivity}{default}(data, reference, positive = levels(reference)[1], na.rm = TRUE, ...)
 \method{sensitivity}{table}(data, positive = rownames(data)[1], ...)
 \method{sensitivity}{matrix}(data, positive = rownames(data)[1], ...)
 
 specificity(data, ...)
-\method{specificity}{default}(data, reference, negative = levels(reference)[-1], ...)
+\method{specificity}{default}(data, reference, negative = levels(reference)[-1], na.rm = TRUE, ...)
 \method{specificity}{table}(data, negative = rownames(data)[-1], ...)
 \method{specificity}{matrix}(data, negative = rownames(data)[-1], ...)
 
@@ -65,6 +65,7 @@ negPredValue(data, ...)
   \item{negative}{a character string that defines the factor level corresponding to 
   the "negative" results}  
   \item{prevalence}{a numeric value for the rate of the "positive" class of the data}
+  \item{na.rm}{a logical value indicating whether \code{NA} values should be stripped before the computation proceeds}
   \item{...}{not currently used}
 }
 
