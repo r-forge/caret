@@ -38,6 +38,7 @@ export(anovaScores,
        densityplot.rfe,
        densityplot.train,
        dotPlot,
+       downSample,
        dummyVars,
        dummyVars.default,
        extractPrediction,
@@ -168,6 +169,7 @@ export(anovaScores,
        treebagFuncs,
        treebagSBF,
        twoClassSummary,
+       upSample,
        varImp,
        varImp.bagEarth,
        xyplot.rfe
@@ -234,6 +236,9 @@ S3method(varImp, cubist)
 S3method(varImp, RRF)
 S3method(varImp, PART)
 S3method(varImp, JRip)
+S3method(varImp, C5.0)
+S3method(varImp, nnet)
+S3method(varImp, glmnet)
 
 S3method(densityplot, train)
 S3method(histogram,   train)
@@ -395,6 +400,7 @@ S3method(predictors, logreg)
 S3method(predictors, logforest)
 S3method(predictors, logicBagg)
 S3method(predictors, gam)
+S3method(predictors, C5.0)
 
 S3method(confusionMatrix, table)
 
