@@ -85,12 +85,43 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
 
       if(class(mod)[1] != "try-error")
         {
-          predicted <- caret:::predictionFunction(method = method,
-                                                  modelFit = mod$fit,
-                                                  newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
-                                                  preProc = mod$preProc,
-                                                  param = info$seqParam[[parm]],
-                                                  custom = ctrl$custom$prediction)
+          predicted <- try(
+                           caret:::predictionFunction(method = method,
+                                                      modelFit = mod$fit,
+                                                      newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
+                                                      preProc = mod$preProc,
+                                                      param = info$seqParam[[parm]],
+                                                      custom = ctrl$custom$prediction),
+                           silent = TRUE)
+
+          if(class(predicted)[1] == "try-error")
+            {
+              wrn <- paste(colnames(printed[parm,,drop = FALSE]),
+                           printed[parm,,drop = FALSE],
+                           sep = "=",
+                           collapse = ", ")
+              wrn <- paste("predictions failed for ", names(resampleIndex)[iter], ": ", wrn, sep = "")
+              if(ctrl$verboseIter) cat(wrn, "\n")
+              warning(wrn)
+              rm(wrn)
+              
+              ## setup a dummy results with NA values for all predictions
+              nPred <- nrow(dat) - length(unique(holdoutIndex))
+              if(!is.null(lev))
+                {
+                  predicted <- rep("", nPred)
+                  predicted[seq(along = predicted)] <- NA
+                } else {
+                  predicted <- rep(NA, nPred)
+                }
+              if(!is.null(info$seqParam[[parm]]))
+                {
+                  tmp <- predicted
+                  predicted <- vector(mode = "list", length = nrow(info$seqParam[[parm]]) + 1)
+                  for(i in seq(along = predicted)) predicted[[i]] <- tmp
+                  rm(tmp)
+                }
+            }
         } else {
           wrn <- paste(colnames(printed[parm,,drop = FALSE]),
                        printed[parm,,drop = FALSE],
@@ -118,8 +149,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
               rm(tmp)
             }
         }
-
-      
+     
       if(testing) print(head(predicted))
       if(ctrl$classProbs)
         {
@@ -203,8 +233,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
           thisResample <- do.call("rbind", thisResample)          
           thisResample <- cbind(allParam, thisResample)
  
-        } else {
-          
+        } else {       
           if(is.factor(dat$.outcome)) predicted <- factor(as.character(predicted),
                                                           levels = lev)
           tmp <-  data.frame(pred = predicted,
@@ -230,7 +259,6 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
 
           ## if classification, get the confusion matrix
           if(length(lev) > 1) thisResample <- c(thisResample, caret:::flatTable(tmp$pred, tmp$obs))
-          
           thisResample <- as.data.frame(t(thisResample))
           thisResample <- cbind(thisResample, info$loop[parm,,drop = FALSE])
 
@@ -241,7 +269,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
                                             names(resampleIndex), iter, FALSE)
       list(resamples = thisResample, pred = tmpPred)
     }
-
+    
     resamples <- rbind.fill(result[names(result) == "resamples"])
     pred <- if(ctrl$savePredictions)  rbind.fill(result[names(result) == "pred"]) else NULL
     if(ctrl$method %in% c("boot632"))
