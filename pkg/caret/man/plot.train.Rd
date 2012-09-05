@@ -47,12 +47,6 @@ parameters, this plot is created inside conditioning panels.
 \seealso{ \code{\link{train}}, \code{\link[lattice]{levelplot}}, \code{\link[lattice]{xyplot}}, \code{\link[lattice:xyplot]{stripplot}} }
 \examples{
 
-pamFit <- train(Species ~ .,
-                  data = iris, 
-                  "pam", 
-                  tuneLength = 15)
-plot(pamFit, scales = list(x = list(rot = 90)))
-
 library(klaR)
 rdaFit <- train(Species ~ .,
                 data = iris, 
