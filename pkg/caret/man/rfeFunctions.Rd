@@ -6,6 +6,7 @@
 \alias{treebagFuncs}
 \alias{ldaFuncs}
 \alias{nbFuncs}
+\alias{lrFuncs}
 \alias{pickSizeBest}
 \alias{pickSizeTolerance}
 \alias{pickVars}
@@ -27,6 +28,7 @@ treebagFuncs
 ldaFuncs
 nbFuncs
 gamFuncs
+lrFuncs
 }
 
 \arguments{

@@ -103,6 +103,7 @@ Altman,  D.G., Bland,  J.M. (1994) ``Diagnostic tests 2: predictive values,'' \e
 \seealso{\code{\link{confusionMatrix}}}
 
 \examples{
+\dontrun{
 ###################
 ## 2 class example
 
@@ -161,12 +162,12 @@ irisTabs <- table(model, iris$Species)
 
 ## When passing factors, an error occurs with more
 ## than two levels
-\dontrun{sensitivity(model, iris$Species)}
+sensitivity(model, iris$Species)
 
 ## When passing a table, more than two levels can
 ## be used
 sensitivity(irisTabs, "versicolor")
 specificity(irisTabs, c("setosa", "virginica"))
-
+}
 }
 \keyword{manip}
