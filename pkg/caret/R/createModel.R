@@ -1781,7 +1781,7 @@
                      PenalizedLDA =
                      {
                        library(penalizedLDA)
-                       PenalizedLDA(as.matrix(trainX), as.numeric(trainY),
+                       penalizedLDA:::PenalizedLDA(as.matrix(trainX), as.numeric(trainY),
                                     lambda = tuneValue$.lambda,
                                     K = tuneValue$.K,
                                     ...)
