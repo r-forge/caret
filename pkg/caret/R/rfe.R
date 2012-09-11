@@ -657,6 +657,31 @@ nbFuncs <- list(summary = defaultSummary,
                 selectSize = pickSizeBest,
                 selectVar = pickVars)
 
+lrFuncs <- ldaFuncs
+lrFuncs$fit <- function (x, y, first, last, ...) 
+{
+  tmp <- x
+  tmp$Class <- y
+  glm(Class ~ ., data = tmp, family = "binomial")
+}
+lrFuncs$pred <- function (object, x) 
+{
+  lvl <- levels(object$data$Class)
+  tmp <- predict(object, x, type = "response")
+  out <- data.frame(1-tmp, tmp)
+  colnames(out) <- lvl
+  out$pred <- factor(ifelse(tmp > .4, lvl[2], lvl[1]),
+                     levels = lvl)
+  out
+}
+
+lrFuncs$rank <- function (object, x, y) 
+{
+    vimp <- varImp(object, scale = FALSE)
+    vimp <- vimp[order(vimp$Overall, decreasing = TRUE),, drop = FALSE]
+    vimp$var <- rownames(vimp)
+    vimp
+}
 
 ######################################################################
 ######################################################################
