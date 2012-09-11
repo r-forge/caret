@@ -396,6 +396,7 @@ The vignette entitled "caret Manual -- Model Building" has more details and exam
 \code{\link{createFolds}}}
 
 \examples{
+\dontrun{
 
 #######################################
 ## Classification Example
@@ -469,10 +470,8 @@ earthFit <- train(medv ~ .,
 #######################################
 ## Parallel Processing Example via multicore package
 
-\dontrun{
-
-library(doMC)
-registerDoMC(2)
+## library(doMC)
+## registerDoMC(2)
 
 ## NOTE: don't run models form RWeka when using
 ### multicore. The session will crash.

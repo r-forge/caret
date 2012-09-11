@@ -47,6 +47,7 @@ parameters, this plot is created inside conditioning panels.
 \seealso{ \code{\link{train}}, \code{\link[lattice]{levelplot}}, \code{\link[lattice]{xyplot}}, \code{\link[lattice:xyplot]{stripplot}} }
 \examples{
 
+\dontrun{
 library(klaR)
 rdaFit <- train(Species ~ .,
                 data = iris, 
@@ -54,6 +55,7 @@ rdaFit <- train(Species ~ .,
                 control = trainControl(method = "cv"))
 plot(rdaFit, plotType = "line")
 plot(rdaFit, plotType = "level")
+}
  }
    
 \keyword{hplot} 
