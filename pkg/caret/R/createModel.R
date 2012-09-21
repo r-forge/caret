@@ -77,6 +77,8 @@
         {
           pp$method <- pp$options
           pp$options <- NULL
+          if("ica" %in% pp$method) pp$n.comp <- pp$ICAcomp
+          pp$ICAcomp <- NULL
           pp$x <- trainX
           ppObj <- do.call("preProcess", pp)
           ppObj$call <- "scrubed"
@@ -89,6 +91,8 @@
         {
           pp$method <- pp$options
           pp$options <- NULL
+          if("ica" %in% pp$method) pp$n.comp <- pp$ICAcomp
+          pp$ICAcomp <- NULL          
           y <- data$.outcome
           data$.outcome <- NULL
           pp$x <- data
@@ -676,22 +680,31 @@
                      glmStepAIC =
                      {
                        library(MASS)
-                       ##check for family in dot and over-write if none
+                       ## The ... could pass to stepAIC or glm, so we'll try to
+                       ## parse them well
+
+                       stepArgs <- names(formals(stepAIC))
+                       stepArgs <- stepArgs[!(stepArgs %in% c("object", "..."))]
                        theDots <- list(...)
+                       glmArgs <- list()
+
                        if(!any(names(theDots) == "family"))
                          {
-                           theDots$family <- if(is.factor(data$.outcome)) binomial() else gaussian()              
-                         }
-
+                           glmArgs$family <- if(is.factor(data$.outcome)) binomial() else gaussian()              
+                         } else glmArgs$family <- theDots$family
+                       if(any(!(names(theDots) %in% stepArgs))) theDots <- theDots[names(theDots) %in% stepArgs]
+                                        
                        ## pass in any model weights
-                       if(!is.null(modelWeights)) theDots$weights <- modelWeights
+                       if(!is.null(modelWeights)) glmArgs$weights <- modelWeights
                        
-                       modelArgs <- c(
-                                      list(formula = modFormula,
+                       modelArgs <- c(list(formula = modFormula,
                                            data = data),
-                                      theDots)
+                                      glmArgs)
 
-                       out <- stepAIC(do.call("glm", modelArgs))
+                       mod <- do.call("glm", modelArgs)
+                     
+                       theDots$object <- mod
+                       out <- do.call("stepAIC", theDots)
                        out$call <- NULL
                        out
                                 
@@ -1741,10 +1754,10 @@
                      {
                        library(obliqueRF)
                        switch(method,
-                              ORFridge = obliqueRF(trainX, trainY, ...),
-                              ORFpls = obliqueRF(trainX, trainY, training_method = "pls", ...),
-                              ORFsvm = obliqueRF(trainX, trainY, training_method = "svm", ...),
-                              ORFlog = obliqueRF(trainX, trainY, training_method = "log", ...))
+                              ORFridge = obliqueRF(as.matrix(trainX), trainY, ...),
+                              ORFpls = obliqueRF(as.matrix(trainX), trainY, training_method = "pls", ...),
+                              ORFsvm = obliqueRF(as.matrix(trainX), trainY, training_method = "svm", ...),
+                              ORFlog = obliqueRF(as.matrix(trainX), trainY, training_method = "log", ...))
                        
                      },
                      rrlda =

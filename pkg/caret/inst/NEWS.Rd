@@ -3,15 +3,17 @@
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
 
-\section{Changes in version  5.16-XXX}{
+\section{Changes in version  5.15-042}{
 \itemize{ 
+
+\item Many examples are wrapped in dontrun to speed up cran checking.
 
 \item The \code{scrda} methods were removed from the package (on
 6/30/12, R Core sent an email that "since we haven't got fixes for
 long standing warnings of the rda packages since more than half a year
 now, we set the package to ORPHANED.")
 
-\item \ cpkg{C5.0} was added (model codes \code{C5.0}, \code{C5.0Tree} and
+\item \cpkg{C5.0} was added (model codes \code{C5.0}, \code{C5.0Tree} and
 \code{C5.0Rules}).
 
 \item Fixed a bug in \code{train} with NaiveBayes when \code{fL != 0}
@@ -82,15 +84,6 @@ of unique probability estimates. Second, a new argument called
 
 \item A bug in \code{print.bag} was fixed. 
 
-}
-}
-
-
-
-
-\section{Changes in version  5.16-001}{
-\itemize{ 
-
 \item Class probabilities were not being generated for sparseLDA
 models.
 
@@ -100,6 +93,18 @@ models.
 avoid conflicts between duplicate funciton names in the \cpkg{party}
 and \cpkg{partykit} package
 
+\item A set of functions for RFE and logistic regression
+(\code{lrFuncs}) was added.
+
+\item A bug in \code{train} with \code{method="glmStepAIC"} was fixed
+so that \code{direction} and other \code{stepAIC} arguments were
+honored.
+
+\item A bug was fixed in \code{preProcess} where the number of ICA
+components was not specified. (thanks to Alexander Lebedev)
+
+\item Another bug was fixed for oblique ranodm forest methods in
+\code{train}. (thanks to Alexander Lebedev)
 
 }
 }
