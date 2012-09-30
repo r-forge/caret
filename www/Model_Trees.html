@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>TableID2e817f20b643</title>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <style type="text/css">
+    body {
+          color: #444444;
+          font-family: Arial,Helvetica,sans-serif;
+          font-size: 75%;
+    }
+    a {
+          color: #4D87C7;
+          text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+ <!-- Table generated in R 2.15.0 by googleVis 0.2.17 package -->
+<!-- Thu Sep 27 12:00:03 2012 -->
+
+
+<!-- jsHeader -->
+<script type="text/javascript" src="http://www.google.com/jsapi">
+</script>
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataTableID2e817f20b643 ()
+{
+  var data = new google.visualization.DataTable();
+  var datajson =
+[
+ [
+ "cubist",
+"Regression Only",
+"cubist",
+"Cubist",
+"committees, neighbors" 
+],
+[
+ "LMT",
+"Classification Only",
+"LMT",
+"RWeka",
+"iter" 
+],
+[
+ "M5",
+"Regression Only",
+"M5",
+"RWeka",
+"rules, pruned, smoothed" 
+],
+[
+ "M5Rules",
+"Regression Only",
+"M5Rules",
+"RWeka",
+"pruned, smoothed" 
+] 
+];
+data.addColumn('string','model');
+data.addColumn('string','Model Type');
+data.addColumn('string','method = ');
+data.addColumn('string','Package');
+data.addColumn('string','Tuning Parameter(s)');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartTableID2e817f20b643() {
+  var data = gvisDataTableID2e817f20b643();
+  var options = {};
+options["allowHtml"] = true;
+options["width"] = "800px";
+
+     var chart = new google.visualization.Table(
+       document.getElementById('TableID2e817f20b643')
+     );
+     chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart 
+function displayChartTableID2e817f20b643()
+{
+  google.load("visualization", "1", { packages:["table"] }); 
+  google.setOnLoadCallback(drawChartTableID2e817f20b643);
+}
+ 
+// jsChart 
+displayChartTableID2e817f20b643()
+ 
+<!-- jsFooter -->  
+//-->
+</script>
+ 
+<!-- divChart -->
+  
+<div id="TableID2e817f20b643"
+  style="width: 800pxpx; height: 500px;">
+</div>
+ <div><span>Data: these &#8226; Chart ID: <a href="Chart_TableID2e817f20b643.html">TableID2e817f20b643</a></span><br /> 
+<!-- htmlFooter -->
+<span> 
+R version 2.15.0 (2012-03-30) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.2.17</a>
+&#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/table.html#Data_Policy">Data Policy</a>
+</span></div>
+</body>
+</html>
