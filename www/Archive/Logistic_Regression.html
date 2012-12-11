@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>TableID2e813df7c30f</title>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <style type="text/css">
+    body {
+          color: #444444;
+          font-family: Arial,Helvetica,sans-serif;
+          font-size: 75%;
+    }
+    a {
+          color: #4D87C7;
+          text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+ <!-- Table generated in R 2.15.0 by googleVis 0.2.17 package -->
+<!-- Thu Sep 27 12:00:03 2012 -->
+
+
+<!-- jsHeader -->
+<script type="text/javascript" src="http://www.google.com/jsapi">
+</script>
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataTableID2e813df7c30f ()
+{
+  var data = new google.visualization.DataTable();
+  var datajson =
+[
+ [
+ "glm",
+"Dual Use",
+"glm",
+"stats",
+"None" 
+],
+[
+ "glmboost",
+"Dual Use",
+"glmboost",
+"mboost",
+"prune, mstop" 
+],
+[
+ "glmnet",
+"Dual Use",
+"glmnet",
+"glmnet",
+"alpha, lambda" 
+],
+[
+ "glmStepAIC",
+"Dual Use",
+"glmStepAIC",
+"MASS",
+"None" 
+],
+[
+ "logitBoost",
+"Classification Only",
+"logitBoost",
+"caTools",
+"nIter" 
+],
+[
+ "multinom",
+"Classification Only",
+"multinom",
+"nnet",
+"decay" 
+],
+[
+ "ORFlog",
+"Classification Only",
+"ORFlog",
+"obliqueRF",
+"mtry" 
+],
+[
+ "plr",
+"Classification Only",
+"plr",
+"stepPlr",
+"cp, lambda" 
+] 
+];
+data.addColumn('string','model');
+data.addColumn('string','Model Type');
+data.addColumn('string','method = ');
+data.addColumn('string','Package');
+data.addColumn('string','Tuning Parameter(s)');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartTableID2e813df7c30f() {
+  var data = gvisDataTableID2e813df7c30f();
+  var options = {};
+options["allowHtml"] = true;
+options["width"] = "800px";
+
+     var chart = new google.visualization.Table(
+       document.getElementById('TableID2e813df7c30f')
+     );
+     chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart 
+function displayChartTableID2e813df7c30f()
+{
+  google.load("visualization", "1", { packages:["table"] }); 
+  google.setOnLoadCallback(drawChartTableID2e813df7c30f);
+}
+ 
+// jsChart 
+displayChartTableID2e813df7c30f()
+ 
+<!-- jsFooter -->  
+//-->
+</script>
+ 
+<!-- divChart -->
+  
+<div id="TableID2e813df7c30f"
+  style="width: 800pxpx; height: 500px;">
+</div>
+ <div><span>Data: these &#8226; Chart ID: <a href="Chart_TableID2e813df7c30f.html">TableID2e813df7c30f</a></span><br /> 
+<!-- htmlFooter -->
+<span> 
+R version 2.15.0 (2012-03-30) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.2.17</a>
+&#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/table.html#Data_Policy">Data Policy</a>
+</span></div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>TableID2e81decf875</title>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+  <style type="text/css">
+    body {
+          color: #444444;
+          font-family: Arial,Helvetica,sans-serif;
+          font-size: 75%;
+    }
+    a {
+          color: #4D87C7;
+          text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+ <!-- Table generated in R 2.15.0 by googleVis 0.2.17 package -->
+<!-- Thu Sep 27 12:00:03 2012 -->
+
+
+<!-- jsHeader -->
+<script type="text/javascript" src="http://www.google.com/jsapi">
+</script>
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataTableID2e81decf875 ()
+{
+  var data = new google.visualization.DataTable();
+  var datajson =
+[
+ [
+ "ada",
+"Classification Only",
+"ada",
+"ada",
+"iter, maxdepth, nu" 
+],
+[
+ "blackboost",
+"Dual Use",
+"blackboost",
+"mboost",
+"maxdepth, mstop" 
+],
+[
+ "bstLs",
+"Dual Use",
+"bstLs",
+"bst",
+"mstop, nu" 
+],
+[
+ "bstSm",
+"Dual Use",
+"bstSm",
+"bst",
+"nu, mstop" 
+],
+[
+ "bstTree",
+"Dual Use",
+"bstTree",
+"bst",
+"nu, maxdepth, mstop" 
+],
+[
+ "C5.0",
+"Classification Only",
+"C5.0",
+"C50",
+"winnow, model, trials" 
+],
+[
+ "gamboost",
+"Dual Use",
+"gamboost",
+"mboost",
+"prune, mstop" 
+],
+[
+ "gbm",
+"Dual Use",
+"gbm",
+"gbm",
+"interaction.depth, n.trees, shrinkage" 
+],
+[
+ "glmboost",
+"Dual Use",
+"glmboost",
+"mboost",
+"prune, mstop" 
+],
+[
+ "logitBoost",
+"Classification Only",
+"logitBoost",
+"caTools",
+"nIter" 
+] 
+];
+data.addColumn('string','model');
+data.addColumn('string','Model Type');
+data.addColumn('string','method = ');
+data.addColumn('string','Package');
+data.addColumn('string','Tuning Parameter(s)');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartTableID2e81decf875() {
+  var data = gvisDataTableID2e81decf875();
+  var options = {};
+options["allowHtml"] = true;
+options["width"] = "800px";
+
+     var chart = new google.visualization.Table(
+       document.getElementById('TableID2e81decf875')
+     );
+     chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart 
+function displayChartTableID2e81decf875()
+{
+  google.load("visualization", "1", { packages:["table"] }); 
+  google.setOnLoadCallback(drawChartTableID2e81decf875);
+}
+ 
+// jsChart 
+displayChartTableID2e81decf875()
+ 
+<!-- jsFooter -->  
+//-->
+</script>
+ 
+<!-- divChart -->
+  
+<div id="TableID2e81decf875"
+  style="width: 800pxpx; height: 500px;">
+</div>
+ <div><span>Data: these &#8226; Chart ID: <a href="Chart_TableID2e81decf875.html">TableID2e81decf875</a></span><br /> 
+<!-- htmlFooter -->
+<span> 
+R version 2.15.0 (2012-03-30) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.2.17</a>
+&#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/table.html#Data_Policy">Data Policy</a>
+</span></div>
+</body>
+</html>
