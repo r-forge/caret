@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <!--
+  Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Emerald 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20120902
+
+-->
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Miscellaneous Model Functions</title>
+  <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+  <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body>
+  <div id="wrapper">
+  <div id="header-wrapper" class="container">
+  <div id="header" class="container">
+  <div id="logo">
+  <h1><a href="#">Miscellaneous Model Functions</a></h1>
+</div>
+  <!--
+  <div id="menu">
+  <ul>
+  <li class="current_page_item"><a href="#">Homepage</a></li>
+<li><a href="#">Blog</a></li>
+<li><a href="#">Photos</a></li>
+<li><a href="#">About</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+  </div>
+  -->
+  </div>
+  <div><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  </div>
+  <!-- end #header -->
+<div id="page">
+  <div id="content">
+  
+<h2>Yet Another <i>k</i>-Nearest Neighbor Function</h2>
+
+<p><code>knn3</code> is a function for <i>k</i>-nearest neighbor classification. This particular implementation is a modification of the <code>knn</code> C code and returns the vote information for all of the classes (<code>knn</code> only returns the probability for the winning class). There is a formula interface via</p>
+  
+<p><xmp class=command>> knn3(formula, data)</xmp></p>
+<p> or by passing the training data directly </p>
+<p><xmp class=command>> # x is a matrix or data frame, y is a factor vector</xmp></p>
+<p><xmp class=command>> knn3(x, y)</xmp></p>
+<p> There are also <code>print</code> and <code>predict</code> methods. </p>
+
+<p>For the Sonar data in the <a href="http://cran.r-project.org/web/packages/mlbench/index.html"><strong>mlbench</strong></a> package, we can fit an 11-nearest neighbor model:</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> library(caret)</xmp></p>
+
+
+
+<p><xmp class=command>> library(mlbench)</xmp></p>
+
+
+
+<p><xmp class=command>> data(Sonar)</xmp></p>
+
+
+
+<p><xmp class=command>> set.seed(808)</xmp></p>
+
+
+
+<p><xmp class=command>> inTrain <- createDataPartition(Sonar$Class, p = 2/3, list = FALSE)</xmp></p>
+
+
+
+<p><xmp class=command>> sonarTrain <- Sonar[inTrain, -ncol(Sonar)]</xmp></p>
+
+
+
+<p><xmp class=command>> sonarTest <- Sonar[-inTrain, -ncol(Sonar)]</xmp></p>
+
+
+
+<p><xmp class=command>> trainClass <- Sonar[inTrain, "Class"]</xmp></p>
+
+
+
+<p><xmp class=command>> testClass <- Sonar[-inTrain, "Class"]</xmp></p>
+
+
+
+<p><xmp class=command>> centerScale <- preProcess(sonarTrain)</xmp></p>
+
+
+
+<p><xmp class=command>> centerScale</xmp></p>
+
+
+
+<p><xmp class=command>> training <- predict(centerScale, sonarTrain)</xmp></p>
+
+
+
+<p><xmp class=command>> testing <- predict(centerScale, sonarTest)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> knnFit <- knn3(training, trainClass, k = 11)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>11-nearest neighbor classification model</pre> <pre></pre> <pre>Call:</pre> <pre>knn3.data.frame(x = training, y = trainClass, k = 11)</pre> <pre></pre> <pre>Training set class distribution:</pre> <pre></pre> <pre> M  R </pre> <pre>74 65 </pre> <pre></pre>
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> predict(knnFit, head(testing), type = "prob")</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>             M         R</pre> <pre>[1,] 0.2727273 0.7272727</pre> <pre>[2,] 0.2727273 0.7272727</pre> <pre>[3,] 0.1818182 0.8181818</pre> <pre>[4,] 0.1818182 0.8181818</pre> <pre>[5,] 0.5454545 0.4545455</pre> <pre>[6,] 0.0000000 1.0000000</pre>
+<!--\end{Schunk}!-->
+
+
+<p> Similarly, <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> contains a <i>k</i>-nearest neighbor regression function, <code>knnreg</code>. It returns the average outcome for the neighbor.</p> 
+
+
+<h2>Partial Least Squares Discriminant Analysis</h2>
+
+<p>The <code>plsda</code> function is a wrapper for the <code>plsr</code> function in the <a href="http://cran.r-project.org/web/packages/pls/index.html"><strong>pls</strong></a> package that does not require a formula interface and can take factor outcomes as arguments. The classes are broken down into dummy variables (one for each class). These 0/1 dummy variables are modeled by partial least squares. 
+
+<p>
+From this model, there are two approaches to computing the class predictions and probabilities:
+<ul>
+   <li>the softmax technique can be used on a per-sample basis to
+   normalize the scores so that they are more ``probability like''
+   (i.e. they sum to one and are between zero and one). For a vector
+   of model predictions for each class <i>X</i>, the softmax class
+   probabilities are computed as. The predicted class is simply the class with the largest model prediction, or equivalently, the largest class probability. This is the default behavior for <code>plsda</code>.</li>
+   
+   <li>Bayes rule can be applied to the model predictions to form posterior probabilities. Here, the model predictions for the training set are used along with the training set outcomes to create conditional distributions for each class. When new samples are predicted, the raw model predictions are run through these conditional distributions to produce a posterior probability for each class (along with the prior). Bayes rule can be used by specifying <code>probModel = "Bayes"</code>. An additional parameter, <code>prior</code>, can be used to set prior probabilities  for the classes. </li>
+</ul>
+ </p>
+<p>The advantage to using Bayes rule is that the full training set is used to directly compute the class probabilities (unlike the softmax function which only uses the current sample's scores). This creates more realistic probability estimates but the disadvantage is that a separate Bayesian model must be created for each value of <code>ncomp</code>, which is more time consuming.  
+ </p>
+<p>For the sonar data set, we can fit two PLS models using each technique and predict the class probabilities for the test set. 
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> plsFit <- plsda(training, trainClass, ncomp = 20)</xmp></p>
+
+
+
+<p><xmp class=command>> plsFit</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>Partial least squares classification, fitted with the kernel algorithm.</pre> <pre>The softmax function was used to compute class probabilities.</pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre>
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> plsBayesFit <- plsda(training, trainClass, ncomp = 20, probMethod = "Bayes")</xmp></p>
+
+
+
+<p><xmp class=command>> plsBayesFit</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>Partial least squares classification, fitted with the kernel algorithm.</pre> <pre>Bayes rule was used to compute class probabilities.</pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre>
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> predict(plsFit, head(testing), type = "prob")</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>, , 20 comps</pre> <pre></pre> <pre>           M         R</pre> <pre>4  0.6227621 0.3772379</pre> <pre>6  0.5240553 0.4759447</pre> <pre>12 0.3883679 0.6116321</pre> <pre>16 0.1925378 0.8074622</pre> <pre>17 0.1800970 0.8199030</pre> <pre>19 0.1336795 0.8663205</pre> <pre></pre>
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> predict(plsBayesFit, head(testing), type = "prob")</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>, , ncomp20</pre> <pre></pre> <pre>             M          R</pre> <pre>4  0.950775270 0.04922473</pre> <pre>6  0.585468690 0.41453131</pre> <pre>12 0.076098620 0.92390138</pre> <pre>16 0.002768591 0.99723141</pre> <pre>17 0.003715369 0.99628463</pre> <pre>19 0.023820018 0.97617998</pre> <pre></pre>
+<!--\end{Schunk}!-->
+
+<p>Similar to <code>plsda</code>, <code>caret</code> also contains a function <code>splsda</code> that allows for classification using sparse PLS. A dummy 
+matrix is created for each class and used with the <code>spls</code> function in the <a href="http://cran.r-project.org/web/packages/spls/index.html"><strong>spls</strong></a> package. The same approach to estimating class probabilities is used for <code>plsda</code> and <code>splsda</code>.
+</p>
+
+
+<h2>Bagged MARS and FDA</h2>
+
+<p>
+Multivariate adaptive regression splines (MARS) models, like classification/regression trees, are unstable predictors (Breiman, 1996). This means that small perturbations in the training data might lead to significantly different models. Bagged trees and random forests are effective ways of improving tree models by exploiting these instabilities. <code>caret</code> contains a function, <code>bagEarth</code>, that fits MARS models via the <code>earth</code> function. There are formula and non-formula interfaces. 
+</p>
+<p>
+Also, flexible discriminant analysis is a generalization of linear discriminant analysis that can use non-linear features as inputs. One way of doing this is the use MARS-type features to classify samples. The function <code>bagFDA</code> fits FDA models of a set of bootstrap samples and aggregates the predictions to reduce noise.
+</p>
+<p>
+This function is deprecated in favor of the <code>bag</code> function.
+</p>
+
+
+<h2>Neural Networks with a Principal Component Step</h1>
+
+<p>
+Neural networks can be affected by severe amounts of multicollinearity
+in the predictors. The function <code>pcaNNet</code> is a wrapper around
+the <code>preProcess</code> and <code>nnet</code> functions that will run
+principal component analysis on the predictors before using them as
+inputs into a neural network. The function will keep enough components
+that will capture some pre-defined threshold on the cumulative
+proportion of variance (see the <code>thresh</code>
+argument). For new samples, the same transformation is applied to the new predictor values (based on the loadings from the training set). The function is available for both regression and classification. 
+</p>
+<p>
+This function is deprecated in favor of the <code>train</code> function using <code>method = "nnet"</code> and <code>preProc = "pca"</code>.
+</p>
+
+<h2>Independent Component Regression</h1>
+
+<p>
+The <code>icr</code> function can be used to fit a model analogous to
+principal component regression (PCR), but using independent component
+analysis (ICA). The predictor data are centered and projected to the
+ICA components. These components are then regressed against the
+outcome. The user needed to specify the number of components to keep.
+</p>
+<p>
+The model uses the <code>preProcess</code> function to compute the latent
+variables using the  <a href="http://cran.r-project.org/web/packages/fastICA/index.html" <strong>fastICA</strong></a> package.
+</p>
+<p>
+Like PCR, there is no guarantee that there will be a correlation
+between the new latent variable and the outcomes.
+</p>
+
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <!-- end #content -->
+<div id="sidebar">
+  <ul>
+  <li>
+  <h2>Links</h2>
+  <p><a href="modelList.html"><tt>train</tt> Model List</a></p>
+  </li>
+  <li>
+  <h2>Topics</h2>
+  <ul>
+          <li><a href="index.html">Main Page</a></li>
+  		<li><a href="datasets.html">Data Sets</a></li>
+                <li><a href="visualizations.html">Visualizations</a></li>
+                <li><a href="preprocess.html">Pre-Processing</a></li>
+                <li><a href="splitting.html">Data Splitting</a></li>
+                <li><a href="misc.html">Miscellaneous Model Functions</a></li>
+                <li><a href="training.html">Model Training and Tuning</a></li>
+                <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
+                <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                <li><a href="varimp.html">Variable Importance</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
+                <li><a href="other.html">Other Functions</a></li>
+                <li><a href="parallel.html">Parallel Processing</a></li>
+</ul>
+  </li>
+  </ul>
+  </div>
+  <!-- end #sidebar -->
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <div class="container"><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  <!-- end #page -->
+</div>
+  <div id="footer-content"></div>
+  <div id="footer">
+  <p>Created on Tue Dec 11 2012 using caret version 5.15-045 and R version 2.15.2 (2012-10-26).</p>
+  </div>
+  <!-- end #footer -->
+</body>
+  </html>
