@@ -19,8 +19,8 @@ avNNet.formula <- function (formula, data, weights, ...,
   m <- match.call(expand.dots = FALSE)
   if (is.matrix(eval.parent(m$data))) 
     m$data <- as.data.frame(data)
-  bag <- m$bag
-  repeats <- m$repeats
+##  bag <- m$bag
+##  repeats <- m$repeats
   m$... <- m$contrasts <- m$bag <- m$repeats <- NULL
   m[[1]] <- as.name("model.frame")
   m <- eval.parent(m)
