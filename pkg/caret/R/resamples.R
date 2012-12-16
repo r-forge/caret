@@ -56,6 +56,10 @@ resamples.default <- function(x, modelNames = names(x), ...)
           {
             x[[i]]$resample <- subset(x[[i]]$resample, Variables == x[[i]]$bestSubset)
           }
+##        if(class(x[[i]])[1] == "train" && x[[i]]$control$returnResamp == "all")
+##          {
+##            x[[i]]$resample <- merge(x[[i]]$resample, x[[i]]$bestTune)
+##          }          
         tmp <- x[[i]]$resample[, c(pNames, "Resample"), drop = FALSE]
         names(tmp)[names(tmp) %in% pNames] <- paste(modelNames[i], names(tmp)[names(tmp) %in% pNames], sep = "~")
         out <- if(i == 1) tmp else merge(out, tmp)
@@ -104,6 +108,8 @@ prcomp.resamples <- function(x, metric = x$metrics[1],  ...)
 
 
 "cluster" <- function(x, ...) UseMethod("cluster")
+
+cluster.default <- function(x, ...) stop("only implemented for resamples objects")
 
 cluster.resamples <- function(x, metric = x$metrics[1],  ...)
   {
@@ -239,7 +245,10 @@ summary.resamples <- function(object, ...)
     {
       tmpData <- vals[, grep(paste("~", object$metrics[i], sep = ""), names(vals), fixed = TRUE), drop = FALSE]
       
-      out[[i]] <- do.call("rbind", lapply(tmpData, summary))
+      out[[i]] <- do.call("rbind", lapply(tmpData, function(x) summary(x)[1:6]))
+      naSum <- matrix(unlist(lapply(tmpData, function(x) sum(is.na(x)))), ncol = 1)
+      colnames(naSum) <- "NA's"
+      out[[i]] <- cbind(out[[i]], naSum)
       rownames(out[[i]]) <- gsub(paste("~", object$metrics[i], sep = ""),
                                  "",
                                  rownames(out[[i]]),
@@ -401,8 +410,8 @@ xyplot.resamples <- function (x, data = NULL, what = "scatter", models = NULL, m
     }  
   out
 }
-
-parallel.resamples <- function (x, data = NULL, models = x$models, metric = x$metric[1], ...) 
+ 
+parallelplot.resamples <- function (x, data = NULL, models = x$models, metric = x$metric[1], ...) 
 {
   if(length(metric) != 1) stop("exactly one metric must be given")
 
@@ -414,16 +423,16 @@ parallel.resamples <- function (x, data = NULL, models = x$models, metric = x$me
                          "",
                          names(tmpData),
                          fixed = TRUE)
-  rng <- range(unlist(lapply(lapply(tmpData, as.numeric), range)))
+  rng <- range(unlist(lapply(lapply(tmpData, as.numeric), range, na.rm = TRUE)))
   prng <- pretty(rng)
 
-  reord <- order(apply(tmpData, 2, median))
+  reord <- order(apply(tmpData, 2, median, na.rm = TRUE))
   tmpData <- tmpData[, reord]
 
-  lattice:::parallel(~tmpData,
+  lattice:::parallelplot(~tmpData,
                      common.scale = TRUE,
                      scales = list(x = list(at = (prng-min(rng))/diff(rng), labels = prng)),
-                     xlab = useMathSymbols(metric),
+                     xlab = caret:::useMathSymbols(metric),
                      ...)
     
 }
@@ -470,7 +479,7 @@ splom.resamples <- function (x, data = NULL, variables = "models",
           plotData$Model <- unlist(lapply(tmp, function(x) x[1]))
           plotData$Metric <- unlist(lapply(tmp, function(x) x[2]))
           plotData <- subset(plotData, Model %in% models & Metric  %in% metric)
-          means <- cast(plotData, Model ~ Metric, mean)
+          means <- dcast(plotData, Model ~ Metric, mean, na.rm = TRUE)
           splom(~means[, metric], groups = means$Model, ...)
 
         } else stop ("'variables' should be either 'models' or 'metrics'")
