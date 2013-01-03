@@ -1,0 +1,928 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <!--
+  Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Emerald 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20120902
+
+-->
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Feature Selection</title>
+  <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+  <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body>
+  <div id="wrapper">
+  <div id="header-wrapper" class="container">
+  <div id="header" class="container">
+  <div id="logo">
+  <h1><a href="#">Feature Selection</a></h1>
+</div>
+  <!--
+  <div id="menu">
+  <ul>
+  <li class="current_page_item"><a href="#">Homepage</a></li>
+<li><a href="#">Blog</a></li>
+<li><a href="#">Photos</a></li>
+<li><a href="#">About</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+  </div>
+  -->
+  </div>
+  <div><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  </div>
+  <!-- end #header -->
+<div id="page">
+  <div id="content">
+
+<h2>Models with Built-In Feature Selection</h2>
+
+<p>
+Many models that can be accessed using <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>'s <code>train</code> function produce prediction equations that do not necessarily use all the predictors. These models are thought to have built-in feature selection and include <code>rpart</code>, <code>gbm</code>, <code>ada</code>, <code>glmboost</code>, <code>gamboost</code>, <code>blackboost</code>, <code>ctree</code>, <code>sparseLDA</code>, <code>sddaLDA</code>, <code>sddaQDA</code>  <code>glmnet</code>, <code>lasso</code>, <code>lars</code>, <code>spls</code>, <code>earth</code>, <code>fda</code>,   <code>bagEarth</code>, <code>bagFDA</code> , <code>pam</code> and others. Many of the functions have an ancillary method called <code>predictors</code> that returns a vector indicating which predictors were used in the final model.
+</p>
+<p>
+In many cases, using these models with built-in feature selection will be more efficient than algorithms where the search routine for the right predictors is external to the model. Built-in feature selection typically couples the predictor search algorithm with the parameter  estimation and are usually optimized with a single objective function (e.g. error rates or likelihood). 
+</p>
+
+<h2>Feature Selection Using Search Algorithms</h2>
+
+<h3>Searching the Feature Space</h3>
+
+<p>
+Many feature selection routines used a "wrapper" approach to find appropriate variables such that an algorithm that searches the feature space repeatedly fits the model with different predictor sets. The best predictor set is determined by some measure of performance (i.e. <i>R</i><sup>2</sup>, classification accuracy, etc). Examples of search functions are genetic algorithms, simulated annealing and forward/backward/stepwise selection methods. In theory, each of these search routines could converge to an optimal set of predictors.
+</p>
+
+<p>
+An example of one search routine is backwards selection (a.k.a. recursive feature elimination). 
+</p>
+
+<p><b><i>Backwards Selection</p></i></b>
+
+<p>
+First, the algorithm fits the model to all predictors. Each predictor is ranked using it's importance to the model. Let <i>S</i> be a sequence of ordered numbers which are candidate values for the number of predictors to retain (<i>S<sub>1</sub></i> &gt <i>S<sub>2</sub></i>, ...). At each iteration of feature selection, the <i>S<sub>i</sub></i> top raked predictors are retained, the model is refit and performance is assessed. The value of <i>S<sub>i</sub></i> with the best performance is determined and the top <i>S<sub>i</sub></i> predictors are used to fit the final model. Algorithm 1 has a more complete definition.
+</p>
+
+<p>
+The algorithm has an optional step (line 1.9) where the predictor rankings are recomputed on the model on the reduced feature set. <a href ="http://rd.springer.com/chapter/10.1007%2F978-3-540-25966-4_33">Svetnik <i>et al</i> (2004)</a> showed that, for random forest models, there was a decrease in performance when the rankings were re-computed at every step. However, in other cases when the initial rankings are not good (e.g. linear models with highly collinear predictors), re-calculation can slightly improve performance.
+</p>
+
+<p><br><img width = 686 height =379 src="Algo1.png"><br><br></p>
+
+
+<p>
+One potential issue over-fitting to the predictor set such that the wrapper procedure could focus on nuances of the training data that are not found in future samples (i.e. over-fitting to predictors and samples). 
+</p>
+
+<p>
+For example, suppose a very large number of uninformative predictors were collected and one such predictor randomly correlated with the outcome. The RFE algorithm would give a good rank to this variable and the prediction error (on the same data set) would be lowered. It would take a different test/validation to find out that this predictor was uninformative. The was referred to as "selection bias" by <a href ="http://www.pnas.org/content/99/10/6562.short">Ambroise and McLachlan (2002)</a>.
+</p>
+
+<p>
+In the current RFE algorithm, the training data is being used for at least three purposes: predictor selection, model fitting and performance evaluation. Unless the number of samples is large, especially in relation to the number of variables, one static training set may not be able to fulfill these needs.
+</p>
+
+<h2>Resampling and External Validation</h2>
+
+<p>
+Since feature selection is part of the model building process, resampling methods (e.g. cross-validation, the bootstrap) should factor in the variability caused by feature selection when calculating performance. For example, the RFE procedure in Algorithm 1 can estimate the model performance on line 1.7, which during the selection process.  <a href ="http://www.pnas.org/content/99/10/6562.short">Ambroise and McLachlan (2002)</a> and <a href ="http://rd.springer.com/chapter/10.1007%2F978-3-540-25966-4_33">Svetnik <i>et al</i> (2004)</a> showed that improper use of resampling to measure performance will result in models that perform poorly on new samples.
+</p>
+
+<p>
+To get performance estimates that incorporate the variation due to feature selection, it is suggested that the steps in Algorithm 1 be encapsulated inside an outer layer of resampling (e.g. 10-fold cross-validation). Algorithm 2 shows a version of the algorithm that uses resampling.
+</p>
+
+<p>
+While this will provide better estimates of performance, it is more computationally burdensome. For users with access to machines with multiple processors, the first <code>For</code> loop in Algorithm 2 (line 2.1) can be easily parallelized. Another complication to using resampling is that multiple lists of the "best" predictors are generated at each iteration. At first this may seem like a disadvantage, but it does provide a more probabilistic assessment of predictor importance than a ranking based on a single fixed data set. At the end of the algorithm, a consensus ranking can be used to determine the best predictors to retain.
+</p>
+
+<p><br><img width = 684 height =477 src="Algo2.png"><br><br></p>
+
+
+
+<h3>Recursive Feature Elimination via <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a></h3>
+
+<p>In <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>, Algorithm 1 is implemented by the function <code>rfeIter</code>. The resampling-based Algorithm 2 is in the <code>rfe</code> function. Given the potential selection bias issues, this document focuses on <code>rfe</code>.  There are several arguments:
+</p>
+
+<ul>
+<li> <code>x</code>, a matrix or data frame of predictor variables</li> 
+<li> <code>y</code>, a vector (numeric or factor) of outcomes</li> 
+<li> <code>sizes</code>, a integer vector for the specific subset sizes that should be tested (which need not to include <code>ncol(x)</code>) </li> 
+<li> <code>rfeControl</code>, a list of options that can be used to specify the model and the methods for prediction, ranking etc.</li> 
+</ul>
+
+<p>
+For a specific model, a set of functions must be specified in <code>rfeControl$functions</code>. Sections below has descriptions of these sub-functions. There are a number of pre-defined sets of functions for several models, including: linear regression (in the object <code>lmFuncs</code>), random forests (<code>rfFuncs</code>), naive Bayes (<code>nbFuncs</code>), bagged trees (<code>treebagFuncs</code>) and functions that can be used with <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>'s <code>train</code> function (<code>caretFuncs</code>). The latter is useful if the model has tuning parameters that must be determined at each iteration.
+</p>
+
+
+<h2>An Example</h2>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> library(caret)</xmp></p>
+
+
+
+<p><xmp class=command>> library(mlbench)</xmp></p>
+
+
+
+<p><xmp class=command>> library(Hmisc)</xmp></p>
+
+
+
+<p><xmp class=command>> library(randomForest)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+
+<p>
+To test the algorithm, the "Friedman 1" benchmark (Friedman, 1991) was used. There are five informative variables generated by the equation
+</p>
+
+<p><img width = 406 height =30 src="FEq.png"></p>
+
+
+<p>
+In the simulation used here:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> n <- 100</xmp></p>
+
+
+
+<p><xmp class=command>> p <- 40</xmp></p>
+
+
+
+<p><xmp class=command>> sigma <- 1</xmp></p>
+
+
+
+<p><xmp class=command>> set.seed(1)</xmp></p>
+
+
+
+<p><xmp class=command>> sim <- mlbench.friedman1(n, sd = sigma)</xmp></p>
+
+
+
+<p><xmp class=command>> colnames(sim$x) <- c(paste("real", 1:5, sep = ""), paste("bogus", </xmp></p>
+
+<p><xmp class=command>>     1:5, sep = ""))</xmp></p>
+
+
+
+<p><xmp class=command>> bogus <- matrix(rnorm(n * p), nrow = n)</xmp></p>
+
+
+
+<p><xmp class=command>> colnames(bogus) <- paste("bogus", 5 + (1:ncol(bogus)), sep = "")</xmp></p>
+
+
+
+<p><xmp class=command>> x <- cbind(sim$x, bogus)</xmp></p>
+
+
+
+<p><xmp class=command>> y <- sim$y</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+
+<p>
+Of the 50 predictors, there are 45 pure noise variables: 5 are uniform on [0, 1] and 40 are random univariate standard normals. The predictors are centered and scaled:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> normalization <- preProcess(x)</xmp></p>
+
+
+
+<p><xmp class=command>> x <- predict(normalization, x)</xmp></p>
+
+
+
+<p><xmp class=command>> x <- as.data.frame(x)</xmp></p>
+
+
+
+<p><xmp class=command>> subsets <- c(1:5, 10, 15, 20, 25)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+
+<p>
+The simulation will fit models with subset sizes of 25, 20, 15, 10, 5, 4, 3, 2, 1. 
+</p>
+
+<p>
+As previously mentioned, to fit linear models, the <code>lmFuncs</code> set of functions can be used. To do this, a control object is created with the <code>rfeControl</code> function. We also specify that repeated 10-fold cross-validation should be used in line 2.1 of Algorithm 2. The number of folds can be changed via the <code>number</code> argument to <code>rfeControl</code> (defaults to 10). The <code>verbose</code> option prevents copious amounts of output from being produced and the <code>returnResamp</code> argument specifies that the 50 performance estimates should be saved only for the optimal subset size.
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> set.seed(10)</xmp></p>
+
+
+
+<p><xmp class=command>> ctrl <- rfeControl(functions = lmFuncs, method = "repeatedcv", </xmp></p>
+
+<p><xmp class=command>>     repeats = 5, verbose = FALSE, returnResamp = "final")</xmp></p>
+
+
+
+<p><xmp class=command>> lmProfile <- rfe(x, y, sizes = subsets, rfeControl = ctrl)</xmp></p>
+
+
+
+<p><xmp class=command>> lmProfile</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre></pre> <pre>Recursive feature selection</pre> <pre></pre> <pre>Outer resampling method: Cross-Validation (10 fold, repeated 5 times) </pre> <pre></pre> <pre>Resampling performance over subset size:</pre> <pre></pre> <pre> Variables  RMSE Rsquared RMSESD RsquaredSD Selected</pre> <pre>         1 3.566   0.4894 0.5791     0.2029         </pre> <pre>         2 3.153   0.5953 0.6439     0.1905         </pre> <pre>         3 2.904   0.6562 0.7357     0.2107        *</pre> <pre>         4 2.993   0.6438 0.7627     0.2066         </pre> <pre>         5 3.221   0.5972 0.8173     0.2094         </pre> <pre>        10 3.394   0.5612 0.8189     0.2144         </pre> <pre>        15 3.517   0.5418 0.9081     0.2337         </pre> <pre>        20 3.719   0.5042 0.9147     0.2365         </pre> <pre>        25 4.088   0.4502 0.9538     0.2302         </pre> <pre>        50 4.088   0.4502 0.9538     0.2302         </pre> <pre></pre> <pre>The top 3 variables (out of 3):</pre> <pre>   real4, real5, real2</pre> <pre></pre>
+<!--\end{Schunk}!-->
+
+<p>
+The output shows that the  best subset size was estimated to be 3 predictors. This set includes informative variables but did not include them all. The <code>predictors</code> function can be used to get a text string of variable names that were picked in the final model. The <code>lmProfile</code> is a list of class <code>"rfe"</code> that contains an object <code>fit</code> that is the final linear model with the remaining terms. The model can be used to get predictions for future or test samples. 
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> predictors(lmProfile)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>[1] "real4" "real5" "real2"</pre>
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> lmProfile$fit</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre></pre> <pre>Call:</pre> <pre>lm(formula = y ~ ., data = tmp)</pre> <pre></pre> <pre>Coefficients:</pre> <pre>(Intercept)        real4        real5        real2  </pre> <pre>     14.613        2.625        1.967        1.648  </pre> <pre></pre>
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> head(lmProfile$resample)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>   Variables     RMSE  Rsquared    Resample</pre> <pre>3          3 2.940756 0.5542831 Fold01.Rep1</pre> <pre>13         3 2.704529 0.6583788 Fold02.Rep1</pre> <pre>23         3 4.599872 0.2181731 Fold03.Rep1</pre> <pre>33         3 2.601659 0.8478823 Fold04.Rep1</pre> <pre>43         3 1.979220 0.8571701 Fold05.Rep1</pre> <pre>53         3 2.978896 0.8301785 Fold06.Rep1</pre>
+<!--\end{Schunk}!-->
+
+<p>
+There are also several plot methods to visualize the results. <code>plot(lmProfile)</code> produces the performance profile across different subset sizes, as shown in the figure below. 
+</p>
+
+<!-- begin{Schunk} !--> 
+<p><br><a href="select_lmprofile.pdf"><img width =300 height =180 src="select_lmprofile.png"><br>(click image for larger pdf)</a><br><br></p>
+<!--\end{Schunk}!-->
+
+<p>
+Also the resampling results are stored in the sub-object <code>lmProfile$resample</code> and can be used with several lattice functions. Univariate lattice functions (<code>densityplot</code>, <code>histogram</code>) can be used to plot the resampling distribution while bivariate functions (<code>xyplot</code>, <code>stripplot</code>) can be used to plot the distributions for different subset sizes. In the latter case, the option <code>returnResamp = "all"</code> in <code>rfeControl</code> can be used to save all the resampling results. Example images are shown below for the random forest model.
+</p>
+
+<h2>Helper Functions</h2>
+
+<p>
+To use feature elimination for an arbitrary model, a set of functions
+must be passed to <code>rfe</code> for each of the steps in Algorithm
+2. 
+</p>
+
+<p>
+This section defines those functions and uses the
+existing random forest functions as an illustrative
+example. <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> contains a list called <code>rfFuncs</code>, but
+this document will use a more simple version that will be better for
+illustrating the ideas. The functions used here are collected
+in a list called <code>rfRFE</code>.
+</p>
+
+
+<p><xmp class=command>>rfRFE <-  list(summary = defaultSummary, </xmp></p>
+<p><xmp class=command>>                 fit = function(x, y, first, last, ...) </xmp></p>
+<p><xmp class=command>>                 { </xmp></p>
+<p><xmp class=command>>                   library(randomForest) </xmp></p>
+<p><xmp class=command>>                   randomForest(x, y, importance = first, ...) </xmp></p>
+<p><xmp class=command>>                 }, </xmp></p>
+<p><xmp class=command>>                 pred = function(object, x) </xmp></p>
+<p><xmp class=command>>                 { </xmp></p>
+<p><xmp class=command>>                   predict(object, x) </xmp></p>
+<p><xmp class=command>>                 }, </xmp></p>
+<p><xmp class=command>>                 rank = function(object, x, y) </xmp></p>
+<p><xmp class=command>>                 { </xmp></p>
+<p><xmp class=command>>                   vimp <- varImp(object) </xmp></p>
+<p><xmp class=command>>                   if(is.factor(y </xmp></p>
+<p><xmp class=command>>                     { </xmp></p>
+<p><xmp class=command>>                       ## If there are class-specific scores, collapse </xmp></p>
+<p><xmp class=command>>                       ## into a single score </xmp></p>
+<p><xmp class=command>>                       if(all(levels(y) %in% colnames(vimp))) </xmp></p>
+<p><xmp class=command>>                         { </xmp></p>
+<p><xmp class=command>>                           avImp <- apply(vimp[, levels(y), drop = TRUE], 1, mean) </xmp></p>
+<p><xmp class=command>>                           vimp$Overall <- avImp </xmp></p>
+<p><xmp class=command>>                         } </xmp></p>
+<p><xmp class=command>>                     } </xmp></p>
+<p><xmp class=command>>                   vimp <- vimp[order(vimp$Overall,decreasing = TRUE),, drop = FALSE] </xmp></p>
+<p><xmp class=command>>                   vimp$var <- rownames(vimp)   </xmp></p>                
+<p><xmp class=command>>                   vimp </xmp></p>
+<p><xmp class=command>>                 }, </xmp></p>
+<p><xmp class=command>>                 selectSize = pickSizeBest, </xmp></p>
+<p><xmp class=command>>                 selectVar = pickVars) </xmp></p>
+
+
+<b><p><i>The <code>summary</code> Function</p></i></b>
+
+<p>
+The <code>summary</code> function takes the observed and predicted values
+and computes one or more performance metrics (see line
+2.14). The input is a data frame with columns <code>obs</code>
+and <code>pred</code>. The output should be a named vector of numeric
+variables. Note that the <code>metric</code> argument of the <code>rfe</code>
+function should reference one of the names of the output of
+<code>summary</code>. The example function is:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> rfRFE$summary</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>function (data, lev = NULL, model = NULL) </pre> <pre>{</pre> <pre>    if (is.character(data$obs)) </pre> <pre>        data$obs <- factor(data$obs, levels = lev)</pre> <pre>    postResample(data[, "pred"], data[, "obs"])</pre> <pre>}</pre> <pre><environment: namespace:caret></pre>
+<!--\end{Schunk}!-->
+
+<p>
+Two functions in <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> that can be used as the summary
+funciton are <code>defaultSummary</code> and <code>twoClassSummary</code> (for
+classification probelms with two classes). 
+</p>
+
+
+<b><p><i>The <code>fit</code> Function</p></i></b>
+
+<p>
+This function builds the model based on the current data set (lines 2.3, 2.9 and 2.17). The arguments for the function must be:
+</p>
+
+<ul>
+<li> <code>x</code>: the current training set of predictor data with the appropriate subset of variables</li> 
+<li> <code>y</code>: the current outcome data (either a numeric or factor vector)</li> 
+<li> <code>first</code>: a single logical value for whether the current predictor set has all possible variables (e.g. line 2.3)</li> 
+  <li> <code>last</code>: similar to <code>first</code>, but <code>TRUE</code> when the last model is fit with the final subset size and predictors. (line 2.17) </li> 
+<li> <code>...</code>: optional arguments to pass to the fit function in the call to <code>rfe</code></li> 
+</ul>
+
+<p>
+The function should return a model object that can be used to generate predictions. For random forest, the fit function is simple:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> rfRFE$fit</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>function(x, y, first, last, ...)</pre> <pre>                 {</pre> <pre>                   library(randomForest)</pre> <pre>                   randomForest(x, y, importance = first, ...)</pre> <pre>                 }</pre>
+<!--\end{Schunk}!-->
+
+<p>
+For feature selection without re-ranking at each iteration, the random forest variable importances only need to be computed on the first iterations when all of the predictors are in the model. This can be accomplished using  <code>importance = first</code>.
+</p>
+
+<p><i>The <code>pred</code> Function</p></i>
+
+<p>
+This function returns a vector of predictions (numeric or factors) from the current model (lines 2.4 and 2.10). The input arguments must be
+</p>
+
+<ul>
+<li> <code>object</code>: the model generated by the <code>fit</code> function</li> 
+<li> <code>x</code>: the current set of predictor set for the held-back samples</li> 
+</ul>
+
+<p>
+For random forests, the function is a simple wrapper for the predict function:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> rfRFE$pred</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>function(object, x)</pre> <pre>                 {</pre> <pre>                   predict(object, x)</pre> <pre>                 }</pre>
+<!--\end{Schunk}!-->
+
+<p>
+For classification, it is probably a good idea to ensure that the resulting factor variables of predictions has the same levels as the input data.
+</p>
+
+<b><p><i>The <code>rank</code> Function</p></i></b>
+
+<p>
+This function is used to return the predictors in the order of the most important to the least important (lines 2.5 and 2.11). Inputs are:
+</p>
+
+<ul>
+<li> <code>object</code>: the model generated by the <code>fit</code> function</li> 
+<li> <code>x</code>: the current set of predictor set for the training samples</li> 
+<li> <code>y</code>: the current training outcomes</li> 
+</ul>
+
+<p>
+The function should return a data frame with a column called <code>var</code> that has the current variable names. The first row should be the most important predictor etc. Other columns can be included in the output and will be returned in the final <code>rfe</code> object.
+</p>
+
+<p>
+For random forests, the function below uses <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>'s <code>varImp</code> function to extract the random forest importances and orders them. For classification, <code>randomForest</code> will produce a column of importances for each class. In this case, the default ranking function orders the predictors by the averages importance across the classes.
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> rfRFE$rank</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>function(object, x, y)</pre> <pre>                 {</pre> <pre>                   vimp <- varImp(object)</pre> <pre></pre> <pre>                   if(is.factor(y))</pre> <pre>                     {</pre> <pre>                       if(all(levels(y) %in% colnames(vimp)))</pre> <pre>                         {</pre> <pre>                           avImp <- apply(vimp[, levels(y), drop = TRUE],</pre> <pre>                                          1,</pre> <pre>                                          mean)</pre> <pre>                           vimp$Overall <- avImp</pre> <pre>                         }</pre> <pre></pre> <pre>                     }</pre> <pre>                   </pre> <pre>                   vimp <- vimp[</pre> <pre>                                order(</pre> <pre>                                      vimp$Overall,</pre> <pre>                                      decreasing = TRUE)</pre> <pre>                                ,,</pre> <pre>                                drop = FALSE]</pre> <pre>                   </pre> <pre>                   vimp$var <- rownames(vimp)                  </pre> <pre>                   vimp</pre> <pre>                 }</pre>
+<!--\end{Schunk}!-->
+
+<b><p><i>The <code>selectSize</code> Function</p></i></b>
+
+<p>
+This function determines the optimal number of predictors based on the resampling output (line 2.15). Inputs for the function are:
+</p>
+
+<ul>
+<li> <code>x</code>: a matrix with columns for the performance metrics and the number of variables, called <code>Variables</code></li> 
+<li> <code>metric</code>: a character string of the performance measure to optimize (e.g. RMSE, Accuracy)</li> 
+<li> <code>maximize</code>: a single logical for whether the metric should be maximized</li> 
+</ul>
+
+<p>
+This function should return an integer corresponding to the optimal subset size.
+</p>
+
+<p>
+<a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> comes with two examples functions for this purpose: <code>pickSizeBest</code> and <code>pickSizeTolerance</code>. The former simply selects the subset size that has the best value. The latter takes into account the whole profile and tries to pick a subset size that is small without sacrificing too much performance. For example, suppose we have computed the RMSE over a series of variables sizes:
+</p>
+
+
+<p><xmp class=command>> example <- data.frame(RMSE = c(3.215, 2.819, 2.414, 2.144,  </xmp></p>
+<p><xmp class=command>>                               2.014, 1.997, 2.025, 1.987,  </xmp></p>
+<p><xmp class=command>>                               1.971, 2.055, 1.935, 1.999,  </xmp></p>
+<p><xmp class=command>>                               2.047, 2.002, 1.895, 2.018), </xmp></p>
+<p><xmp class=command>>                               Variables = 1:16) </xmp></p>
+
+<p>
+These are depicted in the figure below. The solid circle identifies the subset size with the absolute smallest RMSE. However, there are many smaller subsets that produce approximately the same performance but with fewer predictors. In this case, we might be able to accept a slightly larger error for less predictors.
+</p>
+
+<p>
+The <code>pickSizeTolerance</code> determines the absolute best value then the percent difference of the other points to this value. In the case of RMSE, this would be</p>
+
+<p><img width = 283 height = 52 src="tol.png"></p>
+
+
+<p>
+where <i>RMSE<sub>{opt}</sub></i> is the absolute best error rate. These "tolerance" values are plotted in the bottom panel. The solid triangle is the smallest subset size that is within 10% of the optimal value.
+</p>
+
+<p>
+This approach can produce good results for many of the tree based models, such as random forest, where there is a plateau of good performance for larger subset sizes. For trees, this is usually because unimportant variables are infrequently used in splits and do not significantly affect performance.
+</p>
+
+<!-- begin{Schunk} !--> 
+<p><br><a href="select_tol.pdf"><img width =300 height =300 src="select_tol.png"><br>(click image for larger pdf)</a><br><br></p>
+<!--\end{Schunk}!-->
+
+<b><p><i>The <code>selectVar</code> Function</p></i></b>
+
+<p>
+After the optimal subset size is determined, this function will be used to calculate the best rankings for each variable across all the resampling iterations (line 2.16). Inputs for the function are:
+</p>
+
+<ul>
+<li> <code>y</code>: a list of variables importance for each resampling iteration and each subset size (generated by the user-defined </li> <code>rank</code> function). In the example, each each of the cross-validation groups the output of the <code>rank</code> function is saved for each of the 10 subset sizes (including the original subset). If the rankings are not recomputed at each iteration, the values will be the same within each cross-validation iteration.</li> 
+<li> <code>size</code>: the integer returned by the  <code>selectSize</code> function</li> 
+</ul>
+
+<p>
+This function should return a character string of predictor names (of length <code>size</code>) in the order of most important to least important
+</p>
+
+<p>
+For random forests, only the first importance calculation (line 2.5) is used since these are the rankings on the full set of predictors. These importances are averaged and the top predictors are returned.
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> rfRFE$selectVar</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>function (y, size) </pre> <pre>{</pre> <pre>    finalImp <- ddply(y[, c("Overall", "var")], .(var), function(x) mean(x$Overall, </pre> <pre>        na.rm = TRUE))</pre> <pre>    names(finalImp)[2] <- "Overall"</pre> <pre>    finalImp <- finalImp[order(finalImp$Overall, decreasing = TRUE), </pre> <pre>        ]</pre> <pre>    as.character(finalImp$var[1:size])</pre> <pre>}</pre> <pre><environment: namespace:caret></pre>
+<!--\end{Schunk}!-->
+
+<p>
+Note that if the predictor rankings are recomputed at each iteration (line 2.11) the user will need to write their own selection function to use the other ranks.
+</p>
+
+<h2>The Example</h2>
+
+<p>
+For random forest, we fit the same series of model sizes as the linear model. The option to save all the resampling results across subset sizes was changed for this model and are used to show the lattice plot function capabilities in the figures below.
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> ctrl$functions <- rfRFE</xmp></p>
+
+
+
+<p><xmp class=command>> ctrl$returnResamp <- "all"</xmp></p>
+
+
+
+<p><xmp class=command>> set.seed(10)</xmp></p>
+
+
+
+<p><xmp class=command>> rfProfile <- rfe(x, y, sizes = subsets, rfeControl = ctrl)</xmp></p>
+
+
+
+<p><xmp class=command>> rfProfile</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre></pre> <pre>Recursive feature selection</pre> <pre></pre> <pre>Outer resampling method: Cross-Validation (10 fold, repeated 5 times) </pre> <pre></pre> <pre>Resampling performance over subset size:</pre> <pre></pre> <pre> Variables  RMSE Rsquared RMSESD RsquaredSD Selected</pre> <pre>         1 3.873   0.3941 0.6441     0.2181         </pre> <pre>         2 3.222   0.5814 0.5966     0.1986         </pre> <pre>         3 2.670   0.7743 0.5159     0.1070        *</pre> <pre>         4 2.857   0.7485 0.5170     0.1299         </pre> <pre>         5 3.019   0.7209 0.5460     0.1332         </pre> <pre>        10 3.178   0.6867 0.5661     0.1715         </pre> <pre>        15 3.319   0.6882 0.5734     0.1704         </pre> <pre>        20 3.352   0.6778 0.5769     0.1734         </pre> <pre>        25 3.537   0.6484 0.5427     0.1913         </pre> <pre>        50 3.532   0.6503 0.5478     0.1901         </pre> <pre></pre> <pre>The top 3 variables (out of 3):</pre> <pre>   real4, real5, real2</pre> <pre></pre>
+<!--\end{Schunk}!-->
+
+<p>The resampling profile can be visualized along with plots of the individual resampling results:</>
+
+<p><xmp class=command>> plot1 <- plot(rfProfile, type = c("g", "o"))</xmp></p>
+<p><xmp class=command>> plot2 <- plot(rfProfile, type = c("g", "o"), metric = "Rsquared")</xmp></p>
+<p><xmp class=command>> print(plot1, split=c(1,1,1,2), more=TRUE)</xmp></p>
+<p><xmp class=command>> print(plot2, split=c(1,2,1,2))</xmp></p>
+   
+<!-- begin{Schunk} !--> 
+<p><br><a href="select_rf1.pdf"><img width =300 height =300 src="select_rf1.png"><br>(click image for larger pdf)</a><br><br></p>
+<!--\end{Schunk}!-->
+
+<p><xmp class=command>> plot3 <- xyplot(rfProfile, type = c("g", "p", "smooth"), ylab = "RMSE CV Estimates") </xmp></p>
+<p><xmp class=command>> plot4 <- densityplot(rfProfile,  </xmp></p>
+<p><xmp class=command>>                      subset = Variables < 5,  </xmp></p>
+<p><xmp class=command>>                      adjust = 1.25,  </xmp></p>
+<p><xmp class=command>>                      as.table = TRUE,  </xmp></p>
+<p><xmp class=command>>                      xlab = "RMSE CV Estimates",  </xmp></p>
+<p><xmp class=command>>                      pch = "|") </xmp></p>
+<p><xmp class=command>> print(plot3, split=c(1,1,1,2), more=TRUE) </xmp></p>
+<p><xmp class=command>> print(plot4, split=c(1,2,1,2)) </xmp></p>
+
+<!-- begin{Schunk} !--> 
+<p><br><a href="select_rf2.pdf"><img width =300 height =300 src="select_rf2.png"><br>(click image for larger pdf)</a><br><br></p>
+<!--\end{Schunk}!-->
+
+<h3>Feature Selection Using Univariate Filters</h3>
+
+<p>
+Another approach to feature selection is to pre-screen the predictors using simple univariate statistical methods then only use those that pass some criterion in the subsequent model steps. Similar to recursive selection, cross-validation of the subsequent models will be biased as the remaining predictors have already been evaluate on the data set. Proper performance estimates via resampling should include the feature selection step.
+</p>
+
+<p>
+As an example, it has been suggested for classification models, that predictors can be filtered by conducting some sort of <i>k</i>-sample test (where <i>k</i> is the number of classes) to see if the mean of the predictor is different between the classes. Wilcoxon tests, <i>t</i>-tests and ANOVA models are sometimes used. Predictors that have statistically significant differences between the classes are then used for modeling.
+</p>
+
+<p>
+The caret function <code>sbf</code> (for selection by filter) can be used
+to cross-validate such feature selection schemes. Similar to
+<code>rfe</code>, functions can be passed into <code>sbf</code> for the
+computational components: univariate filtering, model fitting, prediction and performance summaries (details are given below).
+</p>
+
+<p>
+The function is applied to the entire training set and also to different resampled versions of the data set. From this, generalizable estimates of performance can be computed that properly take into account the feature selection step. Also, the results of the predictor filters can be tracked over resamples to understand the uncertainty in the filtering.
+</p>
+
+<h2>Basic Syntax</h2>
+
+<p>
+Similar to the <code>rfe</code> function, the syntax for <code>sbf</code> is:
+</p>
+
+<p><xmp class=command>> sbf(predictors, outcome, sbfControl = sbfControl(), ...)</xmp></p>
+<p><xmp class=command>> ## or </xmp></p>
+<p><xmp class=command>> sbf(formula, data, sbfControl = sbfControl(), ...)</xmp></p>
+
+
+<p>
+In this case, the details are specificed using the <code>sbfControl</code>
+function. Here, the argument <code>functions</code> dictates what the
+different components should do. This argument should have elements
+called <code>filter</code>, <code>fit</code>, <code>pred</code> and <code>summary</code>.
+</p>
+
+<b><p><i>The <code>score</code> Function</p></i></b>
+
+<p>
+This function takes as inputs the predictors and the outcome in
+objects called <code>x</code> and <code>y</code>, respectively. The output
+should be a named vector of scores where the names correspond to the
+column names of <code>x</code>. 
+</p>
+
+<p>
+There are two built-in functions called <code>anovaScores</code> and
+<code>gamScores</code>. <code>anovaScores</code> treats the outcome as the
+independent variable and the predictor as the outcome. In this way,
+the null hypothesis is that the mean predictor values are equal across
+the different classes. For regression, <code>gamScores</code> fits a smoothing spline in
+the predictor to the outcome  using a generalized additive model and tests to see if there is any
+functional relationship between the two. In each function the
+p-value is used as the score.
+</p>
+
+<b><p><i>The <code>filter</code> Function</p></i></b>
+
+<p>
+This function takes as inputs the scores coming out of the
+<code>score</code> function (in an argument called <code>score</code>). The
+function also has the training set data as inputs (arguments are called <code>x</code> and <code>y</code>). 
+The output
+should be a named logical vector where the names correspond to the
+column names of <code>x</code>. Columns with values of <code>TRUE</code> will
+be used in the subsequent model.
+</p>
+
+
+<b><p><i>The <code>fit</code> Function</p></i></b>
+
+<p>
+The component is very similar to the function described in Section
+\ref{S:fit}. For <code>sbf</code>, there are no <code>first</code> or
+<code>last</code> arguments. The function should have arguments
+<code>x</code>, <code>y</code> and <code>...</code>. The data within <code>x</code>
+have been filtered using the <code>filter</code> function described
+above. The output of the <code>fit</code> function should be a fitted model.
+</p>
+
+
+<p>
+With some data sets, no predictors will survive the filter. In these cases, a model with predictors cannot be computed, but the lack of viable predictors should not be ignored in the final results. To account for this issue, <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> contains a model function called <code>nullModel</code> that fits a simple model that is independent of any of the predictors. For problems where the outcome is numeric, the function predicts every sample using the simple mean of the training set outcomes. For classification, the model predicts all samples using the most prevalent class in the training data.
+</p>
+
+<p>
+This function can be used in the <code>fit</code> component function to
+``error-trap" cases where no predictors are selected. For example,
+there are several built-in functions for some models. The object
+<code>rfSBF</code> is a set of functions that may be useful for fitting
+random forest models with filtering. The <code>fit</code> function here
+uses <code>nullModel</code> to check for cases with no predictors:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> rfSBF$fit</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre>function (x, y, ...) </pre> <pre>{</pre> <pre>    if (ncol(x) > 0) {</pre> <pre>        library(randomForest)</pre> <pre>        randomForest(x, y, ...)</pre> <pre>    }</pre> <pre>    else nullModel(y = y)</pre> <pre>}</pre> <pre><environment: namespace:caret></pre>
+<!--\end{Schunk}!-->
+
+<b><p><i>The <code>summary</code> and <code>pred</code> Functions</p></i></b>
+
+<p>
+The <code>summary</code> function is used to calculate model performance on held-out samples. The <code>pred</code> function is used to predict new samples using the current
+predictor set. The arguments and outputs for these two functions are identical to the previously discussed <code>summary</code> and <code>pred</code> functions in previously described sections.
+</p>
+
+<h2>The Example</h2>
+
+<p>
+Returning to the example from (Friedman, 1991), we can fit another
+random forest model with the predictors pre-filtered using the
+generalized additive model approach described previously.
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> filterCtrl <- sbfControl(functions = rfSBF, method = "repeatedcv", </xmp></p>
+
+<p><xmp class=command>>     repeats = 5)</xmp></p>
+
+
+
+<p><xmp class=command>> set.seed(10)</xmp></p>
+
+
+
+<p><xmp class=command>> rfWithFilter <- sbf(x, y, sbfControl = filterCtrl)</xmp></p>
+
+
+
+<p><xmp class=command>> rfWithFilter</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre></pre> <pre>Selection By Filter</pre> <pre></pre> <pre>Outer resampling method: Cross-Validation (10 fold, repeated 5 times) </pre> <pre></pre> <pre>Resampling performance:</pre> <pre></pre> <pre>  RMSE Rsquared RMSESD RsquaredSD</pre> <pre> 4.089   0.3329 0.7121     0.1953</pre> <pre></pre> <pre>Using the training set, 7 variables were selected:</pre> <pre>   real1, real2, real3, bogus16, bogus18...</pre> <pre></pre> <pre>During resampling, the top 5 selected variables (out of a possible 20):</pre> <pre>   bogus37 (100%), real1 (100%), real3 (100%), real2 (90%), bogus43 (54%)</pre> <pre></pre> <pre>On average, 6.5 variables were selected (min = 3, max = 9)</pre>
+<!--\end{Schunk}!-->
+
+<p>
+In this case, the training set indicated that
+7 should be used in the random
+forest model, but the resampling results indicate that there is some
+variation in this number. Some of the informative predictors are
+used, but a few others are erroneous retained.
+</p>
+
+<p>
+Similar to <code>rfe</code>, there are methods for <code>predictors</code>,
+<code>densityplot</code>, <code>histogram</code> and <code>varImp</code>.
+</p>
+
+<h3>Visualizing Resampling Results</h3>
+
+<p>
+The <code>resamples</code>
+class can be used to compare the resampling results of objects
+resulting from either <code>train()</code>, <code>rfe()</code> or <code>sbf()</code>.
+</p>
+
+<p>
+First, the resample results are collected together:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> modelObjects <- list(lmRFE = lmProfile, rfRFE = rfProfile, rfFilter = rfWithFilter)</xmp></p>
+
+
+
+<p><xmp class=command>> bootValues <- resamples(modelObjects)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+
+<p>
+After this, there are several Lattice plot methods: <code>xyplot</code>,
+<code>dotplot</code>, <code>densityplot</code>, <code>bwplot</code>,
+<code>splom</code> and <code>parallel</code>. Figure \ref{F:resamps1} show a
+parallel coordinate of the bootstrapped <i>R</i><sup>2</sup> values. 
+</p>
+
+<p>
+The <code>diff</code> function can be applied to these objects to produce
+confidence intervals and hypothesis testing on the differences:
+</p>
+
+<!-- begin{Schunk} !-->
+<!-- begin{Sinput} !-->
+
+<p><xmp class=command>> differences <- diff(bootValues)</xmp></p>
+
+
+
+<p><xmp class=command>> summary(differences)</xmp></p>
+
+
+<!--\end{Sinput}!-->
+
+<!--\end{Schunk}!-->
+<!-- begin{Schunk} !--> 
+<pre></pre> <pre>Call:</pre> <pre>summary.diff.resamples(object = differences)</pre> <pre></pre> <pre>p-value adjustment: bonferroni </pre> <pre>Upper diagonal: estimates of the difference</pre> <pre>Lower diagonal: p-value for H0: difference = 0</pre> <pre></pre> <pre>RMSE </pre> <pre>         lmRFE     rfRFE     rfFilter</pre> <pre>lmRFE               0.2333   -1.1853 </pre> <pre>rfRFE    0.03697             -1.4186 </pre> <pre>rfFilter 9.629e-11 < 2.2e-16         </pre> <pre></pre> <pre>Rsquared </pre> <pre>         lmRFE     rfRFE     rfFilter</pre> <pre>lmRFE              -0.1181    0.3233 </pre> <pre>rfRFE    8.171e-06            0.4415 </pre> <pre>rfFilter 3.900e-10 < 2.2e-16         </pre> <pre></pre>
+<!--\end{Schunk}!-->
+
+<p>
+There are several plot methods for the differences: 
+<code>dotplot</code>, <code>densityplot</code>, <code>bwplot</code> and
+<code>levelplot</code>. For example, a scatterplot matrix of the bootstrapped <i>R</i><sup>2</sup> values
+        from the random forests model with univariate filters and the RFE models using linear least squares and random forests is created using: </p>
+        
+<p><xmp class=command>> splom(bootValues, metric = "Rsquared") </xmp></p>
+
+<!-- begin{Schunk} !--> 
+<p><br><a href="select_resamp_plot.pdf"><img width =300 height =300 src="select_resamp_plot.png"><br>(click image for larger pdf)</a><br><br></p>
+<!--\end{Schunk}!-->
+
+
+<!-- ------------------------ end #content------------------------ -->
+
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <!-- end #content -->
+<div id="sidebar">
+  <ul>
+  <li>
+  <h2>Links</h2>
+  <p><a href="modelList.html"><tt>train</tt> Model List</a></p>
+  </li>
+  <li>
+  <h2>Topics</h2>
+  <ul>
+      	<li><a href="index.html">Main Page</a></li>
+    	<li><a href="datasets.html">Data Sets</a></li>
+                <li><a href="visualizations.html">Visualizations</a></li>
+                <li><a href="preprocess.html">Pre-Processing</a></li>
+                <li><a href="splitting.html">Data Splitting</a></li>
+                <li><a href="misc.html">Miscellaneous Model Functions</a></li>
+                <li><a href="training.html">Model Training and Tuning</a></li>
+                <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
+                 <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                <li><a href="varimp.html">Variable Importance</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
+                <li><a href="other.html">Other Functions</a></li>
+                <li><a href="parallel.html">Parallel Processing</a></li>
+</ul>
+  </li>
+  </ul>
+  </div>
+  <!-- end #sidebar -->
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <div class="container"><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  <!-- end #page -->
+</div>
+  <div id="footer-content"></div>
+  <div id="footer">
+  <p>Created on Tue Dec 11 2012 using caret version 5.15-045 and R version 2.15.2 (2012-10-26).</p>
+  </div>
+  <!-- end #footer -->
+</body>
+  </html>
