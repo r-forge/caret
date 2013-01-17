@@ -15,7 +15,8 @@ rfeControl(functions = NULL,
            returnResamp = "all",
            p = .75,
            index = NULL,
-           timingSamps = 0)
+           timingSamps = 0,
+           allowParallel = TRUE)
 }
 \arguments{
   \item{functions}{a list of functions for model fitting, prediction and variable importance (see Details below)}
@@ -30,6 +31,7 @@ rfeControl(functions = NULL,
   \item{p}{For leave-group out cross-validation: the training percentage}
   \item{index}{a list with elements for each external resampling iteration. Each list element is the sample rows used for training at that iteration.}
   \item{timingSamps}{the number of training set samples that will be used to measure the time for predicting samples (zero indicates that the prediction time should not be estimated).}
+  \item{allowParallel}{if a parallel backend is loaded and available, should the function use it?}
 }
 \details{
 Backwards selection requires function to be specified for some operations. 
