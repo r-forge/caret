@@ -1,0 +1,473 @@
+<<startup,results=hide,echo=FALSE>>=
+library(caret)
+data(BloodBrain)
+theme1 <- caretTheme()
+theme1$superpose.symbol$col = c(rgb(1, 0, 0, .4), rgb(0, 0, 1, .4), 
+  rgb(0.3984375, 0.7578125,0.6445312, .6))
+theme1$superpose.symbol$pch = c(15, 16, 17)
+theme1$superpose.cex = .8
+theme1$superpose.line$col = c(rgb(1, 0, 0, .9), rgb(0, 0, 1, .9), rgb(0.3984375, 0.7578125,0.6445312, .6))
+theme1$superpose.line$lwd <- 2
+theme1$superpose.line$lty = 1:3
+theme1$plot.symbol$col = c(rgb(.2, .2, .2, .4))
+theme1$plot.symbol$pch = 16
+theme1$plot.cex = .8
+theme1$plot.line$col = c(rgb(1, 0, 0, .7))
+theme1$plot.line$lwd <- 2
+theme1$plot.line$lty = 1
+
+library(ellipse)
+
+session <- paste(format(Sys.time(), "%a %b %d %Y"),
+                 "using caret version",
+                 packageDescription("caret")$Version,
+                 "and",
+                 R.Version()$version.string)
+@ 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <!--
+  Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Emerald 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20120902
+
+-->
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Visualizations</title>
+  <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+  <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body>
+  <div id="wrapper">
+  <div id="header-wrapper" class="container">
+  <div id="header" class="container">
+  <div id="logo">
+  <h1><a href="#">Visualizations</a></h1>
+</div>
+  <!--
+  <div id="menu">
+  <ul>
+  <li class="current_page_item"><a href="#">Homepage</a></li>
+<li><a href="#">Blog</a></li>
+<li><a href="#">Photos</a></li>
+<li><a href="#">About</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+  </div>
+  -->
+  </div>
+  <div><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  </div>
+  <!-- end #header -->
+<div id="page">
+  <div id="content">
+  <p>
+  The <code>featurePlot</code> function is a wrapper for different
+<a href="http://cran.r-project.org/web/packages/lattice/index.html"><strong>lattice</strong></a> plots to visualize the data. For example, the following figures show the default plot for continuous outcomes generated using the <code>featurePlot</code> function. 
+</p>
+  <p>
+  For classification data sets, the <code>iris</code> data are used for illustration.
+</p>
+<<mdrr,results=hide>>=
+str(iris)
+@
+<<mdrr_print,results=html,echo=FALSE>>=
+  printOutput(str(iris))
+@ 
+
+<h3>Scatterplot Matrix</h3>
+<p><xmp class=command>> featurePlot(x = iris[, 1:4], </xmp></p>
+<p><xmp class=command>>            y = iris$Species, </xmp></p>
+<p><xmp class=command>>            plot = "pairs",</xmp></p>
+<p><xmp class=command>>            ## Add a key at the top </xmp></p>
+<p><xmp class=command>>            auto.key = list(columns = 3)) </xmp></p>
+
+
+
+<<VisScatMat,echo=FALSE,results=html>>=
+prefix <- "VisScatMat"
+aspect <- 1
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species, 
+                  plot = "pairs",
+                  ## Add a key at the top
+                  auto.key = list(columns = 3)))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species, 
+                  plot = "pairs",
+                  ## Add a key at the top
+                  auto.key = list(columns = 3)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+<h3>Scatterplot Matrix with Ellipses</h3>
+<p><xmp class=command>> featurePlot(x = iris[, 1:4], </xmp></p>
+<p><xmp class=command>>            y = iris$Species, </xmp></p>
+<p><xmp class=command>>            plot = "ellipse",</xmp></p>
+<p><xmp class=command>>            ## Add a key at the top </xmp></p>
+<p><xmp class=command>>            auto.key = list(columns = 3)) </xmp></p>
+  
+<<VisScatMatEl,echo=FALSE,results=html>>=
+prefix <- "VisScatMatEl"
+aspect <- 1
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species, 
+                  plot = "ellipse",
+                  ## Add a key at the top
+                  auto.key = list(columns = 3)))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName,  prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species, 
+                  plot = "ellipse",
+                  ## Add a key at the top
+                  auto.key = list(columns = 3)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+
+<h3>Overlayed Density Plots</h3>
+<p><xmp class=command>> featurePlot(x = iris[, 1:4], </xmp></p>
+<p><xmp class=command>>             y = iris$Species,</xmp></p>
+<p><xmp class=command>>             plot = "ellipse",</xmp></p>
+<p><xmp class=command>>             ## Add a key at the top </xmp></p>
+<p><xmp class=command>>             auto.key = list(columns = 3)) </xmp></p>
+
+
+
+<<VisDens,echo=FALSE,results=html>>=
+prefix <- "VisDens"
+aspect <- 0.5
+width <- 6
+thumb <- 450
+  
+pdf(paste(pathName,  prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species,
+                  plot = "density", 
+                  ## Pass in options to xyplot() to 
+                  ## make it prettier
+                  scales = list(x = list(relation="free"), 
+                    y = list(relation="free")), 
+                  adjust = 1.5, 
+                  pch = "|", 
+                  layout = c(4, 1), 
+                  auto.key = list(columns = 3)))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName,  prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species,
+                  plot = "density", 
+                  ## Pass in options to xyplot() to 
+                  ## make it prettier
+                  scales = list(x = list(relation="free"), 
+                    y = list(relation="free")), 
+                  adjust = 1.5, 
+                  pch = "|", 
+                  layout = c(4, 1), 
+                  auto.key = list(columns = 3)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+
+<h3>Box Plots</h3>
+<p><xmp class=command>> featurePlot(x = iris[, 1:4], </xmp></p>
+<p><xmp class=command>>            y = iris$Species, </xmp></p>
+<p><xmp class=command>>            plot = "box", </xmp></p>
+<p><xmp class=command>>            ## Pass in options to bwplot() </xmp></p>
+<p><xmp class=command>>            scales = list(y = list(relation="free"),</xmp></p>
+<p><xmp class=command>>                          x = list(rot = 90)),  </xmp></p>
+<p><xmp class=command>>            layout = c(4,1 ), </xmp></p>
+<p><xmp class=command>>            auto.key = list(columns = 2)) </xmp></p>
+
+
+<<ViBox,echo=FALSE,results=html>>=
+prefix <- "ViBox"
+aspect <- 0.5
+width <- 6
+thumb <- 450
+  
+pdf(paste(pathName,  prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species, 
+                  plot = "box", 
+                  ## Pass in options to bwplot() 
+                  scales = list(y = list(relation="free"),
+                                x = list(rot = 90)),  
+                  layout = c(4,1 ), 
+                  auto.key = list(columns = 2)))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName,  prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(
+      featurePlot(x = iris[, 1:4], 
+                  y = iris$Species, 
+                  plot = "box", 
+                  ## Pass in options to bwplot() 
+                  scales = list(y = list(relation="free"),
+                                x = list(rot = 90)),  
+                  layout = c(4,1 ), 
+                  auto.key = list(columns = 2)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<h3>Scatter Plots</h3>
+
+
+  <p>For regression, the blood-brain barrier data is used:</p>
+<<bbb,results=hide>>=
+data(BloodBrain)
+regVar <- c("tpsa", "mw", "clogp")
+str(bbbDescr[, regVar])
+@ 
+<<bbb_print,results=html,echo=FALSE>>=
+  printOutput(str(bbbDescr[, regVar]))
+@ 
+
+<p> When the predictors are continuous, <code>featurePlot</code> can
+be used to create scatter plots of each of the predictors with the
+outcome. For example: </p>
+
+  <p><xmp class=command>> featurePlot(x = bbbDescr[, regVar], </xmp></p>
+            <p><xmp class=command>>             y = logBBB, </xmp></p>
+            <p><xmp class=command>>             plot = "scatter", </xmp></p>
+            <p><xmp class=command>>             layout = c(3, 1)) </xmp></p>
+
+  <p>produces the output below. </p>
+ 
+  
+
+<<VisScatter,echo=FALSE,results=html>>=
+prefix <- "VisScatter"
+aspect <- 0.5
+width <- 6
+thumb <- 450
+  
+pdf(paste(pathName,  prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(featurePlot(x = bbbDescr[, regVar], 
+                  y = logBBB, 
+                  plot = "scatter", 
+                  layout = c(3, 1)))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName,  prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(featurePlot(x = bbbDescr[, regVar], 
+                  y = logBBB, 
+                  plot = "scatter", 
+                  layout = c(3, 1)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+  
+<p>Note that the x-axis scales are different. The function
+automatically uses <code>scales = list(y =
+                           list(relation="free"))</code> so you don't have to add it. We can also
+pass in options to the <a href="http://cran.r-project.org/web/packages/lattice/index.html"><strong>lattice</strong></a> function
+<code>xyplot</code>. For example, we can add a scatter plot smoother
+by passing in new options:</p>
+
+<p><xmp class=command>> featurePlot(x = bbbDescr[, regVar],  </xmp></p>
+<p><xmp class=command>>             y = logBBB,  </xmp></p>
+<p><xmp class=command>>             plot = "scatter", </xmp></p>
+<p><xmp class=command>>             type = c("p", "smooth"), </xmp></p>
+<p><xmp class=command>>             span = .5, </xmp></p>
+<p><xmp class=command>>             layout = c(3, 1))  </xmp></p>
+            
+<p>The options <code>degree</code> and <code>span</code> control the
+smoothness of the smoother.</p>
+
+
+
+<<VisScatterSmooth,echo=FALSE,results=html>>=
+prefix <- "VisScatterSmooth"
+aspect <- 0.5
+width <- 6
+thumb <- 450
+  
+pdf(paste(pathName,  prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(featurePlot(x = bbbDescr[, regVar], 
+            y = logBBB, 
+            plot = "scatter",
+            type = c("p", "smooth"),
+            span = .5,
+            layout = c(3, 1)))
+
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName,  prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(featurePlot(x = bbbDescr[, regVar], 
+            y = logBBB, 
+            plot = "scatter",
+            type = c("p", "smooth"),
+            span = .5,
+            layout = c(3, 1)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <!-- end #content -->
+<div id="sidebar">
+  <ul>
+  <li>
+  <h2>Links</h2>
+  <p><a href="modelList.html"><tt>train</tt> Model List</a></p>
+  </li>
+  <li>
+  <h2>Topics</h2>
+  <ul>
+      	<li><a href="index.html">Main Page</a></li>
+  		<li><a href="datasets.html">Data Sets</a></li>
+                <li><a href="visualizations.html">Visualizations</a></li>
+                <li><a href="preprocess.html">Pre-Processing</a></li>
+                <li><a href="splitting.html">Data Splitting</a></li>
+                <li><a href="misc.html">Miscellaneous Model Functions</a></li>
+                <li><a href="training.html">Model Training and Tuning</a></li>
+                <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
+                 <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                <li><a href="varimp.html">Variable Importance</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
+                <li><a href="other.html">Other Functions</a></li>
+                <li><a href="parallel.html">Parallel Processing</a></li>
+</ul>
+  </li>
+  </ul>
+  </div>
+  <!-- end #sidebar -->
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <div class="container"><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  <!-- end #page -->
+</div>
+  <div id="footer-content"></div>
+  <div id="footer">
+  <p>Created on <Sexpr session>.</p>
+  </div>
+  <!-- end #footer -->
+</body>
+  </html>

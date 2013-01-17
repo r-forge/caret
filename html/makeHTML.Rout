@@ -1,0 +1,503 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: x86_64-apple-darwin9.8.0/x86_64 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(R2HTML)
+> library(caret)
+Loading required package: lattice
+Loading required package: reshape2
+Loading required package: plyr
+Loading required package: cluster
+Loading required package: foreach
+> 
+> setwd("~/Code/caret/html/")
+> 
+> startPath <- getwd()
+> 
+> ## pull printOutput and others out to this file
+> 
+> ###########################################################################
+> 
+> printOutput <- function(foo, wd = 70)
++   {
++     options(width = 70)
++     tt <- capture.output(foo, file = NULL)
++ 
++     tt <- paste("<pre>", tt, "</pre>", sep = "")
++     cat(paste(tt, collpase = "\n"))
++     invisible(tt)
++   }
+> 
+> ###########################################################################
+> 
+> dPath <- paste("html_",format(Sys.time(), "%Y_%m_%d_%H_%M"), sep = "")
+> dir.create(dPath)
+>                  
+> rnwFiles <- c("index", "datasets", "misc", "preprocess", "visualizations",
++               "bytag", "featureSelection", "training", "other",
++               "varImp", "parallel", "splitting")
+> 
+> rnwFiles <- paste(rnwFiles, ".Rnw", sep = "")
+> file.copy(rnwFiles, file.path(getwd(), dPath, rnwFiles))
+ [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+> 
+> file.copy(list.files(pattern = "png$"),
++           file.path(getwd(), dPath, list.files(pattern = "png$")))
+[1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+> file.copy("TrainAlgo",
++           file.path(getwd(), dPath, "TrainAlgo"))
+[1] FALSE
+> file.copy("style.css",
++           file.path(getwd(), dPath, "style.css"))
+[1] TRUE
+> dir.create(file.path(dPath, "images"))
+> file.copy(list.files(path = file.path(getwd(), "images"), 
++                      pattern = "^img", 
++                      full.names = TRUE),
++           file.path(getwd(), dPath, "images"))
+[1] TRUE TRUE TRUE
+> file.copy("style.css",
++           file.path(getwd(), dPath, "style.css"))
+[1] FALSE
+> file.copy("parallel.pdf",
++           file.path(getwd(), dPath, "parallel.pdf"))
+[1] FALSE
+> setwd(file.path(getwd(), dPath))
+> pathName <- paste(file.path(getwd()), "/", sep = "")
+> 
+> ###########################################################################
+> 
+> for(i in seq(along = rnwFiles))
++   {
++     cat("###########################################################################\n",
++         "Sweaving", rnwFiles[i], "\n")
++     Sweave(rnwFiles[i],
++            driver = RweaveHTML,
++            output = gsub(".Rnw", ".html", rnwFiles[i]))
++ 
++   }
+###########################################################################
+ Sweaving index.Rnw 
+Writing to file index.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+file  index.html is completed 
+###########################################################################
+ Sweaving datasets.Rnw 
+Writing to file datasets.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : echo term hide (label=oil1)
+ 3 : term html (label=oil_print)
+ 4 : echo term hide (label=oil2)
+ 5 : term html (label=oil2_print)
+ 6 : echo term hide (label=GC)
+ 7 : term html (label=GC_print)
+ 8 : echo term hide (label=cars)
+ 9 : term html (label=GC_print)
+10 : echo term hide (label=CS)
+11 : term html (label=CS_print)
+file  datasets.html is completed 
+###########################################################################
+ Sweaving misc.Rnw 
+Writing to file misc.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : echo term hide (label=MiscKnn1)
+ 3 : echo term hide (label=MiscKnn2)
+ 4 : term html (label=MiscKnn2_print)
+ 5 : echo term hide (label=MiscKnn3)
+ 6 : term html (label=MiscKnn4_print)
+ 7 : echo term hide (label=MiscPls1)
+
+Attaching package: ‘pls’
+
+The following object(s) are masked from ‘package:caret’:
+
+    R2
+
+The following object(s) are masked from ‘package:stats’:
+
+    loadings
+
+ 8 : term html (label=MiscPls1)
+ 9 : echo term hide (label=MiscPls2)
+Loading required package: MASS
+10 : term html (label=MiscPls2)
+11 : echo term hide (label=MiscPls3)
+12 : term html (label=MiscPls3)
+13 : echo term hide (label=MiscPls4)
+14 : term html (label=MiscPls4)
+15 : term hide (label=Misc_bag)
+Loading required package: survival
+Loading required package: splines
+Loading required package: grid
+Loading required package: modeltools
+Loading required package: stats4
+
+Attaching package: ‘modeltools’
+
+The following object(s) are masked from ‘package:plyr’:
+
+    empty
+
+Loading required package: coin
+Loading required package: mvtnorm
+Loading required package: zoo
+
+Attaching package: ‘zoo’
+
+The following object(s) are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+Loading required package: sandwich
+Loading required package: strucchange
+Loading required package: vcd
+Loading required package: colorspace
+16 : term html (label=Misc_bag_print)
+Loading required package: class
+file  misc.html is completed 
+###########################################################################
+ Sweaving preprocess.Rnw 
+Writing to file preprocess.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+Loading required package: leaps
+Loading required package: plotmo
+Loading required package: plotrix
+ 2 : echo term hide (label=dummy1)
+ 3 : term html (label=dummy1_print)
+ 4 : echo term hide (label=dummy2)
+ 5 : term html (label=dummy2_print)
+ 6 : echo term hide (label=nzv1)
+ 7 : term html (label=nzv1_print)
+ 8 : echo term hide (label=nzv2)
+ 9 : term html (label=nzv2_print)
+10 : echo term hide (label=nzv3)
+11 : term html (label=nzv3_print)
+12 : echo term hide (label=nzv4)
+13 : term html (label=nzv4_print)
+14 : echo term hide (label=corr1)
+15 : echo term hide (label=corr2)
+16 : term html (label=corr2_print)
+17 : echo term hide (label=corr3)
+18 : term html (label=corr3_print)
+19 : echo term hide (label=ld1)
+20 : term html (label=ld1_print)
+21 : echo term hide (label=ld2)
+22 : term html (label=ld2_print)
+23 : echo term hide (label=ld3)
+24 : term html (label=ld3_print)
+25 : echo term hide (label=cs1)
+26 : term html (label=cs1_print)
+27 : echo term hide (label=cs2)
+28 : term html (label=PreProcScat)
+29 : term html (label=PreProcSS)
+30 : echo term hide (label=bc1)
+31 : term html (label=bc1_print)
+32 : echo term hide (label=cd1)
+33 : term html (label=cd1_print)
+34 : term html (label=PreProcDist)
+file  preprocess.html is completed 
+###########################################################################
+ Sweaving visualizations.Rnw 
+Writing to file visualizations.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : echo term hide (label=mdrr)
+ 3 : term html (label=mdrr_print)
+ 4 : term html (label=VisScatMat)
+ 5 : term html (label=VisScatMatEl)
+ 6 : term html (label=VisDens)
+ 7 : term html (label=ViBox)
+ 8 : echo term hide (label=bbb)
+ 9 : term html (label=bbb_print)
+10 : term html (label=VisScatter)
+11 : term html (label=VisScatterSmooth)
+file  visualizations.html is completed 
+###########################################################################
+ Sweaving bytag.Rnw 
+Writing to file bytag.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+Loading required package: RJSONIO
+
+Welcome to googleVis version 0.3.3
+
+Please read the Google API Terms of Use
+before you use the package:
+https://developers.google.com/terms/
+
+Type ?googleVis to access the overall documentation and
+vignette('googleVis') for the package vignette.
+You can execute a demo of the package via: demo(googleVis)
+
+More information is available on the googleVis project web-site:
+http://code.google.com/p/google-motion-charts-with-r/
+
+Contact: <rvisualisation@gmail.com>
+
+To suppress the this message use:
+suppressPackageStartupMessages(library(googleVis))
+
+ 2 : term hide (label=MakeTables)
+ 3 : term html (label=WriteList)
+file  bytag.html is completed 
+###########################################################################
+ Sweaving featureSelection.Rnw 
+Writing to file featureSelection.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : echo term hide (label=select_load_lib)
+Hmisc library by Frank E Harrell Jr
+
+Type library(help='Hmisc'), ?Overview, or ?Hmisc.Overview')
+to see overall documentation.
+
+NOTE:Hmisc no longer redefines [.factor to drop unused levels when
+subsetting.  To get the old behavior of Hmisc type dropUnusedLevels().
+
+
+Attaching package: ‘Hmisc’
+
+The following object(s) are masked from ‘package:e1071’:
+
+    impute
+
+The following object(s) are masked from ‘package:survival’:
+
+    untangle.specials
+
+The following object(s) are masked from ‘package:plyr’:
+
+    is.discrete, summarize
+
+The following object(s) are masked from ‘package:base’:
+
+    format.pval, round.POSIXt, trunc.POSIXt, units
+
+randomForest 4.6-7
+Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: ‘randomForest’
+
+The following object(s) are masked from ‘package:Hmisc’:
+
+    combine
+
+ 3 : echo term hide (label=select_load_sim)
+ 4 : echo term hide (label=select_load_pp)
+ 5 : echo term hide (label=select_load_lmProfile)
+ 6 : term html (label=select_load_lmProfile_print)
+ 7 : echo term hide (label=select_load_lmProfile_out1)
+ 8 : term html (label=select_load_lmProfile_out1_print)
+ 9 : echo term hide (label=select_load_lmProfile_out2)
+10 : term html (label=select_load_lmProfile_out2_print)
+11 : echo term hide (label=select_load_lmProfile_out3)
+12 : term html (label=select_load_lmProfile_out3_print)
+13 : term html (label=select_lmprofile)
+14 : term hide (label=select_rfealt)
+15 : echo term hide (label=select_summary)
+16 : term html (label=select_summary_print)
+17 : echo term hide (label=select_fit)
+18 : term html (label=select_fit_print)
+19 : echo term hide (label=select_pred)
+20 : term html (label=select_pred_print)
+21 : echo term hide (label=select_rank)
+22 : term html (label=select_rank_print)
+23 : term hide (label=tolerance)
+24 : term html (label=select_lmdens)
+25 : echo term hide (label=select_selectVar)
+26 : term html (label=select_selectVar_print)
+27 : echo term hide (label=select_rf)
+28 : term html (label=select_rf_print)
+29 : term html (label=select_rf_plot1)
+30 : term html (label=select_rf_plot1)
+31 : echo term hide (label=select_sbf_fit)
+32 : term html (label=select_sbf_fit_print)
+33 : echo term hide (label=select_sbf_rf)
+Loaded gam 1.06.2
+
+34 : term html (label=select_sbf_rf_print)
+35 : echo term Robj (label=select_resamps)
+36 : echo term hide (label=select_diffs)
+37 : term html (label=select_diffs_print)
+38 : term html (label=select_resamp_plot)
+file  featureSelection.html is completed 
+###########################################################################
+ Sweaving training.Rnw 
+Writing to file training.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+Loading required package: iterators
+Loading required package: multicore
+
+Attaching package: ‘multicore’
+
+The following object(s) are masked from ‘package:lattice’:
+
+    parallel
+
+ 2 : echo term hide (label=train_sonar1)
+ 3 : term html (label=train_sonar1_print)
+ 4 : echo term hide (label=train_sonar2)
+ 5 : term hide (label=train_control)
+ 6 : term hide (label=train_gbm1)
+Loaded gbm 1.6.3.2
+
+Loaded gbm 1.6.3.2
+
+Loaded gbm 1.6.3.2
+
+Loaded gbm 1.6.3.2
+
+ 7 : term html (label=train_gbm1_print)
+ 8 : term hide (label=train_gbm2)
+ 9 : term html (label=train_gbm2_print)
+10 : term hide (label=train_gbm3)
+11 : term html (label=train_gbm3_print)
+12 : term html (label=train_plot1)
+13 : term html (label=train_plot2)
+14 : term html (label=train_plot3)
+15 : echo term hide (label=train_summary1)
+16 : term html (label=train_summary1_print)
+17 : term hide (label=train_summary2)
+18 : term hide (label=train_summary3)
+Loading required package: pROC
+Type 'citation("pROC")' for a citation.
+
+Attaching package: ‘pROC’
+
+The following object(s) are masked from ‘package:colorspace’:
+
+    coords
+
+The following object(s) are masked from ‘package:stats’:
+
+    cov, smooth, var
+
+19 : term html (label=train_summary3_print)
+20 : term hide (label=bestGBM)
+21 : echo term hide (label=train_tolerance)
+22 : term html (label=train_tolerance_print)
+23 : echo term hide (label=train_pred1)
+24 : term html (label=train_pred1_print)
+25 : echo term hide (label=train_pred2)
+26 : term html (label=train_pred2_print)
+27 : term html (label=train_plot3)
+28 : term hide (label=train_svmFit)
+
+Attaching package: ‘kernlab’
+
+The following object(s) are masked from ‘package:modeltools’:
+
+    prior
+
+29 : term html (label=train_svmFit_print)
+30 : echo term hide (label=train_rdaFit)
+31 : term html (label=train_rdaFit_print)
+32 : echo term hide (label=train_resamps1)
+33 : term html (label=train_resamps1_print)
+34 : echo term hide (label=train_resamps2)
+35 : term html (label=train_resamps2_print)
+36 : term html (label=train_resample_box)
+37 : term html (label=train_resample_ci)
+38 : term html (label=train_resample_ba)
+39 : term html (label=train_resample_scatmat)
+40 : echo term hide (label=train_resamps3)
+41 : term html (label=train_resamps3_print)
+42 : echo term hide (label=train_resamps4)
+43 : term html (label=train_resamps4_print)
+44 : term html (label=train_diff_box)
+45 : term html (label=train_diff_ci)
+46 : term hide (label=train_Cp1)
+47 : term html (label=train_Cp1_print)
+48 : term hide (label=train_cpGrid)
+49 : term hide (label=train_modelFoo)
+50 : term hide (label=train_predFoo)
+51 : echo term hide (label=train_sortFoo)
+52 : term hide (label=train_trControl)
+53 : echo term hide (label=train_plotResults)
+54 : term html (label=train_custom)
+file  training.html is completed 
+###########################################################################
+ Sweaving other.Rnw 
+Writing to file other.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : echo term hide (label=other_conf0)
+ 3 : term html (label=other_conf0_print)
+ 4 : echo term hide (label=other_conf1)
+ 5 : term html (label=other_conf1_print)
+ 6 : echo term hide (label=other_conf2)
+ 7 : term html (label=other_conf2_print)
+ 8 : echo term hide (label=other_conf3)
+ 9 : term html (label=other_conf3_print)
+file  other.html is completed 
+###########################################################################
+ Sweaving varImp.Rnw 
+Writing to file varImp.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : echo term hide (label=varImp_gbm)
+ 3 : term html (label=varImp_gbm_print)
+ 4 : echo term hide (label=varImp_roc1)
+ 5 : term html (label=varImp_roc1_print)
+ 6 : echo term hide (label=varImp_roc2)
+ 7 : term html (label=varImp_roc2_print)
+ 8 : term html (label=varImp_gbm_plot)
+file  varImp.html is completed 
+###########################################################################
+ Sweaving parallel.Rnw 
+Writing to file parallel.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : term hide (label=mods)
+file  parallel.html is completed 
+###########################################################################
+ Sweaving splitting.Rnw 
+Writing to file splitting.html
+Processing code chunks ...
+ 1 : term hide (label=startup)
+ 2 : echo term hide (label=split1)
+ 3 : term html (label=split1_print)
+ 4 : echo term hide (label=split2)
+ 5 : echo term hide (label=SplitMaxDiss1)
+
+Attaching package: ‘proxy’
+
+The following object(s) are masked from ‘package:stats’:
+
+    as.dist, dist
+
+ 6 : term html (label=SplitMaxDiss1_print)
+file  splitting.html is completed 
+Warning message:
+executing %dopar% sequentially: no parallel backend registered 
+> 
+> 
+> unlink(list.files(pattern = "Rnw$"))
+> 
+> 
+> 
+> 
+> proc.time()
+    user   system  elapsed 
+1480.812   19.364  756.284 
