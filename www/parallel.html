@@ -93,6 +93,19 @@ model fit was decreased to about 90 minutes.
 Note that some models, especially those using the <a href="http://cran.r-project.org/web/packages/RWeka/index.html"><strong>RWeka</strong></a> package, may not be able to be run in parallel due to the underlying code structure. 
 </p>
 <p>
+<code>train</code>, <code>rfe</code>, <code>sbf</code>, <code>bag</code> and
+<code>avNNet</code> were given an additional argument in their respective
+control files called <code>allowParallel</code> that defaults to
+<code>TRUE</code>. When <code>Code</code>, the code will be executed in parallel
+if a parallel backend (e.g. <strong>doMC</strong>) is registered. When
+<code>allowParallel = FALSE</code>, the parallel backend is always
+ignored. The use case is when <code>rfe</code> or <code>sbf</code> calls
+<code>train</code>. If a parallel backend with <i>P</i> processors is being used,
+the combination of these functions will create <i>P</i><sup>2</sup> processes. Since
+some operations benefit more from parallelization than others, the
+user has the ability to concentrate computing resources for specific
+functions.
+<p>
 One additional "trick" that <code>train</code> exploits to increase computational efficiency is to use sub-models; a single model fit can produce predictions for multiple tuning parameters. For example, in most implementations of boosted models, a model trained on <i>B</i> boosting iterations can produce predictions for models for iterations less than <i>B</i>. Suppose a <code>gbm</code> model was tuned over the following grid:
 </p>
 <p><xmp class=command>> gbmGrid <-  expand.grid(.interaction.depth = c(1, 5, 9),  </xmp></p>
@@ -101,12 +114,8 @@ One additional "trick" that <code>train</code> exploits to increase computationa
 
 
 <p>
-In reality, <code>train</code> only created objects for 3 models and derived the other predictions from these objects. This trick is used for hte following models: <code>C5.0</code>, <code>PenalizedLDA</code>, <code>blackboost</code>, <code>bstLs</code>, <code>bstSm</code>, <code>bstTree</code>, <code>cubist</code>, <code>earth</code>, <code>enet</code>, <code>foba</code>, <code>gamboost</code>, <code>gbm</code>, <code>glmboost</code>, <code>glmnet</code>, <code>kernelpls</code>, <code>lars2</code>, <code>lars</code>, <code>lasso</code>, <code>lda2</code>, <code>leapBackward</code>, <code>leapForward</code>, <code>leapSeq</code>, <code>logitBoost</code>, <code>pam</code>, <code>partDSA</code>, <code>pcr</code>, <code>pls</code>, <code>relaxo</code>, <code>rpart2</code>, <code>rpart</code>, <code>simpls</code>, <code>superpc</code>, <code>widekernelpls</code>.
+In reality, <code>train</code> only created objects for 3 models and derived the other predictions from these objects. This trick is used for hte following models: <code>blackboost</code>, <code>bstLs</code>, <code>bstSm</code>, <code>bstTree</code>, <code>C5.0</code>, <code>cubist</code>, <code>earth</code>, <code>enet</code>, <code>foba</code>, <code>gamboost</code>, <code>gbm</code>, <code>glmboost</code>, <code>glmnet</code>, <code>kernelpls</code>, <code>lars</code>, <code>lars2</code>, <code>lasso</code>, <code>lda2</code>, <code>leapBackward</code>, <code>leapForward</code>, <code>leapSeq</code>, <code>logitBoost</code>, <code>pam</code>, <code>partDSA</code>, <code>pcr</code>, <code>PenalizedLDA</code>, <code>pls</code>, <code>relaxo</code>, <code>rpart</code>, <code>rpart2</code>, <code>simpls</code>, <code>superpc</code>, <code>widekernelpls</code>.
 </p>
-
-
-
-
 
 	  <div style="clear: both;">&nbsp;</div>
 	</div>
@@ -145,7 +154,7 @@ In reality, <code>train</code> only created objects for 3 models and derived the
     </div>
     <div id="footer-content"></div>
     <div id="footer">
-      <p>Created on Tue Dec 11 2012 using caret version 5.15-045 and R version 2.15.2 (2012-10-26).</p>
+      <p>Created on Thu Jan 17 2013 using caret version 5.15-052 and R version 2.15.2 (2012-10-26).</p>
     </div>
     <!-- end #footer -->
   </body>
