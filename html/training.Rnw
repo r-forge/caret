@@ -1,0 +1,1539 @@
+<<startup,results=hide,echo=FALSE>>=
+library(caret)
+theme1 <- caretTheme()
+theme1$superpose.symbol$col = c(rgb(1, 0, 0, .4), rgb(0, 0, 1, .4), 
+  rgb(0.3984375, 0.7578125,0.6445312, .6))
+theme1$superpose.symbol$pch = c(15, 16, 17)
+theme1$superpose.cex = .8
+theme1$superpose.line$col = c(rgb(1, 0, 0, .9), rgb(0, 0, 1, .9), rgb(0.3984375, 0.7578125,0.6445312, .6))
+theme1$superpose.line$lwd <- 2
+theme1$superpose.line$lty = 1:3
+theme1$plot.symbol$col = c(rgb(.2, .2, .2, .4))
+theme1$plot.symbol$pch = 16
+theme1$plot.cex = .8
+theme1$plot.line$col = c(rgb(1, 0, 0, .7))
+theme1$plot.line$lwd <- 2
+theme1$plot.line$lty = 1
+
+library(ellipse)
+library(rpart)
+session <- paste(format(Sys.time(), "%a %b %d %Y"),
+                 "using caret version",
+                 packageDescription("caret")$Version,
+                 "and",
+                 R.Version()$version.string)
+
+seqModList <- paste(paste("<code>", unique(subset(modelLookup(), seq)$model), "<code>", sep = ""), collapse = ", ")
+
+
+options(width = 150)
+
+library(doMC)
+registerDoMC(3)
+
+@ 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <!--
+  Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Emerald 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20120902
+
+-->
+  <html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Model Training and Tuning</title>
+  <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+  <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body>
+  <div id="wrapper">
+  <div id="header-wrapper" class="container">
+  <div id="header" class="container">
+  <div id="logo">
+  <h1><a href="#">Model Training and Tuning</a></h1>
+</div>
+  <!--
+  <div id="menu">
+  <ul>
+  <li class="current_page_item"><a href="#">Homepage</a></li>
+<li><a href="#">Blog</a></li>
+<li><a href="#">Photos</a></li>
+<li><a href="#">About</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+  </div>
+  -->
+  </div>
+  <div><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  </div>
+  <!-- end #header -->
+<div id="page">
+  <div id="content">
+
+<h2>Model Training and Parameter Tuning</h2>
+
+<p>
+The <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> package has several functions that attempt to streamline the model building and evaluation process. <p>
+</p> 
+<p>
+<p>
+The <code>train</code> function can be used to
+  <ul>
+  <li> evaluate, using resampling, the effect of model tuning parameters on performance
+  <li> choose the "optimal" model across these parameters 
+  <li> estimate model performance from a training set
+  </ul>
+</p> 
+
+<p>
+First, a specific model must be chosen. Currently,
+<Sexpr length(unique(modelLookup()$model))> are available using
+<a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>; see <a href="modelList.html"><tt>train</tt> Model List</a> 
+or <a href="bytag.html"><tt>train</tt> Models By Tag</a> for details. 
+On these pages, there are lists of tuning parameters that can
+potentially be optimized.  The first step in tuning the model (line
+1 in the algorithm above is to choose a set of
+parameters to evaluate. For example, if fitting a Partial Least Squares
+(PLS) model, the number of PLS components to evaluate must be specified. 
+</p>
+
+<p><br><img width = 629 height =234 src="TrainAlgo.png"><br><br></p>
+
+<p>
+Once the model and tuning parameter values have been defined, the type
+of resampling should be also be specified. Currently, <i>k</i>-fold
+cross-validation (once or repeated), 
+leave-one-out cross-validation and bootstrap
+(simple estimation or the 632 rule) 
+resampling methods can be used by <code>train</code>. After resampling,
+the process produces a profile of performance measures is available to
+guide the user as to which tuning parameter values should be
+chosen. By default, the function automatically chooses the tuning
+parameters associated with the best value, although different
+algorithms can be used (see details below below). 
+</p>
+
+<h3>An Example</h3>
+
+<p>The Sonar data are available in the <a href="http://cran.r-project.org/web/packages/mlbench/index.html"><strong>mlbench</strong></a> package. Here, we load the data:
+
+<<train_sonar1,results=hide>>=
+library(mlbench)
+data(Sonar)
+str(Sonar)
+@
+<<train_sonar1_print,results=html,echo=FALSE>>=
+printOutput(str(Sonar))
+@
+<p>
+There are a few factor predictors, so we will decompose these into dummy variables 
+using the <code>dummyVars</code> function in this package. This decomposition is applied
+to the training and test sets.
+</p>
+<<train_sonar2,results=hide>>=
+library(caret)
+set.seed(998)
+inTraining <- createDataPartition(Sonar$Class, p = .75, list = FALSE)
+training <- Sonar[ inTraining,]
+testing  <- Sonar[-inTraining,]
+@
+
+<h2>Basic Parameter Tuning</h2>
+
+<p>
+By default, simple bootstrap resampling is used for line
+3 in the algorithm above. Others are availible, such
+as repeated <i>K</i>-fold cross-validation, leave-one-out etc. The function
+<code>trainControl</code> can be used to specifiy the type of resampling:
+</p>
+<p><xmp class=command>> fitControl <- trainControl(## 10-fold CV </xmp></p>
+<p><xmp class=command>>                           method = "repeatedcv", </xmp></p>
+<p><xmp class=command>>                           number = 10, </xmp></p>
+<p><xmp class=command>>                           ## repeated ten times </xmp></p>
+<p><xmp class=command>>                           repeats = 10) </xmp></p>
+<<train_control,echo = FALSE,results=hide>>=
+fitControl <- trainControl(## 10-fold CV
+                           method = "repeatedcv",
+                           number = 10,
+                           ## repeated ten times
+                           repeats = 10)
+@
+<p>
+More information about <code>trainControl</code> is given in the section on "X" below.
+</p>
+
+<p>The first two arguments to <code>train</code> are the predictor and
+outcome data objects, respectively. The third argument,
+<code>method</code>, specifies the type of model (see <a href="modelList.html"><tt>train</tt> Model List</a> 
+or <a href="bytag.html"><tt>train</tt> Models By Tag</a>). 
+To illustrate, we will fit a boosted tree model via the <a href="http://cran.r-project.org/web/packages/gbm/index.html"><strong>gbm</strong></a>
+package. The basic syntax for fitting this model using repeated
+cross-validation is shown below:
+</p>
+<p><xmp class=command>> set.seed(825) </xmp></p>
+<p><xmp class=command>> gbmFit1 <- train(Class ~ ., data = training,  </xmp></p>
+<p><xmp class=command>>                  method = "gbm",  </xmp></p>
+<p><xmp class=command>>                  trControl = fitControl, </xmp></p>
+<p><xmp class=command>>                  ## This last option is actually one </xmp></p>
+<p><xmp class=command>>                  ## for gbm() that passes through </xmp></p>
+<p><xmp class=command>>                  verbose = FALSE) </xmp></p>
+<p><xmp class=command>> gbmFit1 </xmp></p>
+
+<<train_gbm1,echo = FALSE,results=hide>>=
+set.seed(825)
+gbmFit1 <- train(Class ~ ., data = training, 
+                 method = "gbm", 
+                 trControl = fitControl,
+                 ## This last option is actually one
+                 ## for gbm() that passes through
+                 verbose = FALSE)
+gbmFit1
+@
+<<train_gbm1_print,results=html,echo=FALSE>>=
+printOutput(gbmFit1)
+@
+
+<p>
+For a gradient boosting machine (GBM) model, there are three main
+tuning parameters:
+  <ul>
+  <li> number of iterations, i.e. trees,  (called <code>n.trees</code> in the
+  <code>gbm</code> function)
+  <li> complexity of the tree, called <code>interaction.depth</code>
+  <li> learning rate: how quickly the algorithm adapts, called
+  <code>shrinkage</code> 
+  </ul>
+</p>  
+<p>
+The default values tested for this model are shown in the first two
+columns (<code>shrinkage</code> is not shown beause the grid set of
+candidate models all use a value of 0.1 for this tuning parameter). 
+The column labeled "<code>Accuracy</code>" is the overall agreement rate
+averaged over cross-validation iterations. The agreement standard
+deviation is also calculated from the cross-validation results. The
+column "<code>Kappa</code>" is Cohen's (unweighted) Kappa statistic
+averaged across the resampling results. <code>train</code> works with
+specific models (see <a href="modelList.html"><tt>train</tt> Model List</a> 
+or <a href="bytag.html"><tt>train</tt> Models By Tag</a>). 
+For these models, <code>train</code> can automatically
+create a grid of tuning parameters. By default, if <i>p</i> is the number
+of tuning parameters, the grid size is <i>3^p</i>. As another example, regularized
+discriminant analysis (RDA) models have two  parameters
+(<code>gamma</code> and <code>lambda</code>), both of which lie on [0,
+1]. The default training grid would produce nine combinations in this
+two-dimensional space. 
+</p>
+
+<p>There are several <a href="notes.html">notes</a> regarding specific model behaviors 
+for <code>train</code>. There is additional functionality in <code>train</code> that is described in the next section.
+</p>
+
+<h2>Customizing the Tuning Process</h2>
+
+<p>
+There are a few ways to customize the process of selecting
+tuning/complexity parameters and building the final model.
+</p>
+
+<h3>Pre-Processing Options</h3>
+
+<p>
+As previously mentioned,<code>train</code> can pre-process the data in
+various ways prior to model fitting. The <code>train</code> function
+<code>preProcess</code> is automatically used. This function can be used
+for centering and scaling, imputation (see details below),
+applying the spatial sign transformation and feature extraction via
+principal component analysis or independent component
+analysis. Options to the <code>preProcess</code> function can be passed
+via the <code>trainControl</code> function.  
+</p>
+<p>
+These processing steps would be applied during any predictions
+generated using <code>predict.train</code>, <code>extractPrediction</code> or
+<code>extractProbs</code> (see details later in this document). The
+pre-processing would <b>not</b> be applied to predictions that
+directly use the <code>object$finalModel</code> object.  
+</p>
+<p>
+For imputation, there are two methods currently implemented:
+</p>
+
+  <ul>
+  <li> <i>k</i>-nearest neighbors takes a sample with missing values and
+  finds the $k$ closest samples in the training set. The average of
+  the $k$ training set values for that predictor are used as a
+  substitute for the original data. When calculating the distances to
+  the training set samples, the predictors used in the calculation are
+  the ones with no missing values for that sample and no missing
+  values in the training set.</li>
+  <li> another approach is to fit a bagged tree model for each
+  predictor using the training set samples. This is usually a fairly
+  accurate model and can handle missing values. When a predictor for a
+  sample requires imputation, the values for the other predictors are
+  fed through the bagged tree and the prediction is used as the new
+  value. This model can have significant computational cost.</li>
+  </ul>
+<p>
+If there are missing values in the training set, PCA and ICA models
+only use complete samples.
+</p>
+
+<h3>Alternate Tuning Grids</h3>
+<p>
+The tuning parameter grid can be specified by the user. The argument
+<code>tuneGrid</code> can take a data frame with columns for each tuning
+parameter. The column
+names should be the same as the fitting function's arguments with a
+period preceding the name. For the previously mentioned RDA example, the names would be
+<code>.gamma</code> and <code>.lambda</code>. <code>train</code> will tune the
+model over each combination of values in the rows. 
+</p>
+<p>
+We can fix the learning rate and evaluate more than three values of
+<code>n.trees</code>: 
+</p>
+
+<p><xmp class=command>> gbmGrid <-  expand.grid(.interaction.depth = c(1, 5, 9),  </xmp></p>
+<p><xmp class=command>>                         .n.trees = (1:15)*100,  </xmp></p>
+<p><xmp class=command>>                         .shrinkage = 0.1) </xmp></p>
+<p><xmp class=command>> nrow(gbmGrid) </xmp></p>
+
+<<train_gbm2,echo=FALSE,results=hide>>=
+gbmGrid <-  expand.grid(.interaction.depth = c(1, 5, 9), 
+                        .n.trees = (1:30)*50, 
+                        .shrinkage = 0.1)
+                        
+nrow(gbmGrid)
+@
+<<train_gbm2_print,results=html,echo=FALSE>>=
+printOutput(nrow(gbmGrid))
+@
+
+<p><xmp class=command>> set.seed(825)</xmp></p>
+<p><xmp class=command>> gbmFit2 <- train(Class ~ ., data = training, </xmp></p>
+<p><xmp class=command>>                  method = "gbm", </xmp></p>
+<p><xmp class=command>>                  trControl = fitControl,</xmp></p> 
+<p><xmp class=command>>                  verbose = FALSE, </xmp></p>
+<p><xmp class=command>>                  ## Now specify the exact models </xmp></p>
+<p><xmp class=command>>                  ## to evaludate:</xmp></p>
+<p><xmp class=command>>                  tuneGrid = gbmGrid)</xmp></p>
+<p><xmp class=command>> gbmFit2</xmp></p>
+<<train_gbm3,echo=FALSE,results=hide>>=
+set.seed(825)
+gbmFit2 <- train(Class ~ ., data = training, 
+                 method = "gbm", 
+                 trControl = fitControl, 
+                 verbose = FALSE, 
+                 ## Now specify the exact models 
+                 ## to evaludate:
+                 tuneGrid = gbmGrid)
+gbmFit2
+@
+<<train_gbm3_print,results=html,echo=FALSE>>=
+gbmOut <- capture.output(print(gbmFit2))
+print(paste("<pre>", gbmOut[1:18], "</pre>"))
+print("<pre>   :                  :         :         :       :            :</pre>\n")
+
+gbmOut <- capture.output(print(gbmFit2))
+print(paste("<pre>", gbmOut[(length(gbmOut)-10):length(gbmOut)], "</pre>", collapse ="\n"))
+@
+
+<h3>Plotting the Resampling Profile</h3>
+
+<p>The <code>plot</code> function can be used to examine the relationship between the 
+estimates of performance and the tuning parameters. For example, a simple invokation of 
+the function shows the results for the first performance measure:
+</p>
+<p><xmp class=command>> plot(gbmFit2) </xmp></p>
+<p>produces the following plot:
+</p>
+
+<<train_plot1,echo=FALSE,results=html>>=
+prefix <- "Train_Plot1"
+aspect <- .7
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(caretTheme())
+print(plot(gbmFit2))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(caretTheme())
+print(plot(gbmFit2))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+<p>Other performance metrics can be shown using the <code>metric</code> option:
+</p>
+<p><xmp class=command>> plot(gbmFit2, metric = "Kappa") </xmp></p>
+<p>produces the following plot:
+</p>
+
+<<train_plot2,echo=FALSE,results=html>>=
+prefix <- "Train_Plot2"
+aspect <- .7
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(caretTheme())
+print(plot(gbmFit2, metric = "Kappa"))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(caretTheme())
+print(plot(gbmFit2, metric = "Kappa"))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+<p>Other types of plot are also available. See <code>?plot.train</code> for more details.
+The code below shows a heatmap of the results:
+</p>
+<p><xmp class=command>> plot(gbmFit2, metric = "Kappa",</xmp></p>
+<p><xmp class=command>>       plotType = "level",</xmp></p>
+<p><xmp class=command>>       scales = list(x = list(rot = 90)))</xmp></p>
+<p>produces the following plot:
+</p>
+
+<<train_plot3,echo=FALSE,results=html>>=
+prefix <- "Train_Plot3"
+aspect <- .7
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(caretTheme())
+print(plot(gbmFit2, metric = "Kappa", plotType = "level",
+           scales = list(x = list(rot = 90))))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(caretTheme())
+print(plot(gbmFit2, metric = "Kappa", plotType = "level"))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+<p>There are also plot functions that show more detailed representations of the 
+resampled estimates. See <code>?xyplot.train</code> for more details.
+</p>
+<p>
+From these plots, a different set of tuning parameters may be desired. To change the 
+final values without starting the whole process again, the <code>update.train</code>
+can be used to refit the final model. See <code>?update.train</code>
+</p>
+
+<h3>The <code>trainControl</code> Function</h3>
+
+<p>
+The function <code>trainControl</code> generates parameters that further
+control how models are created, with possible values: 
+</p>
+<ul>
+ <li> <code>method</code>: The resampling method: <code>boot</code>, <code>boot632</code>,
+  <code>cv</code>, <code>LOOCV</code>, <code>LGOCV</code>, 
+  <code>repeatedcv</code>  and <code>oob</code>. The
+  last value, out-of-bag estimates, can only be used by random
+  forest, bagged trees, bagged earth, bagged flexible discriminant
+  analysis, or conditional tree forest models. GBM models are not
+  included (the <a href="http://cran.r-project.org/web/packages/gbm/index.html"><strong>gbm</strong></a> package maintainer has indicated that
+  it would not be a good idea to choose tuning parameter values
+  based on the model OOB error estimates with boosted trees). Also,
+  for leave-one-out cross-validation, no uncertainty estimates
+  are given for the resampled performance measures.  </li>
+ <li> <code>number</code> and <code>repeats</code>: <code>number</code> controls with the 
+  number of folds in <i>K</i>-fold cross-validation or number of
+  resampling iterations for bootstrapping and leave-group-out
+  cross-validation. <code>repeats</code> applied only to repeated  
+  <i>K</i>-fold cross-validation. Suppose that <code>method = "repeatedcv"</code>,
+  <code>number = 10</code> and <code>repeats = 3</code>,then three separate
+  10-fold cross-validations are used as the resampling scheme. </li>
+ <li> <code>verboseIter</code>: A logical for printing a training log. </li>
+ <li> <code>returnData</code>: A logical for saving the data into a slot
+  called <code>trainingData</code>.  </li>
+ <li> <code>p</code>: For leave-group out cross-validation: the training
+  percentage  </li>
+ <li> <code>classProbs</code>: a logical value determining whether
+  class probabilities should be computed for held-out samples
+  during resample.  </li>
+ <li> <code>index</code>: a list with elements for each resampling
+  iteration. Each list element is the sample rows used for training
+  at that iteration. When these values are not specified,
+  <code>train</code> will generate them.  </li>
+ <li> <code>summaryFunction</code>: a function to compute alternate
+  performance summaries. 
+  details. </li> 
+ <li> <code>selectionFunction</code>: a function to choose the optimal
+  tuning parameters. 
+  and examples.  </li>
+ <li> <code>PCAthresh</code>, <code>ICAcomp</code> and <code>k</code>: these are
+  all options to pass to the <code>preProcess</code>function (when used). </li>
+ <li> <code>returnResamp</code>: a character string containing one of
+  the following values: <code>"all"</code>, <code>"final"</code> or
+  <code>"none"</code>. This specifies how much of the resampled
+  performance measures to save. </li>  
+</ul>
+
+<h3>Alternate Performance Metrics</h3>
+
+<p>
+The user can change the metric used to determine the best settings. By
+default, RMSE and <i>R</i><sup>2</sup> are computed for regression while accuracy and
+Kappa are computed for classification. Also by default, the parameter
+values are chosen using RMSE and accuracy, respectively  for
+regression and classification. The <code>metric</code> argument of the
+<code>train</code> function allows the user to control which the
+optimality criterion is used. For example, in problems where there are
+a low percentage of samples in one class, using <code>metric =
+  "Kappa"</code> can improve quality of the final model. 
+</p>
+<p>
+If none of these parameters are satisfactory, the user can also
+compute custom performance metrics. The <code>trainControl</code> function
+has a argument called <code>summaryFunction</code> that specifies a
+function for computing performance. The function should have these
+arguments: 
+</p>
+<p>
+<ul>
+ <li> <code>data</code> is a reference for a data frame or matrix with
+  columns called <code>obs</code> and <code>pred</code> for the observed and
+  predicted outcome values (either numeric data for regression or
+  character values for classification). Currently, class probabilities
+  are not passed to the function. The values in data are the held-out
+  predictions (and their associated reference values) for a single
+  combination of tuning parameters. If the <code>classProbs</code>
+  argument of the <code>trainControl</code> object is set to
+  <code>TRUE</code>, additional columns in <code>data</code> will be present
+  that contains the class probabilities. The names of these columns
+  are the same as the class levels.</li>
+ <li> <code>lev</code> is a character string that has the outcome factor
+  levels taken from the training data. For regression, a value of
+  <code>NULL</code> is passed into the function. </li>
+ <li> <code>model</code> is a character string for the model being used
+  (i.e. the value passed to the <code>method</code> argument of
+  <code>train</code>). </li>
+</ul>
+</p>
+<p>
+The output to the function should be a vector of numeric summary
+metrics with non-null names.  By default, <code>train</code> evaluate classification models in terms of
+the predicted classes. Optionally, class probabilities can also be
+used to measure performance. To obtain predicted class probabilities
+within the resampling process, the argument <code>classProbs</code> in
+<code>trainControl</code> must be set to <code>TRUE</code>. This merges
+columns of probabilities into the predictions generated from each
+resample (there is a column per class and the column names are the
+class names).
+</p>
+<p>
+As shown in the last section, custom functions can be used to
+calculate performance scores that are averaged over the
+resamples. Another built-in function, <code>twoClassSummary</code>, will
+compute the sensitivity, specificity and area under the ROC curve:
+</p>
+<<train_summary1,results=hide>>=
+head(twoClassSummary)
+@ 
+<<train_summary1_print,results=html,echo=FALSE>>=
+printOutput(head(twoClassSummary))
+@
+
+<p>
+To rebuild the boosted tree model using this criterion, we
+can see the relationship between the tuning parameters and
+the area under the ROC curve using the following code: 
+</p>
+
+<p><xmp class=command>> fitControl <- trainControl(method = "repeatedcv",</xmp></p>
+<p><xmp class=command>>                            number = 10,</xmp></p>
+<p><xmp class=command>>                            repeats = 10,</xmp></p>
+<p><xmp class=command>>                            ## Estimate class probabilities</xmp></p>
+<p><xmp class=command>>                            classProbs = TRUE,</xmp></p>
+<p><xmp class=command>>                            ## Evaluate performance using </xmp></p>
+<p><xmp class=command>>                            ## the following function</xmp></p>
+<p><xmp class=command>>                            summaryFunction = twoClassSummary)   </xmp></p>                  
+<<train_summary2,echo=FALSE,results=hide>>=
+fitControl <- trainControl(method = "repeatedcv",
+                           number = 10,
+                           repeats = 10,
+                           ## Estimate class probabilities
+                           classProbs = TRUE,
+                           ## Evaluate performance using 
+                           ## the following function
+                           summaryFunction = twoClassSummary)
+@
+<p><xmp class=command>> set.seed(825)</xmp></p>
+<p><xmp class=command>> gbmFit3 <- train(Class ~ ., data = training, </xmp></p>
+<p><xmp class=command>>                  method = "gbm", </xmp></p>
+<p><xmp class=command>>                  trControl = fitControl, </xmp></p>
+<p><xmp class=command>>                  verbose = FALSE, </xmp></p>
+<p><xmp class=command>>                  tuneGrid = gbmGrid,</xmp></p>
+<p><xmp class=command>>                  ## Specify which metric to optimize</xmp></p>
+<p><xmp class=command>>                  metric = "ROC")</xmp></p>
+<p><xmp class=command>> gbmFit3</xmp></p>
+
+<<train_summary3,results=hide,echo=FALSE>>=
+set.seed(825)
+gbmFit3 <- train(Class ~ ., data = training, 
+                 method = "gbm", 
+                 trControl = fitControl, 
+                 verbose = FALSE, 
+                 tuneGrid = gbmGrid,
+                 ## Specify which metric to optimize
+                 metric = "ROC")
+gbmFit3
+@ 
+<<train_summary3_print,results=html,echo=FALSE>>=
+gbmOut <- capture.output(print(gbmFit3))
+print(paste("<pre>", gbmOut[1:18], "</pre>"))
+print("<pre>   :                   :         :       :      :     :       :        :</pre>\n")
+
+gbmOut <- capture.output(print(gbmFit3))
+print(paste("<pre>", gbmOut[(length(gbmOut)-10):length(gbmOut)], "</pre>", collapse ="\n"))
+@
+
+<p>
+In this case, the average area under the ROC curve associated with the
+optimal tuning parameters was
+<Sexpr round(caret:::getTrainPerf(gbmFit3)[1,"TrainROC"], 3)> across
+the <Sexpr length(gbmFit3$control$index)> resamples.
+</p>
+
+
+<h3>Choosing the Final Model</h3>
+
+<p>
+Another method for customizing the tuning process is to modify the
+algorithm that is used to select the "best" parameter values, given
+the performance numbers. By default, the <code>train</code> function
+chooses the model with the largest performance value (or smallest, for
+mean squared error in regression models). Other schemes for selecting
+model can be used.  <a href="http://books.google.com/books/about/Classification_and_Regression_Trees.html?id=JwQx-WOmSyQC">Breiman et al (1984)</a> suggested the "one standard
+error rule" for simple tree-based models. In this case, the model
+with the best performance value is identified and, using resampling,
+we can estimate the standard error of performance. The final model
+used was the simplest model within one standard error of the
+(empirically) best model. With simple trees this makes sense, since
+these models will start to over-fit as they become more and more
+specific to the training data. 
+</p>
+<p>
+<code>train</code> allows the user to specify alternate rules for
+selecting the final model. The argument <code>selectionFunction</code>
+can be used to supply a function to algorithmically determine the
+final model. There are three existing functions in the package:
+<code>best</code> is chooses the largest/smallest value, <code>oneSE</code>
+attempts to capture the spirit of <a href="http://books.google.com/books/about/Classification_and_Regression_Trees.html?id=JwQx-WOmSyQC">Breiman et al (1984)</a> and
+<code>tolerance</code> selects the least complex model within some percent
+tolerance of the best value. See <code>?best</code> for more details. 
+</p>
+<p>
+User-defined functions can be used, as long as they have the
+following arguments: 
+<ul>
+  <li><code>x</code> is a data frame containing the tune parameters and
+    their associated performance metrics. Each row corresponds to a
+    different tuning parameter combination. </li> 
+  <li><code>metric</code> a character string indicating which
+      performance metric should be optimized (this is passed in
+      directly from the <code>metric</code> argument of <code>train</code>.</li>  
+  <li><code>maximize</code> is a single logical value indicating
+        whether larger values of the performance metric are better
+        (this is also directly passed from the call to
+        <code>train</code>). </li>
+</ul>
+<p>
+  The function should output a single integer indicating which row in
+  <code>x</code> is chosen. 
+</p>
+<<bestGBM, echo = FALSE, results = hide>>=
+printSelected <- function(x)
+  {
+    tmp <- x$bestTune
+    names(tmp) <- gsub(".", " ", names(tmp), fixed = TRUE)
+    tmp <- paste(names(tmp), "=", tmp)
+    paste(tmp, collapse = ", ")
+  }
+getTrainPerf <- function(x)
+  {
+    bst <- x$bestTune
+    names(bst) <- substring(names(bst), 2)
+    merge(bst, x$results)
+  }
+@   
+  
+<p>  
+As an example, if we chose the previous boosted tree model on the basis of
+overall accuracy, we would choose:
+<Sexpr printSelected(gbmFit3)>. However, the scale in this plots is
+fairly tight, with accuracy values ranging from
+<Sexpr round(min(gbmFit3$results$ROC), 3)> to
+<Sexpr round(max(gbmFit3$results$ROC), 3)>. A less complex model
+(e.g. fewer, more shallow trees) might also yield acceptable
+accuracy. 
+</p>
+<p>
+The tolerance function could be used to find a less complex
+model based on (<i>x</i>-<i>x</i><sub>best</sub>)/<i>x</i><sub>best</sub>x 100$, which is the percent
+difference. For example, to select parameter values based on a 2% loss of performance: 
+</p>
+<<train_tolerance,results=hide>>=
+whichTwoPct <- tolerance(gbmFit3$results, "ROC", 2, TRUE)  
+cat("best model within 2 pct of best:\n")
+gbmFit3$results[whichTwoPct,]
+@ 
+<<train_tolerance_print,results=html,echo=FALSE>>=
+printOutput(gbmFit3$results[whichTwoPct,])
+@
+<p>
+This indicates that we can get a less complex model with and accuracy
+of <Sexpr round(gbmFit3$results[whichTwoPct,"ROC"], 3)> (compared
+to the "pick the best" value of 
+ <Sexpr round(getTrainPerf(gbmFit3)$ROC, 3)>). 
+</p>
+<p>
+The main issue with these functions is related to ordering the models
+from simplest to complex. In some cases, this is easy (e.g. simple
+trees, partial least squares), but in cases such as this model, the ordering of
+models is subjective. For example, is a boosted tree model using 100
+iterations and a tree depth of 2 more complex than one with 50
+iterations and a depth of 8? The package makes some choices regarding
+the orderings. In the case of boosted trees, the package assumes that
+increasing the number of iterations adds complexity at a faster rate
+than increasing the tree depth, so models are ordered on the number of
+iterations then ordered with depth. See <code>?best</code> for more
+examples for specific models. 
+</p>
+
+<h2>Extracting Predictions and Class Probabilities</h2>
+
+<p>
+As previously mentioned, objects produced by the <code>train</code>
+function contain the "optimized" model in the <code>finalModel</code>
+sub-object. Predictions can be made from these objects as usual. In
+some cases, such as <code>pls</code> or <code>gbm</code> objects, additional
+parameters from the optimized fit may need to be specified. In these
+cases, the <code>train</code> objects uses the results of the parameter
+optimization to predict new samples. For example, if predictions were create
+using <code>predict.gbm</code>, the user would have to specify the number of trees 
+directly (there is no default). Also, for binary classification, the predictions
+from this function take the form of the probability of one of the classes, so 
+extra steps are required to convert this to a factor vector. <code>predict.train</code>
+automatically handles these details for this (and for other models).
+</p>
+<p>
+Also, there are very few standard syntaxes for model predictions in R. For example, 
+to get class probabilities, many <code>predict</code> methods have an argument called 
+<code>type</code> that is used to specify whether the classes or probabilities should 
+be generated. Different packages use different values of <code>type</code>, such as 
+"prob", "posterior", "response", "probability" or "raw". In other cases, completely 
+different syntax is used.
+</p>
+<p>For <code>predict.train</code>, the type options are standardized to be "class" 
+and "prob" (the underlying code matches these to the appropriate choices for each 
+model. For example:
+</p>
+<<train_pred1,results=hide>>=
+predict(gbmFit3, head(testing))
+@ 
+<<train_pred1_print,results=html,echo=FALSE>>=
+printOutput(predict(gbmFit3, head(testing)))
+@
+<<train_pred2,results=hide>>=
+predict(gbmFit3, head(testing), type = "prob")
+@ 
+<<train_pred2_print,results=html,echo=FALSE>>=
+printOutput(predict(gbmFit3, head(testing), type = "prob"))
+@
+
+
+<h2>Exploring and Comparing Resampling Distributions</h2>
+
+<h3>Within-Model</h3>
+<p>resamples = "all" note</p>
+<p>
+There are several <a href="http://cran.r-project.org/web/packages/lattice/index.html"><strong>lattice</strong></a> functions than can be used to explore
+relationships between tuning parameters and the resampling results for
+a specific model:
+<ul>
+ <li><code>xyplot</code> and <code>stripplot</code> can be used to plot resampling statistics
+  against (numeric) tuning parameters.</li>
+ <li><code>histogram</code> and <code>densityplot</code> can also be used
+      to look at distributions of the tuning parameters across tuning parameters.</li>
+</ul>
+</p>
+<p>
+For example, the following statements   
+</p>
+<p><xmp class=command>> densityplot(gbmFit3, pch = "|")</xmp></p>
+<p>produce the following plot:
+</p>
+
+<<train_plot3,echo=FALSE,results=html>>=
+prefix <- "Train_Dens"
+aspect <- .5
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(caretTheme())
+print(densityplot(gbmFit3, pch = "|"))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(caretTheme())
+print(densityplot(gbmFit3, pch = "|"))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<h3>Between-Models</h3>
+
+<p>
+The <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> package also includes functions to characterize the differences
+between models (generated using <code>train</code>, <code>sbf</code> or
+<code>rfe</code>) via their resampling distributions. These functions are
+based on the work of <a href="http://www.stat.uni-muenchen.de/~leisch/papers/Hothorn+Leisch+Zeileis-2005.pdf">Hothorn et al. (2005)</a> and <a href="http://epub.ub.uni-muenchen.de/10604/1/tr56.pdf">Eugster et al (2008)</a>.
+</p>
+<p>
+First, a support vector machine model is fit to the Sonar data. The data are centered and scaled using hte <code>preProc</code> argument. Note that the same random number seed is set prior to the model that is idenditcal to the seed used for the boosted tree model. This ensures that the same resampling sets are used, which will come in handy when we compare the resamling profiles between models. </p>
+</p>
+<<train_svmFit,results=hide,echo=FALSE>>=
+set.seed(825)
+svmFit <- train(Class ~ ., data = training, 
+                 method = "svmRadial", 
+                 trControl = fitControl, 
+                 preProc = c("center", "scale"),
+                 tuneLength = 8,
+                 metric = "ROC")
+svmFit                 
+@ 
+<p><xmp class=command>> set.seed(825)</xmp></p>
+<p><xmp class=command>> svmFit <- train(Class ~ ., data = training, </xmp></p>
+<p><xmp class=command>>                  method = "svmRadial", </xmp></p>
+<p><xmp class=command>>                  trControl = fitControl, </xmp></p>
+<p><xmp class=command>>                  preProc = c("center", "scale"),</xmp></p>
+<p><xmp class=command>>                  tuneLength = 8,</xmp></p>
+<p><xmp class=command>>                  metric = "ROC")</xmp></p>
+<p><xmp class=command>> svmFit</xmp></p>
+
+<<train_svmFit_print,results=html,echo=FALSE>>=
+printOutput(svmFit)
+@
+<p>
+Also, a regularized discriminant analysis model was fit.  
+</p>
+<<train_rdaFit,results=hide>>=
+set.seed(825)
+rdaFit <- train(Class ~ ., data = training, 
+                 method = "rda", 
+                 trControl = fitControl, 
+                 tuneLength = 4,
+                 metric = "ROC")
+rdaFit                 
+@ 
+<p><xmp class=command>> set.seed(825)</xmp></p>
+<p><xmp class=command>> rdaFit <- train(Class ~ ., data = training, </xmp></p>
+<p><xmp class=command>>                  method = "rda", </xmp></p>
+<p><xmp class=command>>                  trControl = fitControl, </xmp></p>
+<p><xmp class=command>>                  tuneLength = 4,</xmp></p>
+<p><xmp class=command>>                  metric = "ROC")</xmp></p>
+<p><xmp class=command>> rdaFit</xmp></p>
+<<train_rdaFit_print,results=html,echo=FALSE>>=
+printOutput(rdaFit)
+@
+<p>
+Given these models, can we make statistical statements about their
+performance differences? To do this, we first collect the resampling
+results using <code>resamples</code>. 
+</p>
+<<train_resamps1,results=hide>>=
+resamps <- resamples(list(GBM = gbmFit3,
+                          SVM = svmFit,
+                          RDA = rdaFit))
+resamps
+@ 
+<<train_resamps1_print,results=html,echo=FALSE>>=
+printOutput(resamps)
+@
+<<train_resamps2,results=hide>>=
+summary(resamps)
+@ 
+<<train_resamps2_print,results=html,echo=FALSE>>=
+printOutput(summary(resamps))
+@
+
+<p>
+There are several <pkg>lattice</pkg> plot methods that can be used to visualize
+the resampling distributions: density plots, box-whisker plots,
+scatterplot matrices and scatterplots of summary statistics. In the
+latter case, the plot consists of a scatterplot between the two
+models, as shown in the figure below. In the next figure, density plots
+of the data are shown. In this figure,  the <i>R</i><sup>2</sup> distributions
+indicate that M5 rules and MARS appear to be
+similar to one another but different from the two tree-based
+models. However, this pattern is inconsistent with the root
+mean squared error distributions.
+</p>
+
+<p>A variety of plots can be created for the resampling results:</p>
+<p><xmp class=command>> ## Box-Whisker plots </xmp></p>
+<p><xmp class=command>> bwplot(resamps)</xmp></p>
+
+
+<<train_resample_box,echo=FALSE,results=html>>=
+prefix <- "train_resample_box"
+aspect <- .6
+width <- 8
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(bwplot(resamps))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(bwplot(resamps))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<p><xmp class=command>> ## Confidence intervals (note we plot only one outcome) </xmp></p>
+<p><xmp class=command>> dotplot(resamps, metric = "ROC")</xmp></p>
+
+
+<<train_resample_ci,echo=FALSE,results=html>>=
+prefix <- "train_resample_ci"
+aspect <- .75
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(caretTheme())
+print(dotplot(resamps, metric = "ROC"))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(caretTheme())
+print(dotplot(resamps, metric = "ROC"))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<p><xmp class=command>> ## xyplot can create several plots including simple </xmp></p>
+<p><xmp class=command>> ## scatter plots of two models or a Balnd-Altman type </xmp></p>
+<p><xmp class=command>> ## plot (shown below). See ?xyplot.resamples for more info </xmp></p>
+<p><xmp class=command>> xyplot(resamps, what = "BlandAltman")</xmp></p>
+
+
+<<train_resample_ba,echo=FALSE,results=html>>=
+prefix <- "train_resample_ba"
+aspect <- 1
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(xyplot(resamps, what = "BlandAltman"))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(xyplot(resamps, what = "BlandAltman"))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<p><xmp class=command>> ## Scatter plot matrix: </xmp></p>
+<p><xmp class=command>> splom(resamps)</xmp></p>
+
+
+<<train_resample_scatmat,echo=FALSE,results=html>>=
+prefix <- "train_resample_scatmat"
+aspect <- 1
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(splom(resamps))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(splom(resamps))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<p> Other visualizations are availible in <code>densityplot.resamples</code> and <code>parallel.resamples</code></p>
+
+
+<p>
+Since models are fit on the same versions of the training data, it
+makes sense to make inferences on the differences between models. In
+this way we reduce the within-resample correlation that may exist. We
+can compute the differences, then use a simple <i>t</i>-test to evaluate
+the null hypothesis that there is no difference between models. 
+</p>
+<<train_resamps3,results=hide>>=
+difValues <- diff(resamps)
+difValues
+@ 
+<<train_resamps3_print,results=html,echo=FALSE>>=
+printOutput(difValues)
+@
+<<train_resamps4,results=hide>>=
+summary(difValues)
+@ 
+<<train_resamps4_print,results=html,echo=FALSE>>=
+printOutput(summary(difValues))
+@
+
+<p>This class also has some visualization methods, including:</p>
+<p><xmp class=command>> ## Box-Whisker plots </xmp></p>
+<p><xmp class=command>> bwplot(difValues)</xmp></p>
+
+
+<<train_diff_box,echo=FALSE,results=html>>=
+prefix <- "train_diff_box"
+aspect <- .6
+width <- 8
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(bwplot(difValues))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(bwplot(difValues))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<p><xmp class=command>> ## Confidence intervals for the differences </xmp></p>
+<p><xmp class=command>> dotplot(difValues)</xmp></p>
+
+
+<<train_diff_ci,echo=FALSE,results=html>>=
+prefix <- "train_diff_ci"
+aspect <- .6
+width <- 8
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(caretTheme())
+print(dotplot(difValues))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(caretTheme())
+print(dotplot(difValues))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<h2>Custom Methods for <code>train</code></h2>
+
+<p>
+Although there are currently more than
+<Sexpr length(unique(modelLookup()$model)) -(length(unique(modelLookup()$model)) %% 10)>
+  methods available to <code>train</code>, there may be the need to create
+  custom model functions (e.g. testing a new model etc). One
+  application of custom models would be to create diverse ensembles of
+  models. For example, a set of different classification models may be
+  fit to the same data and a "pick-the-winner" approach can be
+  taken (or the average of the class probabilities could be used, see
+  <a href="http://www.wiley.com/WileyCDA/WileyTitle/productCd-0471210781.html">Kuncheva (2004)</a> or <a href ="http://www.morganclaypool.com/doi/abs/10.2200/S00240ED1V01Y200912DMK002">Seni and Elder (2010)</a>). <code>train</code> already has
+  a framework for resampling and tuning models and
+  <code>predict.train</code> can be used to encapsulate the ensemble of
+  models into one call for prediction.
+</p>
+
+<h3>How To Write Custom Methods</h3>
+
+<p>
+The user will need to deviate from the standard call in two ways:
+<ul>
+<li> use <code>method = "custom"</code> in the call to <code>train</code>, and </li>
+<li> add the required functions for the model using <code>trainControl</code> </li>
+</ul>
+</p>
+<p>
+The <code>custom</code> argument of <code>trainControl</code> requires a list of
+named functions with the following elements: <code>parameters</code>,
+<code>model</code>, <code>prediction</code>, <code>prob</code> and <code>sort</code>.
+</p>
+
+<h3>The <code>parameters</code> Argument</h3>
+
+<p>
+This element is used to specify or generate the models tuning
+parameters. This can be done either as a function to generate them or
+a data frame of the actual parameters.
+</p>
+<p>Inputs:
+<ul>
+    <li><code>data</code>: a data frame of the training set data. The
+    outcome will be in a column labeled <code>.outcome</code>. If the
+    formula method for <code>train</code> was invoked, the data passed into
+    this function will have been processed (i.e. dummy variables have
+    been created etc).</li>
+  <li><code>len</code> an optional parameter passed in form the
+    <code>tuneLength</code> argument to <code>train</code></li>
+</ul>
+</p>
+
+<p>Outputs: a data frame where
+<ul>
+    <li>all columns start with a dot </li>
+    <li>there is at least one row</li>
+</ul>
+<p>
+Instead of a function, the final data frame can be passed in
+</p>
+
+<h3>The <code>model</code> Function</h3>
+
+<p>
+This element fits the model and any other functions
+(e.g. pre-processing of the data)
+</p>
+
+<p>Inputs:
+<ul>
+ <li> <code>data</code>: a data frame of the training set data. The outcome
+  will be in a column labeled <code>.outcome</code>. If case weights were
+  specified in the <code>train</code> call, these are in the column
+  <code>.modelWeights</code>. If the formula method for <code>train</code> was
+  invoked, the data passed into this function will have been processed
+  (i.e. dummy variables have been created etc).
+   <li> <code>weights</code> case weights
+   <li> <code>parameter</code> a single row data frame with the current
+    tuning parameter
+   <li> <code>levels</code>: either <code>NULL</code> or a character vector or
+    factor labels
+   <li> <code>last</code> a logical vector for the final model fit with the
+    selected tuning parameters and the full training set
+   <li> <code>...</code> arguments passed form <code>train</code> to this function
+</ul>
+</p>
+<p>
+Outputs: a list with at least one element:
+<ul>
+   <li> <code>fit</code>: the object corresponding to the trained model
+</ul>
+</p>
+<p>
+Anything else can be attached to this object. If custom
+pre-processing is required, this can be estimated in the <code>model</code>
+function and attached to the output list. Subsequent calls to the
+<code>prediction</code> and <code>probability</code> functions will have the
+entire list available, so the processing can be applied to the new
+data. 
+</p>
+
+<h3>The <code>prediction</code> Function</h3>
+
+<p>
+This should be a function that produces either a number vector (for
+regression) or a factor (or character) vector for classification.
+</p>
+<p>
+Inputs:
+<ul>
+ <li> <code>object</code>: a list with two elements resulting from the
+  model function
+ <li> <code>newdata</code>: a matrix or data frame of predictors to be
+  processed through the model (and possibly pre-processing routine)
+</ul>
+</p>
+<p>
+The output should be either a numeric, character or factor vector. For
+classification, factors are converted to character elsewhere to ensure
+the proper levels are in the output.
+</p>
+
+<h3>The <code>probability</code> Argument</h3>
+<p>
+For classification models, this function should generate a data frame of class probabilities. For regression, a value of <code>NULL</code> can be used. 
+</p>
+<p> Inputs:
+<ul>
+ <li> <code>object</code>: a list with two elements resulting from the
+  model function
+ <li> <code>newdata</code>: a matrix or data frame of predictors to be
+  processed through the model (and possibly pre-processing routine)
+</ul>
+</p>
+<p>
+The output should be a data frame with these characteristics:
+<ul>
+ <li> as many columns are factor levels
+ <li> column names are the same as the factor levels and in the same order
+</ul>
+</p>
+
+<h3>The <code>sort</code> Function</h3>
+
+<p>
+There are cases where multiple tuning parameters yield the same level
+of performance. In these situations, <code>train</code> will choose the
+parameters associated with the most simplistic model. This function
+should take the grid of tuning parameters and order them from least
+complex to most complex.
+</p>
+<p>
+The input is a data frame of tuning parameters (without the
+preceding dot in the name). 
+</p>
+<p>
+The output is the same data frame sorted appropriately. 
+</p>
+
+<h3>An Example</h3>
+
+<p>
+As an example, suppose we want to test out <code>rpart</code> models where
+we tune over the complexity parameter and the minimum number of
+samples in a node to do further splitting (a.k.a <code>minsplit</code>).
+</p>
+<p>
+We'll use the Sonar data in the <a href="http://cran.r-project.org/web/packages/mlbench/index.html"><strong>mlbench</strong></a> package to illustrate.
+</p>
+<p>
+First, we would need to create a training grid with the candidate
+values of <code>cp</code> and <code>minsplit</code>. When using the nominal
+<code>rpart</code> method in <code>train</code>, an initial <code>rpart</code> model is
+created and the unique values of the complexity parameter are obtained
+from the sub-object <code>cptable</code>. We will test two values of
+<code>minsplit</code>: 10 and 30. First, we get the unique
+$C_p$ values for <code>minsplit = 10</code>
+</p>
+
+<<train_Cp1,results=hide,echo=FALSE>>=
+library(rpart)
+cpValues10 <- rpart(Class ~ ., data = training,
+              control = rpart.control(minsplit = 10))$cptable[,"CP"]
+cpValues30 <- rpart(Class ~ ., data = training,
+              control = rpart.control(minsplit = 30))$cptable[,"CP"]
+head(cpValues10)
+@ 
+<p><xmp class=command>> library(rpart)</xmp></p>
+<p><xmp class=command>> cpValues10 <- rpart(Class ~ ., data = training,</xmp></p>
+<p><xmp class=command>>               control = rpart.control(minsplit = 10))$cptable[,"CP"]</xmp></p>
+<p><xmp class=command>> cpValues30 <- rpart(Class ~ ., data = training,</xmp></p>
+<p><xmp class=command>>               control = rpart.control(minsplit = 30))$cptable[,"CP"]</xmp></p>
+<p><xmp class=command>> head(cpValues10)</xmp></p>
+<<train_Cp1_print,results=html,echo=FALSE>>=
+printOutput(head(cpValues10))
+@
+
+<p>
+From these, we will create the tuning grid of 
+<Sexpr length(c(cpValues10, cpValues30)) >
+canidiate models:
+</p>
+
+<<train_cpGrid,results=hide,echo=FALSE>>=
+rpartGrid <- data.frame(.cp = c(cpValues10, cpValues30),
+                        .minsplit = 
+                        c(rep(10, length(cpValues10)), 
+                          rep(30, length(cpValues30))))
+
+@ 
+<p><xmp class=command>> rpartGrid <- data.frame(.cp = c(cpValues10, cpValues30),</xmp></p>
+<p><xmp class=command>>                         .minsplit = </xmp></p>
+<p><xmp class=command>>                         c(rep(10, length(cpValues10)), </xmp></p>
+<p><xmp class=command>>                           rep(30, length(cpValues30))))</xmp></p>
+<p>
+We can now write a model function:
+</p>
+
+<<train_modelFoo,results=hide,echo=FALSE>>=
+modelFunc <- function(data, parameter, levels, last, ...)
+  {
+    library(rpart)
+    ctrl <- rpart.control(cp = parameter$.cp,
+                          minsplit = parameter$.minsplit)
+    
+    list(fit = rpart(.outcome ~ ., data = data, control = ctrl))                             
+  }
+@ 
+<p><xmp class=command>> modelFunc <- function(data, parameter, levels, last, ...)</xmp></p>
+<p><xmp class=command>>   {</xmp></p>
+<p><xmp class=command>>     library(rpart)</xmp></p>
+<p><xmp class=command>>     ctrl <- rpart.control(cp = parameter$.cp,</xmp></p>
+<p><xmp class=command>>                           minsplit = parameter$.minsplit)</xmp></p>
+<p><xmp class=command>>     list(fit = rpart(.outcome ~ ., data = data, control = ctrl))    </xmp></p>                         
+<p><xmp class=command>>   }</xmp></p>
+<p>
+It is a good idea to load the <a href="http://cran.r-project.org/web/packages/rpart/index.html"><strong>rpart</strong></a> package and anything else needed within the function. The prediciton function is simple:
+</p>
+
+<<train_predFoo,results=hide,echo=FALSE>>=
+predFunc <- function(object, newdata)
+  {
+    library(rpart)
+    predict(object$fit, newdata, type = "class")                            
+  }
+@ 
+<p><xmp class=command>> predFunc <- function(object, newdata)</xmp></p>
+<p><xmp class=command>>   {</xmp></p>
+<p><xmp class=command>>     library(rpart)</xmp></p>
+<p><xmp class=command>>     predict(object$fit, newdata, type = "class")     </xmp></p>                       
+<p><xmp class=command>>   }</xmp></p>
+<p>
+Sorting by complexity is somewhat subjective. Both parameters govern
+how deep the tree can be. We will sort by <code>cp</code> then <code>minsplit</code>:
+</p>
+<<train_sortFoo,results=hide>>=
+sortFunc <- function(x)  x[order(x$cp, x$minsplit),]                           
+@ 
+<p>
+Now we can create a control object for <code>train</code>:
+</p>
+<<train_trControl, eval = TRUE,results=hide, echo = FALSE>>=
+ctrl <- trainControl(custom = list(
+                       parameters = rpartGrid,
+                       model = modelFunc,
+                       prediction = predFunc,
+                       probability = NULL,
+                       sort = sortFunc),
+                     method = "repeatedcv",
+                     repeats = 10)
+
+set.seed(581)
+customRpart <- train(Class ~ ., data = training, method = "custom", trControl = ctrl)
+@ 
+<p><xmp class=command>> ctrl <- trainControl(custom = list(</xmp></p>
+<p><xmp class=command>>                      parameters = rpartGrid,</xmp></p>
+<p><xmp class=command>>                      model = modelFunc,</xmp></p>
+<p><xmp class=command>>                      prediction = predFunc,</xmp></p>
+<p><xmp class=command>>                      probability = NULL,</xmp></p>
+<p><xmp class=command>>                      sort = sortFunc),</xmp></p>
+<p><xmp class=command>>                      method = "repeatedcv",</xmp></p>
+<p><xmp class=command>>                      repeats = 10)</xmp></p>
+<p><xmp class=command>> </xmp></p>
+<p><xmp class=command>> set.seed(581)</xmp></p>
+<p><xmp class=command>> customRpart <- train(Class ~ ., data = training, method = "custom", trControl = ctrl)</xmp></p>
+<p>
+The <code>predict</code>, <code>print</code>, <code>plot</code> and <code>resamples</code>
+methods work with custom models. In the case of <code>plot.train</code>, the
+axis and key labels will be the parameter names. However, <code>update</code>
+can be used to make the labels more descriptive:
+</p>
+
+<<train_plotResults, eval = TRUE,results=hide>>=
+rpartPlot <- plot(customRpart, scales = list(x = list(log = 10)))
+rpartPlot <- update(rpartPlot, xlab = "Complexity Parameter")
+rpartPlot
+@ 
+<<train_custom,echo=FALSE,results=html>>=
+prefix <- "Train_Custom"
+aspect <- .8
+width <- 6
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(caretTheme())
+print(rpartPlot)
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(caretTheme())
+print(rpartPlot)
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <!-- end #content -->
+<div id="sidebar">
+  <ul>
+  <li>
+  <h2>Links</h2>
+  <p><a href="modelList.html"><tt>train</tt> Model List</a></p>
+  </li>
+  <li>
+  <h2>Topics</h2>
+  <ul>
+      	<li><a href="index.html">Main Page</a></li>
+  		<li><a href="datasets.html">Data Sets</a></li>
+                <li><a href="visualizations.html">Visualizations</a></li>
+                <li><a href="preprocess.html">Pre-Processing</a></li>
+                <li><a href="splitting.html">Data Splitting</a></li>
+                <li><a href="misc.html">Miscellaneous Model Functions</a></li>
+                <li><a href="training.html">Model Training and Tuning</a></li>
+                <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
+                 <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                <li><a href="varimp.html">Variable Importance</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
+                <li><a href="other.html">Other Functions</a></li>
+                <li><a href="parallel.html">Parallel Processing</a></li>
+</ul>
+  </li>
+  </ul>
+  </div>
+  <!-- end #sidebar -->
+<div style="clear: both;">&nbsp;</div>
+  </div>
+  <div class="container"><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+  <!-- end #page -->
+</div>
+  <div id="footer-content"></div>
+  <div id="footer">
+  <p>Created on <Sexpr session>.</p>
+  </div>
+  <!-- end #footer -->
+</body>
+  </html>

@@ -1,0 +1,542 @@
+<<startup,results=hide,echo=FALSE>>=
+library(caret)
+data(BloodBrain)
+library(earth)
+data(etitanic)
+
+library(caret)
+
+session <- paste(format(Sys.time(), "%a %b %d %Y"),
+                 "using caret version",
+                 packageDescription("caret")$Version,
+                 "and",
+                 R.Version()$version.string)
+@ 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+    Design by Free CSS Templates
+    http://www.freecsstemplates.org
+    Released for free under a Creative Commons Attribution 2.5 License
+
+    Name       : Emerald 
+    Description: A two-column, fixed-width design with dark color scheme.
+    Version    : 1.0
+    Released   : 20120902
+
+  -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Pre-Processing</title>
+    <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+    <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+  </head>
+  <body>
+    <div id="wrapper">
+      <div id="header-wrapper" class="container">
+	<div id="header" class="container">
+	  <div id="logo">
+	    <h1><a href="#">Pre-Processing</a></h1>
+	  </div>
+          <!--
+	      <div id="menu">
+		<ul>
+		  <li class="current_page_item"><a href="#">Homepage</a></li>
+		  <li><a href="#">Blog</a></li>
+		  <li><a href="#">Photos</a></li>
+		  <li><a href="#">About</a></li>
+		  <li><a href="#">Contact</a></li>
+		</ul>
+	      </div>
+              -->
+	</div>
+	<div><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+      </div>
+      <!-- end #header -->
+      <div id="page">
+	<div id="content">
+          <p>
+<a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> includes several functions to pre--process the predictor data.  Assumes that all of the data are numeric (i.e. factors have been converted to dummy variables via <code>model.matrix</code>,  <code>dummaryVars</code>  or other means).  
+          </p>
+    <h2>Creating Dummy Variables</h1>
+    <p>
+    The function <code>dummyVars</code> can be used to generate a complete (less than full rank parameterized) set of dummy variables from one or more factors. The function takes a formula and a data set and outputs an object that can be used to create the dummy variables using the predict method.
+</p>
+<p>
+For example, the <code>etitanic</code> data set in the
+<a href="http://cran.r-project.org/web/packages/earth/index.html"><strong>earth</strong></a> package includes two factors:
+<code>pclass1</code> (with levels 
+<Sexpr paste(levels(etitanic$pclass),  collapse = ", ") >) and <code>sex</code> (with levels <Sexpr paste(levels(etitanic$sex),  sep = "", collapse = ", ")>). The base R function <code>model.matrix</code> would generate the following variables:
+</p>
+<<dummy1,results=hide>>=
+library(earth)
+data(etitanic)
+head(model.matrix(survived ~ ., data = etitanic))
+@
+<<dummy1_print,results=html,echo=FALSE>>=
+printOutput(head(model.matrix(survived ~ ., data = etitanic)))
+@ 
+<p>
+Using <code>dummyVars</code>:
+</p>
+<<dummy2,results=hide>>=
+dummies <- dummyVars(survived ~ ., data = etitanic)
+head(predict(dummies, newdata = etitanic))
+@
+<<dummy2_print,results=html,echo=FALSE>>=
+printOutput(head(predict(dummies, newdata = etitanic)))
+@ 
+<p>
+Note there is no intercept and each factor has a dummy variable for each level, so this parameterization may not be useful for some model functions, such as <code>lm</code>.
+</p>
+
+<h2>Zero- and Near Zero-Variance Predictors</h1>
+<p>
+In some situations, the data generating mechanism can create predictors that only have a single unique value (i.e. a "zero-variance predictor"). For many models (excluding tree-based models), this may cause the model to crash or the fit to be unstable. 
+</p>
+<p>
+Similarly, predictors might have only a handful of unique values that occur with very low frequencies. For example, in the drug resistance data, the <code>nR11</code> descriptor (number of 11-membered rings) data have a few unique numeric values that are highly unbalanced:
+</p>
+
+<<nzv1,results=hide>>=
+data(mdrr)
+data.frame(table(mdrrDescr$nR11))
+@
+<<nzv1_print,results=html,echo=FALSE>>=
+printOutput(data.frame(table(mdrrDescr$nR11)))
+@ 
+
+<p>
+The concern here that these predictors may become zero-variance predictors when the data are split into cross-validation/bootstrap sub-samples or that a few samples may have an undue influence on the model. These "near-zero-variance" predictors may need to be identified and eliminated prior to modeling.
+</p>
+<p>
+To identify these types of predictors, the following two metrics can be calculated:
+</p>
+<ul>
+  		<li> the frequency of the most prevalent value over the second most frequent value (called the "frequency ratio''), which would be near one for well-behaved predictors and very large for highly-unbalanced data></li>
+<li> the "percent of unique values'' is the number of unique values divided by the total number of samples (times 100) that approaches zero as the granularity of the data increases></li>
+</ul>
+
+<p>
+If the frequency ratio is less than a pre-specified threshold and the unique value percentage is less than a threshold, we might consider a predictor to be near zero-variance.
+</p>
+<p>
+We would not want to falsely identify data that have low granularity but are evenly distributed, such as data from a discrete uniform distribution. Using both criteria should not falsely detect such predictors.
+</p>
+<p>
+Looking at the MDRR data, the <code>nearZeroVar</code> function can be used to identify near zero-variance variables (the <code>saveMetrics</code> argument can be used to show the details and usually defaults to <code>FALSE</code>):
+</p>
+
+<<nzv2,results=hide>>=
+nzv <- nearZeroVar(mdrrDescr, saveMetrics= TRUE)
+nzv[nzv$nzv,][1:10,]
+@
+<<nzv2_print,results=html,echo=FALSE>>=
+printOutput(nzv[nzv$nzv,][1:10,])
+@ 
+<<nzv3,results=hide>>=
+dim(mdrrDescr)
+@
+<<nzv3_print,results=html,echo=FALSE>>=
+printOutput(dim(mdrrDescr))
+@ 
+
+<<nzv4,results=hide>>=
+dim(mdrrDescr)
+nzv <- nearZeroVar(mdrrDescr)
+filteredDescr <- mdrrDescr[, -nzv]
+dim(mdrrDescr)
+@
+<<nzv4_print,results=html,echo=FALSE>>=
+printOutput(dim(mdrrDescr))
+@ 
+
+<p>
+By default, <code>nearZeroVar(data)</code> will return the positions of the variables that are flagged to be problematic.
+</p>
+
+<h2>Identifying Correlated Predictors</h1>
+
+<p>
+While there are some models that thrive on correlated predictors (such as <code>pls</code>), other models may benefit from reducing the level of correlation between the predictors. 
+</p>
+
+<p>
+Given a correlation matrix, the <code>findCorrelation</code> function uses the following algorithm to flag predictors for removal:
+</p>
+
+
+<<corr1,results=hide>>=
+descrCor <-  cor(filteredDescr)
+highCorr <- sum(abs(descrCor[upper.tri(descrCor)]) > .999)
+@
+
+<p>
+For the previous MDRR data, there are <Sexpr highCorr> descriptors that are almost perfectly correlated (|correlation| &gt; 0.999), such as the total information index of atomic composition (<code>IAC</code>) and the total information content index (neighborhood symmetry of 0-order) (<code>TIC0</code>) (correlation = 1). The code chunk below shows the effect of removing descriptors with absolute correlations above 0.75.
+</p>
+
+
+<<corr2,results=hide>>=
+descrCor <- cor(filteredDescr)
+summary(descrCor[upper.tri(descrCor)])
+@
+<<corr2_print,results=html,echo=FALSE>>=
+printOutput(summary(descrCor[upper.tri(descrCor)]))
+@ 
+
+<<corr3,results=hide>>=
+highlyCorDescr <- findCorrelation(descrCor, cutoff = .75)
+filteredDescr <- filteredDescr[,-highlyCorDescr]
+descrCor2 <- cor(filteredDescr)
+summary(descrCor2[upper.tri(descrCor2)])
+@
+<<corr3_print,results=html,echo=FALSE>>=
+printOutput(summary(descrCor2[upper.tri(descrCor2)]))
+@ 
+
+
+<h2>Linear Dependencies</h1>
+
+<p>
+The function <code>findLinearCombos</code> uses the QR decomposition of a matrix to enumerate sets of linear combinations (if they exist). For example, consider the following matrix that is could have been produced by a less--than--full--rank parameterizations of a two--way experimental layout:
+</p>
+
+<<ld1,results=hide>>=
+ltfrDesign <- matrix(0, nrow=6, ncol=6)
+ltfrDesign[,1] <- c(1, 1, 1, 1, 1, 1)
+ltfrDesign[,2] <- c(1, 1, 1, 0, 0, 0)
+ltfrDesign[,3] <- c(0, 0, 0, 1, 1, 1)
+ltfrDesign[,4] <- c(1, 0, 0, 1, 0, 0)
+ltfrDesign[,5] <- c(0, 1, 0, 0, 1, 0)
+ltfrDesign[,6] <- c(0, 0, 1, 0, 0, 1)
+
+@
+<<ld1_print,results=html,echo=FALSE>>=
+printOutput(ltfrDesign)
+@ 
+
+<p>
+Note that columns two and three add up to the first column. Similarly, columns four, five and six add up the first column. <code>findLinearCombos</code> will return a list that enumerates these dependencies. For each linear combination, it will incrementally remove columns from the matrix and test to see if the dependencies have been resolved. <code>findLinearCombos</code> will also return a vector of column positions can be removed to eliminate the linear dependencies:
+</p>
+
+
+<<ld2,results=hide>>=
+comboInfo <- findLinearCombos(ltfrDesign)
+comboInfo
+@
+<<ld2_print,results=html,echo=FALSE>>=
+printOutput(comboInfo)
+@ 
+
+<<ld3,results=hide>>=
+ltfrDesign[, -comboInfo$remove]
+findLinearCombos(ltfrDesign[, -comboInfo$remove])
+@
+<<ld3_print,results=html,echo=FALSE>>=
+printOutput(findLinearCombos(ltfrDesign[, -comboInfo$remove]))
+@ 
+
+<p>
+These types of dependencies can arise when large numbers of binary chemical fingerprints are used to describe the structure of a molecule.
+</p>
+
+
+<h2>Centering and Scaling</h1>
+
+<p>
+The <code>preProcess</code> class can be used for many operations on predictors, including centering and scaling. The function <code>preProcess</code> estimates the required parameters for each operation and <code>predict.preProcess</code> is used to apply them to specific data sets.
+</p>
+<p>
+In the example below, the half of the MDRR data are used to estimate the location and scale of the predictors. The function <code>preProcess</code> doesn't actually pre--process the data. <code>predict.preProcess</code> is used to pre--process this and other data sets.
+</p>
+
+<<cs1,results=hide>>=
+set.seed(96)
+inTrain <- sample(seq(along = mdrrClass), length(mdrrClass)/2)
+
+training <- filteredDescr[inTrain,]
+test <- filteredDescr[-inTrain,]
+trainMDRR <- mdrrClass[inTrain]
+testMDRR <- mdrrClass[-inTrain]
+
+preProcValues <- preProcess(training, method = c("center", "scale"))
+@
+<<cs1_print,results=html,echo=FALSE>>=
+printOutput(preProcValues)
+@ 
+<<cs2,results=hide>>=
+trainTransformed <- predict(preProcValues, training)
+testTransformed <- predict(preProcValues, test)
+@
+
+<p>
+The <code>preProcess</code> option <code>"ranges"</code> scales the data to the interval [0, 1].
+</p>
+
+<h2>Imputation</h1>
+
+<p>
+<code>preProcess</code> can be used to impute data sets based only on information in the training set. One method of doing this is with K-nearest neighbors. For an arbitrary sample, the K closest neighbors are found in the training set and the value for the  predictor is imputed using these values (e.g. using the mean). Using this approach will automatically trigger <code>preProcess</code> to center and scale the data, regardless of what is in the <code>method</code> argument. Alternatively, bagged trees can also be used to impute. For each predictor in the data, a bagged tree is created using all of the other predictors in the training set. When a new sample has a missing predictor value, the bagged model is used to predict the value. While, in theory, this is a more powerful method of imputing, the computational costs are much higher than the nearest neighbor technique.
+</p>
+
+<h2>Transforming Predictors</h1>
+
+
+<p>In some cases, there is a need to use principal component analysis (PCA) to transform the data to a smaller sub&ndash;space where the new variable are uncorrelated with one another. The <code>preProcess</code> class can apply this transformation by including <code>&quot;pca&quot;</code> in the <code>method</code> argument. Doing this will also force scaling of the predictors. Note that when PCA is requested, <code>predict.preProcess</code> changes the column names to <code>PC1</code>,  <code>PC2</code> and so on.</p>
+
+<p>Similarly, independent component analysis (ICA) can also be used to find new variables that are linear combinations of the original set such that the components are independent (as opposed to uncorrelated in PCA). The new variables will be labeled as  <code>IC1</code>,  <code>IC2</code> and so on.</p>
+
+<p>The &quot;spatial sign&rdquo; transformation (<a
+href="http://pubs.acs.org/cgi-bin/abstract.cgi/jcisd8/2006/46/i03/abs/ci050498u.html">Serneels
+et al, 2006</a>) projects the data for a predictor to the unit circle
+in p dimensions, where p is the number of predictors. Essentially, a
+vector of data is divided by its norm. The two figures below show two
+centered and scaled descriptors from the MDRR data before and after
+the spatial sign transformation. The predictors should be centered and
+scaled before applying this transformation.</p>
+
+<p><xmp class=command>>  plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")])) </xmp></p>
+<p><xmp class=command>>  xyplot(nC ~ X4v, </xmp></p>
+<p><xmp class=command>>        data = plotSubset, </xmp></p>
+<p><xmp class=command>>        groups = mdrrClass, </xmp></p>
+<p><xmp class=command>>        auto.key = list(columns = 2))  </xmp></p>
+  
+
+<<PreProcScat,echo=FALSE,results=html>>=
+prefix <- "PreProcScat"
+aspect <- 1
+width <- 6
+thumb <- 250
+  
+theme1 <- caretTheme()
+theme1$superpose.symbol$col = c(rgb(1, 0, 0, .4), rgb(0, 0, 1, .4), 
+  rgb(0.3984375, 0.7578125,0.6445312, .6))
+theme1$superpose.symbol$pch = c(15, 16, 17)
+theme1$superpose.cex = .8
+theme1$superpose.line$col = c(rgb(1, 0, 0, .9), rgb(0, 0, 1, .9), rgb(0.3984375, 0.7578125,0.6445312, .6))
+theme1$superpose.line$lwd <- 2
+theme1$superpose.line$lty = 1:3
+theme1$plot.symbol$col = c(rgb(.2, .2, .2, .4))
+theme1$plot.symbol$pch = 16
+theme1$plot.cex = .8
+theme1$plot.line$col = c(rgb(1, 0, 0, .7))
+theme1$plot.line$lwd <- 2
+theme1$plot.line$lty = 1
+
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")]))
+print(
+xyplot(nC ~ X4v, 
+       data = plotSubset, 
+       groups = mdrrClass, 
+       auto.key = list(columns = 2)))
+
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")]))
+print(
+xyplot(nC ~ X4v, 
+       data = plotSubset, 
+       groups = mdrrClass, 
+       auto.key = list(columns = 2)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+<p>After the spatial sign:</p>
+
+<p><xmp class=command>>  xyplot(nC ~ X4v, </xmp></p>
+<p><xmp class=command>>         data = spatialSign(plotSubset), </xmp></p>
+<p><xmp class=command>>         groups = mdrrClass, </xmp></p>
+<p><xmp class=command>>         auto.key = list(columns = 2)) </xmp></p>
+
+<<PreProcSS,echo=FALSE,results=html>>=
+prefix <- "PreProcSS"
+aspect <- 1
+width <- 6
+thumb <- 250
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")]))
+print(
+xyplot(nC ~ X4v, 
+       data = spatialSign(plotSubset), 
+       groups = mdrrClass, 
+       auto.key = list(columns = 2)))
+
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")]))
+print(
+xyplot(nC ~ X4v, 
+       data = spatialSign(plotSubset), 
+       groups = mdrrClass, 
+       auto.key = list(columns = 2)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+
+<p>Another option, <code>&quot;BoxCox&quot;</code> will estimate a Box&ndash;Cox transformation on the predictors if the data are greater than zero.</p>
+
+
+<<bc1,results=hide>>=
+preProcValues2 <- preProcess(training, method = "BoxCox")
+trainBC <- predict(preProcValues2, training)
+testBC <- predict(preProcValues2, test)
+preProcValues2
+@ 
+<<bc1_print,results=html,echo=FALSE>>=
+printOutput(preProcValues2)
+@ 
+
+<p>The <code>NA</code> values correspond to the predictors that could
+not be transformed.</p>
+
+
+<h2>Class Distance Calculations</h1>
+
+<p>
+<a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> contains functions to generate new predictors variables based on distances to class centroids (similar to how linear discriminant analysis works). For each level of a factor variable, the class centroid and covariance matrix is calculated. For new samples, the Mahalanobis distance to each of the class centroids is computed and can be used as an additional predictor. This can be helpful for non--linear models when the true decision boundary is actually linear.
+</p>
+<p>
+In cases where there are more predictors within a class than samples, the <code>classDist</code> function has arguments called <code>pca</code> and <code>keep</code> arguments that allow for principal components analysis within each class to be used to avoid issues with singular covariance matrices. 
+</p>
+<p>
+<code>predict.classDist</code> is then used to generate the class distances. By default, the distances are logged, but this can be changed via the <code>trans</code> argument to <code>predict.classDist</code>.
+</p>
+<p>
+As an example, we can used the MDRR data.
+</p>
+<<cd1,results=hide>>=
+centroids <- classDist(trainBC, trainMDRR)
+distances <- predict(centroids, testBC)
+head(distances)
+@ 
+<<cd1_print,results=html,echo=FALSE>>=
+printOutput(head(distances))
+@
+<p>
+This image shows a scatterplot matrix of the class distances for the held--out samples:
+</p>
+
+<p><xmp class=command>> splom(distances, </xmp></p>
+<p><xmp class=command>>       groups = testMDRR, </xmp></p>
+<p><xmp class=command>>       plot = "pairs",</xmp></p>
+<p><xmp class=command>>       auto.key = list(columns = 2))) </xmp></p>
+
+
+
+<<PreProcDist,echo=FALSE,results=html>>=
+prefix <- "PreProcDist"
+aspect <- 1
+width <- 3.5
+thumb <- 300
+  
+pdf(paste(pathName, prefix, ".pdf", sep = ""),
+    width = width, height = width*aspect)
+trellis.par.set(theme1)
+print(
+  splom(distances, 
+        groups = testMDRR,
+        auto.key = list(columns = 2)))
+tmp1 <- capture.output(dev.off())
+
+png(paste(pathName, prefix, ".png", sep = ""),
+    width = width*96, height = width*aspect*96)
+
+trellis.par.set(theme1)
+print(
+  splom(distances, 
+        groups = testMDRR,
+        auto.key = list(columns = 2)))
+
+tmp1 <- capture.output(dev.off())
+
+link <- paste("<p><br><a href=\"",
+              paste(prefix, ".pdf", sep = ""),
+              "\"><img width =", thumb,
+              " height =", floor(thumb*aspect),
+              " src=\"",
+              paste(prefix, ".png", sep = ""),
+              "\"><br>(click image for larger pdf)</a><br><br></p>", sep = "")
+print(link)
+@
+
+
+	  <div style="clear: both;">&nbsp;</div>
+	</div>
+	<!-- end #content -->
+	<div id="sidebar">
+	  <ul>
+	    <li>
+	      <h2>Links</h2>
+	      <p><a href="modelList.html"><tt>train</tt> Model List</a></p>
+	    </li>
+	    <li>
+	      <h2>Topics</h2>
+	      <ul>
+        <li><a href="index.html">Main Page</a></li>     
+  		<li><a href="datasets.html">Data Sets</a></li>
+                <li><a href="visualizations.html">Visualizations</a></li>
+                <li><a href="preprocess.html">Pre-Processing</a></li>
+                <li><a href="splitting.html">Data Splitting</a></li>
+                <li><a href="misc.html">Miscellaneous Model Functions</a></li>
+                <li><a href="training.html">Model Training and Tuning</a></li>
+                <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
+                <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                <li><a href="varimp.html">Variable Importance</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
+                <li><a href="other.html">Other Functions</a></li>
+                <li><a href="parallel.html">Parallel Processing</a></li>
+	      </ul>
+	    </li>
+	  </ul>
+	</div>
+	<!-- end #sidebar -->
+	<div style="clear: both;">&nbsp;</div>
+      </div>
+      <div class="container"><img src="images/img03.png" width="1000" height="40" alt="" /></div>
+      <!-- end #page -->
+    </div>
+    <div id="footer-content"></div>
+    <div id="footer">
+      <p>Created on <Sexpr session>.</p>
+    </div>
+    <!-- end #footer -->
+  </body>
+</html>
