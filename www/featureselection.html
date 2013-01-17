@@ -432,7 +432,7 @@ The function should return a model object that can be used to generate predictio
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>function(x, y, first, last, ...)</pre> <pre>                 {</pre> <pre>                   library(randomForest)</pre> <pre>                   randomForest(x, y, importance = first, ...)</pre> <pre>                 }</pre>
+<pre>function (x, y, first, last, ...) </pre> <pre>{</pre> <pre>    library(randomForest)</pre> <pre>    randomForest(x, y, importance = first, ...)</pre> <pre>}</pre>
 <!--\end{Schunk}!-->
 
 <p>
@@ -464,7 +464,7 @@ For random forests, the function is a simple wrapper for the predict function:
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>function(object, x)</pre> <pre>                 {</pre> <pre>                   predict(object, x)</pre> <pre>                 }</pre>
+<pre>function (object, x) </pre> <pre>{</pre> <pre>    predict(object, x)</pre> <pre>}</pre>
 <!--\end{Schunk}!-->
 
 <p>
@@ -501,7 +501,7 @@ For random forests, the function below uses <a href="http://cran.r-project.org/w
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>function(object, x, y)</pre> <pre>                 {</pre> <pre>                   vimp <- varImp(object)</pre> <pre></pre> <pre>                   if(is.factor(y))</pre> <pre>                     {</pre> <pre>                       if(all(levels(y) %in% colnames(vimp)))</pre> <pre>                         {</pre> <pre>                           avImp <- apply(vimp[, levels(y), drop = TRUE],</pre> <pre>                                          1,</pre> <pre>                                          mean)</pre> <pre>                           vimp$Overall <- avImp</pre> <pre>                         }</pre> <pre></pre> <pre>                     }</pre> <pre>                   </pre> <pre>                   vimp <- vimp[</pre> <pre>                                order(</pre> <pre>                                      vimp$Overall,</pre> <pre>                                      decreasing = TRUE)</pre> <pre>                                ,,</pre> <pre>                                drop = FALSE]</pre> <pre>                   </pre> <pre>                   vimp$var <- rownames(vimp)                  </pre> <pre>                   vimp</pre> <pre>                 }</pre>
+<pre>function (object, x, y) </pre> <pre>{</pre> <pre>    vimp <- varImp(object)</pre> <pre>    if (is.factor(y)) {</pre> <pre>        if (all(levels(y) %in% colnames(vimp))) {</pre> <pre>            avImp <- apply(vimp[, levels(y), drop = TRUE], 1, </pre> <pre>                mean)</pre> <pre>            vimp$Overall <- avImp</pre> <pre>        }</pre> <pre>    }</pre> <pre>    vimp <- vimp[order(vimp$Overall, decreasing = TRUE), , drop = FALSE]</pre> <pre>    vimp$var <- rownames(vimp)</pre> <pre>    vimp</pre> <pre>}</pre>
 <!--\end{Schunk}!-->
 
 <b><p><i>The <code>selectSize</code> Function</p></i></b>
@@ -866,7 +866,7 @@ confidence intervals and hypothesis testing on the differences:
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre></pre> <pre>Call:</pre> <pre>summary.diff.resamples(object = differences)</pre> <pre></pre> <pre>p-value adjustment: bonferroni </pre> <pre>Upper diagonal: estimates of the difference</pre> <pre>Lower diagonal: p-value for H0: difference = 0</pre> <pre></pre> <pre>RMSE </pre> <pre>         lmRFE     rfRFE     rfFilter</pre> <pre>lmRFE               0.2333   -1.1853 </pre> <pre>rfRFE    0.03697             -1.4186 </pre> <pre>rfFilter 9.629e-11 < 2.2e-16         </pre> <pre></pre> <pre>Rsquared </pre> <pre>         lmRFE     rfRFE     rfFilter</pre> <pre>lmRFE              -0.1181    0.3233 </pre> <pre>rfRFE    8.171e-06            0.4415 </pre> <pre>rfFilter 3.900e-10 < 2.2e-16         </pre> <pre></pre>
+<pre></pre> <pre>Call:</pre> <pre>summary.diff.resamples(object = differences)</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>summary.diff.resamples(object = differences)</pre> <pre></pre> <pre>p-value adjustment: bonferroni </pre> <pre>Upper diagonal: estimates of the difference</pre> <pre>Lower diagonal: p-value for H0: difference = 0</pre> <pre></pre> <pre>RMSE </pre> <pre>         lmRFE     rfRFE     rfFilter</pre> <pre>lmRFE               0.2333   -1.1853 </pre> <pre>rfRFE    0.03697             -1.4186 </pre> <pre>rfFilter 9.629e-11 < 2.2e-16         </pre> <pre></pre> <pre>Rsquared </pre> <pre>         lmRFE     rfRFE     rfFilter</pre> <pre>lmRFE              -0.1181    0.3233 </pre> <pre>rfRFE    8.171e-06            0.4415 </pre> <pre>rfFilter 3.900e-10 < 2.2e-16         </pre> <pre></pre>
 <!--\end{Schunk}!-->
 
 <p>
@@ -921,7 +921,7 @@ There are several plot methods for the differences:
 </div>
   <div id="footer-content"></div>
   <div id="footer">
-  <p>Created on Tue Dec 11 2012 using caret version 5.15-045 and R version 2.15.2 (2012-10-26).</p>
+  <p>Created on Thu Jan 17 2013 using caret version 5.15-052 and R version 2.15.2 (2012-10-26).</p>
   </div>
   <!-- end #footer -->
 </body>
