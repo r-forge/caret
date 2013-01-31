@@ -74,7 +74,7 @@ The function should return a named logical vector.
 
 Examples of these functions are included in the package: \code{\link{caretSBF}}, \code{\link{lmSBF}}, \code{\link{rfSBF}}, \code{\link{treebagSBF}}, \code{\link{ldaSBF}} and \code{\link{nbSBF}}.
 
-Model details about these functions, including examples, are in the package vignette for feature selection.
+The web page  \url{http://caret.r-forge.r-project.org/} has more details and examples related to this function.
 
 }
 \value{
