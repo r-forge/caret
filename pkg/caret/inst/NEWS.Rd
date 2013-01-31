@@ -2,6 +2,106 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 5.15-XX}{
+\itemize{ 
+
+\item A bug in \code{predictors.earth}, discovered by Katrina Bennett,
+was fixed.
+
+}
+}
+
+\section{Changes in version 5.15-052}{
+\itemize{ 
+
+\item Added \code{bayesglm} from the \cpkg{arm} package. 
+
+\item A few bugs were fixed in \code{bag}, thanks to Keith
+Woolner. Most notably, out-of-bag estimates are now computed when the
+prediction function includes a column called \code{pred}.
+
+\item Parallel processing was implemented in \code{bag} and
+\code{avNNet}, which can be turned off using an optional arguments.
+
+\item \code{train}, \code{rfe}, \code{sbf}, \code{bag} and
+\code{avNNet} were given an additional argument in their respective
+control files called \code{allowParallel} that defaults to
+\code{TRUE}. When \code{Code}, the code will be executed in parallel
+if a parallel backend (e.g. \cpkg{doMC}) is registered. When
+\code{allowParallel = FALSE}, the parallel backend is always
+ignored. The use case is when \code{rfe} or \code{sbf} calls
+\code{train}. If a parallel backend with P processors is being used,
+the combination of these functions will create P^2 processes. Since
+some operations benefit more from parallelization than others, the
+user has the ability to concentrate computing resources for specific
+functions.
+
+\item A new resampling function called \code{createTimeSlices} was
+contributed by Tony Cooper that generates cross-validation indices for
+time series data.
+
+\item A few more options were added to
+\code{trainControl}. \code{initialWindow}, \code{horizon} and
+\code{fixedWindow} are applicable for when \code{method =
+"timeslice"}. Another, \code{indexOut} is an optional list of
+resampling indices for the hold-out set. By default, these values are
+the unique set of data points not in the training set.
+
+\item A bug was fixed in multiclass \code{glmnet} models when
+generating class probabilities (thanks to Bradley Buchsbaum for
+finding it).
+}
+}
+
+
+\section{Changes in version  5.15-048}{
+\itemize{ 
+
+\item The three vignettes were removed and two things were added: a
+smaller vignette and a large collection of help pages at
+\url{http://caret.r-forge.r-project.org/}.
+
+\item Minkoo Seo found a bug where \code{na.action} was not being properly
+set with train.formula().
+
+\item \code{parallel.resamples} was changed to properly account for
+missing values.
+
+\item Some testing code was removed from \code{probFunction} and 
+\code{predictionFunction}. 
+
+\item Fixed a bug in \code{sbf} exposed by a new version of \cpkg{plyr}.
+
+\item Changed the package dependency on \cpkg{reshape} to \cpkg{reshape2}. 
+
+\item To be more consistent with recent versions of \cpkg{lattice},
+the \code{parallel.resamples} function was changed to
+\code{parallelplot.resamples}.
+
+\item Since \code{ksvm} now allows probabilities when class weights
+are used, the default behavior in \code{train} is to set
+\code{prob.model = TRUE} unless the user explicitly sets it to
+\code{FALSE}. However, I have reported a bug in \code{ksvm} that gives
+inconsistent results with class weights, so this is not advised at
+this point in time.
+
+\item Bugs were fix in \code{predict.bagEarth} and
+\code{predict.bagFDA}.
+
+\item When using \code{rfeControl(saveDetails = TRUE)} or
+\code{sbfControl(saveDetails = TRUE)} an additional column is
+added to \code{object$pred} called \code{rowIndex}. This indicates the
+row from the original data that is being held-out.
+
+}
+}
+
+\section{Changes in version  5.15-045}{
+\itemize{ 
+
+\item A bug was fixed that induced \code{NA} values in SVM model predictions. 
+}
+}
 
 \section{Changes in version  5.15-042}{
 \itemize{ 
