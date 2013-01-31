@@ -420,7 +420,7 @@ probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL
                         if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
                         sda::predict.sda(modelFit, newdata)$posterior
                       },
-                      glm =, gam =, gamLoess =, gamSpline =, glmStepAIC =
+                      glm =, gam =, gamLoess =, gamSpline =, glmStepAIC =, bayesglm = 
                       {
                         
                         out <- predict(modelFit, newdata, type = "response")
