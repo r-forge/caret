@@ -39,7 +39,8 @@ trainControl(method = "boot",
   \item{initialWindow, horizon, fixedWindow}{possible arguments to \code{\link{createTimeSlices}}}
   \item{classProbs}{a logical; should class probabilities be computed for classification models (along with predicted values) in each resample?}
   \item{summaryFunction}{a function to compute performance metrics across resamples. The arguments to the function should be the same as those in \code{\link{defaultSummary}}.}
-  \item{custom}{an optional list of functions that can be used to fit custom models. See the details below and worked examples in the "train" package vignette. This is an "experimental" version for testing. Please send emails to the maintainer for suggestions or problems.}
+  \item{custom}{an optional list of functions that can be used to fit custom models. See the details below and worked examples at  \url{http://caret.r-forge.r-project.org/}.
+. This is an "experimental" version for testing. Please send emails to the maintainer for suggestions or problems.}
   \item{selectionFunction}{the function used to select the optimal tuning parameter. This can be a name of the function or the function itself. See \code{\link{best}} for details and other options.}
   \item{preProcOptions}{A list of options to pass to \code{\link{preProcess}}. The type of pre-processing (e.g. center, scaling etc) is passed in via the \code{preProc} option in \code{\link{train}}.}
   \item{index}{a list with elements for each resampling iteration. Each list element is the sample rows used for training at that iteration.}
@@ -63,7 +64,7 @@ For custom modeling functions, several functions can be specified using the \cod
     \item{sort}{a function that sorts the tuning parameters by complexity}
     }
 
-For more details and worked examples, see the ``caret Manual -- Model Building'' vignette.
+For more details and worked examples, see \url{http://caret.r-forge.r-project.org/}.
 
 }
 

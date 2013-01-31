@@ -101,7 +101,8 @@ This function should return a character string of predictor names (of length \co
 
 Examples of these functions are included in the package: \code{\link{lmFuncs}}, \code{\link{rfFuncs}}, \code{\link{treebagFuncs}} and \code{\link{nbFuncs}}.
 
-Model details about these functions, including examples, are in the package vignette for feature selection.
+Model details about these functions, including examples, are at \url{http://caret.r-forge.r-project.org/}.
+.
 
 }
 \value{
