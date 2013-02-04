@@ -2,11 +2,20 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in version 5.15-XX}{
+\section{Changes in version 5.15-60}{
 \itemize{ 
 
 \item A bug in \code{predictors.earth}, discovered by Katrina Bennett,
 was fixed.
+
+\item A bug induced by version 5.15-052 for the bootstrap 632 rule was
+fixed.
+
+\item The DESCRIPTION file as of 5.15-048 should have used a
+version-specific lattice dependency.
+
+\item \code{lift} can compute gain and lift charts (and defaults to
+gain)
 
 }
 }
