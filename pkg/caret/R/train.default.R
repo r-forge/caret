@@ -62,7 +62,7 @@ train.default <- function(x, y,
                          paste(make.names(classLevels), collapse = ", ")))
          }
       
-      if(length(classLevels) > 2 & (method %in% c("gbm", "glmboost", "ada", "gamboost", "blackboost", "penalized", "glm",
+      if(length(classLevels) > 2 & (method %in% c("glmboost", "ada", "gamboost", "blackboost", "penalized", "glm",
                                                   "earth", "nodeHarvest", "glmrob", "plr", "GAMens", "rocc",
                                                   "logforest", "logreg", "gam", "gamLoess", "gamSpline",
                                                   "bstTree", "bstLs", "bstSm")))
