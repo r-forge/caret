@@ -17,6 +17,12 @@ version-specific lattice dependency.
 \item \code{lift} can compute gain and lift charts (and defaults to
 gain)
 
+\item The \cpkg{gbm} model was updated to handle 3 or more classes. 
+
+\item For bagged trees using \cpkg{ipred}, the code in \code{train}
+defaults to \code{keepX = FALSE} to save space. Pass in \code{keepX =
+TRUE} to use out-of-bag sampling for this model.
+
 }
 }
 
