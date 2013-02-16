@@ -1,6 +1,6 @@
 
 "createModel" <-
-  function(data, method, tuneValue, obsLevels, pp = NULL, last = FALSE, custom = NULL, ...)
+  function(data, method, tuneValue, obsLevels, pp = NULL, last = FALSE, custom = NULL, classProbs, ...)
 {
 
   ## pam and will crash if there is a resample with <2 observations
@@ -153,104 +153,95 @@
                      },                  
                      svmpoly =, svmPoly = 
                      {
-                       library(kernlab)
-                       if(type == "Classification")
-                         {
-                           ## By default, fit the prob model
-                           useProbModel <- TRUE          
-                           if(any(names(list(...)) == "prob.model")) useProbModel <- list(...)$prob.model                           
-                           out <- ksvm(
-                                       as.matrix(trainX),
-                                       trainY,
-                                       kernel = polydot(
-                                         degree = tuneValue$.degree,
-                                         scale = tuneValue$.scale,
-                                         offset = 1),
-                                       C = tuneValue$.C,
-                                       prob.model = useProbModel,
-                                       ...)
-                         } else out <- ksvm(
-                                            as.matrix(trainX),
-                                            trainY,
-                                            kernel = polydot(
-                                              degree = tuneValue$.degree,
-                                              scale = tuneValue$.scale,
-                                              offset = 1),
-                                            C = tuneValue$.C,
-                                            ...)
+                       library(kernlab)                      
+                       if(any(names(list(...)) == "prob.model") | type == "Regression")
+                       {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           kernel = polydot(
+                             degree = tuneValue$.degree,
+                             scale = tuneValue$.scale,
+                             offset = 1),
+                           C = tuneValue$.C,
+                           ...)
+                       } else {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           kernel = polydot(
+                             degree = tuneValue$.degree,
+                             scale = tuneValue$.scale,
+                             offset = 1),
+                           C = tuneValue$.C,
+                           prob.model = classProbs,
+                           ...)
+                       }
+
                        out            
                      },
                      svmradial =, svmRadial = 
                      {      
-                       library(kernlab)      
-                       if(type == "Classification")
-                         {
-                           ## By default, fit the prob model
-                           useProbModel <- TRUE          
-                           if(any(names(list(...)) == "prob.model")) useProbModel <- list(...)$prob.model
-                           out <- ksvm(
-                                       as.matrix(trainX),
-                                       trainY,
-                                       kernel = rbfdot(sigma = tuneValue$.sigma),
-                                       C = tuneValue$.C,
-                                       prob.model = useProbModel,
-                                       ...)
-                         } else {
-                           out <- ksvm(
-                                       as.matrix(trainX),
-                                       trainY,
-                                       kernel = rbfdot(sigma = tuneValue$.sigma),
-                                       C = tuneValue$.C,
-                                       ...)
-                         }
+                       library(kernlab)    
+                       if(any(names(list(...)) == "prob.model") | type == "Regression")
+                       {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           kernel = rbfdot(sigma = tuneValue$.sigma),
+                           C = tuneValue$.C,
+                           ...)
+                       } else {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           kernel = rbfdot(sigma = tuneValue$.sigma),
+                           C = tuneValue$.C,
+                           prob.model = classProbs,
+                           ...)
+                       }                       
                        out         
                      },
                      svmRadialCost = 
                      {      
-                       library(kernlab)      
-                       if(type == "Classification")
-                         {
-                           ## By default, fit the prob model
-                           useProbModel <- TRUE          
-                           if(any(names(list(...)) == "prob.model")) useProbModel <- list(...)$prob.model
-                           out <- ksvm(
-                                       as.matrix(trainX),
-                                       trainY,
-                                       C = tuneValue$.C,
-                                       prob.model = useProbModel,
-                                       ...)
-                         } else {
-                           out <- ksvm(
-                                       as.matrix(trainX),
-                                       trainY,
-                                       C = tuneValue$.C,
-                                       ...)
-                         }
+                       library(kernlab)  
+                       if(any(names(list(...)) == "prob.model") | type == "Regression")
+                       {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           C = tuneValue$.C,
+                           ...)
+                       } else {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           C = tuneValue$.C,
+                           prob.model = classProbs,
+                           ...)
+                       }
                        out         
                      },                     
                      svmLinear = 
                      {      
                        library(kernlab)      
-                       if(type == "Classification")
-                         {
-                           ## By default, fit the prob model
-                           useProbModel <- TRUE          
-                           if(any(names(list(...)) == "prob.model")) useProbModel <- list(...)$prob.model
-                           out <- ksvm(
-                                       as.matrix(trainX),
-                                       trainY,
-                                       kernel = vanilladot(),
-                                       C = tuneValue$.C,
-                                       prob.model = useProbModel,
-                                       ...)
-                         } else {
-                           out <- ksvm(
-                                       as.matrix(trainX),
-                                       trainY,
-                                       kernel = vanilladot(),
-                                       C = tuneValue$.C,
-                                       ...)
-                         }
+                       if(any(names(list(...)) == "prob.model") | type == "Regression")
+                       {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           kernel = vanilladot(),
+                           C = tuneValue$.C,
+                           ...)
+                       } else {
+                         out <- ksvm(
+                           as.matrix(trainX),
+                           trainY,
+                           kernel = vanilladot(),
+                           C = tuneValue$.C,
+                           prob.model = classProbs,
+                           ...)
+                       }
                        out         
                      },                     
                      rvmPoly = 
