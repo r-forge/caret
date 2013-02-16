@@ -153,6 +153,7 @@ train.default <- function(x, y,
       if(any(unlist(isFactor))   | any(unlist(isCharacter)))  
         stop("All predictors must be numeric for this model. Use the formula interface: train(formula, data)") 
     }
+  if(!trControl$returnData & method == "pamr") warning("The training set is required for predicting pam models; use returnData = TRUE in trainControl")
 
   ## Add the outcome to the data passed into the functions
   trainData$.outcome <- y
@@ -471,6 +472,7 @@ train.default <- function(x, y,
                                                      pp = ppOpt,
                                                      last = TRUE,
                                                      custom = trControl$custom$model,
+                                                     classProbs = trControl$classProbs,
                                                      ...))
 
   ## get pp info
