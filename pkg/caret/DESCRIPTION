@@ -1,5 +1,5 @@
 Package: caret
-Version: 5.15-60
+Version: 5.15-87
 Date: 2013-02-06
 Title: Classification and Regression Training
 Author: Max Kuhn. Contributions from Jed Wing, Steve Weston, Andre
@@ -8,7 +8,7 @@ Description: Misc functions for training and plotting classification and regress
 Maintainer: Max Kuhn <Max.Kuhn@pfizer.com>
 Depends: R (>= 2.10), cluster, foreach, lattice (>= 0.20), plyr, reshape2, stats
 URL: http://caret.r-forge.r-project.org/
-Suggests: ada, affy, arm, Boruta, bst, C50, caTools, class, Cubist, e1071, earth (>= 2.2-3), 
+Suggests: ada, affy, arm, Boruta, bst, C50, car, caTools, class, Cubist, e1071, earth (>= 2.2-3), 
   elasticnet, ellipse, evtree, fastICA, foba, gam, GAMens (>= 1.1.1), gbm (>= 2.0-9), 
   glmnet (>= 1.8), gpls, grid, hda, HDclassif, Hmisc, ipred, kernlab, klaR, kohonen, KRLS, 
   lars, leaps, LogicForest, logicFS, LogicReg, MASS, mboost, mda, mgcv, mlbench, neuralnet, nnet, 
