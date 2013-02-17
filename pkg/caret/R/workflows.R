@@ -594,8 +594,10 @@ nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
       if(ctrl$saveDetails)
         {
           rfeResults$pred$Resample <- names(resampleIndex)[iter]
-          rfeResults$pred$rowIndex <- rep(seq(along = y)[unique(holdoutIndex)],
-                                          length(sizes) - 1)
+          ## If the user did not have nrow(x) in 'sizes', rfeIter added it.
+          ## So, we need to find out how many set of predictions there are:
+          nReps <- length(table(rfeResults$pred$Variables))
+          rfeResults$pred$rowIndex <- rep(seq(along = y)[unique(holdoutIndex)], nReps)
         }
       
       if(is.factor(y))
