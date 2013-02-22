@@ -107,7 +107,8 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
                            printed[parm,,drop = FALSE],
                            sep = "=",
                            collapse = ", ")
-              wrn <- paste("predictions failed for ", names(resampleIndex)[iter], ": ", wrn, sep = "")
+              wrn <- paste("predictions failed for ", names(resampleIndex)[iter],
+                           ": ", wrn, " ", as.character(predicted), sep = "")
               if(ctrl$verboseIter) cat(wrn, "\n")
               warning(wrn)
               rm(wrn)
@@ -134,7 +135,8 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
                        printed[parm,,drop = FALSE],
                        sep = "=",
                        collapse = ", ")
-          wrn <- paste("model fit failed for ", names(resampleIndex)[iter], ": ", wrn, sep = "")
+          wrn <- paste("model fit failed for ", names(resampleIndex)[iter],
+                       ": ", wrn, " ", as.character(mod), sep = "")
           if(ctrl$verboseIter) cat(wrn, "\n")
           warning(wrn)
           rm(wrn)

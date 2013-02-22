@@ -69,7 +69,7 @@
                    'vbmpRadial', 'widekernelpls', 'PenalizedLDA',
                    "mlp", "mlpWeightDecay", "rbf", "rbfDDA", "lda2",
                    "RRF", "RRFglobal", "krlsRadial", "krlsPoly",
-                   "C5.0", "C5.0Tree", "C5.0Rules", "treebag"))
+                   "C5.0", "C5.0Tree", "C5.0Rules", "treebag", "rrlda"))
     {
       trainX <- data[,!(names(data) %in% ".outcome"), drop = FALSE]
       trainY <- data[,".outcome"]
@@ -1791,7 +1791,7 @@
                      {
                        library(rrlda)
                        rrlda:::rrlda(trainX, trainY, lambda = tuneValue$.lambda,
-                                     alpha = tuneValue$.alpha, ...)
+                                     hp = tuneValue$.hp, penalty = tuneValue$.penalty, ...)
                      },
                      evtree =
                      {
