@@ -1097,6 +1097,17 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                }
                              out
                            },
+                           extraTrees = 
+                           {
+                             library(extraTrees)
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 out <-  as.character(predict(modelFit, newdata))
+                               } else {
+                                 out <- predict(modelFit, newdata)
+                               }
+                             out
+                           },                           
                            custom =
                            {
                              custom(object = modelFit, newdata = newdata)

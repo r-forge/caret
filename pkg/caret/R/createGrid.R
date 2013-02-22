@@ -400,6 +400,7 @@
                       krlsPoly = expand.grid(.lambda = NA, .degree = 1:3),
                       lda2 = data.frame(.dimen = 1:min(ncol(data)-1, length(levels(data$.outcome)) - 1)),
                       C5.0 = expand.grid(.trials = c5seq, .model = c("tree", "rules"), .winnow = c(TRUE, FALSE)),
+                      extraTrees = expand.grid(.mtry = rfTune(data, len)[,1], .numRandomCuts = 1:len),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =, lrm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,

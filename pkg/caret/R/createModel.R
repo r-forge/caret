@@ -69,7 +69,8 @@
                    'vbmpRadial', 'widekernelpls', 'PenalizedLDA',
                    "mlp", "mlpWeightDecay", "rbf", "rbfDDA", "lda2",
                    "RRF", "RRFglobal", "krlsRadial", "krlsPoly",
-                   "C5.0", "C5.0Tree", "C5.0Rules", "treebag", "rrlda"))
+                   "C5.0", "C5.0Tree", "C5.0Rules", "treebag", "rrlda",
+                   "extraTrees"))
     {
       trainX <- data[,!(names(data) %in% ".outcome"), drop = FALSE]
       trainY <- data[,".outcome"]
@@ -2009,6 +2010,11 @@
                        C5.0(x = trainX, y = trainY, 
                             rules = method == "C5.0Rules",
                             ...)
+                     },
+                     extraTrees =
+                     {
+                       library(extraTrees)
+                       extraTrees(trainX, trainY, mtry = tuneValue$.mtry, numRandomCuts = tuneValue$.numRandomCuts, ...)
                      },                     
                      custom =
                      {

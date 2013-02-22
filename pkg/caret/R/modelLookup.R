@@ -47,6 +47,8 @@ modelLookup <- function(model = NULL)
             'enet', 'enet',
             ## evtree
             'evtree',
+            ## extraTrees
+            'extraTrees', 'extraTrees',
             ## fda
             'fda', 'fda', 
             ## foba
@@ -346,6 +348,8 @@ modelLookup <- function(model = NULL)
               'fraction', 'lambda',
               ## evtree
               'alpha',
+              ## extraTrees
+              'mtry', 'numRandomCuts',
               ## fda
               'nprune', 'degree', 
               ## foba
@@ -653,6 +657,9 @@ modelLookup <- function(model = NULL)
               'Weight Decay',
               ## evtree
               "Complexity Parameter",
+              ## extraTrees
+              '# Randomly Selected Predictors',
+              '# Random Cuts',
               ## fda
               '#Terms',
               'Product Degree',
@@ -1004,6 +1011,8 @@ modelLookup <- function(model = NULL)
              TRUE, FALSE,
              ## evtree
              FALSE,
+             ## extraTrees
+             FALSE, FALSE,
              ## fda
              FALSE, FALSE, 
              ## foba
@@ -1300,6 +1309,8 @@ modelLookup <- function(model = NULL)
                 TRUE, TRUE,
                 ## evtree
                 TRUE,
+                ## extraTrees
+                TRUE, TRUE,
                 ## fda
                 FALSE, FALSE, 
                 ## foba
@@ -1597,6 +1608,8 @@ modelLookup <- function(model = NULL)
                   FALSE, FALSE,
                   ## evtree
                   TRUE,
+                  ## extraTrees
+                  TRUE, TRUE,
                   ## fda
                   TRUE, TRUE, 
                   ## foba
@@ -1893,6 +1906,8 @@ modelLookup <- function(model = NULL)
                     FALSE, FALSE,
                     ## evtree
                     TRUE,
+                    ## extraTrees
+                    FALSE, FALSE,
                     ## fda
                     TRUE, TRUE, 
                     ## foba
