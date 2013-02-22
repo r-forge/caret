@@ -248,7 +248,7 @@ modelLookup <- function(model = NULL)
             ## RRFglobal
             'RRFglobal', 'RRFglobal',
             ## rrlda
-            'rrlda', 'rrlda',
+            'rrlda', 'rrlda', 'rrlda',
             ## rvmLinear
             'rvmLinear', 
             ## rvmPoly
@@ -544,7 +544,7 @@ modelLookup <- function(model = NULL)
               ## RRFglobal
               'mtry', 'coefReg',
               ## rrlda
-              'lambda', 'alpha',
+              'lambda', 'hp', 'penalty',
               ## rvmLinear
               'parameter', 
               ## rvmPoly
@@ -889,6 +889,7 @@ modelLookup <- function(model = NULL)
               ## rrlda
               'Penalty Parameter',
               'Robustness Parameter',
+              'Penalty Type',
               ## rvmLinear
               'none',
               ## rvmPoly
@@ -1201,7 +1202,7 @@ modelLookup <- function(model = NULL)
              ## RRFglobal
              FALSE, FALSE,
              ## rrlda
-             FALSE, FALSE,
+             FALSE, FALSE, FALSE,
              ## rvmLinear
              FALSE, 
              ## rvmPoly
@@ -1497,7 +1498,7 @@ modelLookup <- function(model = NULL)
                 ## RRFglobal
                 TRUE, TRUE,
                 ## rrlda
-                FALSE, FALSE,
+                FALSE, FALSE, FALSE,
                 ## rvmLinear
                 TRUE, 
                 ## rvmPoly
@@ -1793,7 +1794,7 @@ modelLookup <- function(model = NULL)
                   ## RRFglobal
                   TRUE, TRUE,
                   ## rrlda
-                  TRUE, TRUE,
+                  TRUE, TRUE, TRUE,
                   ## rvmLinear
                   FALSE, 
                   ## rvmPoly
@@ -2089,7 +2090,7 @@ modelLookup <- function(model = NULL)
                     ## RRFglobal
                     TRUE, TRUE,
                     ## rrlda does not generate probabilities, only discrim values
-                    FALSE, FALSE,
+                    FALSE, FALSE, FALSE,
                     ## rvmLinear
                     FALSE, 
                     ## rvmPoly
