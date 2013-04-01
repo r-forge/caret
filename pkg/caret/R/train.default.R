@@ -54,7 +54,7 @@ train.default <- function(x, y,
       ## relative to the others
       classLevels <- levels(y)
 
-      if(any(classLevels != make.names(classLevels)))
+      if(trControl$classProbs && any(classLevels != make.names(classLevels)))
          {
            warning(paste("At least one of the class levels are not valid R variables names;",
                          "This may cause errors if class probabilities are generated because",
