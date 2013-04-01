@@ -102,7 +102,7 @@ byComplexity <- function(x, model)
            {
              x[order(x$n.hidden, -x$penalty),]
            },           
-           knn =, multinom =
+           knn =, kknn =, multinom =
            {
              x[order(-x[,1]),]
            },

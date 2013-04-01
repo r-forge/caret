@@ -2015,7 +2015,15 @@
                      {
                        library(extraTrees)
                        extraTrees(trainX, trainY, mtry = tuneValue$.mtry, numRandomCuts = tuneValue$.numRandomCuts, ...)
-                     },                     
+                     },
+                     kknn =
+                     {
+                       library(kknn)
+                       train.kknn(modFormula, data = data,
+                                  kmax = tuneValue$.kmax,
+                                  distance = tuneValue$.distance,
+                                  kernel = as.character(tuneValue$.kernel), ...)
+                     },
                      custom =
                      {
                        custom(data = data,
