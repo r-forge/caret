@@ -2,6 +2,29 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 5.15-87}{
+\itemize{
+
+\item Added the Yeo-Johnson power transformation from the \cpkg{car}
+package to the \code{preProcess} function.
+
+\item A \code{train} bug was fixed for the \code{rrlda} model (found
+by Tiago Branquinho Oliveira).
+
+\item The \code{extraTrees} model in the \cpkg{extraTrees} package was
+added.
+
+\item The \code{kknn.train} model in the \cpkg{kknn} package was
+added.
+
+\item A bug was fixed in \code{lrFuncs} where the class threshold was
+improperly set (thanks to David Meyer).
+
+\item A bug related to new verions of the \cpkg{gbm} package were fixed.
+
+}
+}
+
 \section{Changes in version 5.15-60}{
 \itemize{ 
 
@@ -22,6 +45,15 @@ gain)
 \item For bagged trees using \cpkg{ipred}, the code in \code{train}
 defaults to \code{keepX = FALSE} to save space. Pass in \code{keepX =
 TRUE} to use out-of-bag sampling for this model.
+
+\item Changes were made to support vector machines for classification
+models due to bugs with class probabilities in the latest version of
+\cpkg{kernlab}. The \code{prob.model} will default to the value of
+\code{classProbs} in the \code{trControl} function. If
+\code{prob.model} is passed in as an argument to \code{train}, this
+specification over-rides the default. In other words, to avoid
+generating a probability model, set either \code{classProbs = FALSE}
+or \code{prob.model = FALSE}. 
 
 }
 }
