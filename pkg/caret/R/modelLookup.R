@@ -97,6 +97,8 @@ modelLookup <- function(model = NULL)
             'JRip',
             ## kernelpls
             'kernelpls',
+            ## kknn
+            'kknn', 'kknn', 'kknn',
             ## knn
             'knn',
             ## krlsRadial
@@ -398,6 +400,8 @@ modelLookup <- function(model = NULL)
               'NumOpt',
               ## kernelpls
               'ncomp',
+              ## kknn
+              'kmax', 'distance', 'kernel',
               ## knn
               'k',
               ## krlsRadial
@@ -721,6 +725,8 @@ modelLookup <- function(model = NULL)
               '# Optimizations',
               ## kernelpls
               '#Components',
+              ## kknn
+              'Max. #Neighbors', 'Distance', 'Kernel',
               ## knn
               '#Neighbors',
               ## krlsRadial
@@ -1061,6 +1067,8 @@ modelLookup <- function(model = NULL)
              FALSE,
              ## kernelpls
              TRUE,
+             ## kknn
+             FALSE, FALSE, FALSE,
              ## knn
              FALSE,
              ## krlsRadial
@@ -1359,6 +1367,8 @@ modelLookup <- function(model = NULL)
                 FALSE,
                 ## kernelpls
                 TRUE,
+                ## kknn
+                TRUE, TRUE, TRUE,
                 ## knn
                 TRUE,
                 ## krlsRadial
@@ -1658,6 +1668,8 @@ modelLookup <- function(model = NULL)
                   TRUE,
                   ## kernelpls
                   TRUE,
+                  ## kknn
+                  TRUE, TRUE, TRUE,
                   ## knn
                   TRUE,
                   ## krlsRadial
@@ -1956,6 +1968,8 @@ modelLookup <- function(model = NULL)
                     TRUE,
                     ## kernelpls
                     TRUE,
+                    ## kknn
+                    FALSE, FALSE, FALSE,
                     ## knn
                     TRUE,
                     ## krlsRadial

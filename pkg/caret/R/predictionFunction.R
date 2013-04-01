@@ -55,8 +55,8 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                          tmp <- apply(tmp, 3,
                                                       function(y, nm = modelFit$obsLevels) nm[apply(y, 1, which.max)])
                                        }
-                                      tmp <- split(tmp, rep(1:ncol(tmp), each = nrow(tmp)))
                                    }
+                                 if(!is.list(tmp)) tmp <- split(tmp, rep(1:ncol(tmp), each = nrow(tmp)))
                                  out <- c(list(out), tmp)
                                }
                              out
@@ -1107,7 +1107,17 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                  out <- predict(modelFit, newdata)
                                }
                              out
-                           },                           
+                           },
+                           kknn =
+                           {
+                             library(kknn)
+                             if(modelFit$problemType == "Classification")
+                               {
+                                 out <-  as.character(predict(modelFit, newdata))
+                               } else {
+                                 out <- predict(modelFit, newdata)
+                               }
+                           },
                            custom =
                            {
                              custom(object = modelFit, newdata = newdata)
