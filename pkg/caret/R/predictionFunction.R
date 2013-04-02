@@ -28,7 +28,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                  gbmProb <- predict(modelFit, newdata, type = "response",
                                                     n.trees = modelFit$tuneValue$.n.trees)
                                  gbmProb[is.nan(gbmProb)] <- NA
-                                 if(modelFit$distribution$name == "bernoulli")
+                                 if(modelFit$distribution$name != "multinomial")
                                    {
                                      out <- ifelse(gbmProb >= .5, modelFit$obsLevels[1], modelFit$obsLevels[2])
                                      ## to correspond to gbmClasses definition above
@@ -46,7 +46,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                  
                                  if(modelFit$problemType == "Classification")
                                    {
-                                     if(modelFit$distribution$name == "bernoulli")
+                                     if(modelFit$distribution$name != "multinomial")
                                        {
                                          tmp <- apply(tmp, 2,
                                                       function(x, nm = modelFit$obsLevels) ifelse(x >= .5, nm[1], nm[2]))

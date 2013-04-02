@@ -20,7 +20,9 @@ added.
 \item A bug was fixed in \code{lrFuncs} where the class threshold was
 improperly set (thanks to David Meyer).
 
-\item A bug related to new verions of the \cpkg{gbm} package were fixed.
+\item A bug related to newer versions of the \cpkg{gbm} package were fixed. 
+Another \cpkg{gbm} bug was fixed related to using non-Bernoulli distributions 
+with two class outcomes (thanks to Zachary Mayer).
 
 }
 }
