@@ -61,8 +61,6 @@ modelLookup <- function(model = NULL)
             'gamSpline',
             ## gamboost
             'gamboost', 'gamboost', 
-            ## GAMens
-            'GAMens', 'GAMens', 'GAMens', 
             ## gaussprLinear
             'gaussprLinear', 
             ## gaussprPoly
@@ -368,8 +366,6 @@ modelLookup <- function(model = NULL)
               'df',
               ## gamboost
               'mstop', 'prune', 
-              ## GAMens
-              'iter', 'rsm_size', 'fusion', 
               ## gaussprLinear
               'parameter', 
               ## gaussprPoly
@@ -687,10 +683,6 @@ modelLookup <- function(model = NULL)
               ## gamboost
               '# Boosting Iterations',
               'AIC Prune?',
-              ## GAMens
-              'Ensemble Size',
-              '#Random Feature Subsets',
-              'Data Fusion Function',
               ## gaussprLinear
               'none',
               ## gaussprPoly
@@ -1043,8 +1035,6 @@ modelLookup <- function(model = NULL)
              FALSE,
              ## gamboost
              TRUE, FALSE, 
-             ## GAMens
-             FALSE, FALSE, FALSE, 
              ## gaussprLinear
              FALSE, 
              ## gaussprPoly
@@ -1347,8 +1337,6 @@ modelLookup <- function(model = NULL)
                 TRUE,
                 ## gamboost
                 TRUE, TRUE, 
-                ## GAMens
-                FALSE, FALSE, FALSE, 
                 ## gaussprLinear
                 TRUE, 
                 ## gaussprPoly
@@ -1652,8 +1640,6 @@ modelLookup <- function(model = NULL)
                   TRUE,
                   ## gamboost
                   TRUE, TRUE, 
-                  ## GAMens
-                  TRUE, TRUE, TRUE, 
                   ## gaussprLinear
                   TRUE, 
                   ## gaussprPoly
@@ -1956,8 +1942,6 @@ modelLookup <- function(model = NULL)
                     TRUE,
                     ## gamboost
                     TRUE, TRUE, 
-                    ## GAMens
-                    TRUE, TRUE, TRUE, 
                     ## gaussprLinear
                     TRUE, 
                     ## gaussprPoly

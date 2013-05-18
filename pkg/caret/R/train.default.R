@@ -64,7 +64,7 @@ train.default <- function(x, y,
          }
       
       if(length(classLevels) > 2 & (method %in% c("glmboost", "ada", "gamboost", "blackboost", "penalized", "glm",
-                                                  "earth", "nodeHarvest", "glmrob", "plr", "GAMens", "rocc",
+                                                  "earth", "nodeHarvest", "glmrob", "plr", "rocc",
                                                   "logforest", "logreg", "gam", "gamLoess", "gamSpline",
                                                   "bstTree", "bstLs", "bstSm")))
         stop("This model is only implemented for two class problems")
