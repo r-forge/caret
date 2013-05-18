@@ -155,6 +155,8 @@ modelLookup <- function(model = NULL)
             'mars', 'mars', 
             ## mda
             'mda',
+            ##Mlda
+            'Mlda',
             ## mlp
             'mlp',
             ## mlpWeightDecay
@@ -237,6 +239,8 @@ modelLookup <- function(model = NULL)
             'rf',
             ## rFerns
             'rFerns',
+            ## RFlda
+            'RFlda',
             ## ridge reg
             'ridge',
             ## rlm
@@ -262,7 +266,7 @@ modelLookup <- function(model = NULL)
             ## scrda
             ## 'scrda', 'scrda', 
             ## sda
-            'sda', 
+            'sda','sda', 
             ## sddaLDA
             'sddaLDA', 
             ## sddaQDA
@@ -458,6 +462,8 @@ modelLookup <- function(model = NULL)
               'nprune', 'degree', 
               ## mda
               'subclasses',
+              ## Mlda
+              'parameter',
               ## mlp
               'size',
               ## mlpWeightDecay
@@ -537,6 +543,8 @@ modelLookup <- function(model = NULL)
               'mtry',
               ## rFerns
               'depth',
+              ## RFlda
+              'q',
               ## ridge
               'lambda',
               ## rlm
@@ -562,7 +570,7 @@ modelLookup <- function(model = NULL)
               ## scrda
               ## 'alpha', 'delta', 
               ## sda
-              'diagonal', 
+              'diagonal','lambda', 
               ## sddaLDA
               'parameter', 
               ## sddaQDA
@@ -789,6 +797,8 @@ modelLookup <- function(model = NULL)
               'Product Degree',
               ## mda
               '#Subclasses Per Class',
+              ## Mlda
+              'none',
               ## mlp
               '#Hidden Units',
               ## mlpWeightDecay
@@ -882,6 +892,8 @@ modelLookup <- function(model = NULL)
               '#Randomly Selected Predictors',
               ## rFerns
               'Fern Depth',
+              ## RFlda
+              "# Factors",
               ## ridge
               'Penalty',
               ## rlm
@@ -914,7 +926,7 @@ modelLookup <- function(model = NULL)
               ## 'Regularization Value',
               ## 'Threshold',
               ## sda
-              'Diagonalize',
+              'Diagonalize','shrinkage',
               ## sddaLDA
               'none',
               ## sddaQDA
@@ -1125,6 +1137,8 @@ modelLookup <- function(model = NULL)
              FALSE, FALSE, 
              ## mda
              FALSE,
+             ## Mlda
+             FALSE,
              ## mlp
              FALSE,
              ## mlpWeightDecay
@@ -1204,6 +1218,8 @@ modelLookup <- function(model = NULL)
              FALSE,
              ## rFerns
              FALSE,
+             ## RFlda
+             FALSE,
              ## ridge
              FALSE,
              ## rlm
@@ -1229,7 +1245,7 @@ modelLookup <- function(model = NULL)
              ## scrda
              ## TRUE, TRUE, 
              ## sda
-             FALSE, 
+             FALSE, FALSE,
              ## sddaLDA
              FALSE, 
              ## sddaQDA
@@ -1425,6 +1441,8 @@ modelLookup <- function(model = NULL)
                 TRUE, TRUE, 
                 ## mda
                 FALSE,
+                ## Mlda
+                FALSE,
                 ## mlp
                 TRUE,
                 ## mlpWeightDecay
@@ -1504,6 +1522,8 @@ modelLookup <- function(model = NULL)
                 TRUE,
                 ## rFerns
                 FALSE,
+                ## RFlda
+                FALSE,
                 ## ridge
                 TRUE,
                 ## rlm
@@ -1529,7 +1549,7 @@ modelLookup <- function(model = NULL)
                 ## scrda
                 ## FALSE, FALSE, 
                 ## sda
-                FALSE, 
+                FALSE, FALSE,
                 ## sddaLDA
                 FALSE, 
                 ## sddaQDA
@@ -1726,6 +1746,8 @@ modelLookup <- function(model = NULL)
                   FALSE, FALSE, 
                   ## mda
                   TRUE,
+                  ## Mlda
+                  TRUE,
                   ## mlp
                   TRUE,
                   TRUE, TRUE,
@@ -1804,6 +1826,8 @@ modelLookup <- function(model = NULL)
                   TRUE,
                   ## rFerns
                   TRUE,
+                  ## RFlda
+                  TRUE,
                   ## ridge
                   FALSE,
                   ## rlm
@@ -1829,7 +1853,7 @@ modelLookup <- function(model = NULL)
                   ## scrda
                   ## TRUE, TRUE, 
                   ## sda
-                  TRUE, 
+                  TRUE, TRUE,
                   ## sddaLDA
                   TRUE, 
                   ## sddaQDA
@@ -2026,6 +2050,8 @@ modelLookup <- function(model = NULL)
                     FALSE, FALSE, 
                     ## mda
                     TRUE,
+                    ## Mlda
+                    FALSE,
                     ## mlp
                     TRUE,
                     TRUE, TRUE,
@@ -2104,6 +2130,8 @@ modelLookup <- function(model = NULL)
                     TRUE,
                     ## rFerns
                     FALSE,
+                    ## RFlda
+                    FALSE,
                     ## ridge
                     FALSE,
                     ## rlm
@@ -2129,7 +2157,7 @@ modelLookup <- function(model = NULL)
                     ## scrda
                     ## TRUE, TRUE, 
                     ## sda
-                    TRUE, 
+                    TRUE, TRUE,
                     ## sddaLDA
                     TRUE, 
                     ## sddaQDA

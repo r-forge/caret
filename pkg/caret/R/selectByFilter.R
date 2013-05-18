@@ -620,7 +620,7 @@ nullModel.default <- function(x = NULL, y, ...)
         lvls <- levels(y)
         tab <- table(y)
         value <- names(tab)[which.max(tab)]
-        pct <- max(tab)/sum(tab)
+        pct <- tab/sum(tab)
       } else {
         lvls <- NULL
         pct <- NULL
@@ -659,9 +659,9 @@ predict.nullModel <- function (object, newdata = NULL, type  = NULL, ...)
       {
         if(type == "prob")
           {
-            out <- as.data.frame(matrix(0, nrow = n, ncol = length(object$levels)))
-            names(out) <- object$levels
-            out[, object$value] <- object$pct
+            out <- matrix(rep(object$pct, n), nrow = n, byrow = TRUE)
+            colnames(out) <- object$levels
+            out <- as.data.frame(out)
           } else {
             out <- factor(rep(object$value, n), levels = object$levels)
           }
@@ -670,56 +670,4 @@ predict.nullModel <- function (object, newdata = NULL, type  = NULL, ...)
         out <- rep(object$value, n)
       }
     out
-  }
-
-if(FALSE)
-  {
-    data(BloodBrain)
-
-
-    set.seed(1)
-    RFwithGAM <- sbf(bbbDescr, logBBB,
-                      sbfControl = sbfControl(functions = rfSBF,
-                        verbose = FALSE))
-
-    test <- rfSBF
-    test$filter <-  function(score, x, y)
-      {
-        ## FDR of 5%
-        out <- bhAdjust(score) <= 0.05 
-        out
-      }
-    
-
-        set.seed(1)
-    RFwithGAM2 <- sbf(bbbDescr, logBBB,
-                      sbfControl = sbfControl(functions = test,
-                        verbose = FALSE))
-    
-    
-    test <- rfSBF
-    test$filter <-  function(score, x, y)
-      {
-        ## Don't keep if no information
-        hasVar <- apply(x, 2, function(x) length(unique(x)) > 1)
-        corX <- cor(x[, hasVar, drop = FALSE])
-
-        ## Find minimal set with pair-wide correlations < 0.75
-        tooHigh <- findCorrelation(corX, .75)
-        if(length(tooHigh) > 1) hasVar[tooHigh] <- FALSE
-
-        ## FDR of 5%
-        out <- bhAdjust(score) <= 0.05 & hasVar
-        out
-      }
-    
-    set.seed(1)
-    RFwithGAM3 <- sbf(bbbDescr, logBBB,
-                      sbfControl = sbfControl(functions = test,
-                        verbose = FALSE))
-    RFwithGAM
-    RFwithGAM2
-    RFwithGAM3
-    
-
   }
