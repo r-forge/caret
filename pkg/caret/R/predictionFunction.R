@@ -1118,6 +1118,13 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                  out <- predict(modelFit, newdata)
                                }
                            },
+                           Mlda =, RFlda = 
+                           {
+                             library(HiDimDA)
+                             out <- predict(modelFit, newdata)$class
+                             out <- modelFit$obsLevels[as.numeric(out)]
+                             out
+                           },
                            custom =
                            {
                              custom(object = modelFit, newdata = newdata)
