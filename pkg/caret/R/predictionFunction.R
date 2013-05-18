@@ -775,11 +775,6 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                     modelFit$obsLevels[1],
                                     modelFit$obsLevels[2])
                            },
-                           GAMens =
-                           {
-                             library(GAMens)
-                             predict(modelFit, newdata)$class[,1]
-                           },
                            rocc =
                            {
                              library(rocc)

@@ -9,7 +9,7 @@ Maintainer: Max Kuhn <Max.Kuhn@pfizer.com>
 Depends: R (>= 2.10), cluster, foreach, lattice (>= 0.20), plyr, reshape2, stats
 URL: http://caret.r-forge.r-project.org/
 Suggests: ada, affy, arm, Boruta, bst, C50, car, caTools, class, Cubist, e1071, earth (>= 2.2-3), 
-  elasticnet, ellipse, evtree, extraTrees, fastICA, foba, gam, GAMens (>= 1.1.1), gbm (>= 2.1), 
+  elasticnet, ellipse, evtree, extraTrees, fastICA, foba, gam, gbm (>= 2.1), 
   glmnet (>= 1.8), gpls, grid, hda, HDclassif, HiDimDA, Hmisc, ipred, kernlab, kknn, klaR, kohonen, KRLS,
   lars, leaps, LogicForest, logicFS, LogicReg, MASS, mboost, mda, mgcv, mlbench, neuralnet, nnet, 
   nodeHarvest, obliqueRF, pamr, partDSA, party (>= 0.9-99992), penalized, penalizedLDA, pls, 

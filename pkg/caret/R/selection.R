@@ -228,7 +228,6 @@ byComplexity <- function(x, model)
            sda = x[order(x$diagonal, x$lambda),],
            glmnet = x[order(-x$lambda, x$alpha),],
            stepLDA =, stepQDA = x[order(x$maxvar),],
-           GAMens = x[order(x$iter, x$rsm_size),],
            gam = x[order(x$select),],
            gamLoess =  x[order(x$degree, -x$span),],
            gamSpline =  x[order(x$df),],
