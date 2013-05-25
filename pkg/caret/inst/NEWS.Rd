@@ -2,6 +2,15 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 5.16-13}{
+\itemize{
+ \item Added a few exemptions to the logic that determines whether a model call should be scrubbed.
+ 
+ \item An error trap was created to catch issues with missing importance scores in \code{rfe}.
+ 
+ }
+ }
+
 \section{Changes in version 5.16-03}{
 \itemize{
  \item A function \code{twoClassSim} was added for benchmarking classification models. 
