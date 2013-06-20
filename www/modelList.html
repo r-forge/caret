@@ -2,7 +2,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>TableIDcc11751f3ef</title>
+  <title>TableID774e3dbae459</title>
   <meta http-equiv="content-type" content="text/html;charset=utf-8" />
   <style type="text/css">
     body {
@@ -17,18 +17,15 @@
   </style>
 </head>
 <body>
- <!-- Table generated in R 2.15.2 by googleVis 0.3.3 package -->
-<!-- Thu Jan 17 11:48:34 2013 -->
+ <!-- Table generated in R 3.0.0 by googleVis 0.4.3 package -->
+<!-- Thu Jun 20 10:16:29 2013 -->
 
 
 <!-- jsHeader -->
-<script type="text/javascript" src="http://www.google.com/jsapi">
-</script>
 <script type="text/javascript">
  
 // jsData 
-function gvisDataTableIDcc11751f3ef ()
-{
+function gvisDataTableID774e3dbae459 () {
   var data = new google.visualization.DataTable();
   var datajson =
 [
@@ -37,7 +34,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Classification Only",
 "ada",
 "ada",
-"maxdepth, iter, nu" 
+"iter, maxdepth, nu" 
 ],
 [
  "avNNet",
@@ -68,18 +65,25 @@ function gvisDataTableIDcc11751f3ef ()
 "nprune, degree" 
 ],
 [
+ "bayesglm",
+"Dual Use",
+"bayesglm",
+"arm",
+"None" 
+],
+[
  "bdk",
 "Dual Use",
 "bdk",
 "kohonen",
-"xweight, topo, xdim, ydim" 
+"topo, ydim, xdim, xweight" 
 ],
 [
  "blackboost",
 "Dual Use",
 "blackboost",
 "mboost",
-"maxdepth, mstop" 
+"mstop, maxdepth" 
 ],
 [
  "Boruta",
@@ -93,7 +97,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "bstLs",
 "bst",
-"nu, mstop" 
+"mstop, nu" 
 ],
 [
  "bstSm",
@@ -107,14 +111,21 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "bstTree",
 "bst",
-"maxdepth, nu, mstop" 
+"nu, mstop, maxdepth" 
 ],
 [
  "C5.0",
 "Classification Only",
 "C5.0",
 "C50",
-"winnow, trials, model" 
+"model, trials, winnow" 
+],
+[
+ "C5.0Cost",
+"Classification Only",
+"C5.0Cost",
+"C50",
+"winnow, Cost, trials, model" 
 ],
 [
  "C5.0Rules",
@@ -156,7 +167,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Regression Only",
 "cubist",
 "Cubist",
-"committees, neighbors" 
+"neighbors, committees" 
 ],
 [
  "earth",
@@ -180,11 +191,18 @@ function gvisDataTableIDcc11751f3ef ()
 "alpha" 
 ],
 [
+ "extraTrees",
+"Dual Use",
+"extraTrees",
+"extraTrees",
+"numRandomCuts, mtry" 
+],
+[
  "fda",
 "Classification Only",
 "fda",
 "mda",
-"degree, nprune" 
+"nprune, degree" 
 ],
 [
  "foba",
@@ -198,7 +216,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "gam",
 "mgcv",
-"select, method" 
+"method, select" 
 ],
 [
  "gamboost",
@@ -206,13 +224,6 @@ function gvisDataTableIDcc11751f3ef ()
 "gamboost",
 "mboost",
 "mstop, prune" 
-],
-[
- "GAMens",
-"Classification Only",
-"GAMens",
-"GAMens",
-"fusion, iter, rsm_size" 
 ],
 [
  "gamLoess",
@@ -254,7 +265,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "gbm",
 "gbm",
-"n.trees, shrinkage, interaction.depth" 
+"shrinkage, interaction.depth, n.trees" 
 ],
 [
  "gcvEarth",
@@ -275,14 +286,14 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "glmboost",
 "mboost",
-"prune, mstop" 
+"mstop, prune" 
 ],
 [
  "glmnet",
 "Dual Use",
 "glmnet",
 "glmnet",
-"lambda, alpha" 
+"alpha, lambda" 
 ],
 [
  "glmStepAIC",
@@ -303,14 +314,14 @@ function gvisDataTableIDcc11751f3ef ()
 "Classification Only",
 "hda",
 "hda",
-"gamma, lambda, newdim" 
+"lambda, gamma, newdim" 
 ],
 [
  "hdda",
 "Classification Only",
 "hdda",
 "HDclassif",
-"threshold, model" 
+"model, threshold" 
 ],
 [
  "icr",
@@ -339,6 +350,13 @@ function gvisDataTableIDcc11751f3ef ()
 "kernelpls",
 "pls",
 "ncomp" 
+],
+[
+ "kknn",
+"Classification Only",
+"kknn",
+"kknn",
+"kernel, kmax, distance" 
 ],
 [
  "knn",
@@ -457,7 +475,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "logicBag",
 "logicFS",
-"ntrees, nleaves" 
+"nleaves, ntrees" 
 ],
 [
  "logitBoost",
@@ -471,7 +489,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "logreg",
 "LogicReg",
-"ntrees, treesize" 
+"treesize, ntrees" 
 ],
 [
  "lssvmRadial",
@@ -485,14 +503,14 @@ function gvisDataTableIDcc11751f3ef ()
 "Classification Only",
 "lvq",
 "class",
-"k, size" 
+"size, k" 
 ],
 [
  "M5",
 "Regression Only",
 "M5",
 "RWeka",
-"smoothed, pruned, rules" 
+"pruned, smoothed, rules" 
 ],
 [
  "M5Rules",
@@ -507,6 +525,13 @@ function gvisDataTableIDcc11751f3ef ()
 "mda",
 "mda",
 "subclasses" 
+],
+[
+ "Mlda",
+"Classification Only",
+"Mlda",
+"HiDimDA",
+"None" 
 ],
 [
  "mlp",
@@ -534,14 +559,14 @@ function gvisDataTableIDcc11751f3ef ()
 "Classification Only",
 "nb",
 "klaR",
-"usekernel, fL" 
+"fL, usekernel" 
 ],
 [
  "neuralnet",
 "Regression Only",
 "neuralnet",
 "neuralnet",
-"layer1, layer2, layer3" 
+"layer2, layer3, layer1" 
 ],
 [
  "nnet",
@@ -562,7 +587,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Dual Use",
 "obliqueTree",
 "obliqueTree",
-"oblique.splits, variable.selection" 
+"variable.selection, oblique.splits" 
 ],
 [
  "OneR",
@@ -618,21 +643,21 @@ function gvisDataTableIDcc11751f3ef ()
 "Classification Only",
 "PART",
 "RWeka",
-"pruned, threshold" 
+"threshold, pruned" 
 ],
 [
  "partDSA",
 "Dual Use",
 "partDSA",
 "partDSA",
-"cut.off.growth, MPD" 
+"MPD, cut.off.growth" 
 ],
 [
  "pcaNNet",
 "Dual Use",
 "pcaNNet",
 "caret",
-"decay, size" 
+"size, decay" 
 ],
 [
  "pcr",
@@ -660,21 +685,21 @@ function gvisDataTableIDcc11751f3ef ()
 "Regression Only",
 "penalized",
 "penalized",
-"lambda2, lambda1" 
+"lambda1, lambda2" 
 ],
 [
  "PenalizedLDA",
 "Classification Only",
 "PenalizedLDA",
 "penalizedLDA",
-"lambda, K" 
+"K, lambda" 
 ],
 [
  "plr",
 "Classification Only",
 "plr",
 "stepPlr",
-"cp, lambda" 
+"lambda, cp" 
 ],
 [
  "pls",
@@ -689,6 +714,13 @@ function gvisDataTableIDcc11751f3ef ()
 "ppr",
 "stats",
 "nterms" 
+],
+[
+ "protoclass",
+"Classification Only",
+"protoclass",
+"protoclass",
+"eps, Minkowski" 
 ],
 [
  "qda",
@@ -716,7 +748,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Regression Only",
 "qrnn",
 "qrnn",
-"bag, n.hidden, penalty" 
+"n.hidden, bag, penalty" 
 ],
 [
  "rbf",
@@ -744,7 +776,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Regression Only",
 "relaxo",
 "relaxo",
-"phi, lambda" 
+"lambda, phi" 
 ],
 [
  "rf",
@@ -759,6 +791,13 @@ function gvisDataTableIDcc11751f3ef ()
 "rFerns",
 "rFerns",
 "depth" 
+],
+[
+ "RFlda",
+"Classification Only",
+"RFlda",
+"HiDimDA",
+"q" 
 ],
 [
  "ridge",
@@ -796,25 +835,32 @@ function gvisDataTableIDcc11751f3ef ()
 "maxdepth" 
 ],
 [
+ "rpartCost",
+"Classification Only",
+"rpartCost",
+"rpart",
+"cp, Cost" 
+],
+[
  "RRF",
 "Dual Use",
 "RRF",
 "RRF",
-"mtry, coefReg, coefImp" 
+"coefImp, mtry, coefReg" 
 ],
 [
  "RRFglobal",
 "Dual Use",
 "RRFglobal",
 "RRF",
-"coefReg, mtry" 
+"mtry, coefReg" 
 ],
 [
  "rrlda",
 "Classification Only",
 "rrlda",
 "rrlda",
-"lambda, alpha" 
+"hp, penalty, lambda" 
 ],
 [
  "rvmLinear",
@@ -842,7 +888,7 @@ function gvisDataTableIDcc11751f3ef ()
 "Classification Only",
 "sda",
 "sda",
-"diagonal" 
+"diagonal, lambda" 
 ],
 [
  "sddaLDA",
@@ -943,6 +989,13 @@ function gvisDataTableIDcc11751f3ef ()
 "C" 
 ],
 [
+ "svmRadialWeights",
+"Classification Only",
+"svmRadialWeights",
+"kernlab",
+"C, sigma, Weight" 
+],
+[
  "treebag",
 "Dual Use",
 "treebag",
@@ -981,14 +1034,14 @@ return(data);
 }
  
 // jsDrawChart
-function drawChartTableIDcc11751f3ef() {
-  var data = gvisDataTableIDcc11751f3ef();
+function drawChartTableID774e3dbae459() {
+  var data = gvisDataTableID774e3dbae459();
   var options = {};
 options["allowHtml"] = true;
 options["width"] = "800px";
 
      var chart = new google.visualization.Table(
-       document.getElementById('TableIDcc11751f3ef')
+       document.getElementById('TableID774e3dbae459')
      );
      chart.draw(data,options);
     
@@ -996,29 +1049,59 @@ options["width"] = "800px";
 }
   
  
-// jsDisplayChart 
-function displayChartTableIDcc11751f3ef()
-{
-  google.load("visualization", "1", { packages:["table"] }); 
-  google.setOnLoadCallback(drawChartTableIDcc11751f3ef);
+// jsDisplayChart
+(function() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  var chartid = "table";
+
+  // Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+  var i, newPackage = true;
+  for (i = 0; newPackage && i < pkgs.length; i++) {
+    if (pkgs[i] === chartid)
+      newPackage = false;
+  }
+  if (newPackage)
+    pkgs.push(chartid);
+
+  // Add the drawChart function to the global list of callbacks
+  callbacks.push(drawChartTableID774e3dbae459);
+})();
+function displayChartTableID774e3dbae459() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+    var pkgCount = pkgs.length;
+    google.load("visualization", "1", { packages:pkgs, callback: function() {
+      if (pkgCount != pkgs.length) {
+        // Race condition where another setTimeout call snuck in after us; if
+        // that call added a package, we must not shift its callback
+        return;
+      }
+      while (callbacks.length > 0)
+        callbacks.shift()();
+    } });
+  }, 100);
 }
  
-// jsChart 
-displayChartTableIDcc11751f3ef()
+// jsFooter
+ </script>
  
-<!-- jsFooter -->  
-//-->
-</script>
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartTableID774e3dbae459"></script>
  
 <!-- divChart -->
   
-<div id="TableIDcc11751f3ef"
+<div id="TableID774e3dbae459"
   style="width: 800pxpx; height: 500px;">
 </div>
- <div><span>Data: forTable &#8226; Chart ID: <a href="Chart_TableIDcc11751f3ef.html">TableIDcc11751f3ef</a></span><br /> 
+ <div><span>Data: forTable &#8226; Chart ID: <a href="Chart_TableID774e3dbae459.html">TableID774e3dbae459</a></span><br /> 
 <!-- htmlFooter -->
 <span> 
-R version 2.15.2 (2012-10-26) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.3.3</a>
+R version 3.0.0 (2013-04-03) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.4.3</a>
 &#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/table.html#Data_Policy">Data Policy</a>
 </span></div>
 </body>

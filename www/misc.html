@@ -125,7 +125,7 @@ Released   : 20120902
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>11-nearest neighbor classification model</pre> <pre></pre> <pre>Call:</pre> <pre>knn3.data.frame(x = training, y = trainClass, k = 11)</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>knn3.data.frame(x = training, y = trainClass, k = 11)</pre> <pre></pre> <pre>Training set class distribution:</pre> <pre></pre> <pre> M  R </pre> <pre>74 65 </pre> <pre></pre>
+<pre>11-nearest neighbor classification model</pre> <pre></pre> <pre>Call:</pre> <pre>knn3.data.frame(x = training, y = trainClass, k = 11)</pre> <pre></pre> <pre>Training set class distribution:</pre> <pre></pre> <pre> M  R </pre> <pre>74 65 </pre> <pre></pre>
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !-->
 <!-- begin{Sinput} !-->
@@ -179,7 +179,7 @@ From this model, there are two approaches to computing the class predictions and
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>Partial least squares classification, fitted with the kernel algorithm.</pre> <pre>The softmax function was used to compute class probabilities.</pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre> <pre></pre>
+<pre>Partial least squares classification, fitted with the kernel algorithm.</pre> <pre>The softmax function was used to compute class probabilities.</pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre> <pre></pre>
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !-->
 <!-- begin{Sinput} !-->
@@ -195,7 +195,7 @@ From this model, there are two approaches to computing the class predictions and
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>Partial least squares classification, fitted with the kernel algorithm.</pre> <pre>Bayes rule was used to compute class probabilities.</pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre> <pre></pre>
+<pre>Partial least squares classification, fitted with the kernel algorithm.</pre> <pre>Bayes rule was used to compute class probabilities.</pre> <pre></pre> <pre>Call:</pre> <pre>plsr(formula = y ~ x, ncomp = ncomp, data = tmpData)</pre> <pre></pre>
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !-->
 <!-- begin{Sinput} !-->
@@ -388,7 +388,7 @@ matrix/data frame of class probabilities. For the linear discriminant model abov
 <p><xmp class=command>>                                           aggregate = ctreeBag$aggregate))</xmp></p>
 <p><xmp class=command>>   summary(baggedCT)</xmp></p>
 <!-- begin{Schunk} !--> 
-<pre></pre> <pre>Call:</pre> <pre>bag.default(x = training[, names(training) != "Class"], y = training$Class, </pre> <pre>    B = 50, bagControl = bagControl(fit = ctreeBag$fit, predict = ctreeBag$pred, </pre> <pre>        aggregate = ctreeBag$aggregate))</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>bag.default(x = training[, names(training) != "Class"], y</pre> <pre> = ctreeBag$fit, predict = ctreeBag$pred, aggregate</pre> <pre> = ctreeBag$aggregate))</pre> <pre></pre> <pre>Out of bag statistics (B = 50):</pre> <pre></pre> <pre>       Accuracy   Kappa</pre> <pre>  0.0%   0.5000 0.07134</pre> <pre>  2.5%   0.5779 0.15443</pre> <pre> 25.0%   0.6560 0.31721</pre> <pre> 50.0%   0.6982 0.39194</pre> <pre> 75.0%   0.7398 0.47383</pre> <pre> 97.5%   0.8002 0.60042</pre> <pre>100.0%   0.8667 0.71014</pre> <pre></pre>
+<pre></pre> <pre>Call:</pre> <pre>bag.default(x = training[, names(training) != "Class"], y</pre> <pre> = ctreeBag$fit, predict = ctreeBag$pred, aggregate</pre> <pre> = ctreeBag$aggregate))</pre> <pre></pre> <pre>Out of bag statistics (B = 50):</pre> <pre></pre> <pre>       Accuracy   Kappa</pre> <pre>  0.0%   0.5000 0.07134</pre> <pre>  2.5%   0.5779 0.15443</pre> <pre> 25.0%   0.6560 0.31721</pre> <pre> 50.0%   0.6982 0.39194</pre> <pre> 75.0%   0.7398 0.47383</pre> <pre> 97.5%   0.8002 0.60042</pre> <pre>100.0%   0.8667 0.71014</pre> <pre></pre>
 <!--\end{Schunk}!-->
 
 
@@ -430,7 +430,7 @@ matrix/data frame of class probabilities. For the linear discriminant model abov
 </div>
   <div id="footer-content"></div>
   <div id="footer">
-  <p>Created on Thu Jan 17 2013 using caret version 5.15-052 and R version 2.15.2 (2012-10-26).</p>
+  <p>Created on Thu Jun 20 2013 using caret version 5.16-24 and R version 3.0.0 (2013-04-03).</p>
   </div>
   <!-- end #footer -->
 </body>

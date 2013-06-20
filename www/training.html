@@ -62,7 +62,7 @@ The <code>train</code> function can be used to
 
 <p>
 First, a specific model must be chosen. Currently,
-143 are available using
+150 are available using
 <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>; see <a href="modelList.html"><tt>train</tt> Model List</a> 
 or <a href="bytag.html"><tt>train</tt> Models By Tag</a> for details. 
 On these pages, there are lists of tuning parameters that can
@@ -178,7 +178,7 @@ cross-validation is shown below:
 <p><xmp class=command>> gbmFit1 </xmp></p>
 
 <!-- begin{Schunk} !--> 
-<pre>157 samples</pre> <pre> 60 predictors</pre> <pre>  2 classes: 'M', 'R' </pre> <pre></pre> <pre>No pre-processing</pre> <pre>Resampling: Cross-Validation (10 fold, repeated 10 times) </pre> <pre></pre> <pre>Summary of sample sizes: 142, 142, 140, 142, 142, 141, ... </pre> <pre></pre> <pre>Resampling results across tuning parameters:</pre> <pre></pre> <pre>  interaction.depth  n.trees  Accuracy  Kappa  Accuracy SD  Kappa SD</pre> <pre>  1                  50       0.765     0.523  0.1          0.204   </pre> <pre>  1                  100      0.796     0.587  0.0933       0.189   </pre> <pre>  1                  150      0.81      0.615  0.0879       0.18    </pre> <pre>  2                  50       0.792     0.578  0.105        0.216   </pre> <pre>  2                  100      0.807     0.608  0.0888       0.184   </pre> <pre>  2                  150      0.81      0.613  0.085        0.175   </pre> <pre>  3                  50       0.797     0.588  0.0902       0.183   </pre> <pre>  3                  100      0.816     0.627  0.0823       0.168   </pre> <pre>  3                  150      0.822     0.638  0.0804       0.165   </pre> <pre></pre> <pre>Tuning parameter 'shrinkage' was held constant at a value of 0.1</pre> <pre>Accuracy was used to select the optimal model using  the</pre> <pre> largest value.</pre> <pre>The final values used for the model were interaction.depth =</pre> <pre> 3, n.trees = 150 and shrinkage = 0.1. </pre>
+<pre>157 samples</pre> <pre> 60 predictors</pre> <pre>  2 classes: 'M', 'R' </pre> <pre></pre> <pre>No pre-processing</pre> <pre>Resampling: Cross-Validation (10 fold, repeated 10 times) </pre> <pre></pre> <pre>Summary of sample sizes: 142, 142, 140, 142, 142, 141, ... </pre> <pre></pre> <pre>Resampling results across tuning parameters:</pre> <pre></pre> <pre>  interaction.depth  n.trees  Accuracy  Kappa  Accuracy SD  Kappa SD</pre> <pre>  1                  50       0.768     0.53   0.105        0.211   </pre> <pre>  1                  100      0.785     0.564  0.087        0.178   </pre> <pre>  1                  150      0.797     0.589  0.0893       0.182   </pre> <pre>  2                  50       0.793     0.581  0.0876       0.179   </pre> <pre>  2                  100      0.806     0.605  0.0919       0.189   </pre> <pre>  2                  150      0.822     0.639  0.0928       0.19    </pre> <pre>  3                  50       0.802     0.599  0.104        0.21    </pre> <pre>  3                  100      0.817     0.63   0.0925       0.188   </pre> <pre>  3                  150      0.819     0.632  0.0892       0.181   </pre> <pre></pre> <pre>Tuning parameter 'shrinkage' was held constant at a value of 0.1</pre> <pre>Accuracy was used to select the optimal model using  the</pre> <pre> largest value.</pre> <pre>The final values used for the model were interaction.depth =</pre> <pre> 2, n.trees = 150 and shrinkage = 0.1. </pre>
 <!--\end{Schunk}!-->
 
 <p>
@@ -300,18 +300,18 @@ We can fix the learning rate and evaluate more than three values of
 <p><xmp class=command>>                  tuneGrid = gbmGrid)</xmp></p>
 <p><xmp class=command>> gbmFit2</xmp></p>
 <!-- begin{Schunk} !--> 
-<pre> 157 samples </pre> <pre>  60 predictors </pre> <pre>   2 classes: 'M', 'R'  </pre> <pre>  </pre> <pre> No pre-processing </pre> <pre> Resampling: Cross-Validation (10 fold, repeated 10 times)  </pre> <pre>  </pre> <pre> Summary of sample sizes: 142, 142, 140, 142, 142, 141, ...  </pre> <pre>  </pre> <pre> Resampling results across tuning parameters: </pre> <pre>  </pre> <pre>   interaction.depth  n.trees  Accuracy  Kappa  Accuracy SD  Kappa SD </pre> <pre>   1                  50       0.77      0.534  0.0995       0.202    </pre> <pre>   1                  100      0.783     0.56   0.0888       0.182    </pre> <pre>   1                  150      0.797     0.589  0.095        0.193    </pre> <pre>   1                  200      0.804     0.603  0.0839       0.172    </pre> <pre>   1                  250      0.802     0.599  0.0868       0.177    </pre> <pre>   1                  300      0.805     0.605  0.096        0.196    </pre><pre>   :                  :         :         :       :            :</pre>
-<pre>   9                  1300     0.818     0.63   0.0929       0.19     </pre>
-<pre>   9                  1350     0.819     0.632  0.0919       0.188    </pre>
-<pre>   9                  1400     0.821     0.638  0.0896       0.183    </pre>
-<pre>   9                  1450     0.82      0.635  0.0938       0.191    </pre>
-<pre>   9                  1500     0.82      0.636  0.0936       0.19     </pre>
+<pre> 157 samples </pre> <pre>  60 predictors </pre> <pre>   2 classes: 'M', 'R'  </pre> <pre>  </pre> <pre> No pre-processing </pre> <pre> Resampling: Cross-Validation (10 fold, repeated 10 times)  </pre> <pre>  </pre> <pre> Summary of sample sizes: 142, 142, 140, 142, 142, 141, ...  </pre> <pre>  </pre> <pre> Resampling results across tuning parameters: </pre> <pre>  </pre> <pre>   interaction.depth  n.trees  Accuracy  Kappa  Accuracy SD  Kappa SD </pre> <pre>   1                  50       0.779     0.55   0.104        0.213    </pre> <pre>   1                  100      0.786     0.564  0.0914       0.187    </pre> <pre>   1                  150      0.796     0.585  0.0938       0.193    </pre> <pre>   1                  200      0.805     0.605  0.09         0.184    </pre> <pre>   1                  250      0.803     0.601  0.0891       0.182    </pre> <pre>   1                  300      0.804     0.602  0.0885       0.18     </pre><pre>   :                  :         :         :       :            :</pre>
+<pre>   9                  1300     0.831     0.656  0.093        0.19     </pre>
+<pre>   9                  1350     0.83      0.655  0.0889       0.181    </pre>
+<pre>   9                  1400     0.831     0.657  0.0915       0.187    </pre>
+<pre>   9                  1450     0.832     0.659  0.0916       0.186    </pre>
+<pre>   9                  1500     0.83      0.656  0.0918       0.186    </pre>
 <pre>  </pre>
 <pre> Tuning parameter 'shrinkage' was held constant at a value of 0.1 </pre>
 <pre> Accuracy was used to select the optimal model using  the </pre>
 <pre>  largest value. </pre>
 <pre> The final values used for the model were interaction.depth = </pre>
-<pre>  5, n.trees = 1050 and shrinkage = 0.1.  </pre>
+<pre>  5, n.trees = 350 and shrinkage = 0.1.  </pre>
 <!--\end{Schunk}!-->
 
 <h3>Plotting the Resampling Profile</h3>
@@ -504,24 +504,24 @@ the area under the ROC curve using the following code:
 <p><xmp class=command>> gbmFit3</xmp></p>
 
 <!-- begin{Schunk} !--> 
-<pre> 157 samples </pre> <pre>  60 predictors </pre> <pre>   2 classes: 'M', 'R'  </pre> <pre>  </pre> <pre> No pre-processing </pre> <pre> Resampling: Cross-Validation (10 fold, repeated 10 times)  </pre> <pre>  </pre> <pre> Summary of sample sizes: 142, 142, 140, 142, 142, 141, ...  </pre> <pre>  </pre> <pre> Resampling results across tuning parameters: </pre> <pre>  </pre> <pre>   interaction.depth  n.trees  ROC    Sens   Spec   ROC SD  Sens SD </pre> <pre>   1                  50       0.861  0.811  0.697  0.0875  0.141   </pre> <pre>   1                  100      0.881  0.843  0.739  0.0845  0.138   </pre> <pre>   1                  150      0.885  0.84   0.751  0.0803  0.14    </pre> <pre>   1                  200      0.882  0.848  0.752  0.0821  0.124   </pre> <pre>   1                  250      0.885  0.847  0.747  0.0829  0.126   </pre> <pre>   1                  300      0.886  0.847  0.753  0.079   0.119   </pre><pre>   :                   :         :       :      :     :       :        :</pre>
+<pre> 157 samples </pre> <pre>  60 predictors </pre> <pre>   2 classes: 'M', 'R'  </pre> <pre>  </pre> <pre> No pre-processing </pre> <pre> Resampling: Cross-Validation (10 fold, repeated 10 times)  </pre> <pre>  </pre> <pre> Summary of sample sizes: 142, 142, 140, 142, 142, 141, ...  </pre> <pre>  </pre> <pre> Resampling results across tuning parameters: </pre> <pre>  </pre> <pre>   interaction.depth  n.trees  ROC    Sens   Spec   ROC SD  Sens SD </pre> <pre>   1                  50       0.867  0.822  0.714  0.0995  0.131   </pre> <pre>   1                  100      0.878  0.837  0.722  0.0911  0.128   </pre> <pre>   1                  150      0.883  0.848  0.742  0.0879  0.121   </pre> <pre>   1                  200      0.885  0.84   0.753  0.0872  0.12    </pre> <pre>   1                  250      0.887  0.85   0.753  0.0863  0.116   </pre> <pre>   1                  300      0.887  0.852  0.753  0.0861  0.126   </pre><pre>   :                   :         :       :      :     :       :        :</pre>
+<pre>   0.157   </pre>
+<pre>   0.157   </pre>
 <pre>   0.16    </pre>
 <pre>   0.159   </pre>
 <pre>   0.16    </pre>
-<pre>   0.162   </pre>
-<pre>   0.159   </pre>
-<pre>   0.156   </pre>
+<pre>   0.157   </pre>
 <pre>  </pre>
 <pre> Tuning parameter 'shrinkage' was held constant at a value of 0.1 </pre>
 <pre> ROC was used to select the optimal model using  the largest value. </pre>
 <pre> The final values used for the model were interaction.depth = </pre>
-<pre>  5, n.trees = 700 and shrinkage = 0.1.  </pre>
+<pre>  5, n.trees = 600 and shrinkage = 0.1.  </pre>
 <!--\end{Schunk}!-->
 
 <p>
 In this case, the average area under the ROC curve associated with the
 optimal tuning parameters was
-0.915 across
+0.916 across
 the 100 resamples.
 </p>
 
@@ -576,10 +576,10 @@ following arguments:
 <p>  
 As an example, if we chose the previous boosted tree model on the basis of
 overall accuracy, we would choose:
- interaction depth = 5,  n trees = 700,  shrinkage = 0.1. However, the scale in this plots is
+ interaction depth = 5,  n trees = 600,  shrinkage = 0.1. However, the scale in this plots is
 fairly tight, with accuracy values ranging from
-0.861 to
-0.915. A less complex model
+0.867 to
+0.916. A less complex model
 (e.g. fewer, more shallow trees) might also yield acceptable
 accuracy. 
 </p>
@@ -606,13 +606,13 @@ difference. For example, to select parameter values based on a 2% loss of perfor
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>   interaction.depth n.trees shrinkage       ROC      Sens      Spec</pre> <pre>32                 5     100       0.1 0.9085268 0.8673611 0.7780357</pre> <pre>        ROCSD    SensSD    SpecSD</pre> <pre>32 0.07025758 0.1178077 0.1466676</pre>
+<pre>   interaction.depth n.trees shrinkage       ROC      Sens      Spec</pre> <pre>32                 5     100       0.1 0.9017336 0.8654167 0.7473214</pre> <pre>        ROCSD    SensSD   SpecSD</pre> <pre>32 0.07296668 0.1226108 0.153285</pre>
 <!--\end{Schunk}!-->
 <p>
 This indicates that we can get a less complex model with and accuracy
-of 0.909 (compared
+of 0.902 (compared
 to the "pick the best" value of 
- 0.915). 
+ 0.916). 
 </p>
 <p>
 The main issue with these functions is related to ordering the models
@@ -678,7 +678,7 @@ model. For example:
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre>             M            R</pre> <pre>1 1.635698e-05 9.999836e-01</pre> <pre>2 1.320336e-07 9.999999e-01</pre> <pre>3 1.496784e-14 1.000000e+00</pre> <pre>4 4.876765e-06 9.999951e-01</pre> <pre>5 9.999936e-01 6.383584e-06</pre> <pre>6 9.860175e-01 1.398252e-02</pre>
+<pre>             M            R</pre> <pre>1 6.917141e-05 9.999308e-01</pre> <pre>2 2.386078e-06 9.999976e-01</pre> <pre>3 9.229512e-13 1.000000e+00</pre> <pre>4 6.452307e-05 9.999355e-01</pre> <pre>5 9.999889e-01 1.106264e-05</pre> <pre>6 9.708947e-01 2.910533e-02</pre>
 <!--\end{Schunk}!-->
 
 
@@ -782,7 +782,7 @@ results using <code>resamples</code>.
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre></pre> <pre>Call:</pre> <pre>resamples.default(x = list(GBM = gbmFit3, SVM = svmFit, RDA = rdaFit))</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>resamples.default(x = list(GBM = gbmFit3, SVM = svmFit, RDA = rdaFit))</pre> <pre></pre> <pre>Models: GBM, SVM, RDA </pre> <pre>Number of resamples: 100 </pre> <pre>Performance metrics: ROC, Sens, Spec </pre> <pre>Time estimates for: everything, final model fit </pre>
+<pre></pre> <pre>Call:</pre> <pre>resamples.default(x = list(GBM = gbmFit3, SVM = svmFit, RDA = rdaFit))</pre> <pre></pre> <pre>Models: GBM, SVM, RDA </pre> <pre>Number of resamples: 100 </pre> <pre>Performance metrics: ROC, Sens, Spec </pre> <pre>Time estimates for: everything, final model fit </pre>
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !-->
 <!-- begin{Sinput} !-->
@@ -794,7 +794,7 @@ results using <code>resamples</code>.
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre></pre> <pre>Call:</pre> <pre>summary.resamples(object = resamps)</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>summary.resamples(object = resamps)</pre> <pre></pre> <pre>Models: GBM, SVM, RDA </pre> <pre>Number of resamples: 100 </pre> <pre></pre> <pre>ROC </pre> <pre>      Min. 1st Qu. Median   Mean 3rd Qu. Max. NA's</pre> <pre>GBM 0.6607  0.8889 0.9365 0.9153  0.9653    1    0</pre> <pre>SVM 0.7321  0.9286 0.9683 0.9535  0.9896    1    0</pre> <pre>RDA 0.6032  0.8750 0.9219 0.9131  0.9643    1    0</pre> <pre></pre> <pre>Sens </pre> <pre>      Min. 1st Qu. Median   Mean 3rd Qu. Max. NA's</pre> <pre>GBM 0.5556   0.875 0.8889 0.8876       1    1    0</pre> <pre>SVM 0.5000   0.875 0.9444 0.9218       1    1    0</pre> <pre>RDA 0.6250   0.875 0.8889 0.8988       1    1    0</pre> <pre></pre> <pre>Spec </pre> <pre>      Min. 1st Qu. Median   Mean 3rd Qu. Max. NA's</pre> <pre>GBM 0.2857  0.7143 0.7500 0.7546  0.8571    1    0</pre> <pre>SVM 0.2857  0.7143 0.8571 0.7930  0.8750    1    0</pre> <pre>RDA 0.2857  0.7143 0.7500 0.7804  0.8571    1    0</pre> <pre></pre>
+<pre></pre> <pre>Call:</pre> <pre>summary.resamples(object = resamps)</pre> <pre></pre> <pre>Models: GBM, SVM, RDA </pre> <pre>Number of resamples: 100 </pre> <pre></pre> <pre>ROC </pre> <pre>      Min. 1st Qu. Median   Mean 3rd Qu. Max. NA's</pre> <pre>GBM 0.6429  0.8889 0.9286 0.9156  0.9643    1    0</pre> <pre>SVM 0.7321  0.9286 0.9683 0.9535  0.9896    1    0</pre> <pre>RDA 0.6032  0.8750 0.9219 0.9131  0.9643    1    0</pre> <pre></pre> <pre>Sens </pre> <pre>     Min. 1st Qu. Median   Mean 3rd Qu. Max. NA's</pre> <pre>GBM 0.500   0.875 0.8889 0.8901       1    1    0</pre> <pre>SVM 0.500   0.875 0.9444 0.9218       1    1    0</pre> <pre>RDA 0.625   0.875 0.8889 0.8988       1    1    0</pre> <pre></pre> <pre>Spec </pre> <pre>      Min. 1st Qu. Median   Mean 3rd Qu. Max. NA's</pre> <pre>GBM 0.1429  0.7143 0.7500 0.7593  0.8571    1    0</pre> <pre>SVM 0.2857  0.7143 0.8571 0.7930  0.8750    1    0</pre> <pre>RDA 0.2857  0.7143 0.7500 0.7804  0.8571    1    0</pre> <pre></pre>
 <!--\end{Schunk}!-->
 
 <p>
@@ -869,7 +869,7 @@ the null hypothesis that there is no difference between models.
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre></pre> <pre>Call:</pre> <pre>diff.resamples(x = resamps)</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>diff.resamples(x = resamps)</pre> <pre></pre> <pre>Models: GBM, SVM, RDA </pre> <pre>Metrics: ROC, Sens, Spec </pre> <pre>Number of differences: 3 </pre> <pre>p-value adjustment: bonferroni </pre>
+<pre></pre> <pre>Call:</pre> <pre>diff.resamples(x = resamps)</pre> <pre></pre> <pre>Models: GBM, SVM, RDA </pre> <pre>Metrics: ROC, Sens, Spec </pre> <pre>Number of differences: 3 </pre> <pre>p-value adjustment: bonferroni </pre>
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !-->
 <!-- begin{Sinput} !-->
@@ -881,7 +881,7 @@ the null hypothesis that there is no difference between models.
 
 <!--\end{Schunk}!-->
 <!-- begin{Schunk} !--> 
-<pre></pre> <pre>Call:</pre> <pre>summary.diff.resamples(object = difValues)</pre> <pre></pre> <pre></pre> <pre>Call:</pre> <pre>summary.diff.resamples(object = difValues)</pre> <pre></pre> <pre>p-value adjustment: bonferroni </pre> <pre>Upper diagonal: estimates of the difference</pre> <pre>Lower diagonal: p-value for H0: difference = 0</pre> <pre></pre> <pre>ROC </pre> <pre>    GBM       SVM       RDA      </pre> <pre>GBM           -0.038125  0.002242</pre> <pre>SVM 6.224e-09            0.040367</pre> <pre>RDA 1         2.104e-08          </pre> <pre></pre> <pre>Sens </pre> <pre>    GBM      SVM      RDA     </pre> <pre>GBM          -0.03417 -0.01111</pre> <pre>SVM 0.006685           0.02306</pre> <pre>RDA 1.000000 0.200447         </pre> <pre></pre> <pre>Spec </pre> <pre>    GBM     SVM      RDA     </pre> <pre>GBM         -0.03839 -0.02571</pre> <pre>SVM 0.02361           0.01268</pre> <pre>RDA 0.40225 1.00000          </pre> <pre></pre>
+<pre></pre> <pre>Call:</pre> <pre>summary.diff.resamples(object = difValues)</pre> <pre></pre> <pre>p-value adjustment: bonferroni </pre> <pre>Upper diagonal: estimates of the difference</pre> <pre>Lower diagonal: p-value for H0: difference = 0</pre> <pre></pre> <pre>ROC </pre> <pre>    GBM       SVM       RDA      </pre> <pre>GBM           -0.037805  0.002562</pre> <pre>SVM 6.700e-10            0.040367</pre> <pre>RDA 1         2.104e-08          </pre> <pre></pre> <pre>Sens </pre> <pre>    GBM     SVM       RDA      </pre> <pre>GBM         -0.031667 -0.008611</pre> <pre>SVM 0.01176            0.023056</pre> <pre>RDA 1.00000 0.20045            </pre> <pre></pre> <pre>Spec </pre> <pre>    GBM     SVM      RDA     </pre> <pre>GBM         -0.03375 -0.02107</pre> <pre>SVM 0.06083           0.01268</pre> <pre>RDA 0.66975 1.00000          </pre> <pre></pre>
 <!--\end{Schunk}!-->
 
 <p>This class also has some visualization methods, including:</p>
@@ -905,7 +905,7 @@ the null hypothesis that there is no difference between models.
 
 <p>
 Although there are currently more than
-140
+150
   methods available to <code>train</code>, there may be the need to create
   custom model functions (e.g. testing a new model etc). One
   application of custom models would be to create diverse ensembles of
@@ -1213,7 +1213,7 @@ can be used to make the labels more descriptive:
 </div>
   <div id="footer-content"></div>
   <div id="footer">
-  <p>Created on Thu Jan 17 2013 using caret version 5.15-052 and R version 2.15.2 (2012-10-26).</p>
+  <p>Created on Thu Jun 20 2013 using caret version 5.16-24 and R version 3.0.0 (2013-04-03).</p>
   </div>
   <!-- end #footer -->
 </body>

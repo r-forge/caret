@@ -2,7 +2,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>TableIDcc12ee00bb4</title>
+  <title>TableID774e49da5d</title>
   <meta http-equiv="content-type" content="text/html;charset=utf-8" />
   <style type="text/css">
     body {
@@ -17,18 +17,15 @@
   </style>
 </head>
 <body>
- <!-- Table generated in R 2.15.2 by googleVis 0.3.3 package -->
-<!-- Thu Jan 17 11:48:34 2013 -->
+ <!-- Table generated in R 3.0.0 by googleVis 0.4.3 package -->
+<!-- Thu Jun 20 10:16:29 2013 -->
 
 
 <!-- jsHeader -->
-<script type="text/javascript" src="http://www.google.com/jsapi">
-</script>
 <script type="text/javascript">
  
 // jsData 
-function gvisDataTableIDcc12ee00bb4 ()
-{
+function gvisDataTableID774e49da5d () {
   var data = new google.visualization.DataTable();
   var datajson =
 [
@@ -162,14 +159,14 @@ return(data);
 }
  
 // jsDrawChart
-function drawChartTableIDcc12ee00bb4() {
-  var data = gvisDataTableIDcc12ee00bb4();
+function drawChartTableID774e49da5d() {
+  var data = gvisDataTableID774e49da5d();
   var options = {};
 options["allowHtml"] = true;
 options["width"] = "800px";
 
      var chart = new google.visualization.Table(
-       document.getElementById('TableIDcc12ee00bb4')
+       document.getElementById('TableID774e49da5d')
      );
      chart.draw(data,options);
     
@@ -177,29 +174,59 @@ options["width"] = "800px";
 }
   
  
-// jsDisplayChart 
-function displayChartTableIDcc12ee00bb4()
-{
-  google.load("visualization", "1", { packages:["table"] }); 
-  google.setOnLoadCallback(drawChartTableIDcc12ee00bb4);
+// jsDisplayChart
+(function() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  var chartid = "table";
+
+  // Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+  var i, newPackage = true;
+  for (i = 0; newPackage && i < pkgs.length; i++) {
+    if (pkgs[i] === chartid)
+      newPackage = false;
+  }
+  if (newPackage)
+    pkgs.push(chartid);
+
+  // Add the drawChart function to the global list of callbacks
+  callbacks.push(drawChartTableID774e49da5d);
+})();
+function displayChartTableID774e49da5d() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+    var pkgCount = pkgs.length;
+    google.load("visualization", "1", { packages:pkgs, callback: function() {
+      if (pkgCount != pkgs.length) {
+        // Race condition where another setTimeout call snuck in after us; if
+        // that call added a package, we must not shift its callback
+        return;
+      }
+      while (callbacks.length > 0)
+        callbacks.shift()();
+    } });
+  }, 100);
 }
  
-// jsChart 
-displayChartTableIDcc12ee00bb4()
+// jsFooter
+ </script>
  
-<!-- jsFooter -->  
-//-->
-</script>
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartTableID774e49da5d"></script>
  
 <!-- divChart -->
   
-<div id="TableIDcc12ee00bb4"
+<div id="TableID774e49da5d"
   style="width: 800pxpx; height: 500px;">
 </div>
- <div><span>Data: these &#8226; Chart ID: <a href="Chart_TableIDcc12ee00bb4.html">TableIDcc12ee00bb4</a></span><br /> 
+ <div><span>Data: these &#8226; Chart ID: <a href="Chart_TableID774e49da5d.html">TableID774e49da5d</a></span><br /> 
 <!-- htmlFooter -->
 <span> 
-R version 2.15.2 (2012-10-26) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.3.3</a>
+R version 3.0.0 (2013-04-03) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.4.3</a>
 &#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/table.html#Data_Policy">Data Policy</a>
 </span></div>
 </body>
