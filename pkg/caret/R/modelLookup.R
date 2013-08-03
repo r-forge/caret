@@ -3,6 +3,10 @@ modelLookup <- function(model = NULL)
 {
   mods <- c(## ada
             'ada', 'ada', 'ada',
+            ## adaboost
+            'adaboost', 'adaboost', 'adaboost',
+            ## adabag
+            'adabag', 
             ## avnnet
             'avNNet', 'avNNet', 'avNNet',               
             ## bag
@@ -27,6 +31,8 @@ modelLookup <- function(model = NULL)
             'bstSm', 'bstSm',
             ## C5.0
             'C5.0', 'C5.0', 'C5.0',
+            ## C5.0Cost
+            'C5.0Cost', 'C5.0Cost', 'C5.0Cost', 'C5.0Cost',            
             ## C5.0Tree
             'C5.0Tree',
             ## C5.0Rules
@@ -217,6 +223,8 @@ modelLookup <- function(model = NULL)
             'plsTest', 
             ## ppr
             'ppr', 
+            ## protoclass
+            'protoclass', 'protoclass',
             ## qda
             'qda', 
             ## QdaCov
@@ -246,9 +254,11 @@ modelLookup <- function(model = NULL)
             ## rocc
             'rocc', 
             ## rpart
-            'rpart2',
-            ## rpart2
             'rpart',
+            ## rpart2
+            'rpart2',
+            ## rpartCost
+            'rpartCost', 'rpartCost',
             ## RRF
             'RRF', 'RRF', 'RRF',
             ## RRFglobal
@@ -296,7 +306,9 @@ modelLookup <- function(model = NULL)
             ## svmRadial
             'svmRadial', 'svmRadial',
             ## svmRadialCost
-            'svmRadialCost',              
+            'svmRadialCost',  
+            ## svmRadialWeights
+            'svmRadialWeights', 'svmRadialWeights', 'svmRadialWeights',            
             ## treebag
             'treebag', 
             ## vbmpRadial
@@ -308,6 +320,10 @@ modelLookup <- function(model = NULL)
 
   pNames <- c(## ada
               'iter', 'maxdepth', 'nu',
+              ## adaboost
+              'mfinal', 'cp', 'coeflearn',
+              ## adabag
+              'cp',               
               ## avnnet
               'size', 'decay', 'bag',              
               ## bag
@@ -332,6 +348,8 @@ modelLookup <- function(model = NULL)
               'mstop', 'nu',
               ## C5.0
               'trials', 'model', 'winnow',
+              ## C5.0Cost
+              'trials', 'model', 'winnow', 'Cost',              
               ## C5.0Tree
               'parameter',
               ## C5.0Rules
@@ -518,7 +536,9 @@ modelLookup <- function(model = NULL)
               ## plsTest
               'ncomp', 
               ## ppr
-              'nterms', 
+              'nterms',
+              ## protoclass
+              'eps', 'Minkowski',
               ## qda
               'parameter', 
               ## QdaCov
@@ -547,10 +567,12 @@ modelLookup <- function(model = NULL)
               'parameter', 
               ## rocc
               'xgenes', 
-              ## rpart2
-              'maxdepth',
               ## rpart
               'cp',
+              ## rpart2
+              'maxdepth',
+              ## rpartCost
+              'cp', 'Cost',
               ## RRF
               'mtry', 'coefReg', 'coefImp',
               ## RRFglobal
@@ -598,7 +620,9 @@ modelLookup <- function(model = NULL)
               ## svmRadial
               'C', 'sigma',
               ## svmRadialCost
-              'C',               
+              'C',    
+              ## svmRadialWeights
+              'C', 'sigma', "Weight",
               ## treebag
               'parameter', 
               ## vbmpRadial
@@ -613,6 +637,12 @@ modelLookup <- function(model = NULL)
               '#Trees',
               'Max Tree Depth',
               'Learning Rate',
+              ## adaboost
+              '#Trees', 
+              'Complexity Parameter', 
+              'Weighting Scheme',
+              ## adabag
+              'Complexity Parameter',               
               ## avnnet
               '#Hidden Units',
               'Weight Decay',
@@ -642,6 +672,8 @@ modelLookup <- function(model = NULL)
               '# Boosting Iterations', 'Shrinkage',
               ## C5.0
               '# Boosting Iterations', 'Model Type', 'Winnow',
+              ## C5.0Cost
+              '# Boosting Iterations', 'Model Type', 'Winnow', 'Cost',              
                ## C5.0Tree
               'none',
               ## C5.0Rules
@@ -862,6 +894,8 @@ modelLookup <- function(model = NULL)
               '#Components',
               ## ppr
               '# Terms',
+              ## protoclass
+              'Ball Size', 'Distance Order',
               ## qda
               'none',
               ## QdaCov
@@ -892,10 +926,12 @@ modelLookup <- function(model = NULL)
               'none',
               ## rocc
               '#Variables Retained',
-              ## rpart2
-              'Max Tree Depth',
               ## rpart
               'Complexity Parameter',
+              ## rpart2
+              'Max Tree Depth',
+              ## rpartCost
+              'Complexity Parameter', 'Cost',
               ## RRF
               '#Randomly Selected Predictors',
               'Regularization Value',
@@ -965,6 +1001,8 @@ modelLookup <- function(model = NULL)
               'Sigma',
               ## svmRadialCost
               'Cost',
+              ## svmRadialWeights
+              'Cost', 'Sigma', 'Class Weight',
               ## treebag
               'none',
               ## vbmpRadial
@@ -977,6 +1015,10 @@ modelLookup <- function(model = NULL)
 
   isSeq <- c(## ada
              FALSE, FALSE, FALSE,
+             ## adaboost
+             TRUE, FALSE, FALSE,
+             ## adabag
+             FALSE, 
              ## avnnet
              FALSE, FALSE, FALSE,             
              ## bag
@@ -1001,6 +1043,8 @@ modelLookup <- function(model = NULL)
              TRUE, FALSE,
              ## C5.0
              TRUE, FALSE, FALSE,
+             ## C5.0Cost
+             TRUE, FALSE, FALSE, FALSE,             
              ## C5.0Tree
              FALSE,
              ## C5.0Rules
@@ -1187,7 +1231,9 @@ modelLookup <- function(model = NULL)
              ## plsTest
              FALSE, 
              ## ppr
-             FALSE, 
+             FALSE,
+             ## protoclass
+             FALSE, FALSE,
              ## qda
              FALSE, 
              ## QdaCov
@@ -1216,10 +1262,12 @@ modelLookup <- function(model = NULL)
              FALSE, 
              ## rocc
              FALSE, 
+             ## rpart
+             TRUE,             
              ## rpart2
              TRUE,
-             ## rpart
-             TRUE,
+             ## rpartCost
+             TRUE, TRUE,
              ## RRF
              FALSE, FALSE, FALSE,
              ## RRFglobal
@@ -1267,7 +1315,9 @@ modelLookup <- function(model = NULL)
              ## svmRadial
              FALSE, FALSE,
              ## svmRadialCost
-             FALSE,               
+             FALSE,  
+             ## svmRadialWeights
+             FALSE, FALSE, FALSE,
              ## treebag
              FALSE, 
              ## vbmpRadial
@@ -1279,6 +1329,10 @@ modelLookup <- function(model = NULL)
              )
   isRegMod <- c(## ada
                 FALSE, FALSE, FALSE,
+                ## adaboost
+                FALSE, FALSE, FALSE,
+                ## adabag
+                FALSE,                 
                 ## avnnet
                 TRUE, TRUE, TRUE,                 
                 ## bag
@@ -1303,6 +1357,8 @@ modelLookup <- function(model = NULL)
                 TRUE, TRUE,
                 ## C5.0
                 FALSE, FALSE, FALSE,
+                ## C5.0Cost
+                FALSE, FALSE, FALSE, FALSE,                
                 ## C5.0Tree
                 FALSE,
                 ## C5.0Rules
@@ -1490,6 +1546,8 @@ modelLookup <- function(model = NULL)
                 TRUE, 
                 ## ppr
                 TRUE, 
+                ## protoclass
+                FALSE, FALSE,
                 ## qda
                 FALSE, 
                 ## QdaCov
@@ -1518,10 +1576,12 @@ modelLookup <- function(model = NULL)
                 TRUE, 
                 ## rocc
                 FALSE, 
+                ## rpart
+                TRUE,                
                 ## rpart2
                 TRUE,
-                ## rpart
-                TRUE,
+                ## rpartCost
+                FALSE, FALSE,
                 ## RRF
                 TRUE, TRUE, TRUE,
                 ## RRFglobal
@@ -1570,6 +1630,8 @@ modelLookup <- function(model = NULL)
                 TRUE, TRUE, 
                 ## svmRadialCost
                 TRUE,
+                ## svmRadialWeights
+                FALSE, FALSE, FALSE,
                 ## treebag
                 TRUE, 
                 ## vbmpRadial
@@ -1582,6 +1644,10 @@ modelLookup <- function(model = NULL)
 
   isClassMod <- c(## ada
                   TRUE, TRUE, TRUE,
+                  ## adaboost
+                  TRUE, TRUE, TRUE,
+                  ## adabag
+                  TRUE,                   
                   ## avnnet
                   TRUE, TRUE, TRUE,                  
                   ## bag
@@ -1606,6 +1672,8 @@ modelLookup <- function(model = NULL)
                   TRUE, TRUE,
                   ## C5.0
                   TRUE, TRUE, TRUE,
+                  ## C5.0Cost
+                  TRUE, TRUE, TRUE, TRUE,                 
                   ## C5.0Tree
                   TRUE,
                   ## C5.0Rules
@@ -1791,7 +1859,9 @@ modelLookup <- function(model = NULL)
                   ## plsTest
                   TRUE, 
                   ## ppr
-                  FALSE, 
+                  FALSE,
+                  ## protoclass
+                  TRUE, TRUE,
                   ## qda
                   TRUE, 
                   ## QdaCov
@@ -1820,10 +1890,12 @@ modelLookup <- function(model = NULL)
                   FALSE, 
                   ## rocc
                   TRUE, 
+                  ## rpart
+                  TRUE,                  
                   ## rpart2
                   TRUE,
-                  ## rpart
-                  TRUE,
+                  ## rpartCost
+                  TRUE, TRUE,
                   ## RRF
                   TRUE, TRUE, TRUE,
                   ## RRFglobal
@@ -1872,6 +1944,8 @@ modelLookup <- function(model = NULL)
                   TRUE, TRUE, 
                   ## svmRadialCost
                   TRUE,
+                  ## svmRadialWeights
+                  TRUE, TRUE, TRUE,
                   ## treebag
                   TRUE, 
                   ## vbmpRadial
@@ -1884,6 +1958,10 @@ modelLookup <- function(model = NULL)
 
   hasProbModel <- c(## ada
                     TRUE, TRUE, TRUE,
+                    ## adaboost
+                    TRUE, TRUE, TRUE,
+                    ## adabag
+                    TRUE,                     
                     ## avnnet
                     TRUE, TRUE, TRUE,                     
                     ## bag
@@ -1908,6 +1986,8 @@ modelLookup <- function(model = NULL)
                     FALSE, FALSE,
                     ## C5.0
                     TRUE, TRUE, TRUE,
+                    ## C5.0Cost
+                    FALSE, FALSE, FALSE, FALSE,                   
                     ## C5.0Tree
                     TRUE,
                     ## C5.0Rules
@@ -2093,7 +2173,9 @@ modelLookup <- function(model = NULL)
                     ## plsTest
                     TRUE, 
                     ## ppr
-                    FALSE, 
+                    FALSE,
+                    ## protoclass
+                    FALSE, FALSE,
                     ## qda
                     TRUE, 
                     ## QdaCov
@@ -2122,10 +2204,12 @@ modelLookup <- function(model = NULL)
                     FALSE, 
                     ## rocc
                     FALSE, 
+                    ## rpart
+                    TRUE,                    
                     ## rpart2
                     TRUE,
-                    ## rpart
-                    TRUE,
+                    ## rpartCost
+                    FALSE, FALSE,
                     ## RRF
                     TRUE, TRUE, TRUE,
                     ## RRFglobal
@@ -2174,6 +2258,8 @@ modelLookup <- function(model = NULL)
                     TRUE, TRUE, 
                     ## svmRadialCost
                     TRUE,
+                    ## svmRadialWeights
+                    FALSE, FALSE, FALSE,
                     ## treebag
                     TRUE, 
                     ## vbmpRadial
