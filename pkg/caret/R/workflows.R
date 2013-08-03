@@ -4,11 +4,6 @@
 ### functions inside of caret cannot be found despite using the
 ### ".packages" argument and calling the caret package via library().
 
-### The doRNG package allows for reproducible random number seeds 
-### in parallel. However, if there are nested loops (as in train)
-### we need to do some manual fixes (see the doRNG) vignette. To
-### do this, we will need three ptoential operators. 
-
 getOper <- function(x) if(x)  `%dopar%` else  `%do%`
 getTrainOper <- function(x) if(x)  `%dopar%` else  `%do%`
 
@@ -343,6 +338,8 @@ looTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FAL
   result <- foreach(iter = seq(along = ctrl$index), .combine = "rbind", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %:%
     foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
+  if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[[iter]][parm])
+  
   library(caret)
   if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE])
   
@@ -473,6 +470,8 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
   `%op%` <- getOper(ctrl$allowParallel)
   result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
+  if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[iter])
+  
   library(caret)
   
   if(names(resampleIndex)[iter] != "AllData")
@@ -545,6 +544,8 @@ looSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
   `%op%` <- getOper(ctrl$allowParallel)
   result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
+  if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[iter])
+  
   library(caret)
   
   modelIndex <- resampleIndex[[iter]]
@@ -591,6 +592,7 @@ nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
     holdoutIndex <- modelIndex
   }
   
+  seeds <- if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) ctrl$seeds[[iter]] else NA
   rfeResults <- caret:::rfeIter(x[modelIndex,,drop = FALSE],
                                 y[modelIndex],
                                 x[holdoutIndex,,drop = FALSE],
@@ -598,6 +600,7 @@ nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
                                 sizes,
                                 ctrl,
                                 label = names(resampleIndex)[iter],
+                                seeds = seeds,
                                 ...)
   resamples <- ddply(rfeResults$pred, .(Variables), ctrl$functions$summary, lev = lev)
   
@@ -669,12 +672,14 @@ looRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
   modelIndex <- resampleIndex[[iter]]
   holdoutIndex <- -unique(resampleIndex[[iter]])
   
+  seeds <- if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) ctrl$seeds[[iter]] else NA
   rfeResults <- caret:::rfeIter(x[modelIndex,,drop = FALSE],
                                 y[modelIndex],
                                 x[holdoutIndex,,drop = FALSE],
                                 y[holdoutIndex],
                                 sizes,
                                 ctrl,
+                                seeds = seeds,
                                 ...)
   rfeResults
 }
