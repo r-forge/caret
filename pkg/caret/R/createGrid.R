@@ -1,5 +1,5 @@
 "createGrid" <-
-  function(method, len = 3, data = NULL)
+  function(method, len = 3, data = NULL, pp = NULL)
 {
 
   somDims <- function(x)
@@ -51,8 +51,6 @@
       colnames(tuneSeq) <- ".cp"
       tuneSeq
     }
-
-  
   
   rbfTune <- function(data, len, center = TRUE)
     {
@@ -234,6 +232,28 @@
 
   c5seq <- if(len == 1)  1 else  c(1, 10*((2:min(len, 11)) - 1))
   
+  if(!is.null(pp) & method %in% c("hda", "rf", "qrf", "Boruta", "ORFridge",
+                                  "ORFpls", "ORFsvm", "ORFlog", "lvq", "rpart",
+                                  "rpart2", "pam", "bagEarth", "bagFDA", "earth",
+                                  "fda", "svmRadial", "rvmRadial", "lssvmRadial", 
+                                  "gaussprRadial", "cforest", "relaxo", "sparseLDA",
+                                  "lars2", "smda", "rocc", "foba", "bag", "RRFglobal",
+                                  "RRF", "lda2", "extraTrees", "rpartCost", "svmRadialWeights",
+                                  "adaboost"))
+  {
+    pp$method <- pp$options
+    pp$options <- NULL
+    if("ica" %in% pp$method) pp$n.comp <- pp$ICAcomp
+    pp$ICAcomp <- NULL          
+    y <- data$.outcome
+    data$.outcome <- NULL
+    pp$x <- data
+    ppObj <- do.call("preProcess", pp)
+    ppObj$call <- "scrubed"
+    data <- predict(ppObj, data)
+    data$.outcome <- y
+  }
+  
   trainGrid <- switch(method,
                       nnet =, pcaNNet = expand.grid(
                                 .size = ((1:len) * 2) - 1, 
@@ -393,6 +413,19 @@
                       extraTrees = expand.grid(.mtry = rfTune(data, len)[,1], .numRandomCuts = 1:len),
                       kknn = data.frame(.kmax = (5:((2 * len)+4))[(5:((2 * len)+4))%%2 > 0], .distance = 2, .kernel = "optimal"),
                       RFlda = data.frame(.q = 1:len),
+                      protoclass = data.frame(.eps = 1:len, .Minkowski = 2),
+                      rpartCost = expand.grid(.cp = rpartTune(data, len)$.cp, .Cost = 1:len),
+                      svmRadialWeights = expand.grid(.sigma = rbfTune(data, len),
+                                                     .C = 2 ^((1:len) - 3),
+                                                     .Weight = 1:len),  
+                      C5.0Cost = expand.grid(.trials = c5seq, 
+                                             .model = c("tree", "rules"), 
+                                             .winnow = c(TRUE, FALSE),
+                                             .Cost = 1:len),
+                      adabag = data.frame(.cp = 0),
+                      adaboost = expand.grid(.mfinal = (1:3)*10,
+                                             .cp = rpartTune(data, len)$.cp,
+                                             .coeflearn = c("Breiman", "Freund", "Zhu")),
                       lda =, lm =, treebag =, sddaLDA =, sddaQDA =,
                       glm =, qda =, OneR =, rlm =, lrm =,
                       rvmLinear =, lssvmLinear =, gaussprLinear =,
