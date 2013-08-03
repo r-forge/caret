@@ -38,10 +38,14 @@ byComplexity <- function(x, model)
            {
              x[order(x[,1]),]
            },
-           rpart =, JRip =
+           rpart =, JRip =, adabag = 
            {
              x[order(x[,1], decreasing = TRUE),]
            },
+           rpartCost = 
+             {
+             x[order(-x$cp, -x$Cost),]
+             },
            M5Rules =
            {
              x$pruned <- factor(as.character(x$pruned), levels = c("Yes", "No"))
@@ -62,6 +66,10 @@ byComplexity <- function(x, model)
              # complex boundaries
              x[order(x$C, -x$sigma),]
            },
+           svmRadialWeights = 
+           {
+             x[order(x$C, -x$sigma, x$Weight),]
+           },           
            svmRadialCost =
            {
              x[order(x$C),]
@@ -212,6 +220,11 @@ byComplexity <- function(x, model)
              x$model <- factor(as.character(x$model), levels = c("rules", "tree"))
              x[order(x$trials, x$model, !x$winnow),]
            },
+           C5.0Cost = 
+           {
+             x$model <- factor(as.character(x$model), levels = c("rules", "tree"))
+             x[order(x$trials, x$model, !x$winnow, x$Cost),]
+           },           
            RRFglobal =, RRF = x[order(x$coefReg),],
            krlsRadial = x[order(x$lambda),],
            krlsPoly = x[order(x$degree, x$lambda),],
@@ -231,6 +244,7 @@ byComplexity <- function(x, model)
            gam = x[order(x$select),],
            gamLoess =  x[order(x$degree, -x$span),],
            gamSpline =  x[order(x$df),],
+           protoclass = x[order(-x$eps),],
            stop("no sorting routine for this model")
            )
 
