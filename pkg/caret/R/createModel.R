@@ -67,10 +67,11 @@
                    'superpc', 'svmLinear', 'svmpoly', 'svmPoly',
                    'svmradial', 'svmRadial', 'svmRadialCost', 'rFerns',
                    'vbmpRadial', 'widekernelpls', 'PenalizedLDA',
+                   'svmRadialWeights', "C5.0Cost",
                    "mlp", "mlpWeightDecay", "rbf", "rbfDDA", "lda2",
                    "RRF", "RRFglobal", "krlsRadial", "krlsPoly",
                    "C5.0", "C5.0Tree", "C5.0Rules", "treebag", "rrlda",
-                   "extraTrees", "Mlda", "RFlda"))
+                   "extraTrees", "Mlda", "RFlda", "protoclass"))
     {
       trainX <- data[,!(names(data) %in% ".outcome"), drop = FALSE]
       trainY <- data[,".outcome"]
@@ -182,9 +183,14 @@
 
                        out            
                      },
-                     svmradial =, svmRadial = 
+                     svmradial =, svmRadial =, svmRadialWeights =  
                      {      
                        library(kernlab)    
+                       if(method == "svmRadialWeights" && tuneValue$.Weight != 1) {
+                         wts <- c(tuneValue$.Weight, 1)
+                         names(wts) <- obsLevels
+                       } else wts <- NULL
+                       
                        if(any(names(list(...)) == "prob.model") | type == "Regression")
                        {
                          out <- ksvm(
@@ -194,13 +200,25 @@
                            C = tuneValue$.C,
                            ...)
                        } else {
-                         out <- ksvm(
-                           as.matrix(trainX),
-                           trainY,
-                           kernel = rbfdot(sigma = tuneValue$.sigma),
-                           C = tuneValue$.C,
-                           prob.model = classProbs,
-                           ...)
+                         if(any(names(list(...)) == "class.weights"))
+                         {
+                           out <- ksvm(
+                             as.matrix(trainX),
+                             trainY,
+                             kernel = rbfdot(sigma = tuneValue$.sigma),
+                             C = tuneValue$.C,
+                             prob.model = classProbs,
+                             ...)
+                         } else {
+                           out <- ksvm(
+                             as.matrix(trainX),
+                             trainY,
+                             kernel = rbfdot(sigma = tuneValue$.sigma),
+                             C = tuneValue$.C,
+                             prob.model = classProbs,
+                             class.weights = wts,
+                             ...)                           
+                         }
                        }                       
                        out         
                      },
@@ -484,10 +502,9 @@
                        out <- do.call("rpart", modelArgs)
                        out
                      },
-                    rpart = 
+                    rpart =, rpartCost = 
                      {
                        library(rpart)   
-                       
                        theDots <- list(...)
                        if(any(names(theDots) == "control"))
                          {
@@ -497,6 +514,15 @@
                            theDots$control <- NULL
                            
                          } else ctl <- rpart.control(cp = tuneValue$.cp, xval = 0)   
+                       if(method == "rpartCost")
+                       {
+                         lmat <-matrix(c(0, 1, tuneValue$.Cost, 0), ncol = 2)
+                         rownames(lmat) <- colnames(lmat) <- obsLevels
+                         if(any(names(theDots) == "parms"))
+                         {
+                           theDots$parms$loss <- lmat
+                         } else parms <- list(loss = lmat)
+                       } else parms <- NULL                     
 
                        ## check to see if weights were passed in (and availible)
                        if(!is.null(modelWeights)) theDots$weights <- modelWeights    
@@ -507,10 +533,12 @@
                                            data = data,
                                            control = ctl),
                                       theDots)
+                       if(method == "rpartCost" & !any(names(theDots) == "parms")) modelArgs$parms <- parms
                          
                        out <- do.call("rpart", modelArgs)
                        out
-                     },                      
+                     },    
+                     
                      pls =, kernelpls =, simpls =, widekernelpls =, plsTest = 
                      {
 
@@ -1955,7 +1983,7 @@
                        krls(trainX, trainY, lambda = if(is.na(tuneValue$.lambda)) NULL else tuneValue$.lambda,
                             whichkernel = krn, ...)
                      },
-                     C5.0 =
+                     C5.0 =, C5.0Cost = 
                      {
                        library(C50)
 
@@ -1965,10 +1993,21 @@
                          {                           
                            theDots$control$winnow <- tuneValue$.winnow
                          } else theDots$control <- C5.0Control(winnow = tuneValue$.winnow)
-
+ 
+                       
                        argList <- list(x = trainX, y = trainY, trials = tuneValue$.trials,
                                        rules = tuneValue$.model == "rules")
                        argList <- c(argList, theDots)
+                       if(method == "C5.0Cost")
+                       {                           
+                         cmat <-matrix(c(0, tuneValue$.Cost, 1, 0), ncol = 2)
+                         rownames(cmat) <- colnames(cmat) <- obsLevels
+                         if(any(names(theDots) == "costs")){
+                           warning("For 'C5.0Cost', the costs are a tuning parameter")
+                           theDots$costs <- cmat
+                         } else argList $costs <- cmat
+                       }                       
+                       
                        do.call("C5.0.default", argList)
 
                      },
@@ -2005,7 +2044,39 @@
                              q = tuneValue$.q, 
                              maxq = tuneValue$.q,
                              ...)
-                     },                     
+                     },   
+                     protoclass = {
+                       library(protoclass)
+                       library(proxy)
+#                        if(tuneValue$.p < 1) stop("p must be > 1")
+                       ## maybe change to computing distance outside (using proxy?)
+                       out <- protoclass(x = trainX, y = trainY, 
+                                         dxz = as.matrix(proxy:::dist(trainX, trainX, 
+                                                                      method = "Minkowski", 
+                                                                      p = as.double(tuneValue$.Minkowski))),
+                                         eps = tuneValue$.eps, 
+                                         ...)
+                       out$Minkowski <- 2
+                       out$training <- trainX
+                       out
+                     },
+                     adabag = 
+                     {
+                       library(adabag)
+                       ## check for control
+                       theDots <- list(...)
+                       if(any(names(theDots) == "control"))
+                       {
+                         theDots$control$cp <- tuneValue$.cp
+                         theDots$control$xval <- 0 
+                       } else {
+                         theDots$control <- rpart.control(cp = tuneValue$.cp, xval = 0)
+                       }
+                       
+                       args <- c(list(formula = modFormula, data = data),
+                                 list(...))
+                       do.call("bagging", args)
+                     },
                      custom =
                      {
                        custom(data = data,
@@ -2034,6 +2105,7 @@
                                       "lssvmRadial", "lssvmPoly", "lssvmLinear",
                                       "gaussprRadial", "gaussprPoly", "gaussprLinear",
                                       "ctree", "ctree2", "cforest",
+                                      "svmRadialWeights",
                                       "penalized", "Linda", "QdaCov", "custom"))))
     {
       modelFit$xNames <- xNames
@@ -2043,8 +2115,9 @@
     }
   if(!is.null(modelFit) && 
      any(names(modelFit) == "call" & 
-     method %in% c("rpart", "rpart2", "earth", "fda"))) 
+     !(method %in% c("rpart", "rpart2", "earth", "fda")))) 
        modelFit$call <- scrubCall(modelFit$call)
+  require(methods)
   if(length(slotNames(modelFit)) > 0 && any(slotNames(modelFit) == "call")) modelFit@call <- scrubCall(modelFit@call)
 
   list(fit = modelFit, preProc = ppObj)
