@@ -507,6 +507,7 @@ train.default <- function(x, y,
     
   ## Make the final model based on the tuning results
 
+  if(!(length(trControl$seeds) == 1 && is.na(trControl$seeds))) set.seed(trControl$seeds[[length(trControl$seeds)]][1])
   finalTime <- system.time(
                            finalModel <- createModel(data = trainData, 
                                                      method = method, 
