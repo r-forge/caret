@@ -1,7 +1,37 @@
+Kim2009 <- function(n)
+{
+  grid <- matrix(runif(n*10), ncol = 10)
+  grid <- as.data.frame(grid)
+  names(grid) = paste("x", 1:10, sep = "")
+  grid$x5 <- floor((grid$x5*3)+1)
+  pred <- -10 + 10 * sin(pi * grid$x1* grid$x2) + 5*(grid$x3 - .5)^2 + 5*grid$x4 + 2*grid$x5
+  prob <-  binomial()$linkinv(pred)
+  grid$Class <- ifelse(prob <= runif(n), "Class1", "Class2")
+  grid$Class <- factor(grid$Class, levels = c("Class1","Class2"))
+  grid
+}
+
+
+gamFormula <- function(data, smoother = "s", cut = 8, y = "y")
+{
+  nzv <- nearZeroVar(data)
+  if(length(nzv) > 0) data <- data[, -nzv, drop = FALSE]
+  
+  numValues <- apply(data, 2, function(x) length(unique(x)))
+  prefix <- rep("", ncol(data))
+  prefix[numValues > cut] <- paste(smoother, "(", sep = "")
+  suffix <- rep("", ncol(data))
+  suffix[numValues > cut] <- ")"
+  rhs <- paste(prefix, names(numValues), suffix, sep = "")
+  rhs <- paste(rhs, collapse = "+")
+  form <- as.formula(paste(y, "~", rhs, sep = ""))
+  form
+}
+
 printCall <- function(x)
   {
     call <- paste(deparse(x), collapse = "\n")
-    cat("\nCall:\n", call, "\n\n", sep = "")
+#     cat("\nCall:\n", call, "\n\n", sep = "")
     ## or
 
     cat("\nCall:\n", truncateText(deparse(x, width.cutoff = 500)), "\n\n", sep = "")
@@ -246,7 +276,25 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                    subTrees <- grid[index, ".trials"] 
                    seqParam[[i]] <- data.frame(.trials = subTrees[subTrees != loop$.trials[i]])
                  }         
-             },             
+             },  
+             C5.0Cost = {
+               loop <- aggregate(grid$.trials, 
+                                 list(.model = grid$.model, 
+                                      .winnow = grid$.winnow,
+                                      .Cost = grid$.Cost), 
+                                 max)
+               loop <- decoerce(loop, grid, TRUE)                  
+               names(loop)[4] <- ".trials"
+               seqParam <- vector(mode = "list", length = nrow(loop))
+               for(i in seq(along = loop$.trials))
+               {
+                 index <- which(grid$.model == loop$.model[i] & 
+                                grid$.winnow == loop$.winnow[i]& 
+                                grid$.Cost == loop$.Cost[i])
+                 subTrees <- grid[index, ".trials"] 
+                 seqParam[[i]] <- data.frame(.trials = subTrees[subTrees != loop$.trials[i]])
+               }         
+             },              
              bstTree = 
              {
                loop <- aggregate(grid$.mstop, 
@@ -287,12 +335,29 @@ tuneScheme <- function(model, grid, useOOB = FALSE)
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
              },
-             rpart = 
+             rpart =, 
              {
                grid <- grid[order(grid$.cp, decreasing = FALSE),, drop = FALSE]
                loop <- grid[1,,drop = FALSE]
                seqParam <- list(grid[-1,,drop = FALSE])
-             },             
+             },    
+             rpartCost = {
+               grid <- grid[order(grid$.Cost, grid$.cp, decreasing = TRUE),, drop = FALSE]
+               
+               uniqueCost <- unique(grid$.Cost)
+               
+               loop <- data.frame(.Cost = uniqueCost)
+               loop$.cp <- NA
+               
+               seqParam <- vector(mode = "list", length = length(uniqueCost))
+               
+               for(i in seq(along = uniqueCost))
+               {
+                 subNK <- grid[grid$.Cost == uniqueCost[i],".cp"]
+                 loop$.cp[loop$.Cost == uniqueCost[i]] <- subNK[which.min(subNK)]
+                 seqParam[[i]] <- data.frame(.cp = subNK[-which.max(subNK)])
+               }   
+             },
              glmboost =, gamboost =
              {
                grid <- grid[order(grid$.mstop, decreasing = TRUE),, drop = FALSE]
@@ -559,6 +624,7 @@ getClassLevels <- function(x)
                                         "lssvmRadial", "lssvmPoly", "lssvmLinear",
                                         "gaussprRadial", "gaussprPoly", "gaussprLinear",
                                         "ctree", "ctree2", "cforest", "svmRadialCost",
+                                        "svmRadialWeights",
                                         "penalized", "Linda", "QdaCov")))
       
       {
@@ -566,7 +632,7 @@ getClassLevels <- function(x)
                             penalized = NULL,
                             svmradial =, svmpoly =, svmlinear =, 
                             rvmradial =, rvmpoly =, svmlinear =,
-                            svmradialcost = ,
+                            svmradialcost = , svmradialweights =,
                             lssvmradial =, lssvmpoly =,  lssvmlinear =,
                             gaussprpadial =, gaussprpoly =, gaussprlinear =
                             {
