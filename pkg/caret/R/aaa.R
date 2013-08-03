@@ -178,3 +178,4 @@ Selected <- NULL
 
 thresh <- NULL
 
+probValues <- min_prob <- NULL
