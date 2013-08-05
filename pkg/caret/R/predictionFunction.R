@@ -48,6 +48,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                    {
                                      if(modelFit$distribution$name != "multinomial")
                                        {
+                                       if(is.vector(tmp)) tmp <- matrix(tmp, ncol = 1)
                                          tmp <- apply(tmp, 2,
                                                       function(x, nm = modelFit$obsLevels) ifelse(x >= .5, nm[1], nm[2]))
                                                       
@@ -79,10 +80,19 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                            rvmRadial =, rvmPoly =, rvmLinear =,
                            lssvmRadial =, lssvmPoly =, lssvmLinear =,
                            gaussprRadial =, gaussprPoly =, gaussprLinear =,
-                           svmRadialCost =
+                           svmRadialCost =, svmRadialWeights =
                            {
                              library(kernlab)
-                             out <- try(predict(modelFit, newdata), silent = TRUE)
+                             svmPred <- function(obj, x)
+                             {
+                               hasPM <- !is.null(unlist(obj@prob.model))
+                               if(hasPM) {
+                                 pred <- lev(obj)[apply(predict(obj, x, type = "probabilities"), 
+                                                        1, which.max)]
+                               } else pred <- predict(obj, x)
+                               pred
+                             }
+                             out <- try(svmPred(modelFit, newdata), silent = TRUE)
                              if(is.character(lev(modelFit)))
                                {
                                  if(class(out)[1] != "try-error")
@@ -163,7 +173,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              
                            },
 
-                           rpart =
+                           rpart =, rpartCost =
                            {
                              library(rpart)
                              
@@ -1074,7 +1084,7 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              library(KRLS)
                              predict(modelFit, newdata)$fit[,1]
                            },
-                           C5.0 =, C5.0Tree =, C5.0Rules =
+                           C5.0 =, C5.0Tree =, C5.0Rules =, C5.0Cost =
                            {
                              library(C50)
                              out <- as.character(predict(modelFit, newdata))
@@ -1119,6 +1129,14 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                              out <- predict(modelFit, newdata)$class
                              out <- modelFit$obsLevels[as.numeric(out)]
                              out
+                           },
+                           protoclass = {
+                             library(protoclass)
+                             library(proxy)
+                             as.character(predictwithd.protoclass(modelFit, 
+                                                                  as.matrix(proxy:::dist(newdata, modelFit$training,
+                                                                                         "Minkowski", 
+                                                                                         p = modelFit$Minkowski))))
                            },
                            custom =
                            {
