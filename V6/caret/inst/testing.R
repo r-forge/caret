@@ -36,6 +36,8 @@ reg08 <- train(bbbDescr[, 1:3], logBBB, "knn", trControl = ctrl1, preProc = c("c
 set.seed(849)
 reg09 <- train(bbbDescr[, 1:3], logBBB, method = "rlm", trControl = ctrl1, preProc = c("center", "scale"))
 
+set.seed(849)
+reg10 <- train(bbbDescr[, 1:3], logBBB, method = "M5", trControl = ctrl1)
 
 
 data(mdrr)
