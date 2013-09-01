@@ -1,0 +1,19 @@
+modelInfo <- list(library = "klaR",
+                  loop = NULL,
+                  type = "Classification",
+                  parameters = data.frame(parameter = c("gamma", "lambda"),
+                                          class = rep("numeric", 2),
+                                          label = c("Gamma", "Lambda")),
+                  grid = function(x, y, len = NULL) 
+                    expand.grid(.gamma = seq(0, 1, length = len), 
+                                .lambda =  seq(0, 1, length = len)),
+                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                    rda(x, y, gamma = param$.gamma, param = tuneValue$.lambda, ...)
+                  },
+                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) {
+                    out <- as.character(predict(modelFit, newdata)$class)
+                  },
+                  prob = function(modelFit, newdata, preProc = NULL, param = NULL){
+                    predict(modelFit, newdata)$posterior
+                  },
+                  sort = function(x) x)
