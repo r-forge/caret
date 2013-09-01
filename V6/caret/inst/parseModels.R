@@ -1,4 +1,4 @@
-setwd("~/Dropbox/Max/caret/inst/models/")
+setwd("~/Code/caret/V6//caret/inst/models/")
 modelFiles <- list.files(pattern = "\\.R$")
 
 models <- vector(mode = "list", length = length(modelFiles))
