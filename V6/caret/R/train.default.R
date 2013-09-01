@@ -1,0 +1,567 @@
+"train" <-
+  function(x, ...){
+    UseMethod("train")
+  }
+
+train.default <- function(x, y, 
+                          method = "rf",
+                          preProcess = NULL,
+                          ...,
+                          weights = NULL,
+                          metric = ifelse(is.factor(y), "Accuracy", "RMSE"),
+                          maximize = ifelse(metric == "RMSE", FALSE, TRUE),
+                          trControl = trainControl(),
+                          tuneGrid = NULL,
+                          tuneLength = 3)
+{
+  startTime <- proc.time()
+  
+  load(system.file("models", "models.RData", package = "caret"))
+  if(is.list(method)) {
+    nameCheck <- names(method) %in% names(models[[1]])
+    if(!all(nameCheck)) stop(paste("some components are missing:",
+                                   paste(names(method)[!nameCheck], collapse = ", ")))
+    models <- method
+    method <- "custom"
+    
+  } else {
+    if(!(method %in% names(models))) stop(paste("Model '", method, "' is not in the ",
+                                                "set of existing models", sep = ""))
+    models <- models[[method]]
+  }
+
+  ## TODO check for packages installed then offer to load
+  
+  funcCall <- match.call(expand.dots = TRUE)
+  modelType <- if(is.factor(y)) "Classification"  else "Regression"
+  if(!(modelType %in% models$type)) stop(paste("wrong model type for", tolower(modelType)))
+ 
+  ## TODO add check method and execute here
+  
+  ## Some models that use RWeka start multiple threads and this conflicts with multicore:
+  if(any(search() == "package:doMC") && getDoParRegistered() && "RWeka" %in% models$library)
+    warning("Models using Weka will not work with parallel processing with multicore/doMC")
+  flush.console()
+  
+  ppMethods <- c("BoxCox", "YeoJohnson", "expoTrans", "center", "scale", "range", "knnImpute", "bagImpute", "pca", "ica", "spatialSign")
+  
+  if(!is.null(preProcess) && !(all(preProcess %in% ppMethods))) 
+    stop(paste('pre-processing methods are limited to:', paste(ppMethods, collapse = ", ")))
+  if(modelType == "Classification")
+    {     
+      ## We should get and save the class labels to ensure that predictions are coerced      
+      ## to factors that have the same levels as the original data. This is especially 
+      ## important with multiclass systems where one or more classes have low sample sizes
+      ## relative to the others
+      classLevels <- levels(y)
+
+      if(trControl$classProbs && any(classLevels != make.names(classLevels)))
+         {
+           warning(paste("At least one of the class levels are not valid R variables names;",
+                         "This may cause errors if class probabilities are generated because",
+                         "the variables names will be converted to:",
+                         paste(make.names(classLevels), collapse = ", ")))
+         }
+        
+      if(metric %in% c("RMSE", "Rsquared")) 
+        stop(paste("Metric", metric, "not applicable for classification models"))
+      if(trControl$classProbs)
+        {
+          if(!is.function(models$prob))
+             {
+              warning("Class probabilities were requested for a model that does not implement them")
+              trControl$classProbs <- FALSE
+             }
+        }         
+    } else {
+      if(metric %in% c("Accuracy", "Kappa")) 
+        stop(paste("Metric", metric, "not applicable for regression models"))         
+      classLevels <- NA
+      if(trControl$classProbs)
+        {
+          warning("cannnot compute class probabilities for regression")
+          trControl$classProbs <- FALSE
+        }   
+    }
+  
+  if(trControl$method == "oob" & !(method %in% c("rf", "treebag", "cforest", "bagEarth", "bagFDA")))
+    stop("for oob error rates, model bust be one of: rf, cforest, bagEarth, bagFDA or treebag")
+
+  ## If they don't exist, make the data partitions for the resampling iterations.
+  if(is.null(trControl$index)) {
+    trControl$index <- switch(tolower(trControl$method),
+                              oob = NULL,
+                              alt_cv =, cv = createFolds(y, trControl$number, returnTrain = TRUE),
+                              repeatedcv =, adaptive_cv = createMultiFolds(y, trControl$number, trControl$repeats),
+                              loocv = createFolds(y, length(y), returnTrain = TRUE),
+                              boot =, boot632 =,  adaptive_boot = createResample(y, trControl$number),
+                              test = createDataPartition(y, 1, trControl$p),
+                              lgocv = createDataPartition(y, trControl$number, trControl$p),
+                              timeslice = createTimeSlices(seq(along = y),
+                                                           initialWindow = trControl$initialWindow,
+                                                           horizon = trControl$horizon,
+                                                           fixedWindow = trControl$fixedWindow)$train)
+  }
+
+  ## Create hold--out indicies
+  if(is.null(trControl$indexOut)){
+    if(tolower(trControl$method) != "timeslice") {      
+      trControl$indexOut <- lapply(trControl$index,
+                                   function(training, allSamples) allSamples[-unique(training)],
+                                   allSamples = seq(along = y))
+    } else {
+      trControl$indexOut <- createTimeSlices(seq(along = y),
+                                             initialWindow = trControl$initialWindow,
+                                             horizon = trControl$horizon,
+                                             fixedWindow = trControl$fixedWindow)$test
+    }
+  }
+  
+  if(trControl$method != "oob" & is.null(trControl$index)) names(trControl$index) <- prettySeq(trControl$index)
+
+  ## Gather all the pre-processing info. We will need it to pass into the grid creation
+  ## code so that there is a concorance between the data used for modeling and grid creation
+  if(!is.null(preProcess))
+  {
+    ppOpt <- list(options = preProcess)
+    if(length(trControl$preProcOptions) > 0) ppOpt <- c(ppOpt,trControl$preProcOptions)
+  } else ppOpt <- NULL
+  
+  ## If no default training grid is specified, get one. We have to pass in the formula
+  ## and data for some models (rpart, pam, etc - see manual for more details)
+  if(is.null(tuneGrid))
+  {
+    for(i in seq(along = models$library)) do.call("require", list(package = models$library[i]))
+    if(!is.null(ppOpt) && length(models$parameters$parameter) > 1 && as.character(models$parameters$parameter) != "parameter")
+    {
+      pp <- list(method = ppOpt$options)
+      if("ica" %in% pp$method) pp$n.comp <- ppOpt$ICAcomp
+      if("pca" %in% pp$method) pp$thresh <- ppOpt$thresh
+      if("knnImpute" %in% pp$method) pp$k <- ppOpt$k   
+      pp$x <- x
+      ppObj <- do.call("preProcess", pp)
+      tuneGrid <- models$grid(predict(ppObj, x), y, tuneLength)
+      rm(ppObj, pp)
+    } else tuneGrid <- models$grid(x, y, tuneLength)
+  } else {
+    ## Check tuning parameter names
+    tuneNames <- as.character(models$parameters$parameter)
+    tuneNames <- paste(".", sort(tuneNames), sep = "")
+    goodNames <- all.equal(tuneNames, sort(names(tuneGrid)))
+    if(!is.logical(goodNames) || !goodNames)
+      stop(paste("The tuning parameter grid must have columns",
+                 paste(tuneNames, collapse = ", ")))
+  }
+
+  ##------------------------------------------------------------------------------------------------------------------------------------------------------#
+
+  ## For each tuning parameter combination, we will loop over them, fit models and generate predictions.
+  ## We only save the predictions at this point, not the models (and in the case of method = "oob" we 
+  ## only save the prediction summaries at this stage.
+  
+  ## trainInfo will hold the information about how we should loop to train the model and what types
+  ## of parameters are used.
+
+  ## There are two types of methods to build the models: "basic" means that each tuning parameter
+  ## combination requires it's own model fit and "seq" where a single model fit can be used to
+  ## get predictions for multiple tuning parameters.
+
+  ## The tuneScheme() function is in miscr.R and it helps define the following:
+  ##   - A data frame called "loop" with columns for parameters and a row for each model to be fit.
+  ##     For "basic" models, this is the same as the tuning grid. For "seq" models, it is only
+  ##     the subset of parameters that need to be fit
+  ##   - A list called "seqParam". If "basic", it is NULL. For "seq" models, it is a list. Each list
+  ##     item is a data frame of the parameters that need to be varied for the corresponding row of
+  ##     the loop oject.
+  ##
+  ## For example, for a gbm model, our tuning grid might be:
+  ##    .interaction.depth .n.trees .shrinkage
+  ##                     1       50        0.1
+  ##                     1      100        0.1
+  ##                     2       50        0.1
+  ##                     2      100        0.1
+  ##                     2      150        0.1
+  ##
+  ## For this example:
+  ## 
+  ##   loop:
+  ##   .interaction.depth .shrinkage .n.trees
+  ##                    1        0.1      100
+  ##                    2        0.1      150
+  ##
+  ##   seqParam:
+  ##   [[1]]
+  ##     .n.trees
+  ##           50
+  ## 
+  ##   [[2]]
+  ##     .n.trees
+  ##           50
+  ##          100
+  ## 
+  ## A simplified version of predictionFunction() would have the following gbm section:
+  ##
+  ##     # First get the predicitons with the value of n.trees as given in the current
+  ##     # row of loop
+  ##     out <- predict(modelFit,
+  ##                    newdata,
+  ##                    type = "response",
+  ##                    n.trees = modelFit$tuneValue$.n.trees)
+  ##
+  ##     # param is the current value of seqParam. In normal predction mode (i.e
+  ##     # when using predict.train), param = NULL. When called within train()
+  ##     # with this model, it will have the other values for n.trees.
+  ##     # In this case, the output of the function is a list of predictions
+  ##     # These values are deconvoluted in workerTasks() in misc.R
+  ##     if(!is.null(param))
+  ##       {
+  ##         tmp <- vector(mode = "list", length = nrow(param) + 1)
+  ##         tmp[[1]] <- out
+  ##         
+  ##         for(j in seq(along = param$.n.trees))
+  ##           {   
+  ##             tmp[[j]]  <- predict(modelFit,
+  ##                                  newdata,
+  ##                                  type = "response",
+  ##                                  n.trees = param$.n.trees[j])
+  ##           }
+  ##         out <- tmp
+  ##
+  
+  paramCols <- paste(".", as.character(models$parameters$parameter), sep = "")
+  
+  #### TODO adjust this for new structure
+#   trainInfo <- tuneScheme(method, tuneGrid, trControl$method == "oob")
+  trainInfo <- list(loop = tuneGrid)
+  trainInfo$scheme <- "basic"
+  trainInfo$seqParam <- NULL
+  trainInfo$constant <- paramCols
+  trainInfo$vary <- NULL
+  
+
+  ## Set or check the seeds when needed
+  if(is.null(trControl$seeds))
+  {
+    seeds <- vector(mode = "list", length = length(trControl$index))
+    seeds <- lapply(seeds, function(x) sample.int(n = 1000000, size = nrow(trainInfo$loop)))
+    seeds[[length(trControl$index) + 1]] <- sample.int(n = 1000000, size = 1)
+    trControl$seeds <- seeds     
+  } else {
+    if(!(length(trControl$seeds) == 1 && is.na(trControl$seeds)))
+    {
+      ## check versus number of tasks
+      numSeeds <- unlist(lapply(trControl$seeds, length))
+      badSeed <- (length(trControl$seeds) < length(trControl$index) + 1) ||
+        (any(numSeeds[-length(numSeeds)] < nrow(trainInfo$loop)))
+      if(badSeed) stop(paste("Bad seeds: the seed object should be a list of length",
+                             length(trControl$index) + 1, "with", 
+                             length(trControl$index), "integer vectors of size",
+                             nrow(trainInfo$loop), "and the last list element having a",
+                             "single integer"))      
+    }
+  }
+  
+    
+  ## run some data thru the sumamry function and see what we get  
+  if(trainInfo$scheme == "oob")
+    {
+      perfNames <- if(modelType == "Regression") c("RMSE", "Rsquared") else  c("Accuracy", "Kappa")    
+    } else {
+      ## get phoney performance to obtain the names of the outputs
+      testOutput <- data.frame(pred = sample(y, min(10, length(y))),
+                               obs = sample(y, min(10, length(y))))
+
+      if(trControl$classProbs)
+        {
+          for(i in seq(along = classLevels)) testOutput[, classLevels[i]] <- runif(nrow(testOutput))
+          testOutput[, classLevels] <- t(apply(testOutput[, classLevels], 1, function(x) x/sum(x)))
+        } else {
+          if(metric == "ROC" & !trControl$classProbs)
+            stop("train()'s use of ROC codes requires class probabilities. See the classProbs option of trainControl()")
+        }
+      
+      
+      perfNames <- names(trControl$summaryFunction(testOutput,
+                                                   classLevels,
+                                                   method))
+    }
+
+  if(!(metric %in% perfNames))
+    {
+      oldMetric <- metric
+      metric <- perfNames[1]
+      warning(paste("The metric \"",
+                    oldMetric,
+                    "\" was not in ",
+                    "the result set. ",
+                    metric,
+                    " will be used instead.",
+                    sep = ""))
+    }
+
+  if(trControl$method == "oob")
+    {
+       tmp <- oobTrainWorkflow2(dat = trainData, info = trainInfo, method = method,
+                              ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+      performance <- tmp
+    } else {
+      if(trControl$method == "LOOCV")
+        {
+          tmp <- looTrainWorkflow2(dat = trainData, info = trainInfo, method = method,
+                                  ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+          performance <- tmp$performance
+        } else {
+          tmp <- nominalTrainWorkflow2(x = x, y = y, wts = weights, 
+                                       info = trainInfo, method = models,
+                                       ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+          performance <- tmp$performance
+          resampleResults <- tmp$resample
+        }
+    }
+
+    ## TODO we used to give resampled results for LOO
+  if(!(trControl$method %in% c("LOOCV", "oob")))
+    {
+      if(modelType == "Classification" && length(grep("^\\cell", colnames(resampleResults))) > 0)
+        {
+          resampledCM <- resampleResults[, !(names(resampleResults) %in% perfNames)]
+          resampleResults <- resampleResults[, -grep("^\\cell", colnames(resampleResults))]
+          #colnames(resampledCM) <- gsub("^\\.", "", colnames(resampledCM))
+        } else resampledCM <- NULL
+    } else resampledCM <- NULL
+    
+  paramNames <- as.character(models$parameters$parameter)
+
+  if(trControl$verboseIter)
+    {
+      cat("Aggregating results\n")
+      flush.console()
+    }
+ 
+  perfCols <- names(performance)
+  perfCols <- perfCols[!(perfCols %in% paramNames)]
+
+  ## Sort the tuning parameters from least complex to most complex
+  if(!is.null(models$sort)) performance <- models$sort(performance)
+
+  if(any(is.na(performance[, metric])))
+  {
+    warning("missing values found in aggregated results")
+    print(performance)
+  }
+  
+  if(trControl$verboseIter && nrow(performance) > 1)
+    {
+    cat("Selecting tuning parameters\n")
+    flush.console()
+    }
+  
+  ## select the optimal set
+  selectClass <- class(trControl$selectionFunction)[1]
+
+  ## Select the "optimal" tuning parameter.
+  if(selectClass == "function")
+    {
+      bestIter <- trControl$selectionFunction(x = performance,
+                                              metric = metric,
+                                              maximize = maximize)
+    }
+  else {
+    if(trControl$selectionFunction == "oneSE")
+      {
+        bestIter <- oneSE(
+                          performance,
+                          metric,
+                          length(trControl$index),
+                          maximize)
+      } else {
+
+        bestIter <- do.call(
+                            trControl$selectionFunction,
+                            list(
+                                 x = performance,
+                                 metric = metric,
+                                 maximize = maximize))
+      }
+  }
+
+  if(is.na(bestIter) || length(bestIter) != 1) stop("final tuning parameters could not be determined")
+
+  ## Based on the optimality criterion, select the tuning parameter(s)
+  bestTune <- performance[bestIter, paramNames, drop = FALSE]
+
+  ## Save some or all of the resampling summary metrics
+  if(!(trControl$method %in% c("LOOCV", "oob")))
+    {
+      byResample <- switch(trControl$returnResamp,
+                           none = NULL,
+                           all =
+                           {
+                             out <- resampleResults
+                             colnames(out) <- gsub("^\\.", "", colnames(out))
+                             out
+                           },
+                           final =
+                           {
+                             out <- merge(bestTune, resampleResults)
+                             out <- out[,!(names(out) %in% names(tuneGrid)), drop = FALSE]
+                             out
+                           })                        
+    } else {
+      byResample <- NULL        
+    } 
+
+  names(bestTune) <- paste(".", names(bestTune), sep = "")   
+
+  ## Reorder rows of performance
+  orderList <- list()
+  for(i in seq(along = paramNames))
+    {
+      orderList[[i]] <- performance[,paramNames[i]]
+    }
+  names(orderList) <- paramNames
+  performance <- performance[do.call("order", orderList),]      
+
+  if(trControl$verboseIter)
+    {
+    bestText <- paste(paste(gsub("^\\.", "",
+                                 names(bestTune)), "=",
+                            format(bestTune, digits = 3)),
+                      collapse = ", ")
+    if(nrow(performance) == 1) bestText <- "final model"
+    cat("Fitting", bestText, "on full training set\n")
+    flush.console()
+    }
+    
+  ## Make the final model based on the tuning results
+
+  if(!(length(trControl$seeds) == 1 && is.na(trControl$seeds))) set.seed(trControl$seeds[[length(trControl$seeds)]][1])
+  finalTime <- system.time(
+    finalModel <- createModel2(x = x, y = y, wts = weights, 
+                               method = models, 
+                               tuneValue = bestTune, 
+                               obsLevels = classLevels,
+                               pp = ppOpt,
+                               last = TRUE,
+                               classProbs = trControl$classProbs,
+                               ...))
+
+  ## get pp info
+  pp <- finalModel$preProc
+  finalModel <- finalModel$fit
+  
+  ## Remove this and check for other places it is reference
+  ## replaced by tuneValue
+  if(method == "pls") finalModel$bestIter <- bestTune
+
+  ## To use predict.train and automatically use the optimal lambda,
+  ## we need to save it
+  if(method == "glmnet") finalModel$lambdaOpt <- bestTune$.lambda
+
+  if(trControl$returnData) { 
+    outData <- x
+    outData$.outcome <- y
+  } else outData <- NULL
+  
+  ## In the case of pam, the data will need to be saved differently
+  if(trControl$returnData & method == "pam")
+    {
+      finalModel$xData <- x
+      finalModel$yData <- y
+    }     
+
+  endTime <- proc.time()
+  times <- list(everything = endTime - startTime,
+                final = finalTime)
+
+  out <- structure(
+                   list(
+                        method = method,
+                        modelType = modelType,
+                        results = performance,
+                        pred = tmp$predictions,
+                        bestTune = bestTune,
+                        call = funcCall, 
+                        dots = list(...),
+                        metric = metric,
+                        control = trControl,
+                        finalModel = finalModel,
+                        preProcess = pp,
+                        trainingData = outData,
+                        resample = byResample,
+                        resampledCM = resampledCM,
+                        perfNames = perfNames,
+                        maximize = maximize,
+                        yLimits = if(is.numeric(y)) range(y) else NULL,
+                        times = times
+                        ), 
+                   class = "train")
+  if(trControl$timingSamps > 0)
+    {
+      pData <- lapply(x, function(x, n) sample(x, n, replace = TRUE), n = trControl$timingSamps)
+      pData <- as.data.frame(pData)
+      out$times$prediction <- system.time(predict(out, pData))
+    } else  out$times$prediction <- rep(NA, 3)
+  out
+  
+}
+
+train.formula <- function (form, data, ..., weights, subset, na.action = na.fail, contrasts = NULL) 
+{
+  m <- match.call(expand.dots = FALSE)
+  if (is.matrix(eval.parent(m$data))) m$data <- as.data.frame(data)
+  m$... <- m$contrasts <- NULL
+  m[[1]] <- as.name("model.frame")
+  m <- eval.parent(m)
+  Terms <- attr(m, "terms")
+  x <- model.matrix(Terms, m, contrasts, na.action = na.action)
+  cons <- attr(x, "contrast")
+  xint <- match("(Intercept)", colnames(x), nomatch = 0)
+  if (xint > 0)  x <- x[, -xint, drop = FALSE]
+  y <- model.response(m)
+  w <- as.vector(model.weights(m))
+  res <- train(x, y, weights = w, ...)
+  res$terms <- Terms
+  res$coefnames <- colnames(x)
+  res$call <- match.call()
+  res$na.action <- attr(m, "na.action")
+  res$contrasts <- cons
+  res$xlevels <- .getXlevels(Terms, m)
+  if(!is.null(res$trainingData))
+    {
+      res$trainingData <- data
+      isY <- names(res$trainingData) %in% as.character(form[[2]])
+      if(any(isY)) colnames(res$trainingData)[isY] <- ".outcome"
+    }
+  class(res) <- c("train", "train.formula")
+  res
+}
+
+summary.train <- function(object, ...) summary(object$finalModel, ...)
+residuals.train <- function(object, ...)
+  {
+    if(object$modelType != "Regression") stop("train() only produces redisuals on numeric outcomes")
+    resid <- residuals(object$finalModel, ...)
+    if(is.null(resid))
+      {    
+        if(!is.null(object$trainingData))
+          {
+            resid <- object$trainingData$.outcome - predict(object, object$trainingData[, names(object$trainingData) != ".outcome",drop = FALSE])
+          } else stop("The training data must be saved to produce residuals")
+      }
+    resid
+  }
+
+fitted.train <- function(object, ...)
+  {
+    prd <- fitted(object$finalModel)
+    if(is.null(prd))
+      {    
+        if(!is.null(object$trainingData))
+          {
+            prd <- predict(object, object$trainingData[, names(object$trainingData) != ".outcome",drop = FALSE])
+          } else stop("The training data must be saved to produce fitted values")
+      }
+    prd
+
+  }
