@@ -39,11 +39,20 @@ reg09 <- train(bbbDescr[, 1:3], logBBB, method = "rlm", trControl = ctrl1, prePr
 set.seed(849)
 reg10 <- train(bbbDescr[, 1:3], logBBB, method = "M5", trControl = ctrl1)
 
-set.seed(849)
-reg11 <- train(bbbDescr[, 1:3], logBBB, method = "cubist", trControl = ctrl1)
+# set.seed(849)
+# reg11 <- train(bbbDescr[, 1:3], logBBB, method = "cubist", trControl = ctrl1)
 
 set.seed(849)
 reg12 <- train(bbbDescr[, 1:3], logBBB, method = "earth", trControl = ctrl1)
+
+set.seed(849)
+reg13 <- train(bbbDescr[, 1:3], logBBB, method = "gbm", trControl = ctrl1, verbose = FALSE)
+
+set.seed(849)
+reg14 <- train(bbbDescr[, 1:3], logBBB, method = "svmPoly", trControl = ctrl1)
+
+set.seed(849)
+reg15 <- train(bbbDescr[, 1:3], logBBB, method = "svmRadial", trControl = ctrl1)
 
 
 library(caret)
@@ -88,6 +97,14 @@ class11 <- train(mdrrDescr[, 1:3], mdrrClass, "C5.0", trControl = ctrl1)
 set.seed(849)
 class12 <- train(mdrrDescr[, 1:3], mdrrClass, "earth", trControl = ctrl1)
 
+set.seed(849)
+class12 <- train(mdrrDescr[, 1:3], mdrrClass, "gbm", trControl = ctrl1, verbose = FALSE)
+
+set.seed(849)
+class13 <- train(mdrrDescr[, 1:3], mdrrClass, "svmPoly", trControl = ctrl1)
+
+set.seed(849)
+class14 <- train(mdrrDescr[, 1:3], mdrrClass, "svmRadial", trControl = ctrl1)
 
 ctrl2 <- trainControl(method = "cv", number = 3, verboseIter = TRUE, classProbs = TRUE,
                       summaryFunction = twoClassSummary)
@@ -118,3 +135,13 @@ classprob10 <- train(mdrrDescr[, 1:3], mdrrClass, "C5.0", trControl = ctrl2, pre
 
 set.seed(849)
 classprob11 <- train(mdrrDescr[, 1:3], mdrrClass, "earth", trControl = ctrl2, metric = "ROC")
+
+set.seed(849)
+classprob12 <- train(mdrrDescr[, 1:3], mdrrClass, "gbm", trControl = ctrl2, metric = "ROC", verbose = FALSE)
+
+set.seed(849)
+classprob13 <- train(mdrrDescr[, 1:3], mdrrClass, "svmPoly", trControl = ctrl2, metric = "ROC")
+
+set.seed(849)
+classprob14 <- train(mdrrDescr[, 1:3], mdrrClass, "svmRadial", trControl = ctrl2, metric = "ROC")
+
