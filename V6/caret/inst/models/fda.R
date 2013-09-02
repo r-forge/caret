@@ -15,7 +15,7 @@ modelInfo <- list(library = c("earth", "mda"),
                     data.frame(.nprune = unique(floor(seq(2, to = maxTerms, length = len))),
                                .degree = 1)
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     fda(.outcome ~ ., data = dat, method = earth, 

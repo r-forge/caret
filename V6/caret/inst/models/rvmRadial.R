@@ -9,7 +9,7 @@ modelInfo <- list(library = "kernlab",
                     sigmas <- sigest(as.matrix(x), na.action = na.omit, scaled = TRUE)   
                     data.frame(.sigma = mean(sigmas[-2]))
                     },
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
                     kernlab:::rvm(x = as.matrix(x), y = y,
                                   kernel = rbfdot,
                                   kpar = list(sigma = param$.sigma),

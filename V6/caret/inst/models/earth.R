@@ -29,7 +29,7 @@ modelInfo <- list(library = "earth",
                     }  
                     list(loop = loop, submodels = submodels)
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, ...) { 
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
                     theDots <- list(...)
                     theDots$keepxy <- TRUE 
                     

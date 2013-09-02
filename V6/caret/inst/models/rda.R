@@ -7,7 +7,7 @@ modelInfo <- list(library = "klaR",
                   grid = function(x, y, len = NULL) 
                     expand.grid(.gamma = seq(0, 1, length = len), 
                                 .lambda =  seq(0, 1, length = len)),
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
                     rda(x, y, gamma = param$.gamma, param = tuneValue$.lambda, ...)
                   },
                   predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 

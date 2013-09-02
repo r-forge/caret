@@ -7,7 +7,7 @@ modelInfo <- list(library = "RWeka",
                   grid = function(x, y, len = NULL) expand.grid(.pruned = c("Yes", "No"), 
                                                                 .smoothed = c("Yes", "No"), 
                                                                 .rules = c("Yes", "No")),
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
                     theDots <- list(...)
                     
                     if(any(names(theDots) == "control"))

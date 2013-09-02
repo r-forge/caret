@@ -29,7 +29,7 @@ modelInfo <- list(library = "randomForest",
                     }
                     data.frame(.mtry = tuneSeq)
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, ...) 
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) 
                     randomForest(x, y, mtry = param$.mtry, ...),
                   predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
                     predict(modelFit, newdata),
