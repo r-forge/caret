@@ -1,6 +1,5 @@
 probFunction2 <- function(method, modelFit, newdata, preProc = NULL, param = NULL)
 {
-  coerceChar <- function(x)  as.data.frame(lapply(x, as.character), stringsAsFactors = FALSE)
   if(!is.null(preProc)) newdata <- predict(preProc, newdata)
   
   ## TODO get a real getLevels function
@@ -9,7 +8,7 @@ probFunction2 <- function(method, modelFit, newdata, preProc = NULL, param = NUL
   classProb <- method$prob(modelFit = modelFit, 
                            newdata = newdata, 
                            preProc = preProc, 
-                           param = info$seqParam[[parm]])  
+                           submodels = info$submodels[[parm]])  
   if(!is.data.frame(classProb) & is.null(param))
   {
     classProb <- as.data.frame(classProb)
