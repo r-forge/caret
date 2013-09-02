@@ -15,7 +15,8 @@
     } else ppObj <- NULL
     modelFit <- method$fit(x = x, y = y, wts = wts, 
                            param  = tuneValue, lev = obsLevels, 
-                           last = FALSE, ...) 
+                           last = FALSE, 
+                           classProbs = classProbs, ...) 
     ## for models using S4 classes, you can't easily append data, so 
     ## exclude these and we'll use other methods to get this information
     if(!isS4(modelFit))
