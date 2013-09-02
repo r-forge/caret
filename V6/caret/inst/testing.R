@@ -15,7 +15,7 @@ set.seed(849)
 reg02 <- train(bbbDescr[, 1:3], logBBB, "rf", preProc = "center", trControl = ctrl1)
 
 set.seed(849)
-reg03 <- train(bbbDescr[, 1:3], logBBB, "lmStepAIC", trControl = ctrl1, trace = -1)
+reg03 <- train(bbbDescr[, 1:3], logBBB, "lmStepAIC", trControl = ctrl1, trace = 0)
 
 set.seed(849)
 reg04 <- train(bbbDescr[, 1:3], logBBB, "rvmRadial", trControl = ctrl1, preProc = c("center", "scale"))
@@ -54,7 +54,7 @@ set.seed(849)
 class03 <- train(mdrrDescr[, 1:3], mdrrClass, "rf", preProc = "center", trControl = ctrl1)
 
 set.seed(849)
-class04 <- train(mdrrDescr[, 1:3], mdrrClass, "glmStepAIC", trControl = ctrl1, trace = -1)
+class04 <- train(mdrrDescr[, 1:3], mdrrClass, "glmStepAIC", trControl = ctrl1, trace = 0)
 
 set.seed(849)
 class05 <- train(mdrrDescr[, 1:3], mdrrClass, "treebag", trControl = ctrl1)
