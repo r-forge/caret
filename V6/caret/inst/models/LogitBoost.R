@@ -15,7 +15,7 @@ modelInfo <- list(library = "caTools",
                                           class = 'numeric',
                                           label = '# Boosting Iterations'),
                   grid = function(x, y, len = NULL) data.frame(.nIter = 1 + ((1:len)*10)),
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
                     ## There is another package with a function called `LogitBoost`
                     ## so we call using the namespace
                     caTools::LogitBoost(as.matrix(x), y, nIter = param$.nIter)

@@ -5,7 +5,7 @@ modelInfo <- list(library = "MASS",
                                           class = NA,
                                           label = "parameter"),
                   grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     if(!is.null(wts))

@@ -14,7 +14,7 @@ modelInfo <- list(library = "class",
                     out <- subset(out, .k <= .size & .size < n)
                     out
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, ...) 
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) 
                     lvq3(x, y, lvqinit(x, y, size = param$.size, k = param$.k), ...),
                   predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
                     lvqtest(modelFit , newdata),

@@ -5,7 +5,7 @@ modelInfo <- list(library = "ipred",
                                           class = NA,
                                           label = "parameter"),
                   grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
                     theDots <- list(...)
                     if(!any(names(theDots) == "keepX")) theDots$keepX <- FALSE   
                     modelArgs <- c(list(X = x, y = y), theDots)

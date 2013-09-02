@@ -21,7 +21,7 @@ modelInfo <- list(library = "C50",
                     c5seq <- if(len == 1)  1 else  c(1, 10*((2:min(len, 11)) - 1))
                     expand.grid(.trials = c5seq, .model = c("tree", "rules"), .winnow = c(TRUE, FALSE))
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, ...) { 
+                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
                     theDots <- list(...)
                     
                     if(any(names(theDots) == "control"))
