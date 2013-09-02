@@ -55,28 +55,28 @@ The results look like:
 
 For the LogitBoost custom model object, we could use this code in the 'pred' slot:
 
-    function(modelFit, newdata, preProc = NULL, param = NULL) {
+    function(modelFit, newdata, preProc = NULL, submodels = NULL) {
         ## This model was fit with the maximum value of nIter
         out <- caTools::predict.LogitBoost(modelFit, newdata, type="class")
-        ## param contains one of the elements of 'submodels'. In this 
-        ## case, 'submodels' is a data frame with the other values of
+        
+        ## In this case, 'submodels' is a data frame with the other values of
         ## nIter. We loop over these to get the other predictions.
-        if(!is.null(param))
+        if(!is.null(submodels))
         {
           ## Save _all_ the predictions in a list
           tmp <- out
-          out <- vector(mode = "list", length = nrow(param) + 1)
+          out <- vector(mode = "list", length = nrow(submodels) + 1)
           out[[1]] <- tmp
       
-          for(j in seq(along = param$.nIter))
+          for(j in seq(along = submodels$.nIter))
           {
             out[[j+1]] <- caTools::predict.LogitBoost(modelFit,
                                                       newdata,
-                                                      nIter = param$.nIter[j])
+                                                      nIter = submodels$.nIter[j])
           }
         }
         out                   
       }
 
-After model training (i.e. predicting new samples), the value of `param` is set to `NULL` and the code produces a single set of predictions. The `prob` slot works in the same way. The only difference is that the values saved in the outgoing lists are matrices or data frames of probabilities for each class. 
+After model training (i.e. predicting new samples), the value of `submodels` is set to `NULL` and the code produces a single set of predictions. The `prob` slot works in the same way. The only difference is that the values saved in the outgoing lists are matrices or data frames of probabilities for each class. 
     
