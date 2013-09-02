@@ -1,10 +1,20 @@
 modelInfo <- list(library = "caTools",
-                  loop = NULL,
+                  loop = function(grid) {            
+                    ## Get the largest value of ncomp to fit the "full" model
+                    loop <- grid[which.max(grid$.nIter),,drop = FALSE]
+                    
+                    submodels <- grid[-which.max(grid$.nIter),,drop = FALSE]
+                    
+                    ## This needs to be excased in a list in case there are more
+                    ## than one tuning parameter
+                    submodels <- list(submodels)  
+                    list(loop = loop, submodels = submodels)
+                  },
                   type = "Classification",
                   parameters = data.frame(parameter = 'nIter',
                                           class = 'numeric',
                                           label = '# Boosting Iterations'),
-                  grid = function(x, y, len = NULL) data.frame(.nIter = (1:len)*10),
+                  grid = function(x, y, len = NULL) data.frame(.nIter = 1 + ((1:len)*10)),
                   fit = function(x, y, wts, param, lev, last, weights, ...) {
                     ## There is another package with a function called `LogitBoost`
                     ## so we call using the namespace
