@@ -29,16 +29,10 @@ modelInfo <- list(library = "randomForest",
                     }
                     data.frame(.mtry = tuneSeq)
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, ...) {
-                    randomForest(x, y, mtry = param$.mtry, ...)
-                  },
-                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) {
-                    if(modelFit$problemType == "Classification")
-                    {
-                      as.character(predict(modelFit, newdata))
-                    } else predict(modelFit, newdata)
-                  },
-                  prob = function(modelFit, newdata, preProc = NULL, param = NULL){
-                    predict(modelFit, newdata, type = "prob")
-                  },
+                  fit = function(x, y, wts, param, lev, last, weights, ...) 
+                    randomForest(x, y, mtry = param$.mtry, ...),
+                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                    predict(modelFit, newdata),
+                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL)
+                    predict(modelFit, newdata, type = "prob"),
                   sort = function(x) x)

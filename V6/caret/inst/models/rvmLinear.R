@@ -10,8 +10,7 @@ modelInfo <- list(library = "kernlab",
                                   kernel = vanilladot(),
                                   ...)
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) {
-                    predict(modelFit, newdata)
-                  },
+                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                    predict(modelFit, newdata),
                   prob = NULL,
                   sort = function(x) x)
