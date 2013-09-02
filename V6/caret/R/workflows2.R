@@ -156,16 +156,16 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
   
   ##################################
 
-  if(!is.null(info$seq))
+  if(!is.null(info$submodels))
   {
     ## merge the fixed and seq parameter values together
     allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
     
-    ## For ctree, we had to repeat the first value
-    if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
-    
-    ## For glmnet, we fit all the lambdas but x$fixed has an NA
-    if(method == "glmnet") allParam <- allParam[complete.cases(allParam),, drop = FALSE]
+#     ## For ctree, we had to repeat the first value
+#     if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
+#     
+#     ## For glmnet, we fit all the lambdas but x$fixed has an NA
+#     if(method == "glmnet") allParam <- allParam[complete.cases(allParam),, drop = FALSE]
     
     ## collate the predicitons across all the sub-models
     predicted <- lapply(predicted,

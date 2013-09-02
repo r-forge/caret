@@ -8,7 +8,7 @@ probFunction2 <- function(method, modelFit, newdata, preProc = NULL, param = NUL
   classProb <- method$prob(modelFit = modelFit, 
                            newdata = newdata, 
                            preProc = preProc, 
-                           submodels = info$submodels[[parm]])  
+                           submodels = param)  
   if(!is.data.frame(classProb) & is.null(param))
   {
     classProb <- as.data.frame(classProb)
