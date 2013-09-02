@@ -10,10 +10,8 @@ modelInfo <- list(library = "klaR",
                   fit = function(x, y, wts, param, lev, last, weights, ...) {
                     rda(x, y, gamma = param$.gamma, param = tuneValue$.lambda, ...)
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) {
-                    out <- as.character(predict(modelFit, newdata)$class)
-                  },
-                  prob = function(modelFit, newdata, preProc = NULL, param = NULL){
-                    predict(modelFit, newdata)$posterior
-                  },
+                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                    predict(modelFit, newdata)$class,
+                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL)
+                    predict(modelFit, newdata)$posterior,
                   sort = function(x) x)

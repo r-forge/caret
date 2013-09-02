@@ -27,7 +27,7 @@ modelInfo <- list(library = NULL,
                     out$call <- NULL
                     out
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) {
+                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
                     if(modelFit$problemType == "Classification")
                     {
                       probs <-  predict(modelFit, newdata, type = "response")
@@ -39,7 +39,7 @@ modelInfo <- list(library = NULL,
                     }
                     out
                   },
-                  prob = function(modelFit, newdata, preProc = NULL, param = NULL){
+                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL){
                     out <- predict(modelFit, newdata, type = "response")
                     out <- cbind(1-out, out)
                     ## glm models the second factor level, we treat the first as the

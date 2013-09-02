@@ -14,6 +14,6 @@ modelInfo <- list(library = NULL,
                     } else out <- lm(.outcome ~ ., data = dat, ...)
                     out
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) predict(modelFit, newdata),
+                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) predict(modelFit, newdata),
                   prob = NULL,
                   sort = function(x) x)

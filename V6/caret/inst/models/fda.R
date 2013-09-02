@@ -22,6 +22,8 @@ modelInfo <- list(library = c("earth", "mda"),
                         degree = param$.degree,
                         nprune = param$.nprune, ...)
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) as.character(predict(modelFit , newdata)),
-                  prob = function(modelFit, newdata, preProc = NULL, param = NULL) predict(modelFit, newdata, type= "posterior"),
+                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                    predict(modelFit , newdata),
+                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                    predict(modelFit, newdata, type= "posterior"),
                   sort = function(x) x)

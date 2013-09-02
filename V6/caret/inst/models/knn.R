@@ -13,16 +13,15 @@ modelInfo <- list(library = NULL,
                       knnreg(as.matrix(x), y, k = param$.k, ...)
                     }
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, param = NULL) {
+                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
                     if(modelFit$problemType == "Classification")
                     {
-                      out <- as.character(predict(modelFit, newdata,  type = "class"))
+                      out <- predict(modelFit, newdata,  type = "class")
                     } else {
                       out <- predict(modelFit, newdata)
                     }
                     out
                   },
-                  prob = function(modelFit, newdata, preProc = NULL, param = NULL){
-                    predict(modelFit, newdata, type = "prob")
-                  },
+                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL)
+                    predict(modelFit, newdata, type = "prob"),
                   sort = function(x) x)
