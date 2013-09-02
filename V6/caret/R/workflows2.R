@@ -69,7 +69,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
                                   modelFit = mod$fit,
                                   newdata = x[holdoutIndex,, drop = FALSE],
                                   preProc = mod$preProc,
-                                  param = info$seqParam[[parm]]),
+                                  param = info$submodels[[parm]]),
       silent = TRUE)
    
     if(class(predicted)[1] == "try-error")
@@ -93,10 +93,10 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
       } else {
         predicted <- rep(NA, nPred)
       }
-      if(!is.null(info$seqParam[[parm]]))
+      if(!is.null(info$submodels[[parm]]))
       {
         tmp <- predicted
-        predicted <- vector(mode = "list", length = nrow(info$seqParam[[parm]]) + 1)
+        predicted <- vector(mode = "list", length = nrow(info$submodels[[parm]]) + 1)
         for(i in seq(along = predicted)) predicted[[i]] <- tmp
         rm(tmp)
       }
@@ -121,10 +121,10 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
     } else {
       predicted <- rep(NA, nPred)
     }
-    if(!is.null(info$seqParam[[parm]]))
+    if(!is.null(info$submodels[[parm]]))
     {
       tmp <- predicted
-      predicted <- vector(mode = "list", length = nrow(info$seqParam[[parm]]) + 1)
+      predicted <- vector(mode = "list", length = nrow(info$submodels[[parm]]) + 1)
       for(i in seq(along = predicted)) predicted[[i]] <- tmp
       rm(tmp)
     }
@@ -139,14 +139,14 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
                                           modelFit = mod$fit,
                                           newdata = x[holdoutIndex,, drop = FALSE],
                                           preProc = mod$preProc,
-                                          param = info$seqParam[[parm]])
+                                          param = info$submodels[[parm]])
     } else {
       probValues <- as.data.frame(matrix(NA, nrow = nPred, ncol = length(lev)))
       colnames(probValues) <- lev
-      if(!is.null(info$seqParam[[parm]]))
+      if(!is.null(info$submodels[[parm]]))
       {
         tmp <- probValues
-        probValues <- vector(mode = "list", length = nrow(info$seqParam[[parm]]) + 1)
+        probValues <- vector(mode = "list", length = nrow(info$submodels[[parm]]) + 1)
         for(i in seq(along = probValues)) probValues[[i]] <- tmp
         rm(tmp)
       }
@@ -159,7 +159,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
   if(!is.null(info$seq))
   {
     ## merge the fixed and seq parameter values together
-    allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$seqParam[[parm]])
+    allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
     
     ## For ctree, we had to repeat the first value
     if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
@@ -329,7 +329,7 @@ looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FA
                                           modelFit = mod$fit,
                                           newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
                                           preProc = mod$preProc,
-                                          param = info$seqParam[[parm]],
+                                          param = info$submodels[[parm]],
                                           custom = NULL)
   
   if(testing) print(head(predicted))
@@ -339,7 +339,7 @@ looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FA
                                        modelFit = mod$fit,
                                        newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
                                        preProc = mod$preProc,
-                                       param = info$seqParam[[parm]],
+                                       param = info$submodels[[parm]],
                                        custom = NULL)
     if(testing) print(head(probValues))
   }
@@ -365,7 +365,7 @@ looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FA
       for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
     }
     predicted <- do.call("rbind", predicted)
-    allParam <- caret:::expandParameters(info$loop, info$seqParam[[parm]])
+    allParam <- caret:::expandParameters(info$loop, info$submodels[[parm]])
     predicted <- cbind(predicted, allParam)
     ## if saveDetails then save and export 'predicted'
   } else {

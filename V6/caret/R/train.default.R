@@ -170,7 +170,7 @@ train.default <- function(x, y,
   ##   - A data frame called "loop" with columns for parameters and a row for each model to be fit.
   ##     For "basic" models, this is the same as the tuning grid. For "seq" models, it is only
   ##     the subset of parameters that need to be fit
-  ##   - A list called "seqParam". If "basic", it is NULL. For "seq" models, it is a list. Each list
+  ##   - A list called "submodels". If "basic", it is NULL. For "seq" models, it is a list. Each list
   ##     item is a data frame of the parameters that need to be varied for the corresponding row of
   ##     the loop oject.
   ##
@@ -189,7 +189,7 @@ train.default <- function(x, y,
   ##                    1        0.1      100
   ##                    2        0.1      150
   ##
-  ##   seqParam:
+  ##   submodels:
   ##   [[1]]
   ##     .n.trees
   ##           50
@@ -208,7 +208,7 @@ train.default <- function(x, y,
   ##                    type = "response",
   ##                    n.trees = modelFit$tuneValue$.n.trees)
   ##
-  ##     # param is the current value of seqParam. In normal predction mode (i.e
+  ##     # param is the current value of submodels. In normal predction mode (i.e
   ##     # when using predict.train), param = NULL. When called within train()
   ##     # with this model, it will have the other values for n.trees.
   ##     # In this case, the output of the function is a list of predictions
@@ -234,7 +234,7 @@ train.default <- function(x, y,
 #   trainInfo <- tuneScheme(method, tuneGrid, trControl$method == "oob")
   trainInfo <- list(loop = tuneGrid)
   trainInfo$scheme <- "basic"
-  trainInfo$seqParam <- NULL
+  trainInfo$submodels <- NULL
   trainInfo$constant <- paramCols
   trainInfo$vary <- NULL
   

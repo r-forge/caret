@@ -1,3 +1,5 @@
+coerceChar <- function(x)  as.data.frame(lapply(x, as.character), stringsAsFactors = FALSE)
+
 checkData <- function(y, x = NULL, check = c("2class", "zv", "zvPerClass"))
 {
   if("2class" %in% check)

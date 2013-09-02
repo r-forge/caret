@@ -1,11 +1,12 @@
 predictionFunction2 <- function(method, modelFit, newdata, preProc = NULL, param = NULL)
 {
-  coerceChar <- function(x)  as.data.frame(lapply(x, as.character), stringsAsFactors = FALSE)
   if(!is.null(preProc)) newdata <- predict(preProc, newdata)
-  method$predict(modelFit = modelFit, 
-                 newdata = newdata, 
-                 preProc = preProc, 
-                 param = info$seqParam[[parm]])
+  out <- method$predict(modelFit = modelFit, 
+                        newdata = newdata, 
+                        preProc = preProc, 
+                        submodels = info$submodels[[parm]])
+  ## TODO convert to character with classification
+  out 
 }
 
 predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL, custom = NULL)
