@@ -4,11 +4,11 @@ For example, a LogitBoost model can be trained over the number of boosting itera
 
     mod <- LogitBoost(as.matrix(x), y, nIter = 50)
     
-If we were to tune the model evaluating models where the number of iterations was 10, 20, 30, 40 and 50, the grid could be
+If we were to tune the model evaluating models where the number of iterations [1] was 10, 20, 30, 40 and 50, the grid could be
 
     lbGrid <- data.frame(.nIter = (1:5)*10)    
     
-During resampling, `train` could loop over all five rows in `lbGrid` and fit five models. However, the `predict.LogitBoost` function has an argument called `nIter` that can produce, in this case, predictions from `mod` for all five models. 
+ During resampling, `train` could loop over all five rows in `lbGrid` and fit five models. However, the `predict.LogitBoost` function has an argument called `nIter` that can produce, in this case, predictions from `mod` for all five models. 
 
 Instead of `train` fitting five models, we could fit a single model with `nIter = 50` and derive predictions for all five models using only `mod`. 
 
@@ -80,3 +80,54 @@ For the LogitBoost custom model object, we could use this code in the 'pred' slo
 
 After model training (i.e. predicting new samples), the value of `submodels` is set to `NULL` and the code produces a single set of predictions. The `prob` slot works in the same way. The only difference is that the values saved in the outgoing lists are matrices or data frames of probabilities for each class. 
     
+Another model with a sequential tuning parameter is cubist. One parameter, the number of committees, is fixed. The other tuning parameters is the number of nearest neighbors and this is only required when `predict.cubist` is used.
+
+Suppose we have this tuning grid:
+
+    grid <- expand.grid(.neighbors = c(0, 5, 9),
+                        .committees = c(1, 10, 20))
+
+For very value of `committees` we only need to fit the model with the largest number of nieghbors (9).
+
+Just for illustration, we will remove one so that we don't have the full grid of parameters:
+
+    grid <- grid[-1,]
+
+The loop should be a data frame with the unique values of committees and the largest number of neighbors and the corresponding number of committees. We can start with this:
+
+    coms <- unique(grid$.committees)        ## c(1, 10, 20)
+    loop <- data.frame(.committees = coms)
+                    
+    ## Create an empty slot for later
+    loop$.neighbors <- NA
+    
+For each value of committees, find the largest  value of `neighbors` and assign it to a row of `loop`.  For the current value of `committees`, assign the other values of `neighbors` to a data frame and add it to `submodels`.
+
+    for(i in seq(along = coms))
+    {
+      nn <- grid[grid$.committees == coms[i],".neighbors"]
+      loop$.neighbors[loop$.committees == coms[i]] <- nn[which.max(nn)]
+      submodels[[i]] <- data.frame(.neighbors = nn[-which.max(nn)])
+    }
+
+In the end, we get:
+
+    > loop      .committees .neighbors    1           1          9    2          10          9    3          20          9
+                 
+and 
+
+    > submodels    [[1]]      .neighbors    1          5    [[2]]      .neighbors    1          0    2          5    [[3]]      .neighbors    1          0    2          5
+                 
+As a result, the `fit` part of the model object will fit:
+
+    mod <- cubist(x, y, committees = 1)
+
+When the `pred` code is invoked, we initial get predictions for `neighbors = 9` then loop over `submodels[[1]]` to get ther rest. On the first iteration, `submodels[[1]]` has a single value of `neighbors` but subsequent iterations with have more than one. 
+
+The `pred` code looks like this:
+
+
+    
+Footnotes:
+
+[1] In practice, we would want nIter to be an odd number to avoid ties in the predictions when there are two classes    
