@@ -230,13 +230,19 @@ train.default <- function(x, y,
   
   paramCols <- paste(".", as.character(models$parameters$parameter), sep = "")
   
+  if(is.function(models$loop)){
+    trainInfo <- models$loop(tuneGrid)
+    if(!all(c("loop", "submodels") %in% names(trainInfo))) 
+      stop("The 'loop' function should produce a list with elements 'loop' and 'submodels'")
+  } else trainInfo <- list(loop = tuneGrid)
+    
   #### TODO adjust this for new structure
 #   trainInfo <- tuneScheme(method, tuneGrid, trControl$method == "oob")
-  trainInfo <- list(loop = tuneGrid)
-  trainInfo$scheme <- "basic"
-  trainInfo$submodels <- NULL
-  trainInfo$constant <- paramCols
-  trainInfo$vary <- NULL
+#   trainInfo <- list(loop = tuneGrid)
+#   trainInfo$scheme <- "basic"
+#   trainInfo$submodels <- NULL
+#   trainInfo$constant <- paramCols
+#   trainInfo$vary <- NULL
   
 
   ## Set or check the seeds when needed
@@ -263,7 +269,7 @@ train.default <- function(x, y,
   
     
   ## run some data thru the sumamry function and see what we get  
-  if(trainInfo$scheme == "oob")
+  if(trControl$method == "oob")
     {
       perfNames <- if(modelType == "Regression") c("RMSE", "Rsquared") else  c("Accuracy", "Kappa")    
     } else {
