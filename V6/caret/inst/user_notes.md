@@ -1,3 +1,163 @@
+Creating Your Own Model in train
+========
+
+You can pass a list of information to the `method` argument in` train`. For models that are built-in to the package, you can just pass the method name as before. 
+
+There are some basic components of the list for custom models. A breif description is below for each then, after setting up and example, each will be described in detail. The list should have hte following elments:
+
+* `library` is a character vector of package names that will be needed to fit the model or calculate predictions. `NULL` can also be used. 
+* `type` is a simple character vector with values `"Classification"`, `"Regression"` or both. 
+* `parameters` is a data frame with three simple attributes for each tuning parameter (if any): the argument name (e.g. `mtry`), the type of data in the parameter grid and textual labels for hte parameter.
+* `grid` is a function that is used to create the tuning grid (unless the user gives the exact values of the parameters via `tuneGrid`)
+* `fit` is a function that fits the model
+* `predict` is the funciton that creates predicitons
+* `prob` is a function that can be used to create class probabilities (if applicable)
+* `sort` is a function that sorts the parameter form most complex to least
+* `loop` is funciton for advanced users for models that can create multiple submodel predicitons form the same object.
+
+In the `caret` package, the subdirectory `models` has all the code for each model that `train` interfaces with and these can be used as prototypes for your model. 
+
+Let's create a new model for a classification support vector machine using the Laplacian kernel function. We will use hte `kernlab` package's `ksvm` function. The kernel has two parameters: the standard cost parameter for SVMs and one kernel parameter (`sigma`).
+
+
+To start, we'll create a new list:
+
+    lpSVM <- list(type = "Classification",
+                  library = "kernlab")
+    
+This model can also be used for regression but we will constrain things here for simplicity. For other SVM models, the type value would be `c("Classificaiton", "Regression")`. 
+
+The `library` value checks to see if this package is installed and loads it whenever it is needed (e.g. before modeling or prediction).
+
+The parameters Element
+----------------------
+
+We have to create some basic information for the parameters in the form of a data frame. The first column is the name of the parameter. Teh convention is to use the argument name in the model function (e.g. the `ksvm` function here). Those values are `C` and `sigma`. Each is a number and we can give them labels of "Cost" and "Sigma", respectively. The `parameters` element would then be:
+
+    prm <- data.frame(parameter = c("C", "sigma"),
+                      class = rep("numeric", 2),
+                      label = c("Cost", "Sigma"))
+                      
+Now we assign it to the model list:
+
+   lpSVM$parameter <- prm
+    
+Values of `type` can indicate numeric, character or logical data types. 
+
+The grid Element
+----------------
+
+This should be a function that takes parameters: `x` and `y` (for the predictors and outcome data) as well as `len`. The latter is the value of `tuneLength` that is potentially passed in through `train`. 
+
+The output should be a data frame of tuning parameter combinations with a column for each parameter. The column names should be the parameter name (e.g. the values of `prm$parameter`) preceeded by a dot. In our case, let's vary the cost parameter on the log 2 scale. For the sigma parmeter, we can use the `kernlab` function `sigest` to pre-estimate the value. Following `ksvm` we take the average of the low and high estimtes. Here is a function we could use:
+
+    svmGrid <- function(x, y, len = NULL) {
+      library(kernlab)
+      ## This produces low, middle and high values for sigma 
+      ## (i.e. a vector with 3 elements). 
+      sigmas <- sigest(as.matrix(x), na.action = na.omit, scaled = TRUE)  
+      expand.grid(.sigma = mean(sigmas[-2]),
+                  .C = 2 ^((1:len) - 3))
+    }
+
+Again, the user can pass their own grid via `train`'s `tuneGrid` option or they can use this code to create a default grid. 
+
+We assign this function to the overall model list:
+
+    lpSVM$grid <- svmGrid
+   
+The fit Element
+----------------
+
+Here is where we fit the model. This `fit` funciton has several arguments:
+
+* `x`, `y`: the current data used to fit the model
+* `wts`: optional instance weights (not applicable for this particular model)
+* `param`: the current tuning parameter values
+* `lev`: the class levels of the outcome (or `NULL` in regression)
+* `last`: a logical for whether the current fit is the final fit
+* `weights`
+* `classProbs`: a lgical for whether class probabilities should be computed.
+
+Here is something we could use for this model:
+
+    svmFit <- function(x, y, wts, param, lev, last, 
+                       weights, classProbs, ...) { 
+      ksvm(x = as.matrix(x), y = y,
+           kernel = rbfdot,
+           kpar = list(sigma = param$.sigma),
+           C = param$.C,
+           prob.model = classProbs,
+           ...)
+     }
+     
+     lpSVM$fit <- svmFit
+
+A few notes about this:
+
+* Notice that the package is not loaded in the code. It is loaded prior to this function being called so it won't hurt if you laod it again (but that's not needed).
+* The `ksvm` function requires a _matrix_ or predictors. If the original data were a data frame, this would throw and error. 
+* The tuning parameters are references in the `param` data frame. There is always a single row in this data frame. 
+* The probability model is fit based on the value of `classProbs`. This value is determined by the value given in `trainControl`. 
+* The three dots allow the user to pass options in from `train` to, in this case, the `ksvm` function. For example, if the user wanted to set the chace size for the function, they could list `cache = 80` and this argument will be pass from `train` to `ksvm`.  
+* Any pre-processing that was requested in the call to `train` have been done. For example, if `preProc = "center"` was orignally requested, the columns of `x` seen within this function are mean centered. 
+
+The pred Element
+----------------
+
+This is a function that produces a vector or predicitons. In our case, these are class predictions but they could be numbers for regression models. 
+
+The arguments are:
+
+* `modelFit`: the model produced by the `fit` code shown above. 
+* `newdata`: the predictor values of the instances being predicted (e.g. out-of-bag samples)
+* `preProc` 
+* `submodels`: this an optionl list of tuning parameters only used with the `loop` element discussed below. In most cases, it will be `NULL`.
+
+Our function will be very simple:
+
+    svmPred <- function(modelFit, newdata, preProc = NULL, 
+                        submodels = NULL)
+       predict(modelFit, newdata)
+    lpSVM$pred <- svmPred
+
+The funciton `predict.ksvm` will automatically create a factor vector as output. The funcitn could also produce character values. Either way, the innards of `train` will make them factors and ensure that the same levels as the original data are used. 
+
+The prob Element
+----------------
+
+If a regresisn model is being used or if the classificaiotn model does not create class probabilties a value of `NULL` can be used here instead of a function. Otherwise, the function arguments are the same as the  `pred` function. The output should be a matrix or data frame of class probabilties with a column for each class. The column names should be the class levels. 
+
+We can use:
+
+    svmProb <- function(modelFit, newdata, preProc = NULL, 
+                        submodels = NULL)
+       predict(modelFit, newdata, type="probabilities")
+    lpSVM$prob <- svmProb
+
+If you look at some of the SVM examples in the `models` directory, the real functions used by `train` are much more complicated so that they can deal with model failures, probabilities that do not sum to 1 etc.
+
+The sort Element
+----------------
+
+This is an optional function that sorts the tuning parameters from the simplest model to the most complex. There are times where this ordering is not obvious. This information is used when the performance values are tied across multiple parameters. We would probabily want to choose the least complex model in those cases. 
+
+Here, we will sort by the cost value. Smaller values of `C` produce smoother class boundaries than larger values:
+
+
+    svmSort <- function(x) x[order(x$C))])
+    lpSVM$sort <- svmSort
+
+
+An Illustration
+---------------
+
+We should now be ready to fit our model. 
+
+
+The loop Element
+----------------
+
 This function can be used to create custom loops for models to tune over. In most cases, the function can just return the existing tuning grid.
 
 For example, a LogitBoost model can be trained over the number of boosting iterations. In the `caTools` package, the `LogitBoost` function can be used to fit this model. For example:
