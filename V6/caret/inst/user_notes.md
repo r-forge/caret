@@ -40,7 +40,7 @@ We have to create some basic information for the parameters in the form of a dat
                       
 Now we assign it to the model list:
 
-   lpSVM$parameter <- prm
+   lpSVM$parameters <- prm
     
 Values of `type` can indicate numeric, character or logical data types. 
 
@@ -102,7 +102,7 @@ A few notes about this:
 * The three dots allow the user to pass options in from `train` to, in this case, the `ksvm` function. For example, if the user wanted to set the chace size for the function, they could list `cache = 80` and this argument will be pass from `train` to `ksvm`.  
 * Any pre-processing that was requested in the call to `train` have been done. For example, if `preProc = "center"` was orignally requested, the columns of `x` seen within this function are mean centered. 
 
-The pred Element
+The predict Element
 ----------------
 
 This is a function that produces a vector or predicitons. In our case, these are class predictions but they could be numbers for regression models. 
@@ -119,7 +119,7 @@ Our function will be very simple:
     svmPred <- function(modelFit, newdata, preProc = NULL, 
                         submodels = NULL)
        predict(modelFit, newdata)
-    lpSVM$pred <- svmPred
+    lpSVM$predict <- svmPred
 
 The funciton `predict.ksvm` will automatically create a factor vector as output. The funcitn could also produce character values. Either way, the innards of `train` will make them factors and ensure that the same levels as the original data are used. 
 
@@ -145,7 +145,7 @@ This is an optional function that sorts the tuning parameters from the simplest 
 Here, we will sort by the cost value. Smaller values of `C` produce smoother class boundaries than larger values:
 
 
-    svmSort <- function(x) x[order(x$C))])
+    svmSort <- function(x) x[order(x$C),]
     lpSVM$sort <- svmSort
 
 
@@ -153,6 +153,27 @@ An Illustration
 ---------------
 
 We should now be ready to fit our model. 
+
+    library(mlbench)
+    data(Sonar)
+  
+    library(caret)
+    set.seed(998)
+    inTraining <- createDataPartition(Sonar$Class, p = .75, list = FALSE)
+    training <- Sonar[ inTraining,]
+    testing  <- Sonar[-inTraining,]
+  
+    fitControl <- trainControl(method = "repeatedcv",
+                               number = 10,
+                               ## repeated ten times
+                               repeats = 10)
+  
+    set.seed(825)
+    Laplacian <- train(Class ~ ., data = training, 
+                       method = lpSVM, 
+                       preProc = c("center", "scale"),
+                       tuneLength = 8,
+                       trControl = fitControl)
 
 
 The loop Element
