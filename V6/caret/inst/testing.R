@@ -54,6 +54,9 @@ reg14 <- train(bbbDescr[, 1:3], logBBB, method = "svmPoly", trControl = ctrl1)
 set.seed(849)
 reg15 <- train(bbbDescr[, 1:3], logBBB, method = "svmRadial", trControl = ctrl1)
 
+set.seed(849)
+reg16 <- train(bbbDescr[, 1:3], logBBB, method = "svmLinear", trControl = ctrl1)
+
 
 library(caret)
 
@@ -106,6 +109,9 @@ class13 <- train(mdrrDescr[, 1:3], mdrrClass, "svmPoly", trControl = ctrl1)
 set.seed(849)
 class14 <- train(mdrrDescr[, 1:3], mdrrClass, "svmRadial", trControl = ctrl1)
 
+set.seed(849)
+class15 <- train(mdrrDescr[, 1:3], mdrrClass, "svmLinear", trControl = ctrl1)
+
 ctrl2 <- trainControl(method = "cv", number = 3, verboseIter = TRUE, classProbs = TRUE,
                       summaryFunction = twoClassSummary)
 
@@ -144,4 +150,7 @@ classprob13 <- train(mdrrDescr[, 1:3], mdrrClass, "svmPoly", trControl = ctrl2, 
 
 set.seed(849)
 classprob14 <- train(mdrrDescr[, 1:3], mdrrClass, "svmRadial", trControl = ctrl2, metric = "ROC")
+
+set.seed(849)
+classprob15 <- train(mdrrDescr[, 1:3], mdrrClass, "svmLinear", trControl = ctrl2, metric = "ROC")
 

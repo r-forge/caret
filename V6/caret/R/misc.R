@@ -640,33 +640,27 @@ twoClassSummary <- function (data, lev = NULL, model = NULL)
 ## make this object oriented
 getClassLevels <- function(x) 
   {
-    if(tolower(x$method) %in% tolower(c("svmRadial", "svmPoly", "svmLinear",
-                                        "rvmRadial", "rvmPoly", "rvmLinear",
-                                        "lssvmRadial", "lssvmPoly", "lssvmLinear",
-                                        "gaussprRadial", "gaussprPoly", "gaussprLinear",
-                                        "ctree", "ctree2", "cforest", "svmRadialCost",
-                                        "svmRadialWeights",
-                                        "penalized", "Linda", "QdaCov")))
+  if(class(x$finalModel)[1] %in% c("penalized", "ksvm", "lssvm",
+                                   "gausspr", "QdaCov", "LdaClassic",
+                                   "BinaryTree", "RandomForest"))
       
       {
-        obsLevels <- switch(tolower(x$method),
+        obsLevels <- switch(class(x$finalModel)[1],
                             penalized = NULL,
-                            svmradial =, svmpoly =, svmlinear =, 
-                            rvmradial =, rvmpoly =, svmlinear =,
-                            svmradialcost = , svmradialweights =,
-                            lssvmradial =, lssvmpoly =,  lssvmlinear =,
-                            gaussprpadial =, gaussprpoly =, gaussprlinear =
+                            ksvm =,
+                            lssvm =,
+                            gausspr =
                             {
                               library(kernlab)
                               lev(x$finalModel)
                             },
 
-                            linda =, qdacov = 
+                            QdaCov =, LdaClassic = 
                             {
                               names(x$finalModel@prior)
                             },
                             
-                            ctree =, ctree2 =, cforest =
+                            BinaryTree =, RandomForest =
                             {
                               library(party)
                               levels(x$finalModel@data@get("response")[,1])

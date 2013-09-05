@@ -465,7 +465,7 @@ train.default <- function(x, y,
   if(method == "glmnet") finalModel$lambdaOpt <- bestTune$.lambda
 
   if(trControl$returnData) { 
-    outData <- x
+    outData <- if(!is.data.frame(x)) as.data.frame(x) else x
     outData$.outcome <- y
   } else outData <- NULL
   
