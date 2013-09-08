@@ -57,6 +57,38 @@ reg15 <- train(bbbDescr[, 1:3], logBBB, method = "svmRadial", trControl = ctrl1)
 set.seed(849)
 reg16 <- train(bbbDescr[, 1:3], logBBB, method = "svmLinear", trControl = ctrl1)
 
+set.seed(849)
+reg17 <- train(bbbDescr[, 1:4], logBBB, method = "pcr", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg18 <- train(bbbDescr[, 1:4], logBBB, method = "pls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg19 <- train(bbbDescr[, 1:4], logBBB, method = "simpls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg20 <- train(bbbDescr[, 1:4], logBBB, method = "kernelpls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg21 <- train(bbbDescr[, 1:4], logBBB, method = "widekernelpls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg22 <- train(bbbDescr[, 1:50], logBBB, method = "leapForward", trControl = ctrl1, tuneLength = 45)
+
+set.seed(849)
+reg23 <- train(bbbDescr[, 1:50], logBBB, method = "leapBackward", trControl = ctrl1, tuneLength = 45)
+
+set.seed(849)
+reg24 <- train(bbbDescr[, 1:50], logBBB, method = "leapSeq", trControl = ctrl1, tuneLength = 45)
+
+set.seed(849)
+reg25 <- train(bbbDescr[, 4:8], logBBB, method = "bstTree", trControl = ctrl1)
+
+set.seed(849)
+reg26 <- train(bbbDescr[, 4:8], logBBB, method = "bstLs", trControl = ctrl1)
+
+set.seed(849)
+reg27 <- train(bbbDescr[, 4:8], logBBB, method = "bstSm", trControl = ctrl1)
 
 library(caret)
 
@@ -112,6 +144,28 @@ class14 <- train(mdrrDescr[, 1:3], mdrrClass, "svmRadial", trControl = ctrl1)
 set.seed(849)
 class15 <- train(mdrrDescr[, 1:3], mdrrClass, "svmLinear", trControl = ctrl1)
 
+set.seed(849)
+class16 <- train(mdrrDescr[, 1:3], mdrrClass, "pls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+class17 <- train(mdrrDescr[, 1:3], mdrrClass, "simpls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+class18 <- train(mdrrDescr[, 1:3], mdrrClass, "kernelpls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+class19 <- train(mdrrDescr[, 1:3], mdrrClass, "widekernelpls", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+class20 <- train(mdrrDescr[, 1:3], mdrrClass, "bstTree", trControl = ctrl1)
+
+set.seed(849)
+class21 <- train(mdrrDescr[, 1:3], mdrrClass, "bstLs", trControl = ctrl1)
+
+set.seed(849)
+class22 <- train(mdrrDescr[, 1:3], mdrrClass, "bstSm", trControl = ctrl1)
+
+
 ctrl2 <- trainControl(method = "cv", number = 3, verboseIter = TRUE, classProbs = TRUE,
                       summaryFunction = twoClassSummary)
 
@@ -153,4 +207,16 @@ classprob14 <- train(mdrrDescr[, 1:3], mdrrClass, "svmRadial", trControl = ctrl2
 
 set.seed(849)
 classprob15 <- train(mdrrDescr[, 1:3], mdrrClass, "svmLinear", trControl = ctrl2, metric = "ROC")
+
+set.seed(849)
+classprob16 <- train(mdrrDescr[, 1:10], mdrrClass, "pls", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
+
+set.seed(849)
+classprob17 <- train(mdrrDescr[, 1:10], mdrrClass, "simpls", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
+
+set.seed(849)
+classprob18 <- train(mdrrDescr[, 1:10], mdrrClass, "kernelpls", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
+
+set.seed(849)
+classprob19 <- train(mdrrDescr[, 1:10], mdrrClass, "widekernelpls", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
 
