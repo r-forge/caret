@@ -17,6 +17,14 @@
     theme1$plot.line$lwd <- 2
     theme1$plot.line$lty = 1
 
+    i <- 1
+
+    hook_inline = knit_hooks$get('inline')
+    knit_hooks$set(inline = function(x) {
+      if (is.character(x)) highr::hi_html(x) else hook_inline(x)
+      })
+    opts_chunk$set(comment=NA, digits = 3)
+
     library(ellipse)
     library(mlbench)
     data(Sonar)
@@ -74,46 +82,46 @@ Released   : 20120902
 <div id="page">
   <div id="content">
 <p> 
-You can pass a list of information to the <span class="hl kwc">method</span> argument in <span class="hl kwd">train</span>. For models that are built-in to the package, you can just pass the method name as before. 
+You can pass a list of information to the <span class="mx arg">method</span> argument in <span class="mx funCall">train</span>. For models that are built-in to the package, you can just pass the method name as before. 
 </p>
 <p> 
 There are some basic components of the list for custom models. A brief description is below for each then, after setting up and example, each will be described in detail. The list should have the following elements:
 </p>
 <ul>
   <li>
-  <span class="hl kwc">library</span> is a character vector of package names that will be needed to fit the model or calculate predictions. <tt>NULL</tt> can also be used.
+  <span class="mx arg">library</span> is a character vector of package names that will be needed to fit the model or calculate predictions. <tt><!--rinline 'NULL' --></tt> can also be used.
   </li>
   <li>
-  <span class="hl kwc">type</span> is a simple character vector with values <tt><span class="string">"Classification"</span></tt>, <tt><span class="string">"Regression"</span></tt> or both. 
+  <span class="mx arg">type</span> is a simple character vector with values <tt><!--rinline '"Classification"'  --></tt>, <tt><!--rinline '"Regression"'  --></tt> or both. 
   </li>
   <li>
-  <span class="hl kwc">parameters</span> is a data frame with three simple attributes for each tuning parameter (if any): the argument name (e.g. <span class="hl kwc">mtry</span>), the type of data in the parameter grid and textual labels for the parameter.
+  <span class="mx arg">parameters</span> is a data frame with three simple attributes for each tuning parameter (if any): the argument name (e.g. <span class="mx arg">mtry</span>), the type of data in the parameter grid and textual labels for the parameter.
   </li>
   <li>
-  <span class="hl kwc">grid</span> is a function that is used to create the tuning grid (unless the user gives the exact values of the parameters via <span class="hl kwc">tuneGrid</span>)
+  <span class="mx arg">grid</span> is a function that is used to create the tuning grid (unless the user gives the exact values of the parameters via <span class="mx funCall">tuneGrid</span>)
   </li>
   <li>
-  <span class="hl kwc">fit</span> is a function that fits the model
+  <span class="mx arg">fit</span> is a function that fits the model
   </li>
   <li>
-  <span class="hl kwc">predict</span> is the function that creates predictions
+  <span class="mx arg">predict</span> is the function that creates predictions
   </li>
   <li>
-  <span class="hl kwc">prob</span> is a function that can be used to create class probabilities (if applicable)
+  <span class="mx arg">prob</span> is a function that can be used to create class probabilities (if applicable)
   </li>
   <li>
-  <span class="hl kwc">sort</span> is a function that sorts the parameter form most complex to least
+  <span class="mx arg">sort</span> is a function that sorts the parameter form most complex to least
   </li>
   <li>
-  <span class="hl kwc">loop</span> is function for advanced users for models that can create multiple submodel predictions form the same object.
+  <span class="mx arg">loop</span> is function for advanced users for models that can create multiple submodel predictions form the same object.
   </li>
  </ul> 
  
 <p>
- In the <span class="hl kwd">caret</span> package, the subdirectory <span class="hl kwc">models</span> has all the code for each model that <span class="hl kwd">train</span> interfaces with and these can be used as prototypes for your model. 
+ In the <span class="mx funCall">caret</span> package, the subdirectory <tt>models</tt> has all the code for each model that <span class="mx funCall">train</span> interfaces with and these can be used as prototypes for your model. 
 </p>
 <p>
-Let's create a new model for a classification support vector machine using the Laplacian kernel function. We will use the <span class="hl kwd">kernlab</span> package's <span class="hl kwd">ksvm</span> function. The kernel has two parameters: the standard cost parameter for SVMs and one kernel parameter (<tt>sigma</tt>).
+Let's create a new model for a classification support vector machine using the Laplacian kernel function. We will use the <span class="mx funCall">kernlab</span> package's <span class="mx funCall">ksvm</span> function. The kernel has two parameters: the standard cost parameter for SVMs and one kernel parameter (<tt>sigma</tt>).
 </p>
 <p>
 To start, we'll create a new list:
@@ -123,16 +131,16 @@ To start, we'll create a new list:
                   library = "kernlab") 
     end.rcode--> 
 <p>
-This model can also be used for regression but we will constrain things here for simplicity. For other SVM models, the type value would be <tt>c(<span class="string">"Classification"</span>, <span class="string">"Regression"</span>)</tt>. 
+This model can also be used for regression but we will constrain things here for simplicity. For other SVM models, the type value would be <tt><!--rinline 'c("Classification", "Regression")'  --></tt>. 
 </p>
 <p>
-The <span class="hl kwc">library</span> value checks to see if this package is installed and loads it whenever it is needed (e.g. before modeling or prediction).
+The <span class="mx arg">library</span> value checks to see if this package is installed and loads it whenever it is needed (e.g. before modeling or prediction).
 </p>
 
 <h2>The parameters Element</h2>
 
 <p>
-We have to create some basic information for the parameters in the form of a data frame. The first column is the name of the parameter. The convention is to use the argument name in the model function (e.g. the <span class="hl kwd">ksvm</span> function here). Those values are <tt>C</tt> and <tt>sigma</tt>. Each is a number and we can give them labels of <tt><span class="string">"Cost"</span></tt> and <tt><span class="string">"Sigma"</span></tt>, respectively. The <span class="hl kwc">parameters</span> element would then be:
+We have to create some basic information for the parameters in the form of a data frame. The first column is the name of the parameter. The convention is to use the argument name in the model function (e.g. the <span class="mx funCall">ksvm</span> function here). Those values are <tt>C</tt> and <tt>sigma</tt>. Each is a number and we can give them labels of <tt><span class="string">"Cost"</span></tt> and <tt><span class="string">"Sigma"</span></tt>, respectively. The <span class="mx arg">parameters</span> element would then be:
 </p>
 <!--begin.rcode tidy=FALSE
 prm <- data.frame(parameter = c("C", "sigma"),
@@ -146,15 +154,15 @@ Now we assign it to the model list:
     lpSVM$parameters <- prm
     end.rcode--> 
 <p>    
-Values of <span class="hl kwc">type</span> can indicate numeric, character or logical data types. 
+Values of <span class="mx arg">type</span> can indicate numeric, character or logical data types. 
 </p>
 
 <h2>The grid Element</h2>
 <p> 
-This should be a function that takes parameters: <span class="hl kwc">x</span> and <span class="hl kwc">y</span> (for the predictors and outcome data) as well as <span class="hl kwc">len</span>. The latter is the value of <span class="hl kwc">tuneLength</span> that is potentially passed in through <span class="hl kwd">train<span>. 
+This should be a function that takes parameters: <span class="mx arg">x</span> and <span class="mx arg">y</span> (for the predictors and outcome data) as well as <span class="mx arg">len</span>. The latter is the value of <span class="mx arg">tuneLength</span> that is potentially passed in through <span class="mx funCall">train<span>. 
 </p> 
 <p> 
-The output should be a data frame of tuning parameter combinations with a column for each parameter. The column names should be the parameter name (e.g. the values of <tt>prm$parameter</tt>) preceded by a dot. In our case, let's vary the cost parameter on the log 2 scale. For the sigma parameter, we can use the <tt>kernlab</tt> function <span class="hl kwd">sigest</span> to pre-estimate the value. Following <span class="hl kwd">ksvm</span> we take the average of the low and high estimates. Here is a function we could use:
+The output should be a data frame of tuning parameter combinations with a column for each parameter. The column names should be the parameter name (e.g. the values of <tt>prm$parameter</tt>) preceded by a dot. In our case, let's vary the cost parameter on the log 2 scale. For the sigma parameter, we can use the <tt>kernlab</tt> function <span class="mx funCall">sigest</span> to pre-estimate the value. Following <span class="mx funCall">ksvm</span> we take the average of the low and high estimates. Here is a function we could use:
 </p> 
 <!--begin.rcode tidy=FALSE
 svmGrid <- function(x, y, len = NULL) {
@@ -167,7 +175,7 @@ svmGrid <- function(x, y, len = NULL) {
 }
    end.rcode--> 
 <p> 
-Again, the user can pass their own grid via <span class="hl kwd">train</span>'s <span class="hl kwc">tuneGrid</span> option or they can use this code to create a default grid. 
+Again, the user can pass their own grid via <span class="mx funCall">train</span>'s <span class="mx arg">tuneGrid</span> option or they can use this code to create a default grid. 
 </p> 
 <p> 
 We assign this function to the overall model list:
@@ -179,28 +187,28 @@ We assign this function to the overall model list:
 <h2>The fit Element</h2>
 
 <p>
-Here is where we fit the model. This <span class="hl kwc">fit</span> function has several arguments:
+Here is where we fit the model. This <span class="mx funCall">fit</span> function has several arguments:
 <ul>
   <li>
-  <span class="hl kwc">x</span>, <span class="hl kwc">y</span>: the current data used to fit the model
+  <span class="mx arg">x</span>, <span class="mx arg">y</span>: the current data used to fit the model
   </li>
   <li>
-  <span class="hl kwc">wts</span>: optional instance weights (not applicable for this particular model)
+  <span class="mx arg">wts</span>: optional instance weights (not applicable for this particular model)
   </li>
   <li>
-  <span class="hl kwc">param</span>: the current tuning parameter values
+  <span class="mx arg">param</span>: the current tuning parameter values
   </li>
   <li>
-  <span class="hl kwc">lev</span>: the class levels of the outcome (or <tt>NULL</tt> in regression)
+  <span class="mx arg">lev</span>: the class levels of the outcome (or <tt><!--rinline 'NULL' --></tt> in regression)
   </li>
   <li>
-  <span class="hl kwc">last</span>: a logical for whether the current fit is the final fit
+  <span class="mx arg">last</span>: a logical for whether the current fit is the final fit
   </li>
   <li>
-  <span class="hl kwc">weights</span>
+  <span class="mx arg">weights</span>
   </li>
   <li>
-  <span class="hl kwc">classProbs</span>: a logical for whether class probabilities should be computed.
+  <span class="mx arg">classProbs</span>: a logical for whether class probabilities should be computed.
   </li>
 </ul>
 <p>
@@ -226,19 +234,19 @@ A few notes about this:
   Notice that the package is not loaded in the code. It is loaded prior to this function being called so it won't hurt if you load it again (but that's not needed).
   </li> 
   <li>
-  The <span class="hl kwd">ksvm</span> function requires a <i>matrix</i> or predictors. If the original data were a data frame, this would throw and error. 
+  The <span class="mx funCall">ksvm</span> function requires a <i>matrix</i> or predictors. If the original data were a data frame, this would throw and error. 
   </li> 
   <li>
-  The tuning parameters are references in the <span class="hl kwc">param</span> data frame. There is always a single row in this data frame. 
+  The tuning parameters are references in the <span class="mx arg">param</span> data frame. There is always a single row in this data frame. 
   </li> 
   <li>
-  The probability model is fit based on the value of <span class="hl kwc">classProbs</span>. This value is determined by the value given in <span class="hl kwd">trainControl</span>. 
+  The probability model is fit based on the value of <span class="mx arg">classProbs</span>. This value is determined by the value given in <span class="mx funCall">trainControl</span>. 
   </li> 
   <li>
-  The three dots allow the user to pass options in from <span class="hl kwd">train</span> to, in this case, the <span class="hl kwd">ksvm</span> function. For example, if the user wanted to set the cache size for the function, they could list <tt><span class="hl kwc">cache</span> = 80</tt> and this argument will be pass from <span class="hl kwd">train</span> to <span class="hl kwd">ksvm</span>.  
+  The three dots allow the user to pass options in from <span class="mx funCall">train</span> to, in this case, the <span class="mx funCall">ksvm</span> function. For example, if the user wanted to set the cache size for the function, they could list <span class="mx arg">cache</span><tt> = <!--rinline '80' --></tt> and this argument will be pass from <span class="mx funCall">train</span> to <span class="mx funCall">ksvm</span>.  
   </li> 
   <li> 
-  Any pre-processing that was requested in the call to <span class="hl kwd">train</span> have been done. For example, if <tt><span class="hl kwc">preProc</span> = "center"</tt> was originally requested, the columns of <tt>x</tt> seen within this function are mean centered. 
+  Any pre-processing that was requested in the call to <span class="mx funCall">train</span> have been done. For example, if <span class="mx arg">preProc</span><tt> = <!--rinline '"center"'  --></tt> was originally requested, the columns of <tt>x</tt> seen within this function are mean centered. 
   </li> 
 </ul>
 
@@ -252,16 +260,16 @@ The arguments are:
 </p>
 <ul>
   <li>
-  <span class="hl kwc">modelFit</span>: the model produced by the <tt>fit</tt> code shown above. 
+  <span class="mx arg">modelFit</span>: the model produced by the <tt>fit</tt> code shown above. 
   </li>
   <li>
-  <span class="hl kwc">newdata</span>: the predictor values of the instances being predicted (e.g. out-of-bag samples)
+  <span class="mx arg">newdata</span>: the predictor values of the instances being predicted (e.g. out-of-bag samples)
   </li>
   <li>
-  <span class="hl kwc">preProc</span> 
+  <span class="mx arg">preProc</span> 
   </li>
   <li>
-  <span class="hl kwc">submodels</span>: this an optional list of tuning parameters only used with the <span class="hl kwc">loop</span> element discussed below. In most cases, it will be <tt>NULL</tt>.
+  <span class="mx arg">submodels</span>: this an optional list of tuning parameters only used with the <span class="mx arg">loop</span> element discussed below. In most cases, it will be <tt><!--rinline 'NULL' --></tt>.
   </li>
 </ul>
 <p>
@@ -275,13 +283,13 @@ lpSVM$predict <- svmPred
 <p></p>
 
 <p>    
-The function <span class="hl kwd">predict.ksvm</span> will automatically create a factor vector as output. The funcitn could also produce character values. Either way, the innards of <span class="hl kwd">train</span> will make them factors and ensure that the same levels as the original data are used. 
+The function <span class="mx funCall">predict.ksvm</span> will automatically create a factor vector as output. The function could also produce character values. Either way, the innards of <span class="mx funCall">train</span> will make them factors and ensure that the same levels as the original data are used. 
 </p>
 
 <h2>The prob Element</h2>
 
 <p>
-If a regression model is being used or if the classification model does not create class probabilities a value of <tt>NULL</tt> can be used here instead of a function. Otherwise, the function arguments are the same as the <span class="hl kwc">pred</span> function. The output should be a matrix or data frame of class probabilities with a column for each class. The column names should be the class levels. 
+If a regression model is being used or if the classification model does not create class probabilities a value of <tt><!--rinline 'NULL' --></tt> can be used here instead of a function. Otherwise, the function arguments are the same as the <span class="mx arg">pred</span> function. The output should be a matrix or data frame of class probabilities with a column for each class. The column names should be the class levels. 
 </p>
 <p>
 We can use:
@@ -295,7 +303,7 @@ lpSVM$prob <- svmProb
 
 <p></p>
 <p>
-If you look at some of the SVM examples in the <tt>models</tt> directory, the real functions used by <span class="hl kwd">train</span> are much more complicated so that they can deal with model failures, probabilities that do not sum to 1 etc.
+If you look at some of the SVM examples in the <tt>models</tt> directory, the real functions used by <span class="mx funCall">train</span> are much more complicated so that they can deal with model failures, probabilities that do not sum to 1 etc.
 </p>
 
 <h2>The sort Element</h2>
@@ -318,7 +326,7 @@ Here, we will sort by the cost value. Smaller values of <tt>C</tt> produce smoot
 <p>
 We should now be ready to fit our model. 
 </p>
-<!--begin.rcode tidy=FALSE
+<!--begin.rcode tidy=FALSE,cache=TRUE
 library(mlbench)
 data(Sonar)
   
@@ -351,6 +359,232 @@ trellis.par.set(caretTheme())
 plot(Laplacian,  scales = list(x = list(log = 2)))
     end.rcode-->
 
+
+<h2>The loop Element</h2>
+
+<p>
+This function can be used to create custom loops for models to tune over. In most cases, the function can just return the existing tuning grid.
+</p>
+<p>
+For example, a <span class="mx funCall">LogitBoost</span> model can be trained over the number of boosting iterations. In the <a href="http://cran.r-project.org/web/packages/caTools/index.html"><strong>caTools</strong></a> package, the <span class="mx funCall">LogitBoost</span> function can be used to fit this model. For example:
+</p>
+<!--begin.rcode eval=FALSE
+mod <- LogitBoost(as.matrix(x), y, nIter = 51)
+    end.rcode-->    
+
+<p>
+If we were to tune the model evaluating models where the number of iterations was 11, 21, 31, 41 and 51, the grid could be
+</p>
+<!--begin.rcode
+lbGrid <- data.frame(.nIter = seq(11, 51, by = 10))    
+    end.rcode-->    
+
+<p>
+During resampling, <span class="mx funCall">train</span> could loop over all five rows in <code>lbGrid</code> and fit five models. However, the <span class="mx funCall">predict.LogitBoost</span> function has an argument called <span class="mx arg">nIter</span> that can produce, in this case, predictions from <code>mod</code> for all five models. 
+</p>
+<p>
+Instead of <span class="mx funCall">train</span> fitting five models, we could fit a single model with <span class="mx arg">nIter</span> = <!--rinline '51' --> and derive predictions for all five models using only <code>mod</code>. 
+</p>
+<p>
+The terminology used here is that  <span class="mx arg">nIter</span> is a <i>sequential</i> tuning parameter (and the other parameters would be considered <i>fixed</i>). 
+</p>
+<p>
+The <span class="mx arg">loop</span> argument for models is used to produce two objects:
+</p>
+<ul>
+ <li> <code>loop</code>: this is the actual loop that is used by `train`. 
+ </li>
+ <li>
+ <code>submodels</code> is a <i>list</i> that has as many elements as there are rows in <code>loop</code>. The list has all the "extra" parameter settings that can be derived for each model.
+ </li>
+</ul>
+<p>
+Going back to the <span class="mx funCall">LogitBoost</span> example, we could have:
+</p>
+<!--begin.rcode
+    loop <- data.frame(.nIter = 51)
+loop
+    submodels <- list(data.frame(.nIter = seq(11, 41, by = 10)))   
+submodels
+    end.rcode-->
+<p>
+For this case, <span class="mx funCall">train</span> first fits the <span class="mx arg">nIter</span><tt> = <!--rinline '50' --></tt> model. When the model is predicted, that code has a <span class="mx funCall">for</span> loop that iterates over the elements of <code>submodel[[1]]</code> to get the predictions for the other 4 models. 
+</p>
+<p>
+In the end, predictions for all five models (for <span class="mx arg">nIter</span><tt> = <!--rinline 'seq(11, 51, by = 10)' --></tt>) with a single model fit. 
+</p>
+<p>
+There are other models built-in to <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a> that are used this way. There are a number of models that have multiple sequential tuning parameters.
+</p>
+<p>
+If the <span class="mx arg">loop</span> argument is left <code><!--rinline 'NULL' --></code> the results of <span class="mx arg">tuneGrid</span> are used as the simple loop and is recommended for most situations. Note that the machinery that is used to "derive" the extra predictions is up to the user to create, typically in the <span class="mx arg">predict</span> and <span class="mx arg">prob</span>  elements of the custom model object. 
+</p>
+<p>    
+For the <span class="mx funCall">LogitBoost</span> model, some simple code to create these objects would be:
+</p>
+
+<!--begin.rcode
+    fullGrid <- data.frame(.nIter = seq(11, 51, by = 10))
+
+    ## Get the largest value of nIter to fit the "full" model
+    loop <- fullGrid[which.max(fullGrid$.nIter),,drop = FALSE]
+    loop
+
+    submodels <- fullGrid[-which.max(fullGrid$.nIter),,drop = FALSE]
+
+    ## This needs to be encased in a list in case there are more
+    ## than one tuning parameter
+    submodels <- list(submodels)  
+    submodels
+    end.rcode-->   
+<p>
+For the <span class="mx funCall">LogitBoost</span> custom model object, we could use this code in the <span class="mx arg">predict</span> slot:
+<p>
+<!--begin.rcode tidy=FALSE
+lbPred <- function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+  ## This model was fit with the maximum value of nIter
+  out <- caTools::predict.LogitBoost(modelFit, newdata, type="class")
+  
+  ## In this case, 'submodels' is a data frame with the other values of
+  ## nIter. We loop over these to get the other predictions.
+  if(!is.null(submodels))
+    {
+    ## Save _all_ the predictions in a list
+    tmp <- out
+    out <- vector(mode = "list", length = nrow(submodels) + 1)
+    out[[1]] <- tmp
+    
+    for(j in seq(along = submodels$.nIter))
+      {
+      out[[j+1]] <- caTools::predict.LogitBoost(modelFit,
+                                                newdata,
+                                                nIter = submodels$.nIter[j])
+      }
+    }
+  out                   
+  }
+    end.rcode--> 
+
+<p>
+A few more notes:
+</p>
+<ul>
+ <li> 
+ The code in the <span class="mx arg">fit</span> element does not have to change. 
+ </li>
+ <li>
+ The <span class="mx arg">prob</span> slot works in the same way. The only difference is that the values saved in the outgoing lists are matrices or data frames of probabilities for each class. 
+  </li>
+  <li>
+  After model training (i.e. predicting new samples), the value of <span class="mx arg">submodels</span> is set to <code><!--rinline 'NULL' --></code> and the code produces a single set of predictions.
+  </li>
+  <li>
+  If the model had one sequential parameter and one fixed parameter, the <code>loop</code> data frame would have two columns (one for each parameter). If the model is tuned over more than one value of the fixed parameter, the <code>submodels</code> list would have more than one element. If <code>loop</code> had 10 rows, then <tt><!--rinline 'length(submodels)'  --></tt> would be <tt>10</tt> and <tt><!--rinline 'loop[i,]' --></tt> would be linked to <tt><!--rinline 'submodels[[i]]' --></tt>. 
+  </li>
+</ul>
+
+<p> Here is a slimmed down version of the lb code already in the package:
+</p>
+
+<!--begin.rcode tidy=FALSE
+lbFuncs <- list(library = "caTools",
+                loop = function(grid) {            
+                  loop <- grid[which.max(grid$.nIter),,drop = FALSE]
+                  submodels <- grid[-which.max(grid$.nIter),,drop = FALSE]
+                  submodels <- list(submodels)  
+                  list(loop = loop, submodels = submodels)
+                },
+                type = "Classification",
+                parameters = data.frame(parameter = 'nIter',
+                                        class = 'numeric',
+                                        label = '# Boosting Iterations'),
+                grid = function(x, y, len = NULL) 
+                  data.frame(.nIter = 1 + ((1:len)*10)),
+                fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  LogitBoost(as.matrix(x), y, nIter = param$.nIter)
+                },
+                predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  out <- predict(modelFit, newdata, type="class")
+                  if(!is.null(submodels))
+                  {                   
+                    tmp <- out
+                    out <- vector(mode = "list", length = nrow(submodels) + 1)
+                    out[[1]] <- tmp
+                    
+                    for(j in seq(along = submodels$.nIter))
+                    {
+                      out[[j+1]] <- predict(modelFit,
+                                            newdata,
+                                            nIter = submodels$.nIter[j])
+                    }
+                  }
+                  out                   
+                },
+                prob = NULL,
+                sort = function(x) x)
+    end.rcode--> 
+
+<p>Should you care about this? Let's tune the model over the same data set used for the SVM model above and see how long it takes:
+</p>
+<!--begin.rcode tidy=FALSE
+set.seed(825)
+lb1 <- system.time(train(Class ~ ., data = training, 
+                         method = lbFuncs, 
+                         tuneLength = 3,
+                         trControl = fitControl))
+lb1
+
+## Now get rid of the submodel parts
+lbFuncs2 <- lbFuncs
+lbFuncs2$loop <- NULL
+lbFuncs2$predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+  predict(modelFit, newdata, type="class")
+
+set.seed(825)
+lb2 <- system.time(train(Class ~ ., data = training, 
+                         method = lbFuncs2, 
+                         tuneLength = 3,
+                         trControl = fitControl))
+lb2
+end.rcode--> 
+<p>On a data set with <!--rinline I(nrow(training)) --> instances and <!--rinline I(ncol(training) - 1) --> predictors and a model that is tuned over only 3 parameter values, there is a <!--rinline I(round(lb2[3]/lb1[3],2))-->-fold speed-up. If the model were more computationally taxing or the data set were larger or the number of tune parameters that were evaluated was larger, the speed-up would increase. Here is a plot of the speed-up for a few more values of <span class="mx arg">tuneLength</span>:
+</p>
+
+<!--begin.rcode tidy=FALSE
+bigGrid <- data.frame(.nIter = seq(1, 151, by = 10))
+results <- bigGrid
+results$SpeedUp <- NA
+
+for(i in 2:nrow(bigGrid)){ 
+  rm(lb1, lb2)
+  set.seed(825)
+  lb1 <- system.time(train(Class ~ ., data = training, 
+                           method = lbFuncs, 
+                           tuneGrid = bigGrid[1:i,,drop = FALSE],
+                           trControl = fitControl))
+  
+  set.seed(825)
+  lb2 <- system.time(train(Class ~ ., data = training, 
+                           method = lbFuncs2, 
+                           tuneGrid = bigGrid[1:i,,drop = FALSE],
+                           trControl = fitControl))
+  results$SpeedUp[i] <- lb2[3]/lb1[3]
+  }
+
+trellis.par.set(caretTheme())
+xyplot(speedups ~ .nIter, 
+       data = results,
+       xlab = "LogitBoost Iterations", 
+       ylab = "Speed-Up",
+       type = c("o", "g"))
+end.rcode--> 
+
+<p>
+The speed-ups are not optimal but there is a significant decrease in training time using this method.
+</p>
+
+
+
 <div style="clear: both;">&nbsp;</div>
   </div>
   <!-- end #content -->
@@ -364,7 +598,7 @@ plot(Laplacian,  scales = list(x = list(log = 2)))
   <h2>Topics</h2>
   <ul>
           <li><a href="index.html">Main Page</a></li>
-  		<li><a href="datasets.html">Data Sets</a></li>
+    	<li><a href="datasets.html">Data Sets</a></li>
                 <li><a href="visualizations.html">Visualizations</a></li>
                 <li><a href="preprocess.html">Pre-Processing</a></li>
                 <li><a href="splitting.html">Data Splitting</a></li>
@@ -387,6 +621,9 @@ plot(Laplacian,  scales = list(x = list(log = 2)))
   <!-- end #page -->
 </div>
   <div id="footer-content"></div>
+<!--begin.rcode echo = FALSE
+knit_hooks$set(inline = hook_inline)    
+    end.rcode-->   
   <div id="footer">
   <p>Created on <!--rinline I(session) -->.</p>
   </div>
