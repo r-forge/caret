@@ -5,7 +5,7 @@ modelInfo <- list(library = NULL,
                                           class = NA,
                                           label = "parameter"),
                   grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     if(!is.null(wts))
@@ -14,6 +14,6 @@ modelInfo <- list(library = NULL,
                     } else out <- lm(.outcome ~ ., data = dat, ...)
                     out
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) predict(modelFit, newdata),
+                  predict = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata),
                   prob = NULL,
                   sort = function(x) x)

@@ -9,13 +9,13 @@ modelInfo <- list(library = "kernlab",
                     sigmas <- sigest(as.matrix(x), na.action = na.omit, scaled = TRUE)   
                     data.frame(.sigma = mean(sigmas[-2]))
                     },
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last,classProbs, ...) {
                     kernlab:::rvm(x = as.matrix(x), y = y,
                                   kernel = rbfdot,
                                   kpar = list(sigma = param$.sigma),
                                   ...)
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL)
+                  predict = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata),
                   prob = NULL,
                   sort = function(x) x)

@@ -5,7 +5,7 @@ modelInfo <- list(library = "kernlab",
                                           label = c("Cost")),
                   grid = function(x, y, len = NULL) data.frame(.C = 1),
                   loop = NULL,
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     if(any(names(list(...)) == "prob.model") | is.numeric(y))
                     {
                       out <- ksvm(x = as.matrix(x), y = y,
@@ -21,7 +21,7 @@ modelInfo <- list(library = "kernlab",
                     
                     out            
                     },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  predict = function(modelFit, newdata, submodels = NULL) {
                     svmPred <- function(obj, x)
                     {
                       hasPM <- !is.null(unlist(obj@prob.model))
@@ -49,7 +49,7 @@ modelInfo <- list(library = "kernlab",
                     }
                     out
                   },
-                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  prob = function(modelFit, newdata, submodels = NULL) {
                     out <- try(predict(modelFit, newdata, type="probabilities"),
                                silent = TRUE)
                     if(class(out)[1] != "try-error")
