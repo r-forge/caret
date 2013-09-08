@@ -5,7 +5,7 @@ modelInfo <- list(library = NULL,
                                           class = NA,
                                           label = "parameter"),
                   grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     if(length(levels(y)) > 2) stop("glm models can only use 2-class outcomes")
@@ -27,7 +27,7 @@ modelInfo <- list(library = NULL,
                     out$call <- NULL
                     out
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  predict = function(modelFit, newdata, submodels = NULL) {
                     if(modelFit$problemType == "Classification")
                     {
                       probs <-  predict(modelFit, newdata, type = "response")
@@ -39,7 +39,7 @@ modelInfo <- list(library = NULL,
                     }
                     out
                   },
-                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL){
+                  prob = function(modelFit, newdata, submodels = NULL){
                     out <- predict(modelFit, newdata, type = "response")
                     out <- cbind(1-out, out)
                     ## glm models the second factor level, we treat the first as the

@@ -5,12 +5,12 @@ modelInfo <- list(library = "kernlab",
                                           class = NA,
                                           label = "parameter"),
                   grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     kernlab:::rvm(x = as.matrix(x), y = y,
                                   kernel = vanilladot(),
                                   ...)
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                  predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = NULL,
                   sort = function(x) x)

@@ -15,15 +15,15 @@ modelInfo <- list(library = c("earth", "mda"),
                     data.frame(.nprune = unique(floor(seq(2, to = maxTerms, length = len))),
                                .degree = 1)
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     fda(.outcome ~ ., data = dat, method = earth, 
                         degree = param$.degree,
                         nprune = param$.nprune, ...)
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                  predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit , newdata),
-                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                  prob = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata, type= "posterior"),
                   sort = function(x) x)

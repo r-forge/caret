@@ -26,12 +26,12 @@ modelInfo <- list(library = "Cubist",
                                           label = c('#Committees', '#Instances')),
                   grid = function(x, y, len = NULL) expand.grid(.neighbors = c(0, 5, 9),
                                                                 .committees = c(1, 10, 20)),
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     out <- cubist(x, y, committees =  param$.committees, ...)
                     if(last) out$tuneValue$.neighbors <- param$.neighbors
                     out
                     },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  predict = function(modelFit, newdata, submodels = NULL) {
                     if(!is.null(submodels))
                     {
                       out <- vector(mode = "list", length = nrow(submodels))                

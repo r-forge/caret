@@ -19,7 +19,7 @@ modelInfo <- list(library = "gbm",
                     }    
                     list(loop = loop, submodels = submodels)
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     ## train will figure out whether we are doing classification or reggression
                     ## from the class of the outcome and automatically specify the value of
                     ## 'distribution' in the control file. If the user wants to over-ride this,
@@ -51,7 +51,7 @@ modelInfo <- list(library = "gbm",
                     
                     do.call("gbm.fit", modArgs)
                     },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  predict = function(modelFit, newdata, submodels = NULL) {
                     if(modelFit$problemType == "Classification")
                     {
                       gbmProb <- predict(modelFit, newdata, type = "response",
@@ -91,7 +91,7 @@ modelInfo <- list(library = "gbm",
                     }
                     out  
                   },
-                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  prob = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata, type = "response",
                                    n.trees = modelFit$tuneValue$.n.trees)
                     

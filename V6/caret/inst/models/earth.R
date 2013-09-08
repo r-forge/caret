@@ -7,7 +7,7 @@ modelInfo <- list(library = "earth",
                     dat <- x
                     dat$.outcome <- y
                     
-                    mod <- earth( .outcome~., data = dat,pmethod = "none")
+                    mod <- earth( .outcome~., data = dat, pmethod = "none")
                     maxTerms <- nrow(mod$dirs)
                     
                     maxTerms <- min(200, floor(maxTerms * .75) + 2)
@@ -29,7 +29,7 @@ modelInfo <- list(library = "earth",
                     }  
                     list(loop = loop, submodels = submodels)
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     theDots <- list(...)
                     theDots$keepxy <- TRUE 
                     
@@ -45,7 +45,7 @@ modelInfo <- list(library = "earth",
                     tmp$call["degree"] <-  param$.degree
                     tmp 
                     },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  predict = function(modelFit, newdata, submodels = NULL) {
                     if(modelFit$problemType == "Classification")
                     {
                       out <- predict(modelFit, newdata,  type = "class")
@@ -73,7 +73,7 @@ modelInfo <- list(library = "earth",
                     }
                     out            
                   },
-                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  prob = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata, type= "response")
                     out <- cbind(1-out, out)
                     colnames(out) <-  modelFit$obsLevels

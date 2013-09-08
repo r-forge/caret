@@ -21,7 +21,7 @@ modelInfo <- list(library = "C50",
                     c5seq <- if(len == 1)  1 else  c(1, 10*((2:min(len, 11)) - 1))
                     expand.grid(.trials = c5seq, .model = c("tree", "rules"), .winnow = c(TRUE, FALSE))
                   },
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     theDots <- list(...)
                     
                     if(any(names(theDots) == "control"))
@@ -33,7 +33,7 @@ modelInfo <- list(library = "C50",
                     argList <- c(argList, theDots)
                     do.call("C5.0.default", argList)
                     },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  predict = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata)
                     
                     if(!is.null(submodels))
@@ -47,7 +47,7 @@ modelInfo <- list(library = "C50",
                     }
                     out              
                   },
-                  prob = function(modelFit, newdata, preProc = NULL, submodels = NULL) {
+                  prob = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata, type= "prob")
                     
                     if(!is.null(submodels))

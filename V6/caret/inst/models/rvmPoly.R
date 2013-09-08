@@ -8,7 +8,7 @@ modelInfo <- list(library = "kernlab",
                     expand.grid(.degree = seq(1, min(len, 3)),      
                                 .scale = 10 ^((1:len) - 4))
                     },
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     kernlab:::rvm(x = as.matrix(x), y = y,
                                   kernel = polydot,
                                   kpar = list(degree = param$.degree,
@@ -16,7 +16,7 @@ modelInfo <- list(library = "kernlab",
                                               offset = 1),
                                   ...)
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                  predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = NULL,
                   sort = function(x) x)

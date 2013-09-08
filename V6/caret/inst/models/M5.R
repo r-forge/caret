@@ -7,7 +7,7 @@ modelInfo <- list(library = "RWeka",
                   grid = function(x, y, len = NULL) expand.grid(.pruned = c("Yes", "No"), 
                                                                 .smoothed = c("Yes", "No"), 
                                                                 .rules = c("Yes", "No")),
-                  fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     
                     if(any(names(theDots) == "control"))
@@ -29,7 +29,7 @@ modelInfo <- list(library = "RWeka",
                     out <- do.call(if(param$.rules == "Yes") "M5Rules" else "M5P", modelArgs) 
                     out
                   },
-                  predict = function(modelFit, newdata, preProc = NULL, submodels = NULL) 
+                  predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = NULL,
                   sort = function(x) x)
