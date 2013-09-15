@@ -205,9 +205,6 @@ Here is where we fit the model. This <span class="mx funCall">fit</span> functio
   <span class="mx arg">last</span>: a logical for whether the current fit is the final fit
   </li>
   <li>
-  <span class="mx arg">weights</span>
-  </li>
-  <li>
   <span class="mx arg">classProbs</span>: a logical for whether class probabilities should be computed.
   </li>
 </ul>
@@ -215,7 +212,7 @@ Here is where we fit the model. This <span class="mx funCall">fit</span> functio
 Here is something we could use for this model:
 <p>
 <!--begin.rcode tidy=FALSE
-svmFit <- function(x, y, wts, param, lev, last, weights, classProbs, ...) { 
+svmFit <- function(x, y, wts, param, lev, last, classProbs, ...) { 
   ksvm(x = as.matrix(x), y = y,
        kernel = rbfdot,
        kpar = list(sigma = param$.sigma),
@@ -266,9 +263,6 @@ The arguments are:
   <span class="mx arg">newdata</span>: the predictor values of the instances being predicted (e.g. out-of-bag samples)
   </li>
   <li>
-  <span class="mx arg">preProc</span> 
-  </li>
-  <li>
   <span class="mx arg">submodels</span>: this an optional list of tuning parameters only used with the <span class="mx arg">loop</span> element discussed below. In most cases, it will be <tt><!--rinline 'NULL' --></tt>.
   </li>
 </ul>
@@ -276,7 +270,7 @@ The arguments are:
 Our function will be very simple:
 </p>
 <!--begin.rcode tidy=FALSE
-svmPred <- function(modelFit, newdata, preProc = NULL,submodels = NULL)
+svmPred <- function(modelFit, newdata, submodels = NULL)
    predict(modelFit, newdata)
 lpSVM$predict <- svmPred
     end.rcode--> 
@@ -296,7 +290,7 @@ We can use:
 </p>
 
 <!--begin.rcode tidy=FALSE
-svmProb <- function(modelFit, newdata, preProc = NULL, submodels = NULL)
+svmProb <- function(modelFit, newdata, submodels = NULL)
    predict(modelFit, newdata, type="probabilities")
 lpSVM$prob <- svmProb
     end.rcode--> 
@@ -403,9 +397,9 @@ Going back to the <span class="mx funCall">LogitBoost</span> example, we could h
 </p>
 <!--begin.rcode
     loop <- data.frame(.nIter = 51)
-loop
+    loop
     submodels <- list(data.frame(.nIter = seq(11, 41, by = 10)))   
-submodels
+    submodels
     end.rcode-->
 <p>
 For this case, <span class="mx funCall">train</span> first fits the <span class="mx arg">nIter</span><tt> = <!--rinline '50' --></tt> model. When the model is predicted, that code has a <span class="mx funCall">for</span> loop that iterates over the elements of <code>submodel[[1]]</code> to get the predictions for the other 4 models. 
