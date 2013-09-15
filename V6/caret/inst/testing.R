@@ -90,6 +90,12 @@ reg26 <- train(bbbDescr[, 4:8], logBBB, method = "bstLs", trControl = ctrl1)
 set.seed(849)
 reg27 <- train(bbbDescr[, 4:8], logBBB, method = "bstSm", trControl = ctrl1)
 
+set.seed(849)
+reg28 <- train(bbbDescr[, 4:8], logBBB, method = "rpart", trControl = ctrl1)
+
+set.seed(849)
+reg29 <- train(bbbDescr[, 4:8], logBBB, method = "rpart2", trControl = ctrl1)
+
 library(caret)
 
 data(mdrr)
@@ -165,6 +171,15 @@ class21 <- train(mdrrDescr[, 1:3], mdrrClass, "bstLs", trControl = ctrl1)
 set.seed(849)
 class22 <- train(mdrrDescr[, 1:3], mdrrClass, "bstSm", trControl = ctrl1)
 
+set.seed(849)
+class23 <- train(mdrrDescr, mdrrClass, "rpart", trControl = ctrl1)
+
+set.seed(849)
+class24 <- train(mdrrDescr, mdrrClass, "rpartCost", trControl = ctrl1)
+
+set.seed(849)
+class25 <- train(mdrrDescr, mdrrClass, "rpart2", trControl = ctrl1)
+
 
 ctrl2 <- trainControl(method = "cv", number = 3, verboseIter = TRUE, classProbs = TRUE,
                       summaryFunction = twoClassSummary)
@@ -219,4 +234,13 @@ classprob18 <- train(mdrrDescr[, 1:10], mdrrClass, "kernelpls", trControl = ctrl
 
 set.seed(849)
 classprob19 <- train(mdrrDescr[, 1:10], mdrrClass, "widekernelpls", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
+
+set.seed(849)
+classprob20 <- train(mdrrDescr[, 1:10], mdrrClass, "rpart", trControl = ctrl2, metric = "ROC")
+
+set.seed(849)
+classprob21 <- train(mdrrDescr[, 1:10], mdrrClass, "rpartCost", trControl = ctrl2, metric = "ROC")
+
+set.seed(849)
+classprob22 <- train(mdrrDescr[, 1:10], mdrrClass, "rpart2", trControl = ctrl2, metric = "ROC")
 
