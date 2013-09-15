@@ -160,6 +160,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
   {
     ## merge the fixed and seq parameter values together
     allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
+    allParam <- allParam[complete.cases(allParam),, drop = FALSE]
     
 #     ## For ctree, we had to repeat the first value
 #     if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
