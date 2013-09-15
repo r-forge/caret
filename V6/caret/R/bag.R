@@ -38,7 +38,7 @@ bagControl <- function(fit = NULL, predict = NULL, aggregate = NULL, downSample 
       
       if(!is.null(v))
         {
-          if(v < ncol(x)) v <- ncol(x)
+          if(v > ncol(x)) v <- ncol(x)
           subVars <- sample(1:ncol(subX), ceiling(v))
           subX <- subX[, subVars, drop = FALSE]
         } else subVars <- NULL
@@ -197,7 +197,10 @@ print.bag <- function (x, ...)
       oobData <- do.call("rbind", oobData)
       oobResults <- ddply(oobData, .(key), defaultSummary)
       oobResults$key <- NULL
-      oobStat <- apply(oobResults, 2, function(x) quantile(x, probs = c(0, 0.025, .25, .5, .75, .975, 1)))
+      oobStat <- apply(oobResults, 2, 
+                       function(x) quantile(x, 
+                                            na.rm = TRUE, 
+                                            probs = c(0, 0.025, .25, .5, .75, .975, 1)))
       rownames(oobStat) <- paste(format(as.numeric(format(gsub("%", "", rownames(oobStat))))),
                                  "%", sep = "")
       B <- nrow(oobResults)
