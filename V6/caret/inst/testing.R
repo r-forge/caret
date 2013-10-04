@@ -91,10 +91,44 @@ set.seed(849)
 reg27 <- train(bbbDescr[, 4:8], logBBB, method = "bstSm", trControl = ctrl1)
 
 set.seed(849)
-reg28 <- train(bbbDescr[, 4:8], logBBB, method = "rpart", trControl = ctrl1)
+reg28 <- train(bbbDescr[, 4:8], logBBB, method = "glmboost", trControl = ctrl1)
 
 set.seed(849)
-reg29 <- train(bbbDescr[, 4:8], logBBB, method = "rpart2", trControl = ctrl1)
+reg29 <- train(bbbDescr[, 4:8], logBBB, method = "gamboost", trControl = ctrl1)
+
+set.seed(849)
+reg30 <- train(bbbDescr[, 4:8], logBBB, method = "lars", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg31 <- train(bbbDescr[, 4:8], logBBB, method = "foba", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg32 <- train(bbbDescr[, 4:8], logBBB, method = "glmnet", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg33 <- train(bbbDescr[, 4:8], logBBB, method = "enet", trControl = ctrl1, preProc = c("center", "scale"))
+
+set.seed(849)
+reg34 <- train(bbbDescr[, 4:8], logBBB, method = "blackboost", trControl = ctrl1)
+
+set.seed(849)
+reg35 <- train(bbbDescr, logBBB, method = "lasso", trControl = ctrl1)
+
+set.seed(849)
+reg36 <- train(bbbDescr[, 4:8], logBBB, method = "partDSA", trControl = ctrl1)
+
+set.seed(849)
+reg37 <- train(bbbDescr[, 4:8], logBBB, method = "nnet", trControl = ctrl1,
+               preProc = c("center", "scale"), trace = FALSE)
+
+set.seed(849)
+reg38 <- train(bbbDescr[, 4:8], logBBB, method = "avNNet", trControl = ctrl1,
+               preProc = c("center", "scale"), trace = FALSE)
+
+set.seed(849)
+reg39 <- train(bbbDescr[, 4:8], logBBB, method = "pcaNNet", trControl = ctrl1,
+               preProc = c("center", "scale"), trace = FALSE)
+
 
 library(caret)
 
@@ -172,14 +206,40 @@ set.seed(849)
 class22 <- train(mdrrDescr[, 1:3], mdrrClass, "bstSm", trControl = ctrl1)
 
 set.seed(849)
-class23 <- train(mdrrDescr, mdrrClass, "rpart", trControl = ctrl1)
+class22 <- train(mdrrDescr[, 1:3], mdrrClass, "glmboost", trControl = ctrl1)
 
 set.seed(849)
-class24 <- train(mdrrDescr, mdrrClass, "rpartCost", trControl = ctrl1)
+class23 <- train(mdrrDescr[, 1:3], mdrrClass, "gamboost", trControl = ctrl1)
 
 set.seed(849)
-class25 <- train(mdrrDescr, mdrrClass, "rpart2", trControl = ctrl1)
+class24 <- train(mdrrDescr[, 1:10], mdrrClass, "pam", trControl = ctrl1)
 
+set.seed(849)
+class25 <- train(mdrrDescr[, 1:10], mdrrClass, "pam", trControl = ctrl1)
+
+set.seed(849)
+class26 <- train(mdrrDescr[, 1:10], mdrrClass, "glmnet", trControl = ctrl1)
+
+set.seed(849)
+class27 <- train(mdrrDescr, mdrrClass, "blackboost", trControl = ctrl1, tuneLength = 5)
+
+set.seed(849)
+class28 <- train(mdrrDescr[, 1:10], mdrrClass, "partDSA", trControl = ctrl1, tuneLength = 5)
+
+set.seed(849)
+class29 <- train(mdrrDescr[, 1:10], mdrrClass, "ada", trControl = ctrl1)
+
+set.seed(849)
+class30 <- train(mdrrDescr[, 1:10], mdrrClass, "nnet", trControl = ctrl1,
+                 preProc = c("center", "scale"), trace = FALSE)
+
+set.seed(849)
+class31 <- train(mdrrDescr[, 1:10], mdrrClass, "avNNet", trControl = ctrl1,
+                 preProc = c("center", "scale"), trace = FALSE)
+
+set.seed(849)
+class32 <- train(mdrrDescr[, 1:10], mdrrClass, "pcaNNet", trControl = ctrl1,
+                 preProc = c("center", "scale"), trace = FALSE)
 
 ctrl2 <- trainControl(method = "cv", number = 3, verboseIter = TRUE, classProbs = TRUE,
                       summaryFunction = twoClassSummary)
@@ -236,11 +296,37 @@ set.seed(849)
 classprob19 <- train(mdrrDescr[, 1:10], mdrrClass, "widekernelpls", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
 
 set.seed(849)
-classprob20 <- train(mdrrDescr[, 1:10], mdrrClass, "rpart", trControl = ctrl2, metric = "ROC")
+classprob20 <- train(mdrrDescr[, 1:10], mdrrClass, "glmboost", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
 
 set.seed(849)
-classprob21 <- train(mdrrDescr[, 1:10], mdrrClass, "rpartCost", trControl = ctrl2, metric = "ROC")
+classprob21 <- train(mdrrDescr[, 1:10], mdrrClass, "gamboost", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
 
 set.seed(849)
-classprob22 <- train(mdrrDescr[, 1:10], mdrrClass, "rpart2", trControl = ctrl2, metric = "ROC")
+classprob22 <- train(mdrrDescr[, 1:10], mdrrClass, "pam", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
 
+set.seed(849)
+classprob23 <- train(mdrrDescr[, 1:10], mdrrClass, "glmnet", trControl = ctrl2, metric = "ROC", preProc = c("center", "scale"))
+
+set.seed(849)
+classprob24 <- train(mdrrDescr, mdrrClass, "blackboost", trControl = ctrl2, metric = "ROC", tuneLength = 3)
+
+set.seed(849)
+classprob25 <- train(mdrrDescr[, 1:10], mdrrClass, "ada", trControl = ctrl2, metric = "ROC")
+
+set.seed(849)
+classprob26 <- train(mdrrDescr[, 1:10], mdrrClass, "nnet", trControl = ctrl2, 
+                     metric = "ROC",
+                     preProc = c("center", "scale"),
+                     trace = FALSE)
+
+set.seed(849)
+classprob27 <- train(mdrrDescr[, 1:10], mdrrClass, "avNNet", trControl = ctrl2, 
+                     metric = "ROC",
+                     preProc = c("center", "scale"),
+                     trace = FALSE)
+
+set.seed(849)
+classprob28 <- train(mdrrDescr[, 1:10], mdrrClass, "pcaNNet", trControl = ctrl2, 
+                     metric = "ROC",
+                     preProc = c("center", "scale"),
+                     trace = FALSE)
