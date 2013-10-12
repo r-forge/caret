@@ -86,4 +86,6 @@ modelInfo <- list(library = "mboost",
                     }                        
                     out
                   },
+                  tags = c("Generalized Additive Model", "Ensemble Model", 
+                           "Boosting", "Implicit Feature Selection"),
                   sort = function(x) x)

@@ -86,4 +86,5 @@ modelInfo <- list(library = "rpart",
                     }                              
                     out
                   },
+                  tags = c("Tree-Based Model", "Implicit Feature Selection"),
                   sort = function(x) x)

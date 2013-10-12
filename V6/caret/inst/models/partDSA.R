@@ -62,5 +62,6 @@ modelInfo <- list(library = "partDSA",
                     }
                     out        
                   },
+                  tags = "",
                   prob = NULL,
                   sort = function(x) x)

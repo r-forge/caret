@@ -22,6 +22,7 @@ modelInfo <- list(library = NULL,
                     }
                     out
                   },
+                  tags = "Prototype Models",
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
                   sort = function(x) x)

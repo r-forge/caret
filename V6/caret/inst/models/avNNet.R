@@ -47,4 +47,5 @@ modelInfo <- list(library = "nnet",
                     }
                     out
                   },
+                  tags = c("Neural Network", "Ensemble Model", "Bagging", "L2 Regularization"),
                   sort = function(x) x)

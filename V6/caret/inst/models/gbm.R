@@ -128,4 +128,5 @@ modelInfo <- list(library = "gbm",
                     } 
                     out
                   },
+                  tags = c("Tree-Based Model", "Boosting", "Ensemble Model", "Implicit Feature Selection"),
                   sort = function(x) x)

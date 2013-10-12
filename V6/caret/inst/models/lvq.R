@@ -19,4 +19,5 @@ modelInfo <- list(library = "class",
                   predict = function(modelFit, newdata, submodels = NULL) 
                     lvqtest(modelFit , newdata),
                   prob = NULL,
+                  tags = "Prototype Models",
                   sort = function(x) x)

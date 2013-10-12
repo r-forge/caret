@@ -32,4 +32,5 @@ modelInfo <- list(library = "RWeka",
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = NULL,
+                  tags = c("Rule-Based Models", "Tree-Based Model", "Linear Regression", "Implicit Feature Selection"),
                   sort = function(x) x)

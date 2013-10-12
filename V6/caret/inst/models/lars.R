@@ -37,5 +37,6 @@ modelInfo <- list(library = "lars",
                     }
                     out        
                   },
+                  tags = c("Linear Regression", "Implicit Feature Selection", "L1 Regularization"),
                   prob = NULL,
                   sort = function(x) x)
