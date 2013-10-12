@@ -15,4 +15,5 @@ modelInfo <- list(library = "ipred",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
+                  tags = c("Tree-Based Model", "Ensemble Model", "Bagging"), 
                   sort = function(x) x)

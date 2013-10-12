@@ -17,13 +17,11 @@ modelInfo <- list(library = "nnet",
                                      weights = wts,                                       
                                      size = param$.size,
                                      decay = param$.decay,
-                                     bag = param$.bag,
                                      ...)
                     } else out <- pcaNNet(.outcome ~ .,
                                           data = dat,
                                           size = param$.size,
                                           decay = param$.decay,
-                                          bag = param$.bag,
                                           ...)
                     out
                   },
@@ -46,4 +44,5 @@ modelInfo <- list(library = "nnet",
                     }
                     out
                   },
+                  tags = c("Neural Network", "Feature Extraction", "L2 Regularization"),
                   sort = function(x) x)

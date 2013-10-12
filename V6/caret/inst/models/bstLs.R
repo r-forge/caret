@@ -64,5 +64,7 @@ modelInfo <- list(library = "bst",
                     }
                     out         
                   },
+                  tags = c("Linear Regression", "Ensemble Model", "Boosting",
+                           "Implicit Feature Selection"),
                   prob = NULL,
                   sort = function(x) x)

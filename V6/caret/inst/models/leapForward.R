@@ -53,5 +53,6 @@ modelInfo <- list(library = "leaps",
                     
                     out
                   },
+                  tags = c("Linear Regression", "Feature Selection Wrapper"),
                   prob = NULL,
                   sort = function(x) x)

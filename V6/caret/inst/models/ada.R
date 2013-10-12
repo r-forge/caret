@@ -39,4 +39,6 @@ modelInfo <- list(library = "ada",
                     colnames(out) <-  modelFit$obsLevels
                     out
                   },
+                  tags = c("Tree-Based Model", "Ensemble Model", "Boosting", 
+                           "Implicit Feature Selection"),
                   sort = function(x) x)

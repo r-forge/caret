@@ -35,4 +35,5 @@ modelInfo <- list(library = "randomForest",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
+                  tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
                   sort = function(x) x)

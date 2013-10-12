@@ -60,4 +60,5 @@ modelInfo <- list(library = "pamr",
                     }   
                     out
                   },
+                  tags = c("Prototype Models", "Implicit Feature Selection"),
                   sort = function(x) x)

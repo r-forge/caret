@@ -47,4 +47,5 @@ modelInfo <- list(library = NULL,
                     dimnames(out)[[2]] <-  modelFit$obsLevels
                     out
                   },
+                  tags = c("Generalized Linear Model"),
                   sort = function(x) x)

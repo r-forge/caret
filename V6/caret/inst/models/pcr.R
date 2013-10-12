@@ -27,5 +27,6 @@ modelInfo <- list(library = "pls",
                     }
                     out            
                   },
+                  tags = c("Linear Regression", "Feature Extraction"),
                   prob = NULL,
                   sort = function(x) x[order(-x$ncomp),,drop = FALSE])

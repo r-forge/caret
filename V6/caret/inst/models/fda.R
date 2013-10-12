@@ -22,6 +22,7 @@ modelInfo <- list(library = c("earth", "mda"),
                         degree = param$.degree,
                         nprune = param$.nprune, ...)
                   },
+                  tags = c("Multivariate Adaptive Regression Splines", "Implicit Feature Selection"),
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit , newdata),
                   prob = function(modelFit, newdata, submodels = NULL) 

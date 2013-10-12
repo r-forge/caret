@@ -71,5 +71,6 @@ modelInfo <- list(library = "bst",
                     }
                     out         
                   },
+                  tags = c("Tree-Based Model", "Ensemble Model", "Boosting"),
                   prob = NULL,
                   sort = function(x) x)

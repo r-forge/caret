@@ -14,4 +14,5 @@ modelInfo <- list(library = "klaR",
                     predict(modelFit, newdata)$class,
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata)$posterior,
+                  tags = c("Discriminant Analysis"),
                   sort = function(x) x)

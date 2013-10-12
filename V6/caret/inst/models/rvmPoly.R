@@ -19,4 +19,5 @@ modelInfo <- list(library = "kernlab",
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = NULL,
+                  tags = c("Kernel Methods", "Relevance Vector Machines"),
                   sort = function(x) x)

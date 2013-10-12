@@ -97,4 +97,5 @@ modelInfo <- list(library = c("party", "mboost"),
                     }                        
                     out
                   },
+                  tags = c("Tree-Based Model", "Ensemble Model", "Boosting"),
                   sort = function(x) x)

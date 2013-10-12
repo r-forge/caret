@@ -40,5 +40,6 @@ modelInfo <- list(library = "Cubist",
                     } else out <- predict(modelFit, newdata, neighbors = modelFit$tuneValue$.neighbors)
                     out                
                   },
+                  tags = c("Rule-Based Models", "Boosting", "Ensemble Model", "Prototype Models"),
                   prob = NULL,
                   sort = function(x) x)

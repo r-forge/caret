@@ -57,5 +57,7 @@ modelInfo <- list(library = "MASS",
                     dimnames(out)[[2]] <-  modelFit$obsLevels
                     out
                   },
+                  tags = c("Generalized Linear Model", "Feature Selection Wrapper",
+                           "Implicit Feature Selection"),
                   sort = function(x) x)
 
