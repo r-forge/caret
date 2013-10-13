@@ -934,7 +934,7 @@ modelCor <- function(x, metric = x$metric[1], ...)
   cor(dat, ...)
 }
 
-sort.resamples <- function(x, metric = x$metric[1], decreasing = FALSE, FUN = mean, ...) 
+sort.resamples <- function(x, decreasing = FALSE, metric = x$metric[1], FUN = mean, ...) 
 {
   dat <- x$values[, grep(paste("~", metric[1], sep = ""), names(x$values))]
   colnames(dat) <- gsub(paste("~", metric[1], sep = ""), "", colnames(dat))
