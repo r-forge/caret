@@ -70,7 +70,7 @@ print.lift <- function(x, ...)
     invisible(x)
   }
 
-plot.lift <- function(x, y = NULL, ...) xyplot.lift <- function(x = x, data = NULL, ...)
+plot.lift <- function(x, y = NULL, ...) xyplot.lift(x = x, data = NULL, ...)
   
 xyplot.lift <- function(x, data = NULL, plot = "gain", values = NULL, ...)
   {
