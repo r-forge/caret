@@ -61,7 +61,7 @@ nominalTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing =
     resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
     ctrl$indexOut <- c(list("AllData" = rep(0, nrow(dat))),  ctrl$indexOut)
   }
-  `%op%` <- getOper(ctrl$allowParallel)
+  `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %:%
     foreach(parm = 1:nrow(info$loop), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop")  %op%
 {
@@ -334,7 +334,7 @@ looTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FAL
   printed <- format(info$loop)
   colnames(printed) <- gsub("^\\.", "", colnames(printed))
   
-  `%op%` <- getOper(ctrl$allowParallel)
+  `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   result <- foreach(iter = seq(along = ctrl$index), .combine = "rbind", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %:%
     foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
@@ -429,7 +429,7 @@ oobTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, ...)
   ppp <- c(ppp, ctrl$preProcOptions)
   printed <- format(info$loop)
   colnames(printed) <- gsub("^\\.", "", colnames(printed))
-  `%op%` <- getOper(ctrl$allowParallel)
+  `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   result <- foreach(parm = 1:nrow(info$loop), .packages = c("methods", "caret"), .combine = "rbind") %op%
 {
   library(caret)
@@ -467,7 +467,7 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
   resampleIndex <- ctrl$index
   if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
   
-  `%op%` <- getOper(ctrl$allowParallel)
+  `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
   if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[iter])
@@ -541,7 +541,7 @@ looSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
   
   vars <- vector(mode = "list", length = length(y))
   
-  `%op%` <- getOper(ctrl$allowParallel)
+  `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
   if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[iter])
@@ -578,7 +578,7 @@ nominalRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
   resampleIndex <- ctrl$index
   if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(x))), resampleIndex)
   
-  `%op%` <- getOper(ctrl$allowParallel)
+  `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
   library(caret)
