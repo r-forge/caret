@@ -77,6 +77,7 @@ export(anovaScores,
        lrFuncs,
        maxDissim,
        minDiss,
+       modelCor,
        modelLookup,
        nbBag,
        nbFuncs,
@@ -256,7 +257,6 @@ S3method(xyplot,      train)
 S3method(xyplot,      lift)
 S3method(xyplot,      calibration)
 
-
 S3method(densityplot, rfe)
 S3method(histogram,   rfe)
 S3method(stripplot,   rfe)
@@ -283,6 +283,8 @@ S3method(plot,  train)
 S3method(plot,  varImp.train)
 S3method(plot,  rfe)
 S3method(plot,  prcomp.resamples)
+S3method(plot,  lift)
+S3method(plot,  calibration)
 
 S3method(confusionMatrix,  train)
 S3method(confusionMatrix,  rfe)
@@ -431,6 +433,7 @@ S3method(summary, resamples)
 S3method(summary, bag)
 
 S3method(diff, resamples)
+S3method(sort, resamples)
 
 S3method(summary, diff.resamples)
 
