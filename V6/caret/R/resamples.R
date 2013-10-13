@@ -926,3 +926,20 @@ dotplot.diff.resamples <- function(x, data = NULL, metric = x$metric[1], ...)
             ...)
   }
 
+
+modelCor <- function(x, metric = x$metric[1], ...)
+{
+  dat <- x$values[, grep(paste("~", metric[1], sep = ""), names(x$values))]
+  colnames(dat) <- gsub(paste("~", metric[1], sep = ""), "", colnames(dat))
+  cor(dat, ...)
+}
+
+sort.resamples <- function(x, metric = x$metric[1], decreasing = FALSE, FUN = mean, ...) 
+{
+  dat <- x$values[, grep(paste("~", metric[1], sep = ""), names(x$values))]
+  colnames(dat) <- gsub(paste("~", metric[1], sep = ""), "", colnames(dat))
+  stats <- apply(dat, 2, FUN, ...)
+  names(sort(stats, decreasing = decreasing))
+}
+
+
