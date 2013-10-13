@@ -181,3 +181,7 @@ thresh <- NULL
 probValues <- min_prob <- NULL
 
 altTrainWorkflow <- function(x) x
+
+groups <- NULL
+
+trainData <- NULL
