@@ -71,6 +71,7 @@ calibCalc <- function(x, class = levels(obs)[1], cuts = 11)
     dataPoints
   }
 
+plot.calibration <- function(x, y = NULL, ...) xyplot.calibration <- function(x = x, data = NULL, ...)
 
 xyplot.calibration <- function(x, data = NULL, ...)
   {
