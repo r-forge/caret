@@ -7,8 +7,15 @@
  \item \code{logicForest} models were removed since the package is
  now archived.
 
- 
- }}
+ \item \code{panel.lift2} and \code{xyplot.lift} now have an argument 
+ called \code{values} that show the percentages of samples found for
+ the specified percentages of samples tested. 
+ }
+
+\item \code{train}, \code{rfe} and \code{sbf} should no longer throw 
+a warning that "executing %dopar% sequentially: no parallel backend registered".
+
+ }
 
 \section{Changes in version 5.17-07}{
 \itemize{
