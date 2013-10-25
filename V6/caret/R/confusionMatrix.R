@@ -97,10 +97,12 @@ confusionMatrix.table <- function(data, positive = NULL, prevalence = NULL, ...)
       names(tableStats) <- c("Sensitivity", "Specificity",
                              "Pos Pred Value", "Neg Pred Value",
                              "Prevalence", "Detection Rate",
-                                "Detection Prevalence")       
+                                "Detection Prevalence")   
+      tableStats["Balanced Accuracy"] <- (tableStats["Sensitivity"]+tableStats["Specificity"])/2
+        
     } else {
 
-      tableStats <- matrix(NA, nrow = length(classLevels), ncol = 7)
+      tableStats <- matrix(NA, nrow = length(classLevels), ncol = 8)
       
       for(i in seq(along = classLevels))
         {
@@ -113,14 +115,14 @@ confusionMatrix.table <- function(data, positive = NULL, prevalence = NULL, ...)
                               negPredValue.table(data, neg, prevalence = prev),
                               prev,
                               sum(data[pos, pos])/sum(data),
-                              sum(data[pos, ])/sum(data))          
-
+                              sum(data[pos, ])/sum(data), NA)          
+          tableStats[i,8] <- (tableStats[i,1] + tableStats[i,2])/2
         }
       rownames(tableStats) <- paste("Class:", classLevels)
       colnames(tableStats) <- c("Sensitivity", "Specificity",
                                 "Pos Pred Value", "Neg Pred Value",
                                 "Prevalence", "Detection Rate",
-                                "Detection Prevalence")  
+                                "Detection Prevalence", "Balanced Accuracy")  
     }
 
   structure(list(
