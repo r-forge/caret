@@ -13,7 +13,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
                                ...)
 {
 
-  allMethods <- c("BoxCox", "YeoJohnson", "expoTrans", "center", "scale", "range", "knnImpute", "bagImpute", "pca", "ica", "spatialSign")
+  allMethods <- c("BoxCox", "YeoJohnson", "expoTrans", "center", "scale", "range", "knnImpute", "bagImpute", "medianImpute", "pca", "ica", "spatialSign")
   if(any(!(method %in% allMethods))) stop(paste("'method' should be one of:", paste(allMethods, collapse = ", ")))
   if(is.null(method)) stop("NULL values of 'method' are not allowed")
   if(any(method %in% "range") & any(method %in% c("center", "scale", "BoxCox")))
@@ -28,7 +28,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
   if(any(method %in% c("pca", "ica", "knnImpute", "spatialSign")) & !(any(method == "scale"))) method  <- c(method, "scale")
   if(any(method %in% c("pca", "ica", "knnImpute", "spatialSign")) & !(any(method == "center"))) method  <- c(method, "center")
   
-  if(any(method == "knnImpute") & any(method == "bagImpute"))
+  if(sum(c("knnImpute","bagImpute", "medianImpute") %in% method) > 1)
     stop("please pick only one imputation method")
   
   method <- unique(method)
@@ -154,6 +154,14 @@ preProcess.default <- function(x, method = c("center", "scale"),
   
   x <- x[complete.cases(x),,drop = FALSE]
   
+  if (any(method == "medianImpute")) 
+    {
+    if(verbose) cat("Computing medians for each predictor...")
+    median <- sapply(x, median, na.rm=TRUE)
+    names(median) <- names(x)
+    if(verbose) cat(" done\n")
+  }
+  
   if(any(method == "pca"))
     {
       if(verbose) cat("Computing PCA loadings\n")
@@ -204,6 +212,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
               k = k,
               knnSummary = knnSummary,
               bagImp = bagModels,
+              median = median,
               cols = cols,
               data = if(any(method == "knnImpute")) scale(x[complete.cases(x),,drop = FALSE]) else NULL)
   structure(out, class = "preProcess")
@@ -343,6 +352,17 @@ predict.preProcess <- function(object, newdata, ...)
       newdata[!cc,] <- hasMiss
     }
   
+  if (any(object$method == "medianImpute") && any(!cc)) {
+    hasMiss <- newdata[!cc, , drop = FALSE]
+    missingVars <- apply(hasMiss, 2, function(x) any(is.na(x)))
+    missingVars <- names(missingVars)[missingVars]
+    if (!is.data.frame(hasMiss)) 
+      hasMiss <- as.data.frame(hasMiss)
+    for (i in seq(along = missingVars)) {
+      hasMiss[is.na(hasMiss[, missingVars[i]]), missingVars[i]] <- object$median[missingVars[i]]
+    }
+    newdata[!cc, ] <- hasMiss
+  }
   
   if(any(object$method == "pca"))
     {
