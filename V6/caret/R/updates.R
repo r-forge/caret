@@ -8,17 +8,13 @@ update.train <- function(object, param = NULL, ...)
     if(is.list(param)) param <- as.data.frame(param)
     if(!is.data.frame(param)) stop("param should be a data frame or a named list")
     if(nrow(param) > 1) stop("only one set of parameters should be specified")
-    if(object$method != "custom")
-      {
-        modelInfo <- modelLookup(object$method)
-        if(length(modelInfo$parameter) != ncol(param))
-          stop(paste("Parameters should be", paste(".", modelInfo$parameter, sep = "", collapse = ", ")))
-        if(any(sort(names(param)) != sort(paste(".", modelInfo$parameter, sep = ""))))
-          stop(paste("Parameters should be", paste(".", modelInfo$parameter, sep = "", collapse = ", ")))
-      } else {
-        stop("updates not currently implemented for custom methods")
-      }
 
+    paramNames <- as.character(marsTune$modelInfo$parameter$parameter)
+    if(length(paramNames) != ncol(param))
+      stop(paste("Parameters should be", paste(".", paramNames, sep = "", collapse = ", ")))
+    if(any(sort(names(param)) != sort(paste(".", paramNames, sep = ""))))
+      stop(paste("Parameters should be", paste(".", paramNames, sep = "", collapse = ", ")))
+    
     ## get pre-processing options
     if(!is.null(object$preProcess))
       {
