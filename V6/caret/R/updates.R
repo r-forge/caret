@@ -3,7 +3,6 @@ update.train <- function(object, param = NULL, ...)
     ## check for original data
     if(is.null(object$trainingData)) stop("original training data is needed; use returnData = TRUE in trainControl()")
     
-    ## check parameter names; what about custom?
     if(is.null(param)) return(object)
     if(is.list(param)) param <- as.data.frame(param)
     if(!is.data.frame(param)) stop("param should be a data frame or a named list")

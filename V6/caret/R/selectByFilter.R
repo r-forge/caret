@@ -362,22 +362,22 @@ caretSBF <- list(summary = defaultSummary,
                  pred = function(object, x)
                  {
                    if(class(object) != "nullModel")
+                   {
+                     tmp <- predict(object, x)
+                     if(object$modelType == "Classification" &
+                          !is.null(object$modelInfo$prob))
                      {
-                       tmp <- predict(object, x)
-                       if(object$modelType == "Classification" &
-                          modelLookup(object$method)$probModel[1])
-                         {
-                           out <- cbind(data.frame(pred = tmp),
-                                        as.data.frame(predict(object, x, type = "prob")))
-                         } else out <- tmp
-                     } else {
-                       tmp <- predict(object, x)
-                       if(!is.null(object$levels))
-                         {
-                           out <- cbind(data.frame(pred = tmp),
-                                        as.data.frame(predict(object, x, type = "prob")))
-                         } else out <- tmp 
-                     }
+                       out <- cbind(data.frame(pred = tmp),
+                                    as.data.frame(predict(object, x, type = "prob")))
+                     } else out <- tmp
+                   } else {
+                     tmp <- predict(object, x)
+                     if(!is.null(object$levels))
+                     {
+                       out <- cbind(data.frame(pred = tmp),
+                                    as.data.frame(predict(object, x, type = "prob")))
+                     } else out <- tmp 
+                   }
                    out
                  },
                  score = function(x, y)
