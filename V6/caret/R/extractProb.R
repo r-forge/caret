@@ -13,7 +13,7 @@ extractProb <- function(
   if(is.null(objectNames)) objectNames <- paste("Object", 1:length(models), sep = "")
 
   
-  if(any(unlist(lapply(models, function(x) !modelLookup(x$method)$probModel))))
+  if(any(unlist(lapply(models, function(x) is.null(x$modelInfo$prob)))))
     stop("only classification models that produce probabilities are allowed")
   
   obsLevels <- getClassLevels(models[[1]])
