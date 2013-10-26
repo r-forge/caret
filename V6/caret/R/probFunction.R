@@ -19,7 +19,7 @@ probFunction2 <- function(method, modelFit, newdata, preProc = NULL, param = NUL
 probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL, custom = NULL)
 {
   
-  if(is.null(object$modelInfo$prob))
+  if(is.null(modelFit$modelInfo$prob))
     stop("no probability method for this model")
   
   if(method %in% c(
