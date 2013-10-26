@@ -5,10 +5,12 @@ models <- vector(mode = "list", length = length(modelFiles))
 names(models) <- gsub("\\.R", "", modelFiles)
 
 for(i in seq(along = modelFiles)) {
-  cat(sprintf("sourcing %s...\n", modelFiles[i]))
   source(file.path("models", modelFiles[i]))
   models[[i]] <- modelInfo
   rm(modelInfo)
 }
 
 save(models, file = "models.RData")
+
+cat("\nYou can update your caret installation using the command:\n\n")
+cat(sprintf("  cp models.RData %s/.\n", system.file("models", package="caret")))
