@@ -1,3 +1,26 @@
+modelLookup2 <- function(model = NULL){
+  warning("modelLookup() is deprecated and will be removed in a future version")
+  load(system.file("models", "models.RData", package = "caret"))
+  if(!is.null(model)){
+    if(!(model %in% names(models))) stop(paste("Model '", method, "' is not in the ",
+                                               "set of existing models", sep = ""))   
+    
+    models <- models[model == names(models)]                                                    
+  }                                                                        
+  out <- lapply(models,
+                function(x) {
+                  out <- x$parameters[, c("parameter", "label")]
+                  out$forReg <- "Regression" %in% x$type
+                  out$forClass <- "Classification" %in% x$type     
+                  out$probModel <- !is.null(x$prob)
+                  out
+                })
+  for(i in seq(along = out)) out[[i]]$model <- names(models)[i]
+  out <- do.call("rbind", out)
+  rownames(out) <- NULL
+  out <- out[, c('model', 'parameter', 'label', 'forReg', 'forClass', 'probModel')]
+  out[order(out$model),]
+}
 
 modelLookup <- function(model = NULL)
 {
