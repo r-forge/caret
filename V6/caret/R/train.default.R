@@ -481,7 +481,7 @@ train.default <- function(x, y,
   out <- structure(
                    list(
                         method = method,
-                        functions = models,
+                        modelInfo = models,
                         modelType = modelType,
                         results = performance,
                         pred = tmp$predictions,
