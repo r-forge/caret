@@ -43,8 +43,6 @@ train.default <- function(x, y,
     warning("Models using Weka will not work with parallel processing with multicore/doMC")
   flush.console()
   
-  ppMethods <- c("BoxCox", "YeoJohnson", "expoTrans", "center", "scale", "range", "knnImpute", "bagImpute", "pca", "ica", "spatialSign")
-  
   if(!is.null(preProcess) && !(all(preProcess %in% ppMethods))) 
     stop(paste('pre-processing methods are limited to:', paste(ppMethods, collapse = ", ")))
   if(modelType == "Classification")

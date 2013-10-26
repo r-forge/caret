@@ -1,3 +1,6 @@
+ppMethods <- c("BoxCox", "YeoJohnson", "expoTrans", "center", "scale", "range", "knnImpute", "bagImpute", "pca", "ica", "spatialSign", "medianImpute")
+
+
 preProcess <- function(x, ...) UseMethod("preProcess")
 
 preProcess.default <- function(x, method = c("center", "scale"),
@@ -13,8 +16,8 @@ preProcess.default <- function(x, method = c("center", "scale"),
                                ...)
 {
 
-  allMethods <- c("BoxCox", "YeoJohnson", "expoTrans", "center", "scale", "range", "knnImpute", "bagImpute", "medianImpute", "pca", "ica", "spatialSign")
-  if(any(!(method %in% allMethods))) stop(paste("'method' should be one of:", paste(allMethods, collapse = ", ")))
+  ppMethods <- c("BoxCox", "YeoJohnson", "expoTrans", "center", "scale", "range", "knnImpute", "bagImpute", "medianImpute", "pca", "ica", "spatialSign")
+  if(any(!(method %in% ppMethods))) stop(paste("'method' should be one of:", paste(ppMethods, collapse = ", ")))
   if(is.null(method)) stop("NULL values of 'method' are not allowed")
   if(any(method %in% "range") & any(method %in% c("center", "scale", "BoxCox")))
     stop("centering, scaling and/or Box-Cox transformations are inconsistent with scaling to a range of [0, 1]")
