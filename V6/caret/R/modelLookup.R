@@ -1,3 +1,41 @@
+checkInstall <- function(pkg){
+  good <- rep(TRUE, length(pkg))
+  for(i in seq(along = pkg)){
+    tested <- try(find.package(pkg[i]), silent = TRUE)
+    if(class(tested)[1] == "try-error") good[i] <- FALSE
+  }
+  if(any(!good)){
+    pkList <- paste(pkg[!good], collapse = ", ")
+    msg <- paste(sum(!good), 
+                 ifelse(sum(!good) > 1, " packages are", " package is"),
+                 " needed for this model and",
+                 ifelse(sum(!good) > 1, " are", " is"),
+                 " not installed. (",
+                 pkList,
+                 "). Would you like to try to install",
+                 ifelse(sum(!good) > 1, " them", " it"),
+                 " now?",
+                 sep = "")
+    cat(msg)    
+    if(interactive()) {
+      installChoice <- menu(c("yes", "no"))
+      if(installChoice == 1){
+        install.packages(pkg[!good])
+      } else stop()
+    } else stop()
+  }
+}
+
+getModelInfo <- function(model = NULL, ...) {
+  load(system.file("models", "models.RData", package = "caret"))
+  if(!is.null(model)){
+    keepers <- grepl(model, names(models), ...)
+    models <- models[keepers]
+  }
+  models
+}
+
+
 modelLookup2 <- function(model = NULL){
   warning("modelLookup() is deprecated and will be removed in a future version")
   load(system.file("models", "models.RData", package = "caret"))
