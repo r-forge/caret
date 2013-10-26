@@ -9,7 +9,7 @@ update.train <- function(object, param = NULL, ...)
     if(!is.data.frame(param)) stop("param should be a data frame or a named list")
     if(nrow(param) > 1) stop("only one set of parameters should be specified")
 
-    paramNames <- as.character(marsTune$modelInfo$parameter$parameter)
+    paramNames <- as.character(object$modelInfo$parameter$parameter)
     if(length(paramNames) != ncol(param))
       stop(paste("Parameters should be", paste(".", paramNames, sep = "", collapse = ", ")))
     if(any(sort(names(param)) != sort(paste(".", paramNames, sep = ""))))
