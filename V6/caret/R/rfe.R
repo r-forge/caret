@@ -426,7 +426,7 @@ caretFuncs <- list(summary = defaultSummary,
                    {
                      tmp <- predict(object, x)
                      if(object$modelType == "Classification" &
-                        modelLookup(object$method)$probModel[1])
+                          !is.null(object$modelInfo$prob))
                        {
                          out <- cbind(data.frame(pred = tmp),
                                       as.data.frame(predict(object, x, type = "prob")))
