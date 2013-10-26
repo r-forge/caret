@@ -19,9 +19,8 @@ probFunction2 <- function(method, modelFit, newdata, preProc = NULL, param = NUL
 probFunction <- function(method, modelFit, newdata, preProc = NULL, param = NULL, custom = NULL)
 {
   
-  if(method != "custom" && !any(modelLookup(method)$probModel))
+  if(is.null(object$modelInfo$prob))
     stop("no probability method for this model")
-  
   
   if(method %in% c(
                    "svmradial", "svmpoly", "svmRadialCost",

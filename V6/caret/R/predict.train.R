@@ -10,9 +10,9 @@ predict.train <- function(object, newdata = NULL, type = "raw", na.action = na.o
   {
 
     if(!(type %in% c("raw", "prob"))) stop("type must be either \"raw\" or \"prob\"")
-    if(type == "prob" & object$method != "custom")
+    if(type == "prob")
       {
-        if (any(!modelLookup(object$method)$probModel))
+        if (is.null(object$modelInfo$prob))
           stop("only classification models that produce probabilities are allowed")
       }
 
