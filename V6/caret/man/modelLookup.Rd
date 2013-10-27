@@ -49,7 +49,7 @@ options to pass to \code{\link[base]{grepl}}
 
 }
 
-\notes{The column \code{seq} is no longer included in the output of \code{modelLookup}.}
+\note{The column \code{seq} is no longer included in the output of \code{modelLookup}.}
 
 \author{
 Max Kuhn
