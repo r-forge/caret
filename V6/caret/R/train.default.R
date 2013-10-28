@@ -16,19 +16,15 @@ train.default <- function(x, y,
 {
   startTime <- proc.time()
   
-  load(system.file("models", "models.RData", package = "caret"))
   if(is.list(method)) {
-    nameCheck <- names(method) %in% names(models[[1]])
+    example <- getModelInfo("rpart", regex = FALSE)
+    nameCheck <- names(method) %in% names(example[[1]])
     if(!all(nameCheck)) stop(paste("some components are missing:",
                                    paste(names(method)[!nameCheck], collapse = ", ")))
     models <- method
     method <- "custom"
-    
-  } else {
-    if(!(method %in% names(models))) stop(paste("Model '", method, "' is not in the ",
-                                                "set of existing models", sep = ""))
-    models <- models[[method]]
-  }
+  } else models <- getModelInfo(method)[[1]]
+  checkInstall(models$library)
 
   ## TODO check for packages installed then offer to load
   
@@ -234,14 +230,6 @@ train.default <- function(x, y,
       stop("The 'loop' function should produce a list with elements 'loop' and 'submodels'")
   } else trainInfo <- list(loop = tuneGrid)
     
-  #### TODO adjust this for new structure
-#   trainInfo <- tuneScheme(method, tuneGrid, trControl$method == "oob")
-#   trainInfo <- list(loop = tuneGrid)
-#   trainInfo$scheme <- "basic"
-#   trainInfo$submodels <- NULL
-#   trainInfo$constant <- paramCols
-#   trainInfo$vary <- NULL
-  
 
   ## Set or check the seeds when needed
   if(is.null(trControl$seeds))
