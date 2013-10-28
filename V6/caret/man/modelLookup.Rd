@@ -11,7 +11,7 @@ These function show information about models and packages that are accessible vi
 \usage{
 modelLookup(model = NULL)
 
-getModelInfo(model = NULL, ...)
+getModelInfo(model = NULL, regex = TRUE, ...)
 
 checkInstall(pkg)
 }
@@ -19,6 +19,9 @@ checkInstall(pkg)
   \item{model}{
 a character string associated with the \code{method} argument of \code{\link{train}}. If no value is 
 passed, all models are returned. For \code{getModelInfo}, regular expressions can be used.
+}
+  \item{regex}{
+a logical: should a regular expressions be used? If \code{FALSE}, a simple match is conducted against the whole name of the model. 
 }
   \item{pkg}{
 a character string of package names. 
@@ -65,6 +68,7 @@ modelLookup("gbm")
 
 getModelInfo("pls")
 getModelInfo("^pls")
+getModelInfo("pls", regex = FALSE)
 
 \dontrun{
 checkInstall(getModelInfo("pls")$library)
