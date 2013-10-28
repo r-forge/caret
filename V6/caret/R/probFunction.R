@@ -3,7 +3,7 @@ probFunction2 <- function(method, modelFit, newdata, preProc = NULL, param = NUL
   if(!is.null(preProc)) newdata <- predict(preProc, newdata)
   
   ## TODO get a real getLevels function 
-  obsLevels <- if(isS4(modelFit)) lev(modelFit) else modelFit$obsLevels
+  obsLevels <- levels(modelFit)
   
   classProb <- method$prob(modelFit = modelFit, 
                            newdata = newdata, 
