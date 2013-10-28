@@ -79,16 +79,9 @@
       resampleN <- unlist(lapply(x$control$index, length))
       numResamp <- length(resampleN)
       
-      resampName <- switch(tolower(x$control$method),
-                           boot = paste("Bootstrap (", numResamp, " reps)", sep = ""),
-                           boot632 = paste("Bootstrap 632 Rule (", numResamp, " reps)", sep = ""),
-                           cv = paste("Cross-Validation (", x$control$number, " fold)", sep = ""),
-                           repeatedcv = paste("Cross-Validation (", x$control$number, " fold, repeated ",
-                                              x$control$repeats, " times)", sep = ""),
-                           loocv = "Leave-One-Out Cross-Validation",
-                           lgocv = paste("Repeated Train/Test Splits (", numResamp, " reps, ",
-                             round(x$control$p, 2), "%)", sep = ""))
-      cat("Resampling:", resampName, "\n\n")      
+      resampText <- resampName(x)
+      
+      cat("Resampling:", resampText, "\n\n")      
       outLabel <- x$metric
 
       resampleN <- as.character(resampleN)

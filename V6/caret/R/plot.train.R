@@ -75,12 +75,7 @@
         ## or conditioning variables
 
 
-        resampName <- switch(tolower(x$control$method),
-                             boot = "(Bootstrap)",
-                             boot632 = "(Bootstrap 632 Rule)",
-                             cv = "(Cross-Validation)",
-                             repeatedcv = "(Repeated Cross-Validation)",
-                             lgocv = "(Repeated Train/Test Splits)")
+        resampText <- resampName(x, FALSE)
         
         if(plotType %in% c("line", "scatter"))
           {
@@ -108,7 +103,7 @@
                                 groups = if(p > 1) dat[,params[2]] else NULL)
             if(length(list(...)) > 0) defaultArgs <- c(defaultArgs, list(...))
             lNames <- names(defaultArgs)
-            if(!("ylab" %in% lNames))  defaultArgs$ylab <- paste(metric, resampName)
+            if(!("ylab" %in% lNames))  defaultArgs$ylab <- paste(metric, resampText)
             
             if(!("type" %in% lNames) & plotType == "scatter") defaultArgs$type <- c("g", "o")
             if(!("type" %in% lNames) & plotType == "line") defaultArgs$type <- c("g", "o")
@@ -157,7 +152,7 @@
             defaultArgs <- list(x = form, data = dat)
             if(length(list(...)) > 0) defaultArgs <- c(defaultArgs, list(...))
             lNames <- names(defaultArgs)
-            if(!("sub" %in% lNames)) defaultArgs$sub <- paste(metric, resampName)
+            if(!("sub" %in% lNames)) defaultArgs$sub <- paste(metric, resampText)
 
             paramLabs <- as.character(subset(x$modelInfo$parameter, parameter %in% params)$label)  
             if(!("xlab" %in% lNames)) defaultArgs$xlab <- paramLabs[1]
