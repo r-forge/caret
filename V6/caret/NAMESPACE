@@ -1,5 +1,5 @@
 useDynLib(caret)
-import(lattice)
+import(lattice, ggplot2)
 importFrom(stats, prcomp)
 
 export(anovaScores,
@@ -484,3 +484,5 @@ S3method(levels, train)
 S3method(levels, VBMP.obj)
 S3method(levels, Weka_classifier)
 
+S3method(ggplot, train)
+S3method(ggplot, rfe)
