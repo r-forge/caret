@@ -26,10 +26,10 @@ checkInstall <- function(pkg){
   }
 }
 
-getModelInfo <- function(model = NULL, ...) {
+getModelInfo <- function(model = NULL, regex = TRUE, ...) {
   load(system.file("models", "models.RData", package = "caret"))
   if(!is.null(model)){
-    keepers <- grepl(model, names(models), ...)
+    keepers <- if(regex) grepl(model, names(models), ...) else which(model == names(models))[1]
     models <- models[keepers]
   }
   models
