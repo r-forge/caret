@@ -201,16 +201,8 @@ print.sbf <- function(x, top = 5, digits = max(3, getOption("digits") - 3), ...)
   resampleN <- unlist(lapply(x$control$index, length))
   numResamp <- length(resampleN)
   
-  resampName <- switch(tolower(x$control$method),
-                       boot = paste("Bootstrap (", numResamp, " reps)", sep = ""),
-                       boot632 = paste("Bootstrap 632 Rule (", numResamp, " reps)", sep = ""),
-                       cv = paste("Cross-Validation (", x$control$number, " fold)", sep = ""),
-                       repeatedcv = paste("Cross-Validation (", x$control$number, " fold, repeated ",
-                         x$control$repeats, " times)", sep = ""),
-                       loocv = "Leave-One-Out Cross-Validation",
-                       lgocv = paste("Repeated Train/Test Splits (", numResamp, " reps, ",
-                         round(x$control$p, 2), "%)", sep = ""))
-  cat("Outer resampling method:", resampName, "\n")      
+  resampText <- resampName(x)
+  cat("Outer resampling method:", resampText, "\n")     
 
   cat("\nResampling performance:\n\n")
   print(format(x$results, digits = digits), row.names = FALSE)
