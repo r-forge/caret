@@ -13,7 +13,8 @@
       x <- predict(ppObj, x)
       rm(pp)
     } else ppObj <- NULL
-    modelFit <- method$fit(x = x, y = y, wts = wts, 
+    modelFit <- method$fit(x = if(!is.data.frame(x)) as.data.frame(x) else x, 
+                           y = y, wts = wts, 
                            param  = tuneValue, lev = obsLevels, 
                            last = FALSE, 
                            classProbs = classProbs, ...) 
