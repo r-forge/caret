@@ -2,7 +2,7 @@ modelInfo <- list(library = "party",
                   loop = NULL,
                   type = c("Classification", "Regression"),
                   parameters = data.frame(parameter = 'mincriterion',
-                                          class = 'unknown',
+                                          class = 'numeric',
                                           label = '1 - P-Value Threshold'),
                   grid = function(x, y, len = NULL) {
                     data.frame(.mincriterion = seq(from = .99, to = 0.01, length = len))
@@ -49,5 +49,5 @@ modelInfo <- list(library = "party",
                     rownames(out) <- NULL
                     out
                   },
-                  tags = c('unknown'),
+                  tags = c('Tree-Based Model'),
                   sort = function(x) x)
