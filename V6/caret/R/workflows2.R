@@ -343,7 +343,7 @@ looTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testin
   if(testing) print(head(predicted))
   if(ctrl$classProbs)
   {
-    probValues <- caret:::probFunction(method = method,
+    probValues <- caret:::probFunction2(method = method,
                                        modelFit = mod$fit,
                                        newdata = x[holdoutIndex,, drop = FALSE],
                                        preProc = mod$preProc,
