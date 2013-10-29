@@ -292,25 +292,27 @@ train.default <- function(x, y,
     }
 
   if(trControl$method == "oob")
+  {
+    tmp <- oobTrainWorkflow2(x = x, y = y, wts = weights, 
+                             info = trainInfo, method = models,
+                             ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+    performance <- tmp
+  } else {
+    if(trControl$method == "LOOCV")
     {
-       tmp <- oobTrainWorkflow2(dat = trainData, info = trainInfo, method = method,
-                              ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
-      performance <- tmp
+      tmp <- looTrainWorkflow2(x = x, y = y, wts = weights, 
+                               info = trainInfo, method = models,
+                               ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+      performance <- tmp$performance
     } else {
-      if(trControl$method == "LOOCV")
-        {
-          tmp <- looTrainWorkflow2(dat = trainData, info = trainInfo, method = method,
-                                  ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
-          performance <- tmp$performance
-        } else {
-          tmp <- nominalTrainWorkflow2(x = x, y = y, wts = weights, 
-                                       info = trainInfo, method = models,
-                                       ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
-          performance <- tmp$performance
-          resampleResults <- tmp$resample
-        }
+      tmp <- nominalTrainWorkflow2(x = x, y = y, wts = weights, 
+                                   info = trainInfo, method = models,
+                                   ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+      performance <- tmp$performance
+      resampleResults <- tmp$resample
     }
-
+  }
+  
     ## TODO we used to give resampled results for LOO
   if(!(trControl$method %in% c("LOOCV", "oob")))
     {
