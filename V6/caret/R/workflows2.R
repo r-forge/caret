@@ -15,7 +15,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
   
   printed <- format(info$loop, digits = 4)
   colnames(printed) <- gsub("^\\.", "", colnames(printed))
-    
+  
   ## For 632 estimator, add an element to the index of zeros to trick it into
   ## fitting and predicting the full data set.
   
@@ -26,7 +26,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
     ctrl$indexOut <- c(list("AllData" = rep(0, nrow(dat))),  ctrl$indexOut)
   }
   `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
-
+  
   pkgs <- c("methods", "caret")
   if(!is.null(method$library)) pkgs <- c(pkgs, method$library)
   
@@ -59,7 +59,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
                          obsLevels = lev,
                          pp = ppp,
                          classProbs = ctrl$classProbs,
-                        ...),
+                         ...),
     silent = TRUE)
   
   if(class(mod)[1] != "try-error")
@@ -71,7 +71,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
                                   preProc = mod$preProc,
                                   param = info$submodels[[parm]]),
       silent = TRUE)
-   
+    
     if(class(predicted)[1] == "try-error")
     {
       wrn <- paste(colnames(printed[parm,,drop = FALSE]),
@@ -155,18 +155,18 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
   }
   
   ##################################
-
+  
   if(!is.null(info$submodels))
   {
     ## merge the fixed and seq parameter values together
     allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
     allParam <- allParam[complete.cases(allParam),, drop = FALSE]
     
-#     ## For ctree, we had to repeat the first value
-#     if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
-#     
-#     ## For glmnet, we fit all the lambdas but x$fixed has an NA
-#     if(method == "glmnet") allParam <- allParam[complete.cases(allParam),, drop = FALSE]
+    #     ## For ctree, we had to repeat the first value
+    #     if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
+    #     
+    #     ## For glmnet, we fit all the lambdas but x$fixed has an NA
+    #     if(method == "glmnet") allParam <- allParam[complete.cases(allParam),, drop = FALSE]
     
     ## collate the predicitons across all the sub-models
     predicted <- lapply(predicted,
@@ -273,7 +273,7 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
   {
     warning("There were missing values in resampled performance measures.")
   }
-
+  
   out <- ddply(resamples[,!grepl("^cell|Resample", colnames(resamples)),drop = FALSE],
                ## TODO check this for seq models
                gsub("^\\.", "", colnames(info$loop)),
@@ -294,9 +294,12 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
 }
 
 
-looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
+
+looTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
 {
+  suppressPackageStartupMessages(library(foreach))
   library(caret)
+  loadNamespace("caret")
   
   ppp <- list(options = ppOpts)
   ppp <- c(ppp, ctrl$preProcOptions)
@@ -305,49 +308,52 @@ looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FA
   colnames(printed) <- gsub("^\\.", "", colnames(printed))
   
   `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
-  result <- foreach(iter = seq(along = ctrl$index), .combine = "rbind", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %:%
-    foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
+  
+  pkgs <- c("methods", "caret")
+  if(!is.null(method$library)) pkgs <- c(pkgs, method$library)
+  
+  result <- foreach(iter = seq(along = ctrl$index), .combine = "rbind", .verbose = FALSE, .packages = pkgs, .errorhandling = "stop") %:%
+    foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = pkgs, .errorhandling = "stop") %op%
 {
+  
   if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[[iter]][parm])
-  
+  if(testing) cat("after loops\n")
   library(caret)
-  if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE])
+  if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE],
+                                        names(ctrl$index), iter, TRUE)
   
-  if(testing) cat("pre-model\n")
-  
-  mod <- caret:::createModel(data = dat[ctrl$index[[iter]],,drop = FALSE ],
-                             method = method,
-                             tuneValue = info$loop[parm,,drop = FALSE],
-                             obsLevels = lev,
-                             pp = ppp,
-                             custom = NULL,
-                             classProbs = ctrl$classProbs,
-                             ...)
+  mod <- caret:::createModel2(x = x[ctrl$index[[iter]],,drop = FALSE ],
+                              y = y[ctrl$index[[iter]] ],
+                              wts = wts[ctrl$index[[iter]] ],
+                              method = method,
+                              tuneValue = info$loop[parm,,drop = FALSE],
+                              obsLevels = lev,
+                              pp = ppp,
+                              classProbs = ctrl$classProbs,
+                              ...)
   
   holdoutIndex <- -unique(ctrl$index[[iter]])
   
-  predicted <- caret:::predictionFunction(method = method,
-                                          modelFit = mod$fit,
-                                          newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
-                                          preProc = mod$preProc,
-                                          param = info$submodels[[parm]],
-                                          custom = NULL)
+  predicted <- caret:::predictionFunction2(method = method,
+                                           modelFit = mod$fit,
+                                           newdata = x[-ctrl$index[[iter]],, drop = FALSE],
+                                           preProc = mod$preProc,
+                                           param = info$submodels[[parm]])
   
   if(testing) print(head(predicted))
   if(ctrl$classProbs)
   {
     probValues <- caret:::probFunction(method = method,
                                        modelFit = mod$fit,
-                                       newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
+                                       newdata = x[holdoutIndex,, drop = FALSE],
                                        preProc = mod$preProc,
-                                       param = info$submodels[[parm]],
-                                       custom = NULL)
+                                       param = info$submodels[[parm]])
     if(testing) print(head(probValues))
   }
   
   ##################################
   
-  if(!is.null(info$seq))
+  if(!is.null(info$submodels))
   {
     ## collate the predictions across all the sub-models
     predicted <- lapply(predicted,
@@ -356,7 +362,7 @@ looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FA
                           if(!is.factor(x) & is.character(x)) x <- factor(as.character(x), levels = lv)
                           data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
                         },
-                        y = dat$.outcome[holdoutIndex],
+                        y = y[holdoutIndex],
                         lv = lev)
     if(testing) print(head(predicted))
     
@@ -371,20 +377,22 @@ looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FA
     ## if saveDetails then save and export 'predicted'
   } else {
     
-    if(is.factor(dat$.outcome)) predicted <- factor(as.character(predicted),
-                                                    levels = lev)
+    if(is.factor(y)) predicted <- factor(as.character(predicted),
+                                         levels = lev)
     predicted <-  data.frame(pred = predicted,
-                             obs = dat$.outcome[holdoutIndex],
+                             obs = y[holdoutIndex],
                              stringsAsFactors = FALSE)
     if(ctrl$classProbs) predicted <- cbind(predicted, probValues)
     predicted <- cbind(predicted, info$loop[parm,,drop = FALSE])
   }
+  if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE],
+                                        names(ctrl$index), iter, FALSE)
   predicted
 }
   
   names(result) <- gsub("^\\.", "", names(result))
   out <- ddply(result,
-               info$model$parameter,
+               as.character(method$parameter$parameter),
                ctrl$summaryFunction,
                lev = lev,
                model = method)
@@ -392,7 +400,7 @@ looTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, testing = FA
 }
 
 
-oobTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, ...)
+oobTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
 {
   library(caret)
   ppp <- list(options = ppOpts)
@@ -403,22 +411,25 @@ oobTrainWorkflow2 <- function(dat, info, method, ppOpts, ctrl, lev, ...)
   result <- foreach(parm = 1:nrow(info$loop), .packages = c("methods", "caret"), .combine = "rbind") %op%
 {
   library(caret)
-  if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE])
+  if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE], "", 1, TRUE)
   
-  mod <- caret:::createModel(data = dat,
-                             method = method,
-                             tuneValue = info$loop[parm,,drop = FALSE],
-                             obsLevels = lev,
-                             pp = ppp,
-                             custom = NULL,
-                             classProbs = ctrl$classProbs,
-                             ...)
-  out <- switch(
-    class(mod$fit)[1],
-    randomForest = caret:::rfStats(mod$fit),
-    RandomForest = caret:::cforestStats(mod$fit),
-    bagEarth =, bagFDA = caret:::bagEarthStats(mod$fit),
-    regbagg =, classbagg = caret:::ipredStats(mod$fit))
+  mod <- caret:::createModel2(x = x,
+                              y = y,
+                              wts = wts,
+                              method = method,
+                              tuneValue = info$loop[parm,,drop = FALSE],
+                              obsLevels = lev,
+                              pp = ppp,
+                              classProbs = ctrl$classProbs,
+                              ...)
+
+  out <- switch(class(mod$fit)[1],
+                randomForest = caret:::rfStats(mod$fit),
+                RandomForest = caret:::cforestStats(mod$fit),
+                bagEarth =, bagFDA = caret:::bagEarthStats(mod$fit),
+                regbagg =, classbagg = caret:::ipredStats(mod$fit))
+  if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE], "", 1, FALSE)
+  
   cbind(as.data.frame(t(out)), info$loop[parm,,drop = FALSE])
 }
   names(result) <- gsub("^\\.", "", names(result))
