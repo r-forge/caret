@@ -55,7 +55,13 @@ modelInfo <- list(library = "pls",
                   prob = function(modelFit, newdata, submodels = NULL) {
                     if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
                     out <- predict(modelFit, newdata, type = "prob",  ncomp = modelFit$tuneValue$.ncomp)
-                    if(length(dim(out)) == 3) out <- out[,,1]
+                    if(length(dim(out)) == 3){
+                      if(dim(out)[1] > 1) {
+                        out <- out[,,1]
+                      } else {
+                        out <- as.data.frame(t(out[,,1]))
+                      }
+                    }
                     if(!is.null(submodels))
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
@@ -64,8 +70,15 @@ modelInfo <- list(library = "pls",
                       for(j in seq(along = submodels$.ncomp))
                       {
                         tmpProb <- predict(modelFit, newdata, type = "prob",  ncomp = submodels$.ncomp[j])
-                        if(length(dim(tmpProb)) == 3) tmpProb <- tmpProb[,,1]
-                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels])
+                        if(length(dim(tmpProb)) == 3){
+                          if(dim(tmpProb)[1] > 1) {
+                            tmpProb <- tmpProb[,,1]
+                          } else {
+                            tmpProb <- as.data.frame(t(tmpProb[,,1]))
+                          }
+                        } 
+                        
+                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels,drop = FALSE])
                       }
                       out <- tmp
                     }                        

@@ -54,7 +54,7 @@ modelInfo <- list(library = "pamr",
                         tmpProb <-  pamr.predict(modelFit, t(newdata),
                                                  threshold =  submodels$.threshold[j], 
                                                  type= "posterior")
-                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels])
+                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels,drop = FALSE])
                       }
                       out <- tmp
                     }   

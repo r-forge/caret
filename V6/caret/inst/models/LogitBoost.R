@@ -58,7 +58,7 @@ modelInfo <- list(library = "caTools",
                                                                type = "raw",
                                                                nIter = submodels$.nIter[j])
                         tmpProb <- out <- t(apply(tmpProb, 1, function(x) x/sum(x)))
-                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels])           
+                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels,drop = FALSE])           
                       }
                       out <- tmp
                     }                       

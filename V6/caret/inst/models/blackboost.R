@@ -91,7 +91,7 @@ modelInfo <- list(library = c("party", "mboost"),
                         tmpProb <- cbind(binomial()$linkinv(-tmpProb),
                                          1 - binomial()$linkinv(-tmpProb))
                         colnames(tmpProb) <- modelFit$obsLevels
-                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels])           
+                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels, drop = FALSE])           
                       }
                       out <- tmp
                     }                        

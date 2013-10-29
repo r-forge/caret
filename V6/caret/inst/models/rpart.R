@@ -80,7 +80,7 @@ modelInfo <- list(library = "rpart",
                       {
                         prunedFit <- prune.rpart(modelFit, cp = submodels$.cp[j])
                         tmpProb <- predict(prunedFit, newdata, type = "prob")
-                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels])
+                        tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels, drop = FALSE])
                       }
                       out <- tmp
                     }                              
