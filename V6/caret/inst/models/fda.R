@@ -5,7 +5,7 @@ modelInfo <- list(library = c("earth", "mda"),
                                           class = c("numeric", "numeric"),
                                           label = c('Product Degree', '#Terms')),
                   grid = function(x, y, len = NULL) {
-                    dat <- x
+                    dat <- if(!is.data.frame(x)) as.data.frame(x) else x
                     dat$.outcome <- y
                     
                     mod <- fda( .outcome~., data = dat, method = earth, pmethod = "none")
