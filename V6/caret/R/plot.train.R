@@ -64,7 +64,12 @@
       {
         p <- length(params)
         dat <- dat[, c(metric, params)]
-        
+        if(p > 1) {
+          numUnique <- unlist(lapply(dat[, -1], function(x) length(unique(x))))
+          numUnique <- sort(numUnique,  decreasing = TRUE)
+          dat <- dat[, c(metric, names(numUnique))]
+          params <- names(numUnique)
+        }  
         ## The conveintion is that the first parameter (in
         ## position #2 of dat) is plotted on the x-axis,
         ## the second parameter is the grouping variable
@@ -107,7 +112,6 @@
             
             if(!("type" %in% lNames) & plotType == "scatter") defaultArgs$type <- c("g", "o")
             if(!("type" %in% lNames) & plotType == "line") defaultArgs$type <- c("g", "o")
-            paramLabs <- as.character(subset(x$modelInfo$parameter, parameter %in% params)$label)    
             if(p > 1)
               {
                 ## I apologize in advance for the following 3 line kludge. 
@@ -121,9 +125,12 @@
                                             include.lowest = TRUE))
                 
                 if(!(any(c("key", "auto.key") %in% lNames)))
-                  defaultArgs$auto.key <- list(columns = groupCols, lines = TRUE, title = paramLabs[2], cex.title = 1)
+                  defaultArgs$auto.key <- list(columns = groupCols, 
+                                               lines = TRUE, 
+                                               title = as.character(x$modelInfo$parameter$label)[x$modelInfo$parameter$parameter == params[2]], 
+                                               cex.title = 1)
               }
-            if(!("xlab" %in% lNames)) defaultArgs$xlab <- paramLabs[1]
+            if(!("xlab" %in% lNames)) defaultArgs$xlab <- as.character(x$modelInfo$parameter$label)[x$modelInfo$parameter$parameter == params[1]]
             
             if(plotType == "scatter")
               {
@@ -153,10 +160,9 @@
             if(length(list(...)) > 0) defaultArgs <- c(defaultArgs, list(...))
             lNames <- names(defaultArgs)
             if(!("sub" %in% lNames)) defaultArgs$sub <- paste(metric, resampText)
-
-            paramLabs <- as.character(subset(x$modelInfo$parameter, parameter %in% params)$label)  
-            if(!("xlab" %in% lNames)) defaultArgs$xlab <- paramLabs[1]
-            if(!("ylab" %in% lNames)) defaultArgs$ylab <- paramLabs[2]
+ 
+            if(!("xlab" %in% lNames)) defaultArgs$xlab <- as.character(x$modelInfo$parameter$label)[x$modelInfo$parameter$parameter == params[1]]
+            if(!("ylab" %in% lNames)) defaultArgs$ylab <- as.character(x$modelInfo$parameter$label)[x$modelInfo$parameter$parameter == params[2]]
 
             
             
