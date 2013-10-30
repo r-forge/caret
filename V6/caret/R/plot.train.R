@@ -1,6 +1,6 @@
 "plot.train" <-  function(x,
                     plotType = "scatter",
-                    metric = x$perfNames[1],
+                    metric = x$metric[1],
                     digits = getOption("digits") - 3,
                     xTrans = NULL,
                     ...)
