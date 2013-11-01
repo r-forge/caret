@@ -43,16 +43,14 @@ predict.train <- function(object, newdata = NULL, type = "raw", na.action = na.o
 
     if(type == "prob")
       {
-        out <- extractProb(
-                           list(object),
+        out <- extractProb(list(object),
                            unkX = newdata,
                            unkOnly = TRUE,
                            ...)
-        obsLevels <- getClassLevels(object)
+        obsLevels <- levels(object)
         out <- out[, obsLevels, drop = FALSE]
       } else {
-        out <- extractPrediction(
-                                 list(object),
+        out <- extractPrediction(list(object),
                                  unkX = newdata,
                                  unkOnly = TRUE,
                                  ...)$pred
