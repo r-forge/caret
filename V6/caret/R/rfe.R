@@ -314,33 +314,26 @@ print.rfe <- function(x, top = 5, digits = max(3, getOption("digits") - 3), ...)
 ######################################################################
 
 plot.rfe <- function (x,
-                      plotType = "size",
                       metric = x$metric,
-                      digits = getOption("digits") - 5,
-                      xTrans = NULL,
-                      ...)
-{
-  switch(plotType,
-         size =
-         {
-           x$results$Selected <- ""
-           x$results$Selected[x$results$Variables == x$bestSubset] <- "*"
-           
-           results <- x$results[, colnames(x$results) %in% c("Variables", "Selected", metric)]
-           metric <- metric[which(metric %in% colnames(results))]
-           
-           plotForm <- as.formula(paste(metric, "~ Variables"))
-           panel.profile <- function(x, y, groups, ...)
-             {
-               panel.xyplot(x, y, ...)
-               panel.xyplot(x[groups == "*"], y[groups == "*"], pch = 16)
-             }
-           resampText <- resampName(x, FALSE)
-           resampText <- paste(metric, resampText)
-           out <- xyplot(plotForm, data = results, groups = Selected, panel =  panel.profile, 
-                         ylab = resampText,
-                         ...)
-         })
+                      ...) {  
+  x$results$Selected <- ""
+  x$results$Selected[x$results$Variables == x$bestSubset] <- "*"
+  
+  results <- x$results[, colnames(x$results) %in% c("Variables", "Selected", metric)]
+  metric <- metric[which(metric %in% colnames(results))]
+  
+  plotForm <- as.formula(paste(metric, "~ Variables"))
+  panel.profile <- function(x, y, groups, ...)
+  {
+    panel.xyplot(x, y, ...)
+    panel.xyplot(x[groups == "*"], y[groups == "*"], pch = 16)
+  }
+  resampText <- resampName(x, FALSE)
+  resampText <- paste(metric, resampText)
+  out <- xyplot(plotForm, data = results, groups = Selected, panel =  panel.profile, 
+                ylab = resampText,
+                ...)
+  
   out
 }
 
