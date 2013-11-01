@@ -67,7 +67,6 @@ splitter <- function(x, p = .8, start = NULL, ...)
 
 splitByDissim <- function(x, p = .8, y = NULL, start = NULL, ...)
   {
-    library(plyr)
     if(!is.data.frame(x)) x <- as.data.frame(x)
     
     if(!is.null(y))

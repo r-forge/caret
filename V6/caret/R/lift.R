@@ -4,7 +4,6 @@ lift.default <- function(x, ...) stop("'x' should be a formula")
 
 lift.formula <- function(x, data = NULL, class = NULL,subset = TRUE,  lattice.options = NULL, labels = NULL, ...)
   {
-    library(plyr)
 
     if (!is.null(lattice.options)) {
       oopt <- lattice.options(lattice.options)

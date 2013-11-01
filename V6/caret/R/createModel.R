@@ -1246,7 +1246,6 @@
                      },
                      ppr =
                      {
-                       library(stats)
                        if(!is.null(modelWeights))
                          {
                            out <- ppr(as.matrix(trainX),
