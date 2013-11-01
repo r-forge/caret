@@ -1,7 +1,7 @@
 levels.train <- function(x) {
   if(x$modelType == "Classification")
   {
-    if(!isS4(x)) {
+    if(!isS4(x$finalModel)) {
       ## add a try here and or look for null values
       out <- x$finalModel$obsLevels
     } else out <- levels(x$finalModel)
