@@ -7,7 +7,6 @@
 
 nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
 {
-  suppressPackageStartupMessages(library(foreach))
   library(caret)
   loadNamespace("caret")
   ppp <- list(options = ppOpts)
@@ -297,7 +296,6 @@ nominalTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, te
 
 looTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
 {
-  suppressPackageStartupMessages(library(foreach))
   library(caret)
   loadNamespace("caret")
   
