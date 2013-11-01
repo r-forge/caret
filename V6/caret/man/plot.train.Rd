@@ -28,7 +28,7 @@
   \item{digits}{an integer specifying the number of significant digits used to label the parameter value.}
   \item{xTrans}{a fuction that will be used to scale the x-axis in scatter plots.}
   \item{data}{an object of class \code{\link{train}}.}  
-  \item{output}{either "data", "ggplot" or "layered". The first returns a data frame while the second retruns a simple \code{ggplot} object with no layers. The third value returns a plot with a set of layers. }  
+  \item{output}{either "data", "ggplot" or "layered". The first returns a data frame while the second returns a simple \code{ggplot} object with no layers. The third value returns a plot with a set of layers. }  
   \item{\dots}{\code{plot} only: specifications to be passed to \code{\link[lattice]{levelplot}}, \code{\link[lattice]{xyplot}}, \code{\link[lattice:xyplot]{stripplot}} (for line plots). The function automatically sets some arguments (e.g. axis labels) but passing in values here will over-ride the defaults }
 }
 \details{
