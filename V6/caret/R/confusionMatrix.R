@@ -175,7 +175,7 @@ confusionMatrix.train <- function(data, norm = "overall", dnn = c("Prediction", 
     numResamp <- 0
   }
   
-  lev <- caret:::getClassLevels(data)
+  lev <- levels(data)
   ## get only best tune
   names(data$bestTune) <- gsub("^\\.", "", names(data$bestTune))
   resampledCM <- merge(data$bestTune, data$resampledCM)

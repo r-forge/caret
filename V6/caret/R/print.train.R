@@ -29,7 +29,7 @@
       chDim[2] <- chDim[2] - 1
      if(x$modelType == "Classification")
         {
-          lev <- caret:::getClassLevels(x)
+          lev <- levels(x)
           if(is.character(lev)) chDim <- c(chDim, length(lev))
         } else lev <- NULL      
       chDim <- format(chDim)
