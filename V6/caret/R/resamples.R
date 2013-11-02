@@ -64,6 +64,7 @@ resamples.default <- function(x, modelNames = names(x), ...)
         names(tmp)[names(tmp) %in% pNames] <- paste(modelNames[i], names(tmp)[names(tmp) %in% pNames], sep = "~")
         out <- if(i == 1) tmp else merge(out, tmp)
       }
+    if(any(unlist(lapply(x, function(x) x$control$returnResamp)) != "final")) stop("some model did not have 'returnResamp=\"final\"")
 
     timings <- do.call("rbind", lapply(x, getTimes))
     colnames(timings) <- c("Everything", "FinalModel", "Prediction")
