@@ -106,6 +106,10 @@ levels.stepclass <- function(x) levels(x$fit)
 
 levels.plr <- function(x) unique(unlist(lapply(strsplit(rownames(x$means), ".", fixed = TRUE), function(x) x[1])))
 
+levels.CSimca <- function(x) names(x@prior)
+
+levels.RSimca <- function(x) names(x@prior)
+
 if(FALSE)
 {
   lvlList <- sort(ls(pattern = "levels\\."))
