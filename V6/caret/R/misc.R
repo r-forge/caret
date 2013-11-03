@@ -1,3 +1,4 @@
+
 coerceChar <- function(x)  as.data.frame(lapply(x, as.character), stringsAsFactors = FALSE)
 
 checkData <- function(y, x = NULL, check = c("2class", "zv", "zvPerClass"))
@@ -637,40 +638,6 @@ twoClassSummary <- function (data, lev = NULL, model = NULL)
   out
 }
 
-## make this object oriented
-getClassLevels <- function(x) 
-  {
-  if(class(x$finalModel)[1] %in% c("penalized", "ksvm", "lssvm",
-                                   "gausspr", "QdaCov", "LdaClassic",
-                                   "BinaryTree", "RandomForest"))
-      
-      {
-        obsLevels <- switch(class(x$finalModel)[1],
-                            penalized = NULL,
-                            ksvm =,
-                            lssvm =,
-                            gausspr =
-                            {
-                              library(kernlab)
-                              lev(x$finalModel)
-                            },
-
-                            QdaCov =, LdaClassic = 
-                            {
-                              names(x$finalModel@prior)
-                            },
-                            
-                            BinaryTree =, RandomForest =
-                            {
-                              library(party)
-                              levels(x$finalModel@data@get("response")[,1])
-                            })
-      } else {
-        obsLevels <- x$finalModel$obsLevels
-      }
-    obsLevels
-  }
-
 partRuleSummary <- function(x)
   {
     predictors <- all.vars(x$terms)
@@ -756,10 +723,6 @@ depth2cp <- function(x, depth)
     out
   }
 
-
-
-
-
 smootherFormula <- function(data, smoother = "s", cut = 10, df = 0, span = .5, degree = 1, y = ".outcome")
   {
     nzv <- nearZeroVar(data)
@@ -787,15 +750,12 @@ smootherFormula <- function(data, smoother = "s", cut = 10, df = 0, span = .5, d
     form
   }
 
-
 varSeq <- function(x)
   {
     vars <- apply(summary(x)$which, 1, function(x) names(which(x)))
     vars <- lapply(vars, function(x) x[x != "(Intercept)"])
     vars
   }
-
-
 
 cranRef <- function(x) paste("{\\tt \\href{http://cran.r-project.org/web/packages/", x, "/index.html}{", x, "}}", sep = "")
 
