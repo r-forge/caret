@@ -87,7 +87,7 @@ bagControl <- function(fit = NULL, predict = NULL, aggregate = NULL, downSample 
   
   btSamples <- createResample(y, times = B)
 
-  hasFE <- suppressPackageStartupMessages(require("foreach"))
+  hasFE <- TRUE
   if(bagControl$allowParallel)
     {
       if(!hasFE) cat("Install the foreach package for parallel processing; going sequential instead")
