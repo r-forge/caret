@@ -2134,7 +2134,7 @@
      any(names(modelFit) == "call" & 
      !(method %in% c("rpart", "rpart2", "earth", "fda")))) 
        modelFit$call <- scrubCall(modelFit$call)
-  require(methods)
+  #require(methods)  # not needed since caret now depends on methods
   if(length(slotNames(modelFit)) > 0 && any(slotNames(modelFit) == "call")) modelFit@call <- scrubCall(modelFit@call)
 
   list(fit = modelFit, preProc = ppObj)
