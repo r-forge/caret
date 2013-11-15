@@ -1,6 +1,7 @@
 useDynLib(caret)
 import(lattice, ggplot2)
 importFrom(stats, prcomp)
+import(cluster, foreach, methods, plyr, reshape2)
 
 export(anovaScores,
        avNNet,
