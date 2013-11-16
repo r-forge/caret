@@ -1,0 +1,32 @@
+modelInfo <- list(library = "RWeka",
+                  loop = NULL,
+                  type = c("Classification"),
+                  parameters = data.frame(parameter = "NumOpt",
+                                          class = "numeric",
+                                          label = "# Optimizations"),
+                  grid = function(x, y, len = NULL) data.frame(.NumOpt = 1:len),
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+                    dat <- x
+                    dat$.outcome <- y
+                    theDots <- list(...)
+                    
+                    if(any(names(theDots) == "control")) {
+                      theDots$control$N <- param$.NumOpt 
+                      ctl <- theDots$control
+                      theDots$control <- NULL
+                    } else ctl <- Weka_control(N = param$.NumOpt) 
+                    
+                    modelArgs <- c(list(formula = as.formula(".outcome ~ ."),
+                                        data = dat,
+                                        control = ctl),
+                                   theDots)
+                    
+                    out <- do.call("JRip", modelArgs) 
+                    out      
+                    },
+                  predict = function(modelFit, newdata, submodels = NULL) 
+                    predict(modelFit, newdata),
+                  prob = function(modelFit, newdata, submodels = NULL)
+                    predict(modelFit, newdata, type = "probability"),
+                  tags = c("Rule-Based Model", "Implicit Feature Selection"),
+                  sort = function(x) x)
