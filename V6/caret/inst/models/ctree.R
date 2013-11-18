@@ -19,7 +19,8 @@ modelInfo <- list(library = "party",
                         ctl <- theDots$controls
                         theDots$controls <- NULL
 
-                      } else ctl <- ctree_control(mincriterion = param$.mincriterion)
+                      } else ctl <- do.call(getFromNamespace("ctree_control", "party"), 
+                                            list(mincriterion = param$.mincriterion))
 
                     ## pass in any model weights
                     if(!is.null(wts)) theDots$weights <- wts
