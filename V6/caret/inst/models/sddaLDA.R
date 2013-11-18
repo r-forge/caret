@@ -1,0 +1,16 @@
+modelInfo <- list(library = c("SDDA"),
+                  loop = NULL,
+                  type = c("Classification"),
+                  parameters = data.frame(parameter = c("parameter"),
+                                          class = c("character"),
+                                          label = c('parameter')),
+                  grid = function(x, y, len = NULL) 
+                    data.frame(.parameter = "none"),
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...)
+                    sdda(as.matrix(x), y, method = "lda", ...),
+                  predict = function(modelFit, newdata, submodels = NULL)
+                    predict(modelFit, as.matrix(newdata), type = "class"),
+                  prob = function(modelFit, newdata, submodels = NULL)
+                    predict(modelFit, as.matrix(newdata), type = "prob"),
+                  tags = c("Discriminant Analysis", "Feature Selection Wrapper"),
+                  sort = function(x) x)
