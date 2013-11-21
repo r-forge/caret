@@ -2,7 +2,7 @@ modelInfo <- list(library = NULL,
                   loop = NULL,
                   type = "Regression",
                   parameters = data.frame(parameter = "parameter",
-                                          class = NA,
+                                          class = "character",
                                           label = "parameter"),
                   grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {

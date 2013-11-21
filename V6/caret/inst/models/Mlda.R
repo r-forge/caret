@@ -2,8 +2,8 @@ modelInfo <- list(library = "HiDimDA",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('parameter'),
-                                          class = c('numeric'),
-                                          label = c('none')),
+                                          class = c("character"),
+                                          label = c('parameter')),
                   grid = function(x, y, len = NULL) 
                     data.frame(.parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 

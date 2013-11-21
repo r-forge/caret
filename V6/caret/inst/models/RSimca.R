@@ -2,7 +2,7 @@ modelInfo <- list(library = "rrcovHD",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = 'parameter',
-                                          class = NA,
+                                          class = "character",
                                           label = 'parameter'),
                   grid = function(x, y, len = NULL) {
                     data.frame(parameter = "none")

@@ -1,7 +1,6 @@
 modelInfo <- list(library = "gpls",
                   loop = NULL,
                   type = c('Classification'),
-                  type = c('Classification'),
                   parameters = data.frame(parameter = c('K.prov'),
                                           class = c('numeric'),
                                           label = c('#Components')),
