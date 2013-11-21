@@ -61,5 +61,5 @@ modelInfo <- list(library = "party",
                     rownames(out) <- NULL
                     out
                   },
-                  tags = c('Tree-Based Model'),
+                  tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
                   sort = function(x) x)

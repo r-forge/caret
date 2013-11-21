@@ -15,5 +15,5 @@ modelInfo <- list(library = "gpls",
                     colnames(out) <-  modelFit$obsLevels
                     out
                   },
-                  tags = c("Gaussian Process", "Bayesian Analysis"),
+                  tags = c("Logistic Regression", "Partial Least Squares"),
                   sort = function(x) x)

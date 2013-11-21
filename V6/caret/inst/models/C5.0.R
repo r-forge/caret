@@ -63,6 +63,6 @@ modelInfo <- list(library = "C50",
                     }
                     out
                   },
-                  tags = c("Tree-Based Model", "Rule-Based Models", "Implicit Feature Selection",
+                  tags = c("Tree-Based Model", "Rule-Based Model", "Implicit Feature Selection",
                   	       "Boosting", "Ensemble Model", "Cost Sensitive Learning"),
                   sort = function(x) x)

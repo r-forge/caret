@@ -34,5 +34,5 @@ modelInfo <- list(library = "vbmp",
                     colnames(probs) <- modelFit$obsLevels
                     probs
                   },
-                  tags = c("Gaussian Process", "Bayesian Analysis"),
+                  tags = c("Gaussian Process", "Bayesian Model"),
                   sort = function(x) x)
