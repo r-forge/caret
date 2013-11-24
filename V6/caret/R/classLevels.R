@@ -1,14 +1,16 @@
 levels.train <- function(x) {
   if(x$modelType == "Classification")
   {
-    if(!isS4(x$finalModel)) {
-      ## add a try here and or look for null values
-      out <- x$finalModel$obsLevels
-    } else out <- levels(x$finalModel)
+    if(!is.null(x$modelInfo$levels)) {
+      out <- x$modelInfo$levels(x$finalModel)
+    } else {
+      if(!is.null(x$finalModel$obsLevels)) {
+        out <- out <- x$finalModel$obsLevels
+      } else out <- levels(x$finalModel)
+    }
   } else out <- NULL
   out
 }
-
 
 levels.ksvm <- function(x) {
   library(kernlab)
@@ -37,7 +39,7 @@ levels.gbm <- function(x) if(any(names(x) == "obsLevels")) x$obsLevels else NULL
 
 levels.randomForest <- function(x) x$classes
 
-levels.nnet <- function(x) x$coefnames
+levels.nnet <- function(x) x$lev
 
 levels.pcaNNet <- function(x) x$model$coefnames
 
@@ -104,7 +106,7 @@ levels.nodeHarvest <- function(x) unique(unlist(lapply(strsplit(rownames(x$means
 
 levels.stepclass <- function(x) levels(x$fit)
 
-levels.plr <- function(x) unique(unlist(lapply(strsplit(rownames(x$means), ".", fixed = TRUE), function(x) x[1])))
+levels.plr <- function(x) x$obsLevels
 
 levels.CSimca <- function(x) names(x@prior)
 
