@@ -15,5 +15,5 @@ modelInfo <- list(library = c("ipred"),
                     predict(modelFit, newdata)$class,
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata)$posterior,
-                  tags = c("Discriminant Analysis"),
+                  tags = c("Discriminant Analysis", "Linear Classifier"),
                   sort = function(x) x)

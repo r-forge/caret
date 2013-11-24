@@ -21,5 +21,5 @@ modelInfo <- list(library = "rrlda",
                     colnames(out) <- modelFit$obsLevels
                     out
                     },
-                  tags = c("Discriminant Analysis", "Robust Model", "Regularization"),
+                  tags = c("Discriminant Analysis", "Robust Model", "Regularization", "Linear Classifier"),
                   sort = function(x) x)

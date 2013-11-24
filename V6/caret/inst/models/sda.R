@@ -16,5 +16,5 @@ modelInfo <- list(library = c("sda"),
                     sda::predict.sda(modelFit, as.matrix(newdata))$class,
                   prob = function(modelFit, newdata, submodels = NULL)
                     sda::predict.sda(modelFit, as.matrix(newdata))$posterior,
-                  tags = c("Discriminant Analysis", "Regularization"),
+                  tags = c("Discriminant Analysis", "Regularization", "Linear Classifier"),
                   sort = function(x) x)

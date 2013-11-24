@@ -105,5 +105,5 @@ modelInfo <- list(library = "rpart",
                     }                              
                     out
                   },
-                  tags = c("Kernel Methods", "Relevance Vector Machines", "Cost Sensitive Learning"),
+                  tags = c("Tree-Based Model", "Implicit Feature Selection", "Cost Sensitive Learning"),
                   sort = function(x) x)

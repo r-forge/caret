@@ -20,5 +20,6 @@ modelInfo <- list(library = "kernlab",
                     out
                   },
                   prob = NULL,
-                  tags = c("Kernel Methods", "Support Vector Machines"),
+                  tags = c("Kernel Method", "Support Vector Machines", "Polynomial Model"),
+                  levels = function(x) lev(x),
                   sort = function(x) x)

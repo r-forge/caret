@@ -43,6 +43,7 @@ modelInfo <- list(library = "party",
                     out 
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
+                    if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
                     ## party builds the levels into the model object, so I'm
                     ## going to assume that all the levels will be passed to
                     ## the output
@@ -53,6 +54,7 @@ modelInfo <- list(library = "party",
                     out
                   },
                   prob = function(modelFit, newdata, submodels = NULL) {
+                    if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
                     obsLevels <- levels(modelFit@data@get("response")[,1])
                     rawProbs <- treeresponse(modelFit, newdata)
                     probMatrix <- matrix(unlist(rawProbs), ncol = length(obsLevels), byrow = TRUE)
@@ -62,4 +64,5 @@ modelInfo <- list(library = "party",
                     out
                   },
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
+                  levels = function(x) levels(x@data@get("response")[,1]),
                   sort = function(x) x)

@@ -6,7 +6,7 @@ modelInfo <- list(library = "rrcov",
                                           label = "parameter"),
                   grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    rrcov:::Linda(x, y, ...),
+                    rrcov:::QdaCov(x, y, ...),
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata)@classification,
                   prob = function(modelFit, newdata, submodels = NULL) {
@@ -14,5 +14,6 @@ modelInfo <- list(library = "rrcov",
                     colnames(probs) <- names(modelFit@prior)
                     probs
                   },
-                  tags = "Discriminant Analysis",
+                  tags = c("Discriminant Analysis", "Polynomial Model"),
+                  levels = function(x) names(x@prior),
                   sort = function(x) x)

@@ -39,5 +39,5 @@ modelInfo <- list(library = "quantregForest",
                   prob = NULL,
                   tags = c("Random Forest", "Ensemble Model", "Bagging", 
                            "Implicit Feature Selection", "Quantile Regression",
-                           "Robust Methods"),
+                           "Robust Model"),
                   sort = function(x) x)

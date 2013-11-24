@@ -12,5 +12,5 @@ modelInfo <- list(library = c("SDDA"),
                     predict(modelFit, as.matrix(newdata), type = "class"),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, as.matrix(newdata), type = "prob"),
-                  tags = c("Discriminant Analysis", "Feature Selection Wrapper"),
+                  tags = c("Discriminant Analysis", "Feature Selection Wrapper", "Linear Classifier"),
                   sort = function(x) x)

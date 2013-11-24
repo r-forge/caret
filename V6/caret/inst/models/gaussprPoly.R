@@ -22,5 +22,6 @@ modelInfo <- list(library = "kernlab",
                   prob = function(modelFit, newdata, submodels = NULL) {
                     predict(modelFit, as.matrix(newdata), type = "probabilities")
                   },
-                  tags = c("Kernel Methods", "Support Vector Machines"),
+                  tags = c("Kernel Method", "Support Vector Machines", "Polynomial Model"),
+                  levels = function(x) lev(x),
                   sort = function(x) x)

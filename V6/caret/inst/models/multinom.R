@@ -32,5 +32,5 @@ modelInfo <- list(library = "nnet",
                     }
                     out
                   },
-                  tags = c("Neural Network", "L2 Regularization", "Logistic Regression"),
+                  tags = c("Neural Network", "L2 Regularization", "Logistic Regression", "Linear Classifier"),
                   sort = function(x) x)

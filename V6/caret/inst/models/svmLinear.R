@@ -70,5 +70,6 @@ modelInfo <- list(library = "kernlab",
                     }
                     out
                   },
-                  tags = c("Kernel Methods", "Support Vector Machines","Linear Regression"),
+                  tags = c("Kernel Method", "Support Vector Machines","Linear Regression", "Linear Classifier"),
+                  levels = function(x) lev(x),
                   sort = function(x) x)

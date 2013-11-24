@@ -17,5 +17,5 @@ modelInfo <- list(library = "MASS",
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = NULL,
-                  tags = c("Linear Regression", "Robust Methods"),
+                  tags = c("Linear Regression", "Robust Model"),
                   sort = function(x) x)

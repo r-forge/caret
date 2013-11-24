@@ -64,5 +64,6 @@ modelInfo <- list(library = "caTools",
                     }                       
                     out
                   },
-                  tags = c("Generalized Linear Model", "Ensemble Model", "Boosting", "Implicit Feature Selection"),
+                  tags = c("Ensemble Model", "Boosting", "Implicit Feature Selection",
+                           "Tree-Based Model", "Logistic Regression"),
                   sort = function(x) x)

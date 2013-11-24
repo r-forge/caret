@@ -28,5 +28,5 @@ modelInfo <- list(library = "RWeka",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "probability"),
-                  tags = c("Model Tree", "Implicit Feature Selection"),
+                  tags = c("Model Tree", "Implicit Feature Selection", "Logistic Regression", "Linear Classifier"),
                   sort = function(x) x)

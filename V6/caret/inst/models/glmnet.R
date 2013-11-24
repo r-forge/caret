@@ -119,5 +119,6 @@ modelInfo <- list(library = "glmnet",
                     probs
                   },
                   tags = c("Generalized Linear Model", "Implicit Feature Selection", 
-                           "L1 Regularization", "L2 Regularization"),
+                           "L1 Regularization", "L2 Regularization", "Linear Classifier",
+                           "Linear Regression"),
                   sort = function(x) x)

@@ -42,5 +42,5 @@ modelInfo <- list(library = "arm",
                     colnames(out) <-  modelFit$obsLevels
                     out
                   },
-                  tags = c("Generalized Linear Model", "Logistic Regression"),
+                  tags = c("Generalized Linear Model", "Logistic Regression", "Linear Classifier"),
                   sort = function(x) x)
