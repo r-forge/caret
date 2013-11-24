@@ -17,13 +17,14 @@ train.default <- function(x, y,
   startTime <- proc.time()
   
   if(is.list(method)) {
-    example <- getModelInfo("rpart", regex = FALSE)
-    nameCheck <- names(method) %in% names(example[[1]])
-    if(!all(nameCheck)) stop(paste("some components are missing:",
-                                   paste(names(method)[!nameCheck], collapse = ", ")))
+    minNames <- c("library", "type", "parameters", "grid",
+                  "loop", "fit", "predict", "prob")
+    nameCheck <- minNames %in% names(method) 
+    if(!all(nameCheck)) stop(paste("some required components are missing:",
+                                   paste(minNames[!nameCheck], collapse = ", ")))
     models <- method
     method <- "custom"
-  } else models <- getModelInfo(method)[[1]]
+  } else models <- getModelInfo(method, regex = FALSE)[[1]]
   checkInstall(models$library)
 
   ## TODO check for packages installed then offer to load
