@@ -20,5 +20,5 @@ modelInfo <- list(library = c("klaR", "MASS"),
                   prob = function(modelFit, newdata, submodels = NULL){
                     predict(modelFit$fit, newdata[, predictors(modelFit), drop = FALSE])$posterior
                   },
-                  tags = c("Discriminant Analysis", "Feature Selection Wrapper"),
+                  tags = c("Discriminant Analysis", "Feature Selection Wrapper", "Polynomial Model"),
                   sort = function(x) x)

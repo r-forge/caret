@@ -86,5 +86,5 @@ modelInfo <- list(library = "mboost",
                     }                        
                     out
                   },
-                  tags = c("Generalized Linear Model", "Ensemble Model", "Boosting"),
+                  tags = c("Generalized Linear Model", "Ensemble Model", "Boosting", "Linear Classifier"),
                   sort = function(x) x)

@@ -49,5 +49,5 @@ modelInfo <- list(library = "RSNNS",
                     colnames(out) <- modelFit$obsLevels
                     out
                   },
-                  tags = c("Neural Network","L2 Regularization"),
+                  tags = c("Neural Network","L2 Regularization", "Radial Basis Function"),
                   sort = function(x) x)

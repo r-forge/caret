@@ -15,5 +15,5 @@ modelInfo <- list(library = "gpls",
                     colnames(out) <-  modelFit$obsLevels
                     out
                   },
-                  tags = c("Logistic Regression", "Partial Least Squares"),
+                  tags = c("Logistic Regression", "Partial Least Squares", "Linear Classifier"),
                   sort = function(x) x)

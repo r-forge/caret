@@ -37,12 +37,14 @@ modelInfo <- list(library = "party",
                     out
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
+                    if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
                     out <- predict(modelFit, newdata)
                     if(!is.null(modelFit@responses@levels$.outcome)) out <- as.character(out)
                     if(is.matrix(out)) out <- out[,1]
                     out
                   },
                   prob = function(modelFit, newdata, submodels = NULL) {
+                    if(!is.data.frame(newdata)) newdata <- as.data.frame(newdata)
                     obsLevels <- levels(modelFit@data@get("response")[,1])
                     rawProbs <- treeresponse(modelFit, newdata)
                     probMatrix <- matrix(unlist(rawProbs), ncol = length(obsLevels), byrow = TRUE)
@@ -51,5 +53,6 @@ modelInfo <- list(library = "party",
                     rownames(out) <- NULL
                     out
                   },
-                  tags = c('Tree-Based Model'),
+                  tags = c('Tree-Based Model', "Implicit Feature Selection"),
+                  levels = function(x) levels(x@data@get("response")[,1]),
                   sort = function(x) x)
