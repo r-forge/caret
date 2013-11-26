@@ -17,11 +17,18 @@ modelInfo <- list(library = "kohonen",
                         contin = !is.factor(y),
                         grid = somgrid(param$.xdim, param$.ydim, param$.topo),
                         ...),
-                  predict = function(modelFit, newdata, submodels = NULL)
-                    predict(modelFit, as.matrix(newdata))$prediction,
+                  predict = function(modelFit, newdata, submodels = NULL) {
+                    out <- predict(modelFit, as.matrix(newdata))$prediction
+                    if(modelFit$problemType == "Classification") {
+                      out <- as.character(out)
+                    } else {
+                      if(is.matrix(out)) out <- out[,1]
+                    }
+                    out
+                    },
                   prob = function(modelFit, newdata, submodels = NULL){
                     preds <- predict(modelFit, as.matrix(newdata))
-                    preds$unit.predictions[preds$unit.classif,]
+                    preds$unit.predictions[preds$unit.classif,,drop = FALSE]
                   },
                   tags = c("Self-Organising Maps"),
                   sort = function(x) x)

@@ -1,4 +1,4 @@
-modelInfo <- list(library = "RRF",
+modelInfo <- list(library = c("randomForest", "RRF"),
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('mtry', 'coefReg', 'coefImp'),

@@ -21,7 +21,7 @@ modelInfo <- list(library = "kohonen",
                     predict(modelFit, as.matrix(newdata))$prediction,
                   prob = function(modelFit, newdata, submodels = NULL){
                     preds <- predict(modelFit, as.matrix(newdata))
-                    preds$unit.predictions[preds$unit.classif,]
+                    preds$unit.predictions[preds$unit.classif,,drop = FALSE]
                   },
                   tags = c("Self-Organising Maps"),
                   sort = function(x) x)
