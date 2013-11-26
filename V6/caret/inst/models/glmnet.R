@@ -6,15 +6,19 @@ modelInfo <- list(library = "glmnet",
                   grid = function(x, y, len = NULL) 
                     expand.grid(.alpha = seq(0.1, 1, length = len),
                                 .lambda = seq(.1, 3, length = 3 * len)),
-                  loop = function(grid) {   
-                    uniqueAlpha <- unique(grid$.alpha)
-                    loop <- data.frame(.alpha = uniqueAlpha)
-                    loop$.lambda <- NA
-                    submodels <- vector(mode = "list", length = length(uniqueAlpha))
+                  loop = function(grid) {  
+                    alph <- unique(grid$.alpha)
                     
-                    for(i in seq(along = uniqueAlpha))
-                      submodels[[i]] <- data.frame(.lambda = subset(grid, 
-                                                                    subset = .alpha == uniqueAlpha[i])$.lambda)
+                    loop <- data.frame(.alpha = alph)
+                    loop$.lambda <- NA
+                    
+                    submodels <- vector(mode = "list", length = length(alph))
+                    for(i in seq(along = alph))
+                    {
+                      np <- grid[grid$.alpha == alph[i],".lambda"]
+                      loop$.lambda[loop$.alpha == alph[i]] <- np[which.max(np)]
+                      submodels[[i]] <- data.frame(.lambda = np[-which.max(np)])
+                    }  
                     list(loop = loop, submodels = submodels)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
@@ -41,81 +45,61 @@ modelInfo <- list(library = "glmnet",
                                    theDots)
                     
                     out <- do.call("glmnet", modelArgs) 
+                    if(!is.na(param$.lambda[1])) out$lambdaOpt <- param$.lambda[1]
                     out 
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
-                    
+                    if(length(modelFit$obsLevels) < 2)
+                    {
+                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt)[,1]
+                    } else {
+                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt, type = "class")[,1]
+                    }
+                      
                     if(!is.null(submodels))
                     {
                       if(length(modelFit$obsLevels) < 2)
                       {
-                        out <- as.list(as.data.frame(predict(modelFit, newdata, s = submodels$.lambda)))
+                        tmp <- as.list(as.data.frame(predict(modelFit, newdata, s = submodels$.lambda)))
                       } else {
-                        out <- predict(modelFit, newdata, s = submodels$.lambda, type = "class")
-                        out <- as.list(as.data.frame(out, stringsAsFactors = FALSE))
+                        tmp <- predict(modelFit, newdata, s = submodels$.lambda, type = "class")
+                        tmp <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
                       }
-                    } else {
-                      
-                      if(is.null(modelFit$lambdaOpt))
-                        stop("optimal lambda not saved by train; needs a single lambda value")
-                      if(length(modelFit$obsLevels) < 2)
-                      {
-                        out <- predict(modelFit, newdata, s = modelFit$lambdaOpt)[,1]
-                      } else {
-                        out <- predict(modelFit, newdata, s = modelFit$lambdaOpt, type = "class")[,1]
-                      }
-                    }
-                    out       
+                      out <- c(list(out), tmp)
+                    } 
+                    out
                   },
                   prob = function(modelFit, newdata, submodels = NULL) {
                     obsLevels <- if("classnames" %in% names(modelFit)) modelFit$classnames else NULL
-                    if(length(obsLevels) == 2)
-                    {
-                      if(!is.null(submodels))
-                      {
-                        probs <- predict(modelFit,
-                                         as.matrix(newdata),
-                                         s = submodels$.lambda,
-                                         type = "response")
-                        
-                        probs <- as.list(as.data.frame(probs))
-                        probs <- lapply(probs,
-                                        function(x, lev)
-                                        {
-                                          tmp <- data.frame(x, 1-x)
-                                          names(tmp) <- lev
-                                          tmp
-                                        },
-                                        lev = modelFit$obsLevels)
-                        
-                      } else {
-                        probs <- predict(modelFit,
-                                         as.matrix(newdata),
-                                         s = modelFit$lambdaOpt,
-                                         type = "response")
-                        probs <- cbind(1-probs, probs)
-                        colnames(probs) <- modelFit$obsLevels
-                      }
-                    } else {
-                      if(!is.null(submodels))
-                      {
-                        ## This generates a 3d array
-                        probs <- predict(modelFit,
-                                         as.matrix(newdata),
-                                         s = submodels$.lambda,
-                                         type = "response")
-                        ## convert it to a list of 2d structures
-                        probs <- apply(probs, 3, function(x) data.frame(x))
-                      } else {
-                        probs <- predict(modelFit,
-                                         as.matrix(newdata),
-                                         s = modelFit$lambdaOpt,
-                                         type = "response")
-                        probs <- probs[,,1]
-                      }
-                    }
+                    probs <- predict(modelFit,
+                                     as.matrix(newdata),
+                                     s = submodels$.lambda,
+                                     type = "response")
+                    if(length(obsLevels) == 2) {
+                      probs <- cbind(1-probs, probs)
+                      colnames(probs) <- modelFit$obsLevels
+                    } else probs <- probs[,,1]
                     
+                    if(!is.null(submodels))
+                    {
+                      tmp <- predict(modelFit,
+                                     as.matrix(newdata),
+                                     s = submodels$.lambda,
+                                     type = "response")
+                      if(length(obsLevels) == 2) {
+                        tmp <- as.list(as.data.frame(tmp))
+                        tmp <- lapply(tmp,
+                                      function(x, lev)
+                                      {
+                                        tmp <- data.frame(x, 1-x)
+                                        names(tmp) <- lev
+                                        tmp
+                                      },
+                                      lev = modelFit$obsLevels)
+                      } else tmp <- apply(tmp, 3, function(x) data.frame(x))
+                      probs <- list(probs, tmp)
+                    }
                     probs
                   },
                   tags = c("Generalized Linear Model", "Implicit Feature Selection", 

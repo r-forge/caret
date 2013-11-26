@@ -52,42 +52,54 @@ modelInfo <- list(library = "gbm",
                     do.call("gbm.fit", modArgs)
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {
-                    if(modelFit$problemType == "Classification")
-                    {
-                      gbmProb <- predict(modelFit, newdata, type = "response",
-                                         n.trees = modelFit$tuneValue$.n.trees)
-                      gbmProb[is.nan(gbmProb)] <- NA
-                      if(modelFit$distribution$name != "multinomial")
-                      {
-                        out <- ifelse(gbmProb >= .5, modelFit$obsLevels[1], modelFit$obsLevels[2])
-                        ## to correspond to gbmClasses definition above
-                      } else {
-                        out <- colnames(gbmProb)[apply(gbmProb, 1, which.max)]
-                      }
-                    } else {
-                      out <- predict(modelFit, newdata, type = "response",
-                                     n.trees = modelFit$tuneValue$.n.trees)
-                    }
+                    out <- predict(modelFit, newdata, type = "response",
+                                   n.trees = modelFit$tuneValue$.n.trees)
+                    out[is.nan(out)] <- NA
+                    
+                    out <- switch(modelFit$distribution$name,
+                                  multinomial = {
+                                    ## The output is a 3D array that is
+                                    ## nxcx1
+                                    colnames(out[,,1,drop=FALSE])[apply(out[,,1,drop=FALSE], 1, which.max)]
+                                  },
+                                  bernoulli =, adaboost =, huberized = {
+                                    ## The data come back as an nx1 vector
+                                    ## of probabilities.
+                                    ifelse(out >= .5, 
+                                           modelFit$obsLevels[1], 
+                                           modelFit$obsLevels[2])
+                                  },
+                                  gaussian =, laplace =, tdist = {
+                                    out
+                                  })
                     
                     if(!is.null(submodels))
                     {
                       tmp <- predict(modelFit, newdata, type = "response", n.trees = submodels$.n.trees)
-                      
-                      if(modelFit$problemType == "Classification")
-                      {
-                        if(modelFit$distribution$name != "multinomial")
-                        {
-                          if(is.vector(tmp)) tmp <- matrix(tmp, ncol = 1)
-                          tmp <- apply(tmp, 2,
-                                       function(x, nm = modelFit$obsLevels) ifelse(x >= .5, nm[1], nm[2]))
-                          
-                        } else {
-                          tmp <- apply(tmp, 3,
-                                       function(y, nm = modelFit$obsLevels) nm[apply(y, 1, which.max)])
-                        }
-                      }
-                      if(!is.list(tmp)) tmp <- split(tmp, rep(1:ncol(tmp), each = nrow(tmp)))
-                      out <- c(list(out), tmp)
+                      out <- switch(modelFit$distribution$name,
+                                    multinomial = {
+                                      ## The output is a 3D array that is
+                                      ## nxcx1
+                                      lvl <- colnames(tmp[,,1,drop=FALSE])
+                                      tmp <- apply(tmp, 3, function(x) apply(x, 1, which.max))
+                                      if(is.vector(tmp)) tmp <- matrix(tmp, nrow = 1)
+                                      tmp <- t(apply(tmp, 1, function(x, lvl) lvl[x], lvl = lvl))
+                                      tmp <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
+                                      c(list(out), tmp)
+                                    },
+                                    bernoulli =, adaboost =, huberized = {
+                                      ## Now we have a nxt matrix
+                                      tmp <- ifelse(tmp >= .5, 
+                                             modelFit$obsLevels[1], 
+                                             modelFit$obsLevels[2])
+                                      tmp <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
+                                      c(list(out), tmp)
+                                    },
+                                    gaussian =, laplace =, tdist = {
+                                      ## an nxt matrix
+                                      tmp <- as.list(as.data.frame(tmp))
+                                      c(list(out), tmp)
+                                    })
                     }
                     out  
                   },
@@ -95,37 +107,46 @@ modelInfo <- list(library = "gbm",
                     out <- predict(modelFit, newdata, type = "response",
                                    n.trees = modelFit$tuneValue$.n.trees)
                     
-                    if(modelFit$distribution$name != "multinomial") 
-                    {
-                      out <- data.frame(a = out, b = 1-out) 
-                      names(out) <-  modelFit$obsLevels
-                    } else out <- as.data.frame(out[,,1])
+                    out[is.nan(out)] <- NA
+                    
+                    out <- switch(modelFit$distribution$name,
+                                  multinomial = {
+                                    ## The output is a 3D array that is
+                                    ## nxcx1
+                                    out[,,1]
+                                  },
+                                  bernoulli =, adaboost =, huberized = {
+                                    ## The data come back as an nx1 vector
+                                    ## of probabilities.
+                                    out <- cbind(out, 1 - out)
+                                    colnames(out) <- modelFit$obsLevels
+                                    out
+                                  },
+                                  gaussian =, laplace =, tdist = {
+                                    out
+                                  })
+                    
                     if(!is.null(submodels))
                     {
                       tmp <- predict(modelFit, newdata, type = "response", n.trees = submodels$.n.trees)
-                      
-                      if(modelFit$problemType == "Classification")
-                      {
-                        if(modelFit$distribution$name != "multinomial")
-                        {
-                          if(is.vector(tmp)) tmp <- matrix(tmp, ncol = 1)
-                          tmp <- apply(tmp, 2,
-                                       function(x, nm = modelFit$obsLevels)
-                                       {
-                                         x <- data.frame(x = x, y = 1 - x)
-                                         colnames(x) <- nm
-                                         x
-                                       })
-                        } else {
-                          ## Does anyone know of a better
-                          ## way to convert an array to a
-                          ## list of matrices or data
-                          ## frames?                   
-                          tmp <- apply(tmp, 3, function(x) data.frame(x))
-                        }
-                      }
+                      tmp <- switch(modelFit$distribution$name,
+                                    multinomial = {
+                                      ## The output is a 3D array that is
+                                      ## nxcxt
+                                      apply(tmp, 3, function(x) data.frame(x))
+                                    },
+                                    bernoulli =, adaboost =, huberized = {
+                                      ## The data come back as an nx1t matrix
+                                      ## of probabilities.
+                                      tmp <- as.list(as.data.frame(tmp))
+                                      lapply(tmp, function(x, lvl) {
+                                        x <- cbind(x, 1 - x)
+                                        colnames(x) <- lvl
+                                        x
+                                      }, lvl = modelFit$obsLevels)
+                                    })
                       out <- c(list(out), tmp)
-                    } 
+                    }
                     out
                   },
                   tags = c("Tree-Based Model", "Boosting", "Ensemble Model", "Implicit Feature Selection"),
