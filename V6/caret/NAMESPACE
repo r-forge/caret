@@ -420,6 +420,8 @@ S3method(predictors, logforest)
 S3method(predictors, logicBagg)
 S3method(predictors, gam)
 S3method(predictors, C5.0)
+S3method(predictors, stepclass)
+
 
 S3method(confusionMatrix, table)
 
