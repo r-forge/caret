@@ -370,7 +370,8 @@ looTrainWorkflow2 <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testin
       for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
     }
     predicted <- do.call("rbind", predicted)
-    allParam <- caret:::expandParameters(info$loop, info$submodels[[parm]])
+    allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
+    rownames(predicted) <- NULL
     predicted <- cbind(predicted, allParam)
     ## if saveDetails then save and export 'predicted'
   } else {
