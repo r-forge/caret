@@ -13,4 +13,5 @@ modelInfo <- list(library = "rrcovHD",
                     predict(modelFit, newdata)@classification,
                   prob = NULL,
                   tags = c('Robust Model', "Linear Classifier"),
+                  levels = function(x) names(x@prior),
                   sort = function(x) x)
