@@ -40,14 +40,14 @@ extractProb <- function(models,
     if(verbose) cat("starting ", models[[i]]$method, "\n"); flush.console()         
     if(!unkOnly)
     {        
-      tempTrainPred <- predictionFunction2(models[[i]]$modelInfo,
-                                           models[[i]]$finalModel, 
-                                           trainX, 
-                                           models[[i]]$preProcess)    
-      tempTrainProb <- probFunction2(models[[i]]$modelInfo,
-                                     models[[i]]$finalModel, 
-                                     trainX, 
-                                     models[[i]]$preProcess)    
+      tempTrainPred <- predictionFunction(models[[i]]$modelInfo,
+                                          models[[i]]$finalModel, 
+                                          trainX, 
+                                          models[[i]]$preProcess)    
+      tempTrainProb <- probFunction(models[[i]]$modelInfo,
+                                    models[[i]]$finalModel, 
+                                    trainX, 
+                                    models[[i]]$preProcess)    
       
       
       if(verbose) cat(models[[i]]$method, ":", length(tempTrainPred), "training predictions were added\n"); flush.console()         
@@ -66,14 +66,14 @@ extractProb <- function(models,
         tempX <- testX
         tempY <- testY
         tempX$.outcome <- NULL
-        tempTestPred <- predictionFunction2(models[[i]]$modelInfo,
-                                            models[[i]]$finalModel, 
-                                            tempX, 
-                                            models[[i]]$preProcess)    
-        tempTestProb <- probFunction2(models[[i]]$modelInfo,
-                                      models[[i]]$finalModel, 
-                                      tempX, 
-                                      models[[i]]$preProcess)   
+        tempTestPred <- predictionFunction(models[[i]]$modelInfo,
+                                           models[[i]]$finalModel, 
+                                           tempX, 
+                                           models[[i]]$preProcess)    
+        tempTestProb <- probFunction(models[[i]]$modelInfo,
+                                     models[[i]]$finalModel, 
+                                     tempX, 
+                                     models[[i]]$preProcess)   
         
         if(verbose) cat(models[[i]]$method, ":", length(tempTestPred), "test predictions were added\n")         
         
@@ -94,14 +94,14 @@ extractProb <- function(models,
       tempX <- unkX
       tempX$.outcome <- NULL
       
-      tempUnkPred <- predictionFunction2(models[[i]]$modelInfo,
-                                         models[[i]]$finalModel, 
-                                         tempX, 
-                                         models[[i]]$preProcess)    
-      tempUnkProb <- probFunction2(models[[i]]$modelInfo,
-                                   models[[i]]$finalModel, 
-                                   tempX, 
-                                   models[[i]]$preProcess)  
+      tempUnkPred <- predictionFunction(models[[i]]$modelInfo,
+                                        models[[i]]$finalModel, 
+                                        tempX, 
+                                        models[[i]]$preProcess)    
+      tempUnkProb <- probFunction(models[[i]]$modelInfo,
+                                  models[[i]]$finalModel, 
+                                  tempX, 
+                                  models[[i]]$preProcess)  
       
       if(verbose) cat(models[[i]]$method, ":", length(tempUnkPred), "unknown predictions were added\n")         
       

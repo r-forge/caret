@@ -294,21 +294,21 @@ train.default <- function(x, y,
 
   if(trControl$method == "oob")
   {
-    tmp <- oobTrainWorkflow2(x = x, y = y, wts = weights, 
-                             info = trainInfo, method = models,
-                             ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+    tmp <- oobTrainWorkflow(x = x, y = y, wts = weights, 
+                            info = trainInfo, method = models,
+                            ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
     performance <- tmp
   } else {
     if(trControl$method == "LOOCV")
     {
-      tmp <- looTrainWorkflow2(x = x, y = y, wts = weights, 
-                               info = trainInfo, method = models,
-                               ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+      tmp <- looTrainWorkflow(x = x, y = y, wts = weights, 
+                              info = trainInfo, method = models,
+                              ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
       performance <- tmp$performance
     } else {
-      tmp <- nominalTrainWorkflow2(x = x, y = y, wts = weights, 
-                                   info = trainInfo, method = models,
-                                   ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
+      tmp <- nominalTrainWorkflow(x = x, y = y, wts = weights, 
+                                  info = trainInfo, method = models,
+                                  ppOpts = preProcess, ctrl = trControl, lev = classLevels, ...)
       performance <- tmp$performance
       resampleResults <- tmp$resample
     }
@@ -432,15 +432,15 @@ train.default <- function(x, y,
 
   if(!(length(trControl$seeds) == 1 && is.na(trControl$seeds))) set.seed(trControl$seeds[[length(trControl$seeds)]][1])
   finalTime <- system.time(
-    finalModel <- createModel2(x = x, y = y, wts = weights, 
-                               method = models, 
-                               tuneValue = bestTune, 
-                               obsLevels = classLevels,
-                               pp = ppOpt,
-                               last = TRUE,
-                               classProbs = trControl$classProbs,
-                               ...))
-
+    finalModel <- createModel(x = x, y = y, wts = weights, 
+                              method = models, 
+                              tuneValue = bestTune, 
+                              obsLevels = classLevels,
+                              pp = ppOpt,
+                              last = TRUE,
+                              classProbs = trControl$classProbs,
+                              ...))
+  
   ## get pp info
   pp <- finalModel$preProc
   finalModel <- finalModel$fit

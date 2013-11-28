@@ -34,10 +34,10 @@ extractPrediction <- function(models,
   {
     if(!unkOnly)
     {
-      tempTrainPred <- predictionFunction2(models[[i]]$modelInfo,
-                                           models[[i]]$finalModel, 
-                                           trainX, 
-                                           models[[i]]$preProcess)
+      tempTrainPred <- predictionFunction(models[[i]]$modelInfo,
+                                          models[[i]]$finalModel, 
+                                          trainX, 
+                                          models[[i]]$preProcess)
       
       if(verbose) cat(models[[i]]$method, ":", length(tempTrainPred), "training predictions were added\n")         
       
@@ -62,10 +62,10 @@ extractPrediction <- function(models,
         tempY <- testY
         tempX$.outcome <- NULL
         
-        tempTestPred <- predictionFunction2(models[[i]]$modelInfo,
-                                            models[[i]]$finalModel, 
-                                            tempX, 
-                                            models[[i]]$preProcess)              
+        tempTestPred <- predictionFunction(models[[i]]$modelInfo,
+                                           models[[i]]$finalModel, 
+                                           tempX, 
+                                           models[[i]]$preProcess)              
         
         if(verbose) cat(models[[i]]$method, ":", length(tempTestPred), "test predictions were added\n")         
         
@@ -92,10 +92,10 @@ extractPrediction <- function(models,
       tempX <- unkX
       tempX$.outcome <- NULL
       
-      tempUnkPred <- predictionFunction2(models[[i]]$modelInfo,
-                                         models[[i]]$finalModel, 
-                                         tempX, 
-                                         models[[i]]$preProcess)     
+      tempUnkPred <- predictionFunction(models[[i]]$modelInfo,
+                                        models[[i]]$finalModel, 
+                                        tempX, 
+                                        models[[i]]$preProcess)     
       
       if(verbose) cat(models[[i]]$method, ":", length(tempUnkPred), "unknown predictions were added\n")         
       
