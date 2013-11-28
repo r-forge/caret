@@ -83,5 +83,5 @@ modelInfo <- list(library = "pls",
                     }                        
                     out
                     },
-                    tags = c("Partial Least Squares", "Feature Extraction", "Linear Classifier"),
+                    tags = c("Partial Least Squares", "Feature Extraction", "Linear Classifier", "Linear Regression"),
                   sort = function(x) x[order(-x$ncomp),,drop = FALSE])

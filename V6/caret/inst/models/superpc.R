@@ -47,7 +47,5 @@ modelInfo <- list(library = "superpc",
                     out
                   },
                   prob = NULL,
-                  tags = c("Implicit Feature Selection", 
-                           "L1 Regularization", "L2 Regularization",
-                           "Linear Regression"),
+                  tags = c("Feature Extraction", "Linear Regression"),
                   sort = function(x) x)
