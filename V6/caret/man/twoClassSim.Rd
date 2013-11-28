@@ -33,7 +33,7 @@ The correlation structure of the correlated irrelevant predictors. Values of "AR
   \item{corrValue}{
 The correlation value.
 }
-  \ite{mislabel}{
+  \item{mislabel}{
   The proportion of data that is possibly mislabeled. See Details below.
   }
 }
