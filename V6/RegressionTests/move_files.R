@@ -59,5 +59,8 @@ if(FALSE){
   mods <- names(getModelInfo())
   testfiles <- gsub(".R", "", rFiles, fixed = TRUE)
   
-  mods[!(mods %in% testfiles)]
+  testFiles <- list.files(file.path(getwd(), "Code"))
+  modelFiles <- list.files("/Users/kuhna03/Code/caret/V6/caret/inst/models")  
+  
+  modelFiles[!(modelFiles %in% testFiles)]
 }
