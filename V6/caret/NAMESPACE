@@ -58,6 +58,7 @@ export(anovaScores,
        getTrainPerf,
        ggplot.rfe,
        ggplot.train,
+       hasTerms,
        histogram.rfe,
        icr,
        icr.default,
@@ -415,12 +416,14 @@ S3method(predictors, trocc)
 S3method(predictors, foba)
 S3method(predictors, dsa)
 S3method(predictors, logreg)
-S3method(predictors, logforest)
 S3method(predictors, logicBagg)
 S3method(predictors, gam)
 S3method(predictors, C5.0)
 S3method(predictors, stepclass)
-
+S3method(predictors, enet)
+S3method(predictors, ppr)
+S3method(predictors, trocc)
+S3method(predictors, rpart)
 
 S3method(confusionMatrix, table)
 
