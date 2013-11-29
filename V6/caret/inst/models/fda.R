@@ -28,8 +28,11 @@ modelInfo <- list(library = c("earth", "mda"),
                   prob = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata, type= "posterior"),
                   predictors = function(x, ...) {
+                    code <- getModelInfo("earth", regex = FALSE)[[1]]$predictors
                     tmp <- predictors(x$terms)
-                    out <- if(class(x$fit) == "earth") predictors(x$fit) else tmp
+                    out <- if(class(x$fit) == "earth") code(x$fit) else tmp
                     out
                   },
+                  varImp = function(object, value = "gcv", ...) 
+                    varImp(object$fit, value = value, ...),
                   sort = function(x) x)

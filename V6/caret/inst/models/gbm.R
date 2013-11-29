@@ -155,5 +155,12 @@ modelInfo <- list(library = "gbm",
                     varUsed <- as.character(subset(relImp, rel.inf != 0)$var)
                     caret:::basicVars(varList, varUsed) 
                   },
+                  varImp = function(object, numTrees = object$n.trees, ...) {
+                    varImp <- relative.influence(object, n.trees = numTrees)
+                    out <- data.frame(varImp)
+                    colnames(out) <- "Overall"
+                    rownames(out) <- object$var.names
+                    out   
+                  },
                   tags = c("Tree-Based Model", "Boosting", "Ensemble Model", "Implicit Feature Selection"),
                   sort = function(x) x)

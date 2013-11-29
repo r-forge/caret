@@ -67,6 +67,11 @@ modelInfo <- list(library = "party",
                     vi <- varimp(x, ...)
                     names(vi)[vi != 0]
                   },
+                  varImp = function(object, ...) {
+                    variableImp <- varimp(object, ...)
+                    out <- data.frame(Overall = variableImp)
+                    out
+                  },
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
                   levels = function(x) levels(x@data@get("response")[,1]),
                   sort = function(x) x)

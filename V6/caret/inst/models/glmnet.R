@@ -121,6 +121,25 @@ modelInfo <- list(library = "glmnet",
                     }
                     out
                   },
+                  varImp = function(object, lambda = NULL, ...) {
+                    if(is.null(lambda))
+                    {
+                      if(length(lambda) > 1) stop("Only one value of lambda is allowed right now")
+                      if(!is.null(object$lambdaOpt))
+                      {
+                        lambda <- object$lambdaOpt
+                      } else stop("must supply a vaue of lambda")
+                    }
+                    beta <- predict(object, s = lambda, type = "coef")
+                    if(is.list(beta))
+                    {
+                      out <- do.call("cbind", lapply(beta, function(x) x[,1]))
+                      out <- as.data.frame(out)
+                    } else out <- data.frame(Overall = beta[,1])
+                    out <- out[rownames(out) != "(Intercept)",,drop = FALSE]
+                    
+                    out
+                  },
                   tags = c("Generalized Linear Model", "Implicit Feature Selection", 
                            "L1 Regularization", "L2 Regularization", "Linear Classifier",
                            "Linear Regression"),

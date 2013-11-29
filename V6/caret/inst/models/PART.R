@@ -35,4 +35,10 @@ modelInfo <- list(library = "RWeka",
                     predict(modelFit, newdata, type = "probability"),
                   predictors = function(x, ...) predictors(x$terms),
                   tags = c("Rule-Based Model", "Implicit Feature Selection"),
+                  varImp = function(object, ...) {
+                    dat <- caret:::partRuleSummary(object)
+                    out <- dat$varUsage[,"Overall", drop = FALSE]
+                    rownames(out) <- dat$varUsage$Var
+                    out
+                  },
                   sort = function(x) x)

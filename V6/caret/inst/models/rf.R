@@ -44,5 +44,21 @@ modelInfo <- list(library = "randomForest",
                     varsUsed <- names(x$forest$ncat)[varIndex]
                     varsUsed
                   },
+                  varImp = function(object, ...){
+                    varImp <- randomForest::importance(object, ...)
+                    if(object$type == "regression")
+                      varImp <- data.frame(Overall = varImp[,"%IncMSE"])
+                    else {
+                      retainNames <- levels(object$y)
+                      varImp <- varImp[, retainNames]
+                    }
+                    
+                    out <- as.data.frame(varImp)
+                    if(dim(out)[2] == 2) {
+                      tmp <- apply(out, 1, mean)
+                      out[,1] <- out[,2] <- tmp  
+                    }
+                    out
+                  },
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
                   sort = function(x) x)

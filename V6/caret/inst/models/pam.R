@@ -69,9 +69,25 @@ modelInfo <- list(library = "pamr",
                     {
                       if(!is.null(x$threshold)) threshold <- x$threshold else stop("must supply threshold") 
                     }
-                    library(pamr)
                     varIndex <- pamr.predict(x, newx = newdata, threshold = threshold, type = "nonzero")
                     colnames(newdata)[varIndex]
+                  },
+                  varImp = function (object, threshold, data, ...) {
+                    if( dim(object$centroids)[1] != dim(data)[2]) 
+                      stop("the number of columns (=variables) is not consistent with the pamr object")
+                    
+                    if(is.null(dimnames(data)))  {
+                      featureNames <- paste("Feature", seq(along = data[1,]), sep = "")
+                      colnames(data) <- featureNames
+                    } else featureNames <- dimnames(data)[[2]]
+                    
+                    x <- t(data)
+                    retainedX <- x[object$gene.subset, object$sample.subset, drop = F]
+                    centroids <- pamr.predict(object, x, threshold = threshold, type = "cent")
+                    standCentroids <- (centroids - object$centroid.overall)/object$sd
+                    rownames(standCentroids) <- featureNames
+                    colnames(standCentroids) <- names(object$prior)
+                    as.data.frame(standCentroids)
                   },
                   tags = c("Prototype Models", "Implicit Feature Selection", "Linear Classifier"),
                   sort = function(x) x)

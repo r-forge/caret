@@ -33,5 +33,17 @@ modelInfo <- list(library = "nnet",
                     out
                   },
                   predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else NA,
+                  varImp = function(object, ...) {
+                    out <- abs(coef(object))
+                    if(is.vector(out))
+                    {
+                      out <- data.frame(Overall = out)
+                      rownames(out) <- names(coef(object))
+                    } else {
+                      out <- as.data.frame(apply(out, 2, sum))
+                      names(out)[1] <- "Overall"
+                    }
+                    subset(out, rownames(out) != "(Intercept)")
+                  },
                   tags = c("Neural Network", "L2 Regularization", "Logistic Regression", "Linear Classifier"),
                   sort = function(x) x)
