@@ -60,6 +60,14 @@ modelInfo <- list(library = "foba",
                     }
                     out       
                   },
+                  predictors = function(x, k = NULL, ...) {
+                    if(is.null(k))
+                    {
+                      if(!is.null(x$tuneValue)) k <- x$tuneValue$.k[1]  else stop("Please specify k")
+                    }
+                    library(foba)
+                    names(predict(x, k = k, type = "coefficients")$selected.variables)                    
+                  },
                   tags = c("Linear Regression", "Implicit Feature Selection", "L1 Regularization"),
                   prob = NULL,
                   sort = function(x) x)

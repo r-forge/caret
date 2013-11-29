@@ -15,6 +15,17 @@ modelInfo <- list(library = "kernlab",
                     out
                   },
                   prob = NULL,
+                  predictors = function(x, ...) {
+                    if(hasTerms(x) & !is.null(x@terms))
+                    {
+                      out <- predictors.terms(x@terms)
+                    } else {
+                      out <- colnames(attr(x, "xmatrix"))
+                    }
+                    if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+                    if(is.null(out)) out <-NA
+                    out
+                  },
                   tags = c("Kernel Method", "Support Vector Machines", "Linear Classifier"),
                   levels = function(x) lev(x),
                   sort = function(x) x)

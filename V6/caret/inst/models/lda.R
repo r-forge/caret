@@ -10,5 +10,6 @@ modelInfo <- list(library = "MASS",
                     predict(modelFit, newdata)$class,
                   prob = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata)$posterior,
+                  predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else colnames(x$means),
                   tags = c("Discriminant Analysis", "Linear Classifier"),
                   sort = function(x) x)

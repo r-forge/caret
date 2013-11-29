@@ -31,6 +31,7 @@ modelInfo <- list(library = "spls",
                     if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
                     caret:::predict.splsda(modelFit, newdata, type = "prob")
                   },
+                  predictors = function(x, ...) colnames(x$x)[x$A],
                   tags = c("Partial Least Squares", "Feature Extraction", "Linear Classifier", "Linear Regression",
                            "L1 Regularization"),
                   levels = NULL,

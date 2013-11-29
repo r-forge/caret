@@ -38,5 +38,9 @@ modelInfo <- list(library = "mgcv",
                     colnames(out) <-  modelFit$obsLevels
                     out
                   },
+                  predictors = function(x, ...) {
+                    tmp <- varImp(x, scale = FALSE)
+                    rownames(tmp)[tmp$Overall > 0]
+                  },
                   tags = c("Generalized Linear Model"),
                   sort = function(x) x)

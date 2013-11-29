@@ -64,6 +64,14 @@ modelInfo <- list(library = "caTools",
                     }                       
                     out
                   },
+                  predictors = function(x, ...) {                    
+                    if(!is.null(x$xNames))
+                    {
+                      out <- unique(x$xNames[x$Stump[, "feature"]])
+                    } else out <- NA
+                    
+                    out
+                  },
                   tags = c("Ensemble Model", "Boosting", "Implicit Feature Selection",
                            "Tree-Based Model", "Logistic Regression"),
                   sort = function(x) x)

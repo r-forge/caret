@@ -47,5 +47,6 @@ modelInfo <- list(library = NULL,
                     dimnames(out)[[2]] <-  modelFit$obsLevels
                     out
                   },
+                  predictors = function(x, ...) predictors(x$terms),
                   tags = c("Generalized Linear Model", "Linear Classifier"),
                   sort = function(x) x)

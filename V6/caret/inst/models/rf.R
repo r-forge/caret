@@ -35,5 +35,14 @@ modelInfo <- list(library = "randomForest",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
+                  predictors = function(x, ...) {
+                    ## After doing some testing, it looks like randomForest
+                    ## will only try to split on plain main effects (instead
+                    ## of interactions or terms like I(x^2).
+                    varIndex <- as.numeric(names(table(x$forest$bestvar)))
+                    varIndex <- varIndex[varIndex > 0]
+                    varsUsed <- names(x$forest$ncat)[varIndex]
+                    varsUsed
+                  },
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
                   sort = function(x) x)

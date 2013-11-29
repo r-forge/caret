@@ -32,5 +32,6 @@ modelInfo <- list(library = "nnet",
                     }
                     out
                   },
+                  predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else NA,
                   tags = c("Neural Network", "L2 Regularization", "Logistic Regression", "Linear Classifier"),
                   sort = function(x) x)

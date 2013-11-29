@@ -29,4 +29,13 @@ modelInfo <- list(library = c("earth", "mda"),
                     predict(modelFit , newdata),
                   prob = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata, type= "probs"),
+                  predictors = function(x, ...) {
+                    fdaPreds <- function(x) {
+                      tmp <- predictors(x$terms)
+                      out <- if(class(x$fit) == "earth") predictors(x$fit) else tmp
+                      out
+                    }
+                    eachFit <- lapply(x$fit, fdaPreds)
+                    unique(unlist(eachFit))
+                  },
                   sort = function(x) x)

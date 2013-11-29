@@ -94,5 +94,10 @@ modelInfo <- list(library = "earth",
                     }
                     out
                   },
+                  predictors = function(x, ...) {
+                    vi <- varImp(x)
+                    notZero <- sort(unique(unlist(lapply(vi, function(x) which(x > 0)))))
+                    if(length(notZero) > 0) rownames(vi)[notZero] else NULL
+                  },
                   tags = c("Multivariate Adaptive Regression Splines", "Implicit Feature Selection"),
                   sort = function(x) x)

@@ -22,6 +22,7 @@ modelInfo <- list(library = NULL,
                     }
                     out
                   },
+                  predictors = function(x, ...) colnames(x$learn$X),
                   tags = "Prototype Models",
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
