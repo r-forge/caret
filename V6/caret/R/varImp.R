@@ -3,142 +3,6 @@ function(object, ...){
    UseMethod("varImp")
 }
 
-
-
-varImp.dsa <- function(object, cuts = NULL, ...)
-  {
-    if(is.null(cuts) & !is.null(object$tuneValue))
-      {
-        cuts <- object$tuneValue$.cut.off.growth[1]
-      } else {
-        if(is.null(cuts)) stop("please supply a value for 'cuts'")
-      }
-    tmp <- object$var.importance[,cuts]
-    out <- data.frame(Overall = tmp)
-    rownames(out) <- names(tmp)
-    out
-  }
-
-varImp.multinom <- function(object, ...)
-  {
-    library(nnet)
-    out <- abs(coef(object))
-    if(is.vector(out))
-      {
-        out <- data.frame(Overall = out)
-        rownames(out) <- names(coef(object))
-      } else {
-        out <- as.data.frame(apply(out, 2, sum))
-        names(out)[1] <- "Overall"
-      }
-    subset(out, rownames(out) != "(Intercept)")
-  }
-
-
-varImp.gam <- function(object, ...)
-  {
-
-    if(any(names(object) %in% c("edf", "mgcv.conv", "gcv.ubre")))
-      {
-        library(mgcv)
-        tmp <- mgcv::anova.gam(object)
-        smoothed <- data.frame(Overall = tmp$s.table[, 4])
-
-        if(nrow(tmp$p.table) > 1)
-          {
-            linear <- data.frame(Overall = tmp$p.table[, 4])
-            out <- rbind(linear, smoothed)
-          } else out <- smoothed
-        out$Overall[!is.na(out$Overall)] <- -log10(out$Overall[!is.na(out$Overall)])
-
-        out$Overall[is.na(out$Overall)] <- 0
-
-        nms <- strsplit(rownames(out), "[()]")
-        nms <- unlist(lapply(nms, function(x) x[length(x)]))
-        rownames(out) <- nms
-        out <- subset(out, rownames(out) != "Intercept")
-      } else {
-        library(gam)
-        trms <- attr(object$terms, "term.labels")
-
-        vars <- all.vars(object$terms)[-1]
-        out <- data.frame(Overall = rep(NA, length(vars)))
-        rownames(out) <- vars
-        for(i in seq(along = trms))
-          {
-            reduced <- update(object, as.formula(paste("~.-", trms[i])))
-            out[i,1] <- -log10(gam::anova.gam(object, reduced)[2, "P(>|Chi|)"])
-          }
-      }
-    out
-  }
-
-
-varImp.cubist <- function(object, weights = c(0.5, 0.5), ...)
-  {
-    if(length(weights) != 2) stop("two weights must be given")
-    weights <- weights/sum(weights)
-    out <- data.frame(Overall = object$usage$Conditions*weights[1] + object$usage$Model*weights[2])
-    rownames(out) <- object$usage$Variable
-    out
-  }
-
-
-varImp.RRF <- function(object, ...)
-  {
-    library(RRF)
-    varImp <- RRF::importance(object, ...)
-    if(object$type == "regression")
-      varImp <- data.frame(Overall = varImp[,"%IncMSE"])
-    else {
-      retainNames <- levels(object$y)
-      varImp <- varImp[, retainNames]
-    }
-    
-    out <- as.data.frame(varImp)
-    if(dim(out)[2] == 2)
-      {
-        tmp <- apply(out, 1, mean)
-        out[,1] <- out[,2] <- tmp  
-      }
-    out
-  }
-
-varImp.JRip <- function(object, ...)
-  {
-    dat <- ripperRuleSummary(object)
-    out <- dat$varUsage[,"Overall", drop = FALSE]
-    rownames(out) <- dat$varUsage$Var
-    out
-  }
-
-varImp.PART <- function(object, ...)
-  {
-    dat <- partRuleSummary(object)
-    out <- dat$varUsage[,"Overall", drop = FALSE]
-    rownames(out) <- dat$varUsage$Var
-    out
-  }
-
-
-varImp.glm <- function(object, ...)
-  {
-    sObj <- summary(object)$coef
-    sObj <- sObj[rownames(sObj) != "(Intercept)",]
-    sObj <- abs(sObj[, "z value", drop = FALSE])
-    colnames(sObj) <- "Overall"
-    sObj <- as.data.frame(sObj)
-    sObj
-  }
-
-
-
-varImp.C5.0 <- function(object, ...)
-  {
-    library(C50)
-    C5imp(object, ...)
-  }
-
 GarsonWeights <- function(object)
   {
     beta <- coef(object)
@@ -229,41 +93,186 @@ GarsonWeights <- function(object)
     imp
   }
 
-varImp.nnet <- function(object, ...)
-  {
-    imp <- GarsonWeights(object, ...)
-    if(ncol(imp) > 1)
-      {
-        imp <- cbind(apply(imp, 1, mean), imp)
-        colnames(imp)[1] <- "Overall"
-      } else {
-        imp <- as.data.frame(imp)
-        names(imp) <- "Overall"
-      }
-    if(!is.null(object$xNames)) rownames(imp) <- object$xNames
-    imp
-  }
+varImp.bagEarth <- function(x, ...){
+  code <- getModelInfo("bagEarth", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
 
+varImp.C5.0 <- function(x, ...){
+  code <- getModelInfo("C5.0", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
 
+varImp.cubist <- function(x, ...){
+  code <- getModelInfo("cubist", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
 
-varImp.glmnet <- function(object, lambda = NULL, ...)
-{
-  library(glmnet)
-  if(is.null(lambda))
-    {
-      if(length(lambda) > 1) stop("Only one value of lambda is allowed right now")
-      if(!is.null(object$lambdaOpt))
-        {
-          lambda <- object$lambdaOpt
-        } else stop("must supply a vaue of lambda")
-    }
-  beta <- predict(object, s = lambda, type = "coef")
-  if(is.list(beta))
-    {
-      out <- do.call("cbind", lapply(beta, function(x) x[,1]))
-      out <- as.data.frame(out)
-    } else out <- data.frame(Overall = beta[,1])
-  out <- out[rownames(out) != "(Intercept)",,drop = FALSE]
+varImp.dsa <- function(x, ...){
+  code <- getModelInfo("partDSA", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
 
-  out
+varImp.glm <- function(x, ...){
+  code <- getModelInfo("glm", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.glmnet <- function(x, ...){
+  code <- getModelInfo("glmnet", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.JRip <- function(x, ...){
+  code <- getModelInfo("JRip", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.multinom <- function(x, ...){
+  code <- getModelInfo("multinom", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.nnet <- function(x, ...){
+  code <- getModelInfo("nnet", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.PART <- function(x, ...){
+  code <- getModelInfo("PART", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.RRF <- function(x, ...){
+  code <- getModelInfo("RRF", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.rpart <- function(x, ...){
+  code <- getModelInfo("rpart", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.randomForest <- function(x, ...){
+  code <- getModelInfo("rf", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.gbm <- function(x, ...){
+  code <- getModelInfo("gbm", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.classbagg <- function(x, ...){
+  code <- getModelInfo("treebag", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.regbagg <- function(x, ...){
+  code <- getModelInfo("treebag", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.pamrtrained <- function(x, ...){
+  code <- getModelInfo("pam", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.lm <- function(x, ...){
+  code <- getModelInfo("lm", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.mvr <- function(x, ...){
+  code <- getModelInfo("pls", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.earth <- function(x, ...){
+  code <- getModelInfo("earth", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.RandomForest <- function(x, ...){
+  code <- getModelInfo("cforest", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.plsda <- function(x, ...){
+  code <- getModelInfo("pls", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
+}
+
+varImp.fda <- function(x, ...){
+  code <- getModelInfo("fda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(x, ...)
 }
