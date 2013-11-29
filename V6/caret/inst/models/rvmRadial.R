@@ -18,5 +18,16 @@ modelInfo <- list(library = "kernlab",
                   predict = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata),
                   prob = NULL,
+                  predictors = function(x, ...) {
+                    if(hasTerms(x) & !is.null(x@terms))
+                    {
+                      out <- predictors.terms(x@terms)
+                    } else {
+                      out <- colnames(attr(x, "xmatrix"))
+                    }
+                    if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+                    if(is.null(out)) out <-NA
+                    out
+                  },
                   tags = c("Kernel Method", "Relevance Vector Machines", "Radial Basis Function"),
                   sort = function(x) x)

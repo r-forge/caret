@@ -16,5 +16,6 @@ modelInfo <- list(library = "mda",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "posterior"),
+                  predictors = function(x, ...) predictors(x$terms),
                   tags = c("Discriminant Analysis"),
                   sort = function(x) x)

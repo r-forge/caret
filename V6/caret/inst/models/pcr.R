@@ -15,7 +15,7 @@ modelInfo <- list(library = "pls",
                     dat <- x
                     dat$.outcome <- y
                     pcr(.outcome ~ ., data = dat, ncomp = param$.ncomp, ...)
-                    },
+                  },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out <- as.vector(pls:::predict.mvr(modelFit, newdata, ncomp = max(modelFit$ncomp)))
                     
@@ -27,6 +27,7 @@ modelInfo <- list(library = "pls",
                     }
                     out            
                   },
+                  predictors = function(x, ...) rownames(x$projection),
                   tags = c("Linear Regression", "Feature Extraction"),
                   prob = NULL,
                   sort = function(x) x[order(-x$ncomp),,drop = FALSE])

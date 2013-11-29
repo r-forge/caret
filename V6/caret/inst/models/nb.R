@@ -14,5 +14,6 @@ modelInfo <- list(library = "klaR",
                   },
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "raw")$posterior,
+                  predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else x$varnames,
                   tags = c("Bayesian Model"),
                   sort = function(x) x)

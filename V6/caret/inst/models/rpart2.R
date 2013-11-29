@@ -104,5 +104,16 @@ modelInfo <- list(library = "rpart",
                     }                              
                     out
                   },
+                  predictors = function(x, surrogate = TRUE, ...) {
+                    out <- as.character(x$frame$var)
+                    out <- out[!(out %in% c("<leaf>"))]
+                    if(surrogate)
+                    {
+                      splits <- x$splits
+                      splits <- splits[splits[,"adj"] > 0,]
+                      out <- c(out, rownames(splits))
+                    }
+                    unique(out)
+                  },
                   tags = c("Tree-Based Model", "Implicit Feature Selection"),
                   sort = function(x) x)

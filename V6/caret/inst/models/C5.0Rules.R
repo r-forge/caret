@@ -11,5 +11,9 @@ modelInfo <- list(library = "C50",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata, type= "prob"),
+                  predictors = function(x, ...) {
+                    vars <- C5imp(x, metric = "splits")
+                    rownames(vars)[vars$Overall > 0]
+                  },
                   tags = c("Rule-Based Model", "Implicit Feature Selection"),
                   sort = function(x) x)

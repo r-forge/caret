@@ -20,6 +20,11 @@ modelInfo <- list(library = "penalized",
                     out
                   },
                   prob = NULL,
+                  predictors = function(x, ...) {
+                    out <- coef(x, "all")
+                    out <- names(out)[out != 0]
+                    out[out != "(Intercept)"]
+                  },
                   tags = c("Implicit Feature Selection", 
                            "L1 Regularization", "L2 Regularization",
                            "Linear Regression"),

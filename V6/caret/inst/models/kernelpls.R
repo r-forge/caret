@@ -21,7 +21,7 @@ modelInfo <- list(library = "pls",
                       plsr(.outcome ~ ., data = dat, method = "kernelpls", ncomp = param$.ncomp, ...)
                     }
                     out
-                    },
+                  },
                   predict = function(modelFit, newdata, submodels = NULL) {                    
                     out <- if(modelFit$problemType == "Classification")
                     {
@@ -83,6 +83,7 @@ modelInfo <- list(library = "pls",
                       out <- tmp
                     }                        
                     out
-                    },  
+                  },
+                  predictors = function(x, ...) rownames(x$projection),  
                   tags = c("Partial Least Squares", "Feature Extraction", "Kernel Method", "Linear Classifier", "Linear Regression"),
                   sort = function(x) x[order(-x$ncomp),,drop = FALSE])

@@ -102,6 +102,25 @@ modelInfo <- list(library = "glmnet",
                     }
                     probs
                   },
+                  predictors = function(x, lambda = NULL, ...) {
+                    if(is.null(lambda))
+                    {
+                      if(length(lambda) > 1) stop("Only one value of lambda is allowed right now")
+                      if(!is.null(x$lambdaOpt))
+                      {
+                        lambda <- x$lambdaOpt
+                      } else stop("must supply a vaue of lambda")
+                    }
+                    allVar <- if(is.list(x$beta)) rownames(x$beta[[1]]) else rownames(x$beta)
+                    out <- unlist(predict(x, s = lambda, type = "nonzero"))
+                    out <- unique(out)
+                    if(length(out) > 0)
+                    {
+                      out <- out[!is.na(out)]
+                      out <- allVar[out]
+                    }
+                    out
+                  },
                   tags = c("Generalized Linear Model", "Implicit Feature Selection", 
                            "L1 Regularization", "L2 Regularization", "Linear Classifier",
                            "Linear Regression"),

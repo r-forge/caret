@@ -20,5 +20,6 @@ modelInfo <- list(library = NULL,
                   },
                   predict = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata),
                   prob = NULL,
+                  predictors = function(x, ...) x$xnames,
                   tags = "Feature Extraction",
                   sort = function(x) x)

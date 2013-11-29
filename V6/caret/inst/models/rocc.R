@@ -39,5 +39,6 @@ modelInfo <- list(library = "rocc",
                            levels =  modelFit$obsLevels)
                   },
                   prob = NULL,
+                  predictors = function(x, ...) x$genes,
                   tags = "ROC Curves",
                   sort = function(x) x)

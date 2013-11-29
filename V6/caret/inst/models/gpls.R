@@ -15,5 +15,9 @@ modelInfo <- list(library = "gpls",
                     colnames(out) <-  modelFit$obsLevels
                     out
                   },
+                  predictors = function(x, ...) {
+                    out <- if(hasTerms(x)) predictors(x$terms) else colnames(x$data$x.order)
+                    out[!(out %in% "Intercept")]
+                  },
                   tags = c("Logistic Regression", "Partial Least Squares", "Linear Classifier"),
                   sort = function(x) x)

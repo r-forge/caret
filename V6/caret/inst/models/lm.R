@@ -16,5 +16,6 @@ modelInfo <- list(library = NULL,
                   },
                   predict = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata),
                   prob = NULL,
+                  predictors = function(x, ...) predictors(x$terms),
                   tags = "Linear Regression",
                   sort = function(x) x)

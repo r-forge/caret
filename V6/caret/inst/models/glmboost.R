@@ -86,5 +86,8 @@ modelInfo <- list(library = "mboost",
                     }                        
                     out
                   },
+                  predictors = function(x, ...) {
+                    strsplit(variable.names(x), ", ")[[1]]
+                  },
                   tags = c("Generalized Linear Model", "Ensemble Model", "Boosting", "Linear Classifier"),
                   sort = function(x) x)

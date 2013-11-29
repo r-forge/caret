@@ -60,6 +60,10 @@ modelInfo <- list(library = "C50",
                     out              
                   },
                   prob = NULL,
+                  predictors = function(x, ...) {
+                    vars <- C5imp(x, metric = "splits")
+                    rownames(vars)[vars$Overall > 0]
+                  },
                   tags = c("Tree-Based Model", "Rule-Based Model", "Implicit Feature Selection",
                   	       "Boosting", "Ensemble Model", "Cost Sensitive Learning"),
                   sort = function(x) x)

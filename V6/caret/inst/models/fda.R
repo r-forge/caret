@@ -27,4 +27,9 @@ modelInfo <- list(library = c("earth", "mda"),
                     predict(modelFit , newdata),
                   prob = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata, type= "posterior"),
+                  predictors = function(x, ...) {
+                    tmp <- predictors(x$terms)
+                    out <- if(class(x$fit) == "earth") predictors(x$fit) else tmp
+                    out
+                  },
                   sort = function(x) x)

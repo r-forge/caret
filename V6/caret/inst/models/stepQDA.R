@@ -20,5 +20,10 @@ modelInfo <- list(library = c("klaR", "MASS"),
                   prob = function(modelFit, newdata, submodels = NULL){
                     predict(modelFit$fit, newdata[, predictors(modelFit), drop = FALSE])$posterior
                   },
+                  predictors = function(x, ...) {
+                    form <- x$formula
+                    form[[2]] <- NULL
+                    all.vars(form)
+                  },
                   tags = c("Discriminant Analysis", "Feature Selection Wrapper", "Polynomial Model"),
                   sort = function(x) x)

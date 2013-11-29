@@ -29,5 +29,11 @@ modelInfo <- list(library = "LogicReg",
                     colnames(out) <- modelFit$obsLevels
                     out
                   },
+                  predictors = function(x, ...) {
+                    getVarIndex <- function(y) unique(y$trees$knot)
+                    varNums <- unique(unlist(lapply(x$model$trees, getVarIndex)))
+                    varNums <- varNums[varNums > 0]
+                    if(length(varNums) > 0) colnames(x$binary)[varNums] else NA
+                  },
                   tags = c("Logic Regression", "Linear Classifier", "Linear Regression", "Logistic Regression"),
                   sort = function(x) x)

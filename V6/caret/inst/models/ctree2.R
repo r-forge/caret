@@ -53,6 +53,19 @@ modelInfo <- list(library = "party",
                     rownames(out) <- NULL
                     out
                   },
+                  predictors = function(x, surrogate = TRUE, ...) {
+                    treeObj <- unlist(nodes(x, 1))
+                    target <- "psplit\\.variableName"
+                    vars <- treeObj[grep(target, names(treeObj))]
+                    if(surrogate)
+                    {
+                      target2 <- "ssplits\\.variableName"
+                      svars <- treeObj[grep(target, names(treeObj))]
+                      vars <- c(vars, svars)
+                      
+                    }
+                    unique(vars)
+                  },
                   tags = c('Tree-Based Model', "Implicit Feature Selection"),
                   levels = function(x) levels(x@data@get("response")[,1]),
                   sort = function(x) x)

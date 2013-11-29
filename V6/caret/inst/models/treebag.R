@@ -15,5 +15,11 @@ modelInfo <- list(library = "ipred",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
+                  predictors = function(x, surrogate = TRUE, ...) {
+                    eachTree <- lapply(x$mtree,
+                                       function(u, surr) predictors(u$btree, surrogate = surr),
+                                       surr = surrogate)
+                    unique(unlist(eachTree))
+                  },
                   tags = c("Tree-Based Model", "Ensemble Model", "Bagging"), 
                   sort = function(x) x)

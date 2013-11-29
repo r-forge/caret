@@ -50,7 +50,7 @@ modelInfo <- list(library = "gbm",
                     if(length(theDots) > 0) modArgs <- c(modArgs, theDots)
                     
                     do.call("gbm.fit", modArgs)
-                    },
+                  },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata, type = "response",
                                    n.trees = modelFit$tuneValue$.n.trees)
@@ -90,8 +90,8 @@ modelInfo <- list(library = "gbm",
                                     bernoulli =, adaboost =, huberized = {
                                       ## Now we have a nxt matrix
                                       tmp <- ifelse(tmp >= .5, 
-                                             modelFit$obsLevels[1], 
-                                             modelFit$obsLevels[2])
+                                                    modelFit$obsLevels[1], 
+                                                    modelFit$obsLevels[2])
                                       tmp <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
                                       c(list(out), tmp)
                                     },
@@ -148,6 +148,12 @@ modelInfo <- list(library = "gbm",
                       out <- c(list(out), tmp)
                     }
                     out
+                  },
+                  predictors = function(x, ...) {
+                    varList <- if(caret:::hasTerms(x)) predictors(x$terms) else colnames(x$data$x.order)
+                    relImp <- summary(x, plotit = FALSE)
+                    varUsed <- as.character(subset(relImp, rel.inf != 0)$var)
+                    caret:::basicVars(varList, varUsed) 
                   },
                   tags = c("Tree-Based Model", "Boosting", "Ensemble Model", "Implicit Feature Selection"),
                   sort = function(x) x)

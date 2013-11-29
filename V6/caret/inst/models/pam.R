@@ -60,5 +60,18 @@ modelInfo <- list(library = "pamr",
                     }   
                     out
                   },
+                  predictors = function(x, newdata = NULL, threshold = NULL,  ...) {
+                    if(is.null(newdata))
+                    {
+                      if(!is.null(x$xData)) newdata <- x$xData else stop("must supply newdata") 
+                    }
+                    if(is.null(threshold))
+                    {
+                      if(!is.null(x$threshold)) threshold <- x$threshold else stop("must supply threshold") 
+                    }
+                    library(pamr)
+                    varIndex <- pamr.predict(x, newx = newdata, threshold = threshold, type = "nonzero")
+                    colnames(newdata)[varIndex]
+                  },
                   tags = c("Prototype Models", "Implicit Feature Selection", "Linear Classifier"),
                   sort = function(x) x)

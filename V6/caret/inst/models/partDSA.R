@@ -62,6 +62,16 @@ modelInfo <- list(library = "partDSA",
                     }
                     out        
                   },
+                  predictors = function(x, cuts = NULL, ...) {
+                    if(is.null(cuts) & !is.null(x$tuneValue))
+                    {
+                      cuts <- x$tuneValue$.cut.off.growth[1]
+                    } else {
+                      if(is.null(cuts)) stop("please supply a value for 'cuts'")
+                    }
+                    tmp <- x$var.importance[,cuts]
+                    names(tmp)[which(tmp != 0)]
+                  },
                   tags = "",
                   prob = NULL,
                   sort = function(x) x)

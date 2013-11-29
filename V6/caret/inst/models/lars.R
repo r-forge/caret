@@ -37,6 +37,23 @@ modelInfo <- list(library = "lars",
                     }
                     out        
                   },
+                  predictors = function(x, s = NULL, ...) {
+                    if(is.null(s))
+                    {
+                      if(!is.null(x$tuneValue))
+                      {
+                        s <- x$tuneValue$.fraction
+                      } else stop("must supply a vaue of s")
+                      out <- predict(x, s = s,
+                                     type = "coefficients",
+                                     mode = "fraction")$coefficients
+                      
+                    } else {
+                      out <- predict(x, s = s, ...)$coefficients
+                      
+                    }
+                    names(out)[out != 0]
+                  },
                   tags = c("Linear Regression", "Implicit Feature Selection", "L1 Regularization"),
                   prob = NULL,
                   sort = function(x) x)

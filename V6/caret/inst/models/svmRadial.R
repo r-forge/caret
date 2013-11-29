@@ -27,7 +27,7 @@ modelInfo <- list(library = "kernlab",
                     }
                     
                     out            
-                    },
+                  },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     svmPred <- function(obj, x)
                     {
@@ -75,6 +75,17 @@ modelInfo <- list(library = "kernlab",
                       out <- matrix(NA, nrow(newdata) * length(obsLevels), ncol = length(obsLevels))
                       colnames(out) <- obsLevels
                     }
+                    out
+                  },
+                  predictors = function(x, ...){
+                    if(hasTerms(x) & !is.null(x@terms))
+                    {
+                      out <- predictors.terms(x@terms)
+                    } else {
+                      out <- colnames(attr(x, "xmatrix"))
+                    }
+                    if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+                    if(is.null(out)) out <-NA
                     out
                   },
                   tags = c("Kernel Method", "Support Vector Machines", "Radial Basis Function"),
