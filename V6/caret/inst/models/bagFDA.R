@@ -31,8 +31,9 @@ modelInfo <- list(library = c("earth", "mda"),
                     predict(modelFit, newdata, type= "probs"),
                   predictors = function(x, ...) {
                     fdaPreds <- function(x) {
+                      code <- getModelInfo("earth", regex = FALSE)[[1]]$predictors
                       tmp <- predictors(x$terms)
-                      out <- if(class(x$fit) == "earth") predictors(x$fit) else tmp
+                      out <- if(class(x$fit) == "earth") code(x$fit) else tmp
                       out
                     }
                     eachFit <- lapply(x$fit, fdaPreds)

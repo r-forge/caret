@@ -103,6 +103,14 @@ modelInfo <- list(library = "earth",
                     eachFit <- lapply(x$fit, predEarth)
                     unique(unlist(eachFit))
                   },
+                  varImp = function(object, ...) {
+                    allImp <- lapply(object$fit, varImp, ...)
+                    impDF <- as.data.frame(allImp)
+                    meanImp <- apply(impDF, 1, mean)
+                    out <- data.frame(Overall = meanImp)
+                    rownames(out) <- names(meanImp)
+                    out
+                  },
                   tags = c("Multivariate Adaptive Regression Splines", "Ensemble Model", 
                            "Implicit Feature Selection", "Bagging"),
                   sort = function(x) x)

@@ -37,5 +37,20 @@ modelInfo <- list(library = "RRF",
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
+                  varImp = function(object, ...) {
+                    varImp <- RRF::importance(object, ...)
+                    if(object$type == "regression")
+                      varImp <- data.frame(Overall = varImp[,"%IncMSE"])
+                    else {
+                      retainNames <- levels(object$y)
+                      varImp <- varImp[, retainNames]
+                    } 
+                    out <- as.data.frame(varImp)
+                    if(dim(out)[2] == 2) {
+                      tmp <- apply(out, 1, mean)
+                      out[,1] <- out[,2] <- tmp  
+                    }
+                    out
+                  },
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection", "Regularization"),
                   sort = function(x) x)

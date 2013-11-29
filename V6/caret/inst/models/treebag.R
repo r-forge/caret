@@ -16,10 +16,19 @@ modelInfo <- list(library = "ipred",
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
                   predictors = function(x, surrogate = TRUE, ...) {
+                    code <- getModelInfo("rpart", regex = FALSE)[[1]]$predictors
                     eachTree <- lapply(x$mtree,
-                                       function(u, surr) predictors(u$btree, surrogate = surr),
+                                       function(u, surr) code(u$btree, surrogate = surr),
                                        surr = surrogate)
                     unique(unlist(eachTree))
+                  },
+                  varImp = function(object, ...) {
+                    allImp <- lapply(object$fit, varImp, ...)
+                    impDF <- as.data.frame(allImp)
+                    meanImp <- apply(impDF, 1, mean)
+                    out <- data.frame(Overall = meanImp)
+                    rownames(out) <- names(meanImp)
+                    out
                   },
                   tags = c("Tree-Based Model", "Ensemble Model", "Bagging"), 
                   sort = function(x) x)

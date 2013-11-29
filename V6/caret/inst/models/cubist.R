@@ -49,6 +49,13 @@ modelInfo <- list(library = "Cubist",
                     }
                     out              
                   },
+                  varImp = function(object, weights = c(0.5, 0.5), ...) {
+                    if(length(weights) != 2) stop("two weights must be given")
+                    weights <- weights/sum(weights)
+                    out <- data.frame(Overall = object$usage$Conditions*weights[1] + object$usage$Model*weights[2])
+                    rownames(out) <- object$usage$Variable
+                    out
+                  },
                   tags = c("Rule-Based Model", "Boosting", "Ensemble Model", 
                            "Prototype Models", "Model Tree", "Linear Regression",
                            "Implicit Feature Selection"),

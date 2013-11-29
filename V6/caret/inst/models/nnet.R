@@ -43,6 +43,18 @@ modelInfo <- list(library = "nnet",
                     }
                     out
                   },
+                  varImp = function(object, ...) {
+                    imp <- caret:::GarsonWeights(object, ...)
+                    if(ncol(imp) > 1) {
+                      imp <- cbind(apply(imp, 1, mean), imp)
+                      colnames(imp)[1] <- "Overall"
+                    } else {
+                      imp <- as.data.frame(imp)
+                      names(imp) <- "Overall"
+                    }
+                    if(!is.null(object$xNames)) rownames(imp) <- object$xNames
+                    imp
+                  },
                   predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else NA,
                   tags = c("Neural Network", "L2 Regularization"),
                   sort = function(x) x)

@@ -15,10 +15,13 @@ modelInfo <- list(library = c("klaR", "MASS"),
                     out$fit <- lda(x[, predictors(out), drop = FALSE], y, ...)
                     out
                   },
-                  predict = function(modelFit, newdata, submodels = NULL)
-                    predict(modelFit$fit, newdata[,  predictors(modelFit), drop = FALSE])$class,
+                  predict = function(modelFit, newdata, submodels = NULL) {
+                    code <- getModelInfo("lda", regex = FALSE)[[1]]$predictors
+                    predict(modelFit$fit, newdata[,  code(modelFit), drop = FALSE])$class
+                    },
                   prob = function(modelFit, newdata, submodels = NULL){
-                    predict(modelFit$fit, newdata[, predictors(modelFit), drop = FALSE])$posterior
+                    code <- getModelInfo("lda", regex = FALSE)[[1]]$predictors
+                    predict(modelFit$fit, newdata[, code(modelFit), drop = FALSE])$posterior
                   },
                   predictors = function(x, ...) {
                     form <- x$formula
