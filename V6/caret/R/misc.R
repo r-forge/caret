@@ -1,3 +1,21 @@
+model2method <- function(x)
+{
+  ## There are some disconnecs between the object class and the
+  ## method used by train.
+  
+  switch(x,
+         randomForest = "rf",
+         rvm = "rvmRadial",
+         ksvm = "svmRadial",
+         lssvm = "lssvmRadial",
+         gausspr = "gaussprRadial",
+         NaiveBayes = "nb",
+         classbagg =, regbagg = "treebag",
+         plsda = "pls",
+         pamrtrained = "pam",
+         x)
+}
+
 
 Kim2009 <- function(n)
 {
