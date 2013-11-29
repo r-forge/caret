@@ -2,8 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "plr"
-tests <- c("test_class_cv_model", "test_class_pred", "test_class_prob",
-           "test_class_loo_model", "test_levels")
 
 #########################################################################
 
@@ -38,6 +36,8 @@ test_class_loo_model <- train(trainX, trainY,
 test_levels <- levels(test_class_cv_model)
 
 #########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

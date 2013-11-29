@@ -1,7 +1,7 @@
 library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
-model <- modelInfo
+model <- "svmRadialCost"
 
 #########################################################################
 
@@ -16,7 +16,7 @@ cctrl2 <- trainControl(method = "LOOCV")
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
-                             method = modelInfo, 
+                             method = "svmRadialCost", 
                              trControl = cctrl1,
                              preProc = c("center", "scale"))
 
@@ -24,7 +24,7 @@ test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
-                              method = modelInfo, 
+                              method = "svmRadialCost", 
                               trControl = cctrl2,
                               preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
@@ -48,16 +48,23 @@ rctrl2 <- trainControl(method = "LOOCV")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
-                           method = modelInfo, 
+                           method = "svmRadialCost", 
                            trControl = rctrl1,
                            preProc = c("center", "scale"))
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, 
-                            method = modelInfo,
+                            method = "svmRadialCost",
                             trControl = rctrl2,
                             preProc = c("center", "scale"))
+
+#########################################################################
+
+test_class_predictors1 <- predictors(test_class_cv_model)
+test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+test_reg_predictors1 <- predictors(test_reg_cv_model)
+test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
 
 #########################################################################
 

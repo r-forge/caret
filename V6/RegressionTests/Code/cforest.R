@@ -2,9 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "cforest"
-tests <- c("test_class_cv_model", "test_class_pred", "test_class_prob",
-           "test_class_loo_model", "test_levels", "test_reg_cv_model",
-           "test_reg_loo_model", "test_reg_oob_model", "test_class_oob_model")
 
 #########################################################################
 
@@ -49,6 +46,11 @@ test_class_oob_model <- train(trainX, trainY,
 
 #########################################################################
 
+test_class_predictors1 <- predictors(test_class_cv_model)
+test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+
+#########################################################################
+
 data(BloodBrain)
 bbbDescr <-bbbDescr[, -nearZeroVar(bbbDescr)]
 bbbDescr <-bbbDescr[, -findCorrelation(cor(bbbDescr), .5)]
@@ -89,6 +91,7 @@ test_reg_oob_model <- train(trainX, trainY,
 
 #########################################################################
 
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

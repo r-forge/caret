@@ -1,9 +1,8 @@
 library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
-model <- modelInfo
-tests <- c("test_class_cv_model", "test_class_pred", "test_class_prob",
-           "test_class_loo_model", "test_levels")
+model <- "lda2"
+
 
 #########################################################################
 
@@ -30,7 +29,7 @@ cctrl2 <- trainControl(method = "LOOCV",
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
-                             method = modelInfo, 
+                             method = "lda2", 
                              trControl = cctrl1,
                              preProc = c("center", "scale"))
 
@@ -39,12 +38,19 @@ test_class_prob <- predict(test_class_cv_model, testX, type = "prob")
 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
-                            method = modelInfo, 
+                            method = "lda2", 
                             trControl = cctrl2,
                             preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
 
 #########################################################################
+
+test_class_predictors1 <- predictors(test_class_cv_model)
+test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+
+#########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

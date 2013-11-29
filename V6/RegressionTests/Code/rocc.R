@@ -31,6 +31,11 @@ test_levels <- levels(test_class_cv_model)
 
 #########################################################################
 
+test_class_predictors1 <- predictors(test_class_cv_model)
+test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+
+#########################################################################
+
 tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()

@@ -2,8 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "CSimca"
-tests <- c("test_class_cv_model", "test_class_pred", "test_class_prob",
-           "test_class_loo_model", "test_levels")
 
 #########################################################################
 
@@ -23,7 +21,6 @@ test_class_cv_model <- train(trainX, trainY,
                              preProc = c("center", "scale"))
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
-test_class_prob <- predict(test_class_cv_model, testing[, -ncol(testing)], type = "prob")
 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
@@ -34,7 +31,11 @@ test_levels <- levels(test_class_cv_model)
 
 #########################################################################
 
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
+
 sInfo <- sessionInfo()
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 save(list = c(tests, "sInfo", "timestamp"),
      file = file.path(getwd(), paste(model, ".RData", sep = "")))

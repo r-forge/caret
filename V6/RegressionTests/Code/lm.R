@@ -2,7 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "lm"
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
 
 #########################################################################
 
@@ -29,6 +28,13 @@ set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, method = "lm", trControl = rctrl2)
 
 #########################################################################
+
+test_reg_predictors1 <- predictors(test_reg_cv_model)
+test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
+
+#########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 
