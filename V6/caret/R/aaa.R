@@ -130,7 +130,7 @@ iter <- parm <- method <- Resample <- dat <- NULL
 ##
 ## ????
 ##
-## > formals(klaR:::rda.default)
+## > formals(klaR::rda.default)
 ## $x
 ## <snip>
 ## $gamma
@@ -185,3 +185,5 @@ altTrainWorkflow <- function(x) x
 groups <- NULL
 
 trainData <- NULL
+
+j <- NULL

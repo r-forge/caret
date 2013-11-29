@@ -26,8 +26,8 @@ train.default <- function(x, y,
     method <- "custom"
   } else models <- getModelInfo(method, regex = FALSE)[[1]]
   checkInstall(models$library)
+  for(i in seq(along = models$library)) do.call("require", list(package = models$library[i]))
 
-  ## TODO check for packages installed then offer to load
   
   funcCall <- match.call(expand.dots = TRUE)
   modelType <- if(is.factor(y)) "Classification"  else "Regression"
@@ -126,7 +126,6 @@ train.default <- function(x, y,
   ## and data for some models (rpart, pam, etc - see manual for more details)
   if(is.null(tuneGrid))
   {
-    for(i in seq(along = models$library)) do.call("require", list(package = models$library[i]))
     if(!is.null(ppOpt) && length(models$parameters$parameter) > 1 && as.character(models$parameters$parameter) != "parameter")
     {
       pp <- list(method = ppOpt$options)
