@@ -430,12 +430,12 @@ parallelplot.resamples <- function (x, data = NULL, models = x$models, metric = 
   reord <- order(apply(tmpData, 2, median, na.rm = TRUE))
   tmpData <- tmpData[, reord]
 
-  lattice:::parallelplot(~tmpData,
-                     common.scale = TRUE,
-                     scales = list(x = list(at = (prng-min(rng))/diff(rng), labels = prng)),
-                     xlab = caret:::useMathSymbols(metric),
-                     ...)
-    
+  lattice::parallelplot(~tmpData,
+                        common.scale = TRUE,
+                        scales = list(x = list(at = (prng-min(rng))/diff(rng), labels = prng)),
+                        xlab = caret:::useMathSymbols(metric),
+                        ...)
+  
 }
 
 splom.resamples <- function (x, data = NULL, variables = "models",

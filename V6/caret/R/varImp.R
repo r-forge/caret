@@ -41,7 +41,7 @@ varImp.gam <- function(object, ...)
     if(any(names(object) %in% c("edf", "mgcv.conv", "gcv.ubre")))
       {
         library(mgcv)
-        tmp <- mgcv:::anova.gam(object)
+        tmp <- mgcv::anova.gam(object)
         smoothed <- data.frame(Overall = tmp$s.table[, 4])
 
         if(nrow(tmp$p.table) > 1)
@@ -67,7 +67,7 @@ varImp.gam <- function(object, ...)
         for(i in seq(along = trms))
           {
             reduced <- update(object, as.formula(paste("~.-", trms[i])))
-            out[i,1] <- -log10(gam:::anova.gam(object, reduced)[2, "P(>|Chi|)"])
+            out[i,1] <- -log10(gam::anova.gam(object, reduced)[2, "P(>|Chi|)"])
           }
       }
     out
@@ -87,7 +87,7 @@ varImp.cubist <- function(object, weights = c(0.5, 0.5), ...)
 varImp.RRF <- function(object, ...)
   {
     library(RRF)
-    varImp <- RRF:::importance(object, ...)
+    varImp <- RRF::importance(object, ...)
     if(object$type == "regression")
       varImp <- data.frame(Overall = varImp[,"%IncMSE"])
     else {

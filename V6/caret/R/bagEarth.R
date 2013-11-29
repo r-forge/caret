@@ -167,7 +167,7 @@ print.bagEarth <- function (x, ...)
                           object$fit, 
                           function(x)
                           {
-                            earth:::get.nused.preds.per.subset(x$dirs, x$selected.terms)
+                            earth::get.nused.preds.per.subset(x$dirs, x$selected.terms)
                           }))
   modelInfo <- cbind(numTerms, numVar)
   colnames(modelInfo) <- c("Num Terms", "Num Variables")
