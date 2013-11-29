@@ -55,184 +55,183 @@ predictors.list <- function(x, ...)
     out
   }
 
-predictors.mvr <- function(x, ...)
-  {
-    rownames(x$projection)
+predictors.mvr <- function(x, ...) {
+   code <- getModelInfo("pls", regex = FALSE)[[1]]
+   checkInstall(code$library)
+   for(i in seq(along = code$library)) 
+     do.call("require", list(package = code$library[i]))
+   code$predictors(x, ...)
   }
 
-predictors.gbm <- function(x, ...)
-  {
-
-    library(gbm)
-    varList <- if(hasTerms(x)) predictors(x$terms) else colnames(x$data$x.order)
-    relImp <- summary(x, plotit = FALSE)
-    varUsed <- as.character(subset(relImp, rel.inf != 0)$var)
-    basicVars(varList, varUsed)    
+predictors.gbm <- function(x, ...) {
+  code <- getModelInfo("gbm", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)  
   }
 
-predictors.Weka_classifier <- function(x, ...)
-{
-  ## todo We can do better here by digging in and seeing what
-  ## variables were actually used
-  predictors(x$terms)
+predictors.Weka_classifier <- function(x, ...) {
+  code <- getModelInfo("J48", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.fda <- function(x, ...)
-{
-  tmp <- predictors(x$terms)
-  out <- if(class(x$fit) == "earth") predictors(x$fit) else tmp
-  out
-  
+predictors.fda <- function(x, ...) {
+  code <- getModelInfo("fda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.earth <- function(x, ...)
-{
-  vi <- varImp(x)
-  notZero <- sort(unique(unlist(lapply(vi, function(x) which(x > 0)))))
-  if(length(notZero) > 0) rownames(vi)[notZero] else NULL
+predictors.earth <- function(x, ...) {
+  code <- getModelInfo("earth", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.gausspr <- function(x, ...)
-{
-  if(hasTerms(x) & !is.null(x@terms))
-    {
-      out <- predictors.terms(x@terms)
-    } else {
-      out <- colnames(attr(x, "xmatrix"))
-    }
-  if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
-  if(is.null(out)) out <-NA
-  out
-  
+predictors.gausspr <- function(x, ...) {
+  code <- getModelInfo("gaussprRadial", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.ksvm <- function(x, ...)
-{
-  if(hasTerms(x) & !is.null(x@terms))
-    {
-      out <- predictors.terms(x@terms)
-    } else {
-      out <- colnames(attr(x, "xmatrix"))
-    }
-  if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
-  if(is.null(out)) out <-NA
-  out
-  
+predictors.ksvm <- function(x, ...) {
+  code <- getModelInfo("svmRadial", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.lssvm <- function(x, ...)
-{
-  if(hasTerms(x) & !is.null(x@terms))
-    {
-      out <- predictors.terms(x@terms)
-    } else {
-      out <- colnames(attr(x, "xmatrix"))
-    }
-  if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
-  if(is.null(out)) out <-NA
-  out
-  
+predictors.lssvm <- function(x, ...) {
+  code <- getModelInfo("lssvmRadial", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.rvm <- function(x, ...)
-{
-  if(hasTerms(x) & !is.null(x@terms))
-    {
-      out <- predictors.terms(x@terms)
-    } else {
-      out <- colnames(attr(x, "xmatrix"))
-    }
-  if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
-  if(is.null(out)) out <-NA
-  out
-  
+predictors.rvm <- function(x, ...) {
+  code <- getModelInfo("rvmRadial", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
 
-predictors.gpls <- function(x, ...)
-{
-    out <- if(hasTerms(x)) predictors(x$terms) else colnames(x$data$x.order)
-    out[!(out %in% "Intercept")]
+predictors.gpls <- function(x, ...) {
+  code <- getModelInfo("gpls", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.knn3 <- function(x, ...)
-  {
-    colnames(x$learn$X)
+predictors.knn3 <- function(x, ...) {
+  code <- getModelInfo("knn", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
   }
 
-predictors.knnreg <- function(x, ...)
-  {
-    colnames(x$learn$X)
+predictors.knnreg <- function(x, ...){
+  code <- getModelInfo("knn", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+predictors.LogitBoost <- function(x, ...) {
+  code <- getModelInfo("LogitBoost", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
   }
 
-predictors.LogitBoost <- function(x, ...)
-  {
-    if("Weka_classifier" %in% class(x))
-      {
-        out <- predictors.Weka_classifier(x)
-      } else {
-        if(!is.null(x$xNames))
-          {
-            out <- unique(x$xNames[x$Stump[, "feature"]])
-          } else out <- NA
-      }
-    out
-  }
-
-predictors.lda <- function(x, ...)
-{
-    if(hasTerms(x)) predictors(x$terms) else colnames(x$means)
+predictors.lda <- function(x, ...) {
+  code <- getModelInfo("lda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.qda <- function(x, ...)
-{
-    if(hasTerms(x)) predictors(x$terms) else colnames(x$means)
+predictors.qda <- function(x, ...) {
+  code <- getModelInfo("qda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.rda <- function(x, ...)
-{
-    x$varnames
+predictors.rda <- function(x, ...) {
+  code <- getModelInfo("rda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.multinom <- function(x, ...)
-{
-    predictors(x$terms)
+predictors.multinom <- function(x, ...) {
+  code <- getModelInfo("multinom", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.nnet <- function(x, ...)
-{
-    if(hasTerms(x)) predictors(x$terms) else NA
+predictors.nnet <- function(x, ...) {
+  code <- getModelInfo("nnet", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.pcaNNet <- function(x, ...)
-{
-    rownames(x$pc$rotation)
+
+predictors.pcaNNet <- function(x, ...){
+  code <- getModelInfo("pcaNNet", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.avNNet <- function(x, ...)
-{
-    rownames(x$pc$rotation)
+predictors.avNNet <- function(x, ...){
+  code <- getModelInfo("avNNet", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.NaiveBayes <- function(x, ...)
-{
-    if(hasTerms(x)) predictors(x$terms) else x$varnames
+predictors.NaiveBayes <- function(x, ...){
+  code <- getModelInfo("nb", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.pamrtrained <- function(x, newdata = NULL, threshold = NULL,  ...)
-  {
-    if(is.null(newdata))
-      {
-        if(!is.null(x$xData)) newdata <- x$xData else stop("must supply newdata") 
-      }
-    if(is.null(threshold))
-      {
-        if(!is.null(x$threshold)) threshold <- x$threshold else stop("must supply threshold") 
-      }
-    library(pamr)
-    varIndex <- pamr.predict(x, newx = newdata, threshold = threshold, type = "nonzero")
-    colnames(newdata)[varIndex]
-  }
+predictors.pamrtrained <- function(x, newdata = NULL, threshold = NULL,  ...){
+  code <- getModelInfo("pam", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, newdata = newdata, threshold = threshold,  ...)
+}
 
 ## todo finalize this
 predictors.superpc <- function(x, newdata = NULL, threshold = NULL, n.components = NULL, ...)
@@ -240,319 +239,268 @@ predictors.superpc <- function(x, newdata = NULL, threshold = NULL, n.components
     NA
   }
 
-predictors.randomForest <- function(x, ...)
-{
-  ## After doing some testing, it looks like randomForest
-  ## will only try to split on plain main effects (instead
-  ## of interactions or terms like I(x^2).
-  varIndex <- as.numeric(names(table(x$forest$bestvar)))
-  varIndex <- varIndex[varIndex > 0]
-  varsUsed <- names(x$forest$ncat)[varIndex]
-  varsUsed
+predictors.randomForest <- function(x, ...){
+  code <- getModelInfo("rf", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.slda <- function(x, ...)
-{
-    if(hasTerms(x)) predictors(x$terms) else predictors(x$mylda)
+predictors.slda <- function(x, ...){
+  code <- getModelInfo("slda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.rpart <- function(x, surrogate = TRUE, ...)
-{
-  out <- as.character(x$frame$var)
-  out <- out[!(out %in% c("<leaf>"))]
-  if(surrogate)
-    {
-      splits <- x$splits
-      splits <- splits[splits[,"adj"] > 0,]
-      out <- c(out, rownames(splits))
-    }
-  unique(out)
+predictors.rpart <- function(x, surrogate = TRUE, ...){
+  code <- getModelInfo("rpart", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, surrogate = surrogate, ...)
 }
 
-predictors.regbagg <- function(x, surrogate = TRUE, ...)
-{
-  eachTree <- lapply(x$mtree,
-                     function(u, surr) predictors.rpart(u$btree, surrogate = surr),
-                     surr = surrogate)
-  unique(unlist(eachTree))
+predictors.regbagg <- function(x, surrogate = TRUE, ...){
+  code <- getModelInfo("treebag", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, surrogate = surrogate, ...)
 }
 
-predictors.classbagg <- function(x, surrogate = TRUE, ...)
-{
-  eachTree <- lapply(x$mtree,
-                     function(u, surr) predictors.rpart(u$btree, surrogate = surr),
-                     surr = surrogate)
-  unique(unlist(eachTree))
+predictors.classbagg <- function(x, surrogate = TRUE, ...){
+  code <- getModelInfo("treebag", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, surrogate = surrogate, ...)
 }
 
-predictors.lm <- function(x, ...)
-{
-    predictors(x$terms)
+predictors.lm <- function(x, ...){
+  code <- getModelInfo("lm", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.glmboost <- function(x, ...)
-  {
-    if(is.null(x$data$formula))
-      {
-        varNames <- colnames(x$data$x)
-        varNames <- varNames[!(varNames %in% "(Intercept)")]
-        
-      } else {
-        varNames <- predictors.terms(x$data$formula)
-      }
-    varNames
-  }
-
-predictors.blackboost <- function(x, ...)
-  {
-
-    if("menv" %in% slotNames(x$data) && !is.null(x$data@menv@formula$input))
-      {
-        varNames <- all.vars(x$data@menv@formula$input)
-      } else {
-        varNames <- unlist(lapply(x$data@inputs@variables, colnames))
-      }
-    varNames
-  }
-
-predictors.gamboost <- function(x, ...)
-  {
-    if("menv" %in% names(x$data) && !is.null(x$data$menv@formula$input))
-      {
-        varNames <- all.vars(x$data$menv@formula$input)
-      } else {
-        varNames <- colnames(x$data$x)
-      }
-    varNames
-  }
-
-predictors.BinaryTree <- function(x, surrogate = TRUE, ...)
-  {
-    treeObj <- unlist(nodes(x, 1))
-    target <- "psplit\\.variableName"
-    vars <- treeObj[grep(target, names(treeObj))]
-    if(surrogate)
-      {
-        target2 <- "ssplits\\.variableName"
-        svars <- treeObj[grep(target, names(treeObj))]
-        vars <- c(vars, svars)
-
-      }
-    unique(vars)
-  }
-
-
-predictors.bagEarth <- function(x, ...)
-  {
-    eachFit <- lapply(x$fit, predictors.earth)
-    unique(unlist(eachFit))
-  }
-
-predictors.bagFDA <- function(x, ...)
-  {
-    eachFit <- lapply(x$fit, predictors.fda)
-    unique(unlist(eachFit))
-  }
-
-predictors.ppr <- function(x, ...)
-  {
-    x$xnames
-  }
-
-predictors.spls <- function(x, ...)
-  {
-    colnames(x$x)[x$A]
-  }
-
-predictors.splsda <- function(x, ...)
-  {
-    colnames(x$x)[x$A]
-  }
-
-predictors.mvr <- function(x, ...)
-  {
-    rownames(x$coeff)
-  }
-
-predictors.glm <- function(x, ...)
-{
-    predictors(x$terms)
+predictors.glmboost <- function(x, ...) {
+  code <- getModelInfo("glmboost", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.mda <- function(x, ...)
-{
-    predictors(x$terms)
+predictors.blackboost <- function(x, ...) {
+  code <- getModelInfo("blackboost", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+predictors.gamboost <- function(x, ...) {
+  code <- getModelInfo("gamboost", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+predictors.BinaryTree <- function(x, surrogate = TRUE, ...) {
+  code <- getModelInfo("ctree", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, surrogate = surrogate, ...)
 }
 
 
-predictors.glmnet <- function(x, lambda = NULL, ...)
-{
-  library(glmnet)
-  if(is.null(lambda))
-    {
-      if(length(lambda) > 1) stop("Only one value of lambda is allowed right now")
-      if(!is.null(x$lambdaOpt))
-        {
-          lambda <- x$lambdaOpt
-        } else stop("must supply a vaue of lambda")
-    }
-  allVar <- if(is.list(x$beta)) rownames(x$beta[[1]]) else rownames(x$beta)
-  out <- unlist(predict(x, s = lambda, type = "nonzero"))
-  out <- unique(out)
-  if(length(out) > 0)
-    {
-      out <- out[!is.na(out)]
-      out <- allVar[out]
-    }
-  out
+predictors.bagEarth <- function(x, ...) {
+  code <- getModelInfo("bagEarth", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.penfit <- function(x, ...)
-  {
-    library(penalized)
-    out <- coef(x, "all")
-    out <- names(out)[out != 0]
-    out[out != "(Intercept)"]
-  }
-
-predictors.lars <- function(x, s = NULL, ...)
-{
-  library(lars)
-  if(is.null(s))
-    {
-      if(!is.null(x$tuneValue))
-        {
-          s <- x$tuneValue$.fraction
-        } else stop("must supply a vaue of s")
-      out <- predict(x, s = s,
-                     type = "coefficients",
-                     mode = "fraction")$coefficients
-
-    } else {
-      out <- predict(x, s = s, ...)$coefficients
-
-    }
-  names(out)[out != 0]
+predictors.bagFDA <- function(x, ...){
+  code <- getModelInfo("bagFDA", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.enet <- function(x, s = NULL, ...)
-{
-  library(elasticnet)
-  if(is.null(s))
-    {
-      if(!is.null(x$tuneValue))
-        {
-          s <- x$tuneValue$.fraction
-        } else stop("must supply a vaue of s")
-      out <- predict(x, s = s,
-                     type = "coefficients",
-                     mode = "fraction")$coefficients
-
-    } else {
-      out <- predict(x, s = s, ...)$coefficients
-
-    }
-  names(out)[out != 0]
+predictors.ppr <- function(x, ...){
+  code <- getModelInfo("ppr", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
 }
 
-predictors.sda <- function(x, ...)
-  {
-    out <- x$varNames
-    if(is.null(out)) out <- varIndex
-    out
-  }
+predictors.spls <- function(x, ...){
+  code <- getModelInfo("spls", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
-predictors.smda <- function(x, ...)
-  {
-    out <- x$varNames
-    if(is.null(out)) out <- varIndex
-    out
-  }
+predictors.splsda <- function(x, ...){
+  code <- getModelInfo("spls", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
-predictors.stepclass <- function(x, ...)
-  {
-    form <- x$formula
-    form[[2]] <- NULL
-    all.vars(form)
-  }
+predictors.glm <- function(x, ...){
+  code <- getModelInfo("glm", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
-
-predictors.trocc <- function(x, ...) x$genes
-
-
-predictors.foba <- function(x, k = NULL, ...)
-  {
-    if(is.null(k))
-      {
-        if(!is.null(x$tuneValue)) k <- x$tuneValue$.k[1]  else stop("Please specify k")
-      }
-    library(foba)
-    names(predict(x, k = k, type = "coefficients")$selected.variables)
-  }
-
-predictors.dsa <- function(x, cuts = NULL, ...)
-  {
-    if(is.null(cuts) & !is.null(x$tuneValue))
-      {
-        cuts <- x$tuneValue$.cut.off.growth[1]
-      } else {
-        if(is.null(cuts)) stop("please supply a value for 'cuts'")
-      }
-    tmp <- x$var.importance[,cuts]
-    names(tmp)[which(tmp != 0)]
-
-  }
-
-predictors.RandomForest <- function(x, ...)
-  {
-    library(party)
-    vi <- varimp(x, ...)
-    names(vi)[vi != 0]
-  }
+predictors.mda <- function(x, ...){
+  code <- getModelInfo("mda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
 
-predictors.logreg <- function(x, ...)
-  {
-    getVarIndex <- function(y) unique(y$trees$knot)
-    varNums <- unique(unlist(lapply(x$model$trees, getVarIndex)))
-    varNums <- varNums[varNums > 0]
-    if(length(varNums) > 0) colnames(x$binary)[varNums] else NA
-  }
+predictors.glmnet <- function(x, lambda = NULL, ...){
+  code <- getModelInfo("glmnet", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, lambda = lambda, ...)
+}
 
-predictors.logforest <- function(x, ...)
-  {
-    varNums <- sort(unique(unlist(lapply(x$AllFits, predictors))))
-    if(length(varNums) == 0) varNums <- NA
-    varNums
-  }
+predictors.penfit <- function(x, ...){
+  code <- getModelInfo("penalized", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
-predictors.logicBagg <- function(x, ...)
-  {
-    varNums <- lapply(x$logreg.model,
-                      function(y) lapply(y$trees,
-                                         function(z) z$trees$knot))
-    
+predictors.lars <- function(x, s = NULL, ...){
+  code <- getModelInfo("lars", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, s = s, ...)
+}
 
-    varNums <- sort(unique(unlist(varNums)))
-    varNums <- varNums[varNums > 0]
-    if(length(varNums) > 0) colnames(x$data)[varNums] else NA    
-  }
+predictors.enet <- function(x, s = NULL, ...){
+  code <- getModelInfo("enet", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, s = s, ...)
+}
+
+predictors.sda <- function(x, ...){
+  code <- getModelInfo("sda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+predictors.smda <- function(x, ...){
+  code <- getModelInfo("smda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+predictors.stepclass <- function(x, ...){
+  code <- getModelInfo("stepLDA", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
 
-predictors.gam <- function(x, ...)
-  {
-    library(mgcv)
-    tmp <- varImp(x, scale = FALSE)
-    rownames(tmp)[tmp$Overall > 0]
-  }
+predictors.trocc <- function(x, ...){
+  code <- getModelInfo("rocc", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+predictors.foba <- function(x, k = NULL, ...){
+  code <- getModelInfo("foba", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, k = k, ...)
+}
+
+predictors.dsa <- function(x, cuts = NULL, ...){
+  code <- getModelInfo("partDSA", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, cuts = cuts, ...)
+}
+
+predictors.RandomForest <- function(x, ...){
+  code <- getModelInfo("cforest", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
 
-predictors.C5.0 <- function(x, ...)
-  {
-    library(C50)
-    vars <- C5imp(x, metric = "splits")
-    rownames(vars)[vars$Overall > 0]
-  }
+predictors.logreg <- function(x, ...){
+  code <- getModelInfo("logreg", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+
+predictors.logicBagg <- function(x, ...){
+  code <- getModelInfo("logicBagg", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+
+predictors.gam <- function(x, ...){
+  code <- getModelInfo("gam", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
+
+
+predictors.C5.0 <- function(x, ...){
+  code <- getModelInfo("C5.0", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library)) 
+    do.call("require", list(package = code$library[i]))
+  code$predictors(x, ...)
+}
 
 predictors.canldaRes <- function(x, ...) names(x$vkpt)
 
