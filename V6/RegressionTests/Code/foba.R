@@ -2,7 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "foba"
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
 
 #########################################################################
 
@@ -31,6 +30,13 @@ test_reg_loo_model <- train(trainX, trainY, method = "foba", trControl = rctrl2,
                             preProc = c("center", "scale"))
 
 #########################################################################
+
+test_reg_predictors1 <- predictors(test_reg_cv_model)
+test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
+
+#########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

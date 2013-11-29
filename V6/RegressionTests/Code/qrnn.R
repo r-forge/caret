@@ -2,7 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "qrnn"
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
 
 #########################################################################
 
@@ -33,6 +32,8 @@ test_reg_loo_model <- train(trainX, trainY, method = "qrnn", trControl = rctrl2,
                             iter.max = 50, n.trials = 2)
 
 #########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

@@ -1,8 +1,7 @@
 library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
-model <- superpc
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
+model <- "superpc"
 
 #########################################################################
 
@@ -22,15 +21,17 @@ rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
 
 set.seed(849)
-test_reg_cv_model <- train(trainX, trainY, method = superpc, trControl = rctrl1,
+test_reg_cv_model <- train(trainX, trainY, method = "superpc", trControl = rctrl1,
                            preProc = c("center", "scale"))
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
 set.seed(849)
-test_reg_loo_model <- train(trainX, trainY, method = superpc, trControl = rctrl2,
+test_reg_loo_model <- train(trainX, trainY, method = "superpc", trControl = rctrl2,
                             preProc = c("center", "scale"))
 
 #########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

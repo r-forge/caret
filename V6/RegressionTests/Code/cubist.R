@@ -2,7 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "cubist"
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
 
 #########################################################################
 
@@ -31,6 +30,8 @@ test_reg_loo_model <- train(trainX, trainY, method = "cubist", trControl = rctrl
 #########################################################################
 
 sInfo <- sessionInfo()
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 save(list = c(tests, "sInfo", "timestamp"),
      file = file.path(getwd(), paste(model, ".RData", sep = "")))

@@ -2,7 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "krlsPoly"
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
 
 #########################################################################
 
@@ -31,6 +30,8 @@ test_reg_loo_model <- train(trainX, trainY, method = "krlsPoly", trControl = rct
                             preProc = c("center", "scale"), print.level = 0)
 
 #########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

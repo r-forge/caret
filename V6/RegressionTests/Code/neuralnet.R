@@ -2,7 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "neuralnet"
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
 
 #########################################################################
 
@@ -31,6 +30,8 @@ test_reg_loo_model <- train(trainX, trainY, method = "neuralnet", trControl = rc
                             preProc = c("center", "scale"))
 
 #########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 

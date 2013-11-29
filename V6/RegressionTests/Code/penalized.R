@@ -2,7 +2,6 @@ library(caret)
 timestamp <- format(Sys.time(), "%Y_%m_%d_%H_%M")
 
 model <- "penalized"
-tests <- c("test_reg_cv_model", "test_reg_pred", "test_reg_loo_model")
 
 #########################################################################
 
@@ -33,6 +32,13 @@ test_reg_loo_model <- train(trainX, trainY, method = "penalized", trControl = rc
                             trace = FALSE)
 
 #########################################################################
+
+test_reg_predictors1 <- predictors(test_reg_cv_model)
+test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
+
+#########################################################################
+
+tests <- grep("test_", ls(), fixed = TRUE, value = TRUE)
 
 sInfo <- sessionInfo()
 
