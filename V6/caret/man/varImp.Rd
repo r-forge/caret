@@ -17,8 +17,9 @@
 \alias{varImp.dsa}
 \alias{varImp.fda}
 \alias{varImp.multinom}
-\alias{varImp.gam}
+%\alias{varImp.gam}
 \alias{varImp.cubist}
+\alias{varImp.plsda}
 \alias{varImp.JRip}
 \alias{varImp.PART}
 \alias{varImp.nnet}
@@ -65,8 +66,6 @@ A generic method for calculating variable importance for objects produced by
 
 \method{varImp}{multinom}(object, ...)
 
-\method{varImp}{gam}(object, ...)
-
 \method{varImp}{cubist}(object, weights = c(0.5, 0.5), ...)
 
 \method{varImp}{JRip}(object, ...)
@@ -78,6 +77,8 @@ A generic method for calculating variable importance for objects produced by
 \method{varImp}{nnet}(object, ...)
 
 \method{varImp}{glmnet}(object, lambda = NULL, ...)
+
+\method{varImp}{plsda}(object, ...)
 }
 
 \arguments{
