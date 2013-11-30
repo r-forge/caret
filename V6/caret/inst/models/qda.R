@@ -12,4 +12,5 @@ modelInfo <- list(library = "MASS",
                     predict(modelFit, newdata)$posterior,
                   predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else colnames(x$means),
                   tags = c("Discriminant Analysis", "Polynomial Model"),
+                  levels = function(x) names(x$prior),
                   sort = function(x) x)

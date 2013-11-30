@@ -91,4 +91,5 @@ modelInfo <- list(library = "mboost",
                   },
                   tags = c("Generalized Additive Model", "Ensemble Model", 
                            "Boosting", "Implicit Feature Selection"),
+                  levels = function(x) levels(x$response),
                   sort = function(x) x)

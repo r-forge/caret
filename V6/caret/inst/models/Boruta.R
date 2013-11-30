@@ -39,4 +39,5 @@ modelInfo <- list(library = c("Boruta", "randomForest"),
                   predict = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata, type = "prob") ,
                   tags = c("Tree-Based Model", "Ensemble Model", "Feature Selection Wrapper"),
+                  levels = function(x) x$classes,
                   sort = function(x) x)

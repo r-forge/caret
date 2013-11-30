@@ -89,5 +89,6 @@ modelInfo <- list(library = "pamr",
                     colnames(standCentroids) <- names(object$prior)
                     as.data.frame(standCentroids)
                   },
+                  levels = function(x) names(x$prior),
                   tags = c("Prototype Models", "Implicit Feature Selection", "Linear Classifier"),
                   sort = function(x) x)

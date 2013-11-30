@@ -162,5 +162,15 @@ modelInfo <- list(library = "gbm",
                     rownames(out) <- object$var.names
                     out   
                   },
+                  levels = function(x) {
+                    if(x$distribution$name %in% c("gaussian", "laplace", "tdist")) 
+                      return(NULL)
+                    if(is.null(x$classes)) {
+                      out <- if(any(names(x) == "obsLevels")) x$obsLevels else NULL
+                    } else {
+                      out <- x$classes
+                    }
+                    out
+                  },
                   tags = c("Tree-Based Model", "Boosting", "Ensemble Model", "Implicit Feature Selection"),
                   sort = function(x) x)

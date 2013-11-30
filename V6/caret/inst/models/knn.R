@@ -26,4 +26,5 @@ modelInfo <- list(library = NULL,
                   tags = "Prototype Models",
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
+                  levels = function(x) levels(x$learn$y),
                   sort = function(x) x)
