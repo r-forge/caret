@@ -18,10 +18,8 @@
                     class(object$finalModel)[1],
                     pamrtrained = 
                     {
-                      library(pamr)
                       if(is.null(object$finalModel$xData)) stop("the train$finalModel object needs an xData object")
-                      varImp(
-                             object$finalModel, 
+                      varImp(object$finalModel, 
                              threshold = ifelse(is.null(object$bestTune), 0, object$bestTune[,1]),
                              data = object$finalModel$xData)         
                     },
