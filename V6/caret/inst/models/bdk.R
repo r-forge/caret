@@ -31,4 +31,4 @@ modelInfo <- list(library = "kohonen",
                     preds$unit.predictions[preds$unit.classif,,drop = FALSE]
                   },
                   tags = c("Self-Organising Maps"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$xdim,  x$ydim),])

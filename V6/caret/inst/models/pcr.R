@@ -30,4 +30,4 @@ modelInfo <- list(library = "pls",
                   predictors = function(x, ...) rownames(x$projection),
                   tags = c("Linear Regression", "Feature Extraction"),
                   prob = NULL,
-                  sort = function(x) x[order(-x$ncomp),,drop = FALSE])
+                  sort = function(x) x[order(x[,1]),])

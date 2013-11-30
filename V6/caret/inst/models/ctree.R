@@ -67,4 +67,4 @@ modelInfo <- list(library = "party",
                   },
                   tags = c('Tree-Based Model', "Implicit Feature Selection"),
                   levels = function(x) levels(x@data@get("response")[,1]),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$mincriterion),])

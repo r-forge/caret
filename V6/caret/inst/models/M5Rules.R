@@ -33,4 +33,8 @@ modelInfo <- list(library = "RWeka",
                   predictors = function(x, ...) predictors(x$terms),
                   prob = NULL,
                   tags = c("Rule-Based Model", "Linear Regression", "Implicit Feature Selection"),
-                  sort = function(x) x)
+                  sort = function(x) {
+                    x$pruned <- factor(as.character(x$pruned), levels = c("Yes", "No"))
+                    x$smoothed <- factor(as.character(x$smoothed), levels = c("Yes", "No"))
+                    x[order(x$pruned, x$smoothed),]
+                  })

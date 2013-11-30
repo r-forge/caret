@@ -91,4 +91,4 @@ modelInfo <- list(library = "pamr",
                   },
                   levels = function(x) names(x$prior),
                   tags = c("Prototype Models", "Implicit Feature Selection", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

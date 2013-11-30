@@ -37,4 +37,4 @@ modelInfo <- list(library = "obliqueRF",
                     predict(modelFit, newdata, type = "prob"),
                   tags = c("Random Forest", "Oblique Tree", "Logistic Regression", 
                            "Implicit Feature Selection", "Ensemble Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

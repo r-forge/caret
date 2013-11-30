@@ -60,4 +60,4 @@ modelInfo <- list(library = "Cubist",
                            "Prototype Models", "Model Tree", "Linear Regression",
                            "Implicit Feature Selection"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$committees,  x$neighbors),])

@@ -35,4 +35,4 @@ modelInfo <- list(library = c("earth", "mda"),
                   },
                   varImp = function(object, value = "gcv", ...) 
                     varImp(object$fit, value = value, ...),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$degree, x$nprune),])

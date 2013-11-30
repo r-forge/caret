@@ -41,4 +41,4 @@ modelInfo <- list(library = "RWeka",
                     rownames(out) <- dat$varUsage$Var
                     out
                   },
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$pruned, -x$threshold),])

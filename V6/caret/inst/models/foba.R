@@ -70,4 +70,4 @@ modelInfo <- list(library = "foba",
                   },
                   tags = c("Linear Regression", "Implicit Feature Selection", "L1 Regularization"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$k, -x$lambda),])

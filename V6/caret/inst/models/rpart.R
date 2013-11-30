@@ -144,4 +144,4 @@ modelInfo <- list(library = "rpart",
                     out2  
                   },
                   tags = c("Tree-Based Model", "Implicit Feature Selection"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1], decreasing = TRUE),])

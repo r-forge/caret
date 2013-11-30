@@ -57,4 +57,4 @@ modelInfo <- list(library = "kernlab",
                   },
                   tags = c("Kernel Method", "Support Vector Machines", "Radial Basis Function", "Cost Sensitive Learning"),
                   levels = function(x) lev(x),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$C, -x$sigma, x$Weight),])

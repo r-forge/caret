@@ -48,4 +48,4 @@ modelInfo <- list(library = "superpc",
                   },
                   prob = NULL,
                   tags = c("Feature Extraction", "Linear Regression"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$threshold, x$n.components),])

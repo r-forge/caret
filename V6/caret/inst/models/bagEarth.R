@@ -114,4 +114,4 @@ modelInfo <- list(library = "earth",
                   levels = function(x) x$levels,
                   tags = c("Multivariate Adaptive Regression Splines", "Ensemble Model", 
                            "Implicit Feature Selection", "Bagging"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$degree, x$nprune),])

@@ -83,4 +83,9 @@ modelInfo <- list(library = "kernlab",
                   },
                   tags = c("Kernel Method", "Support Vector Machines","Linear Regression", "Linear Classifier"),
                   levels = function(x) lev(x),
-                  sort = function(x) x)
+                  sort = function(x) {
+                    # If the cost is high, the decision boundary will work hard to
+                    # adapt. Also, if C is fixed, smaller values of sigma yeild more
+                    # complex boundaries
+                    x[order(x$C),]
+                  })

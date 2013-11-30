@@ -89,4 +89,4 @@ modelInfo <- list(library = "kernlab",
                   },
                   tags = c("Kernel Method", "Support Vector Machines", "Polynomial Model"),
                   levels = function(x) lev(x),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$degree, x$C, x$scale),])

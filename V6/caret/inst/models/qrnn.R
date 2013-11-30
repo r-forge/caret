@@ -20,4 +20,4 @@ modelInfo <- list(library = "qrnn",
                   prob = NULL,
                   tags = c("Neural Network", "L2 Regularization", "Quantile Regression", "Bagging",
                            "Ensemble Model", "Robust Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$n.hidden, -x$penalty),])

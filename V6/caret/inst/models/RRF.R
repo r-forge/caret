@@ -67,4 +67,4 @@ modelInfo <- list(library = c("randomForest", "RRF"),
                     out
                   },
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection", "Regularization"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$coefReg),])

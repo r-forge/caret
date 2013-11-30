@@ -30,4 +30,4 @@ modelInfo <- list(library = "RWeka",
                     predict(modelFit, newdata, type = "probability"),
                   predictors = function(x, ...) predictors(x$terms),
                   tags = c("Model Tree", "Implicit Feature Selection", "Logistic Regression", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

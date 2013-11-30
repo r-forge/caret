@@ -12,4 +12,4 @@ modelInfo <- list(library = "rFerns",
                     predict(modelFit, newdata),
                   prob = NULL,
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

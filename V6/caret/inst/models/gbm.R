@@ -173,4 +173,8 @@ modelInfo <- list(library = "gbm",
                     out
                   },
                   tags = c("Tree-Based Model", "Boosting", "Ensemble Model", "Implicit Feature Selection"),
-                  sort = function(x) x)
+                  sort = function(x) {
+                    # This is a toss-up, but the # trees probably adds
+                    # complexity faster than number of splits
+                    x[order(x$n.trees, x$interaction.depth, x$shrinkage),] 
+                  })

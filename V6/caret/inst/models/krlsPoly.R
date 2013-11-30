@@ -22,4 +22,4 @@ modelInfo <- list(library = c("KRLS"),
                   },
                   tags = c("Kernel Method", "L2 Regularization", "Polynomial Model"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$degree, x$lambda),])

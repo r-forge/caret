@@ -17,4 +17,4 @@ modelInfo <- list(library = "klaR",
                   predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else x$varnames,
                   tags = c("Bayesian Model"),
                   levels = function(x) x$levels,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

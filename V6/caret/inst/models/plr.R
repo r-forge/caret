@@ -25,4 +25,4 @@ modelInfo <- list(library = "stepPlr",
                     out
                   },
                   tags = c("L2 Regularization", "Logistic Regression", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$lambda),])

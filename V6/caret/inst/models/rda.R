@@ -17,4 +17,8 @@ modelInfo <- list(library = "klaR",
                   predictors = function(x, ...) x$varnames,
                   tags = c("Discriminant Analysis", "Polynomial Model"),
                   levels = function(x) names(x$prior),
-                  sort = function(x) x)
+                  sort = function(x) {
+                    # since lds is less complex than qda, we
+                    # sort on lambda (larger are least complex)
+                    x[order(-x$lambda, x$gamma),] 
+                  })

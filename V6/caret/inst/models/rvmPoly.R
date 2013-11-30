@@ -31,4 +31,4 @@ modelInfo <- list(library = "kernlab",
                     out
                   },
                   tags = c("Kernel Method", "Relevance Vector Machines", "Polynomial Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$degree, x$scale),])

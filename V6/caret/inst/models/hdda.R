@@ -17,4 +17,4 @@ modelInfo <- list(library = "HDclassif",
                     data.frame(unclass(predict(modelFit, newdata)$posterior))
                   },
                   tags = c("Discriminant Analysis", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$threshold),])

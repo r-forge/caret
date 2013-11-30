@@ -40,4 +40,4 @@ modelInfo <- list(library = "RSNNS",
                     out
                   },
                   tags = c("Neural Network","L2 Regularization", "Radial Basis Function"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$negativeThreshold),])

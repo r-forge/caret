@@ -41,4 +41,4 @@ modelInfo <- list(library = "rocc",
                   prob = NULL,
                   predictors = function(x, ...) x$genes,
                   tags = "ROC Curves",
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$xgenes),])

@@ -29,4 +29,4 @@ modelInfo <- list(library = c("sparseLDA"),
                   prob = NULL,
                   tags = c("Discriminant Analysis", "L1 Regularization", 
                            "Implicit Feature Selection", "Mixture Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$NumVars, x$R, -x$lambda),])

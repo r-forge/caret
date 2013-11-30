@@ -73,4 +73,4 @@ modelInfo <- list(library = "bst",
                   },
                   tags = c("Tree-Based Model", "Ensemble Model", "Boosting"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$mstop, x$maxdepth, x$nu),] )

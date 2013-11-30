@@ -34,4 +34,4 @@ modelInfo <- list(library = c("evtree"),
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "prob"),
                   tags = c("Tree-Based Model", "Implicit Feature Selection"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

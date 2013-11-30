@@ -26,4 +26,4 @@ modelInfo <- list(library = "neuralnet",
                   },
                   prob = NULL,
                   tags = c("Neural Network"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$layer1, x$layer2, x$layer3),])

@@ -22,4 +22,4 @@ modelInfo <- list(library = "rrlda",
                     out
                     },
                   tags = c("Discriminant Analysis", "Robust Model", "Regularization", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$lambda),])
