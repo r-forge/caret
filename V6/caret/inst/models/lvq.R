@@ -20,4 +20,4 @@ modelInfo <- list(library = "class",
                     lvqtest(modelFit , newdata),
                   prob = NULL,
                   tags = "Prototype Models",
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$k, -x$size),])

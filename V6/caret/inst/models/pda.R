@@ -31,4 +31,4 @@ modelInfo <- list(library = "mda",
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "posterior"),
                   tags = c("Discriminant Analysis", "Polynomial Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

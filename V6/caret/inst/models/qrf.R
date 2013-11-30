@@ -40,4 +40,4 @@ modelInfo <- list(library = "quantregForest",
                   tags = c("Random Forest", "Ensemble Model", "Bagging", 
                            "Implicit Feature Selection", "Quantile Regression",
                            "Robust Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

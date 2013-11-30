@@ -40,4 +40,4 @@ modelInfo <- list(library = "penalizedLDA",
                   prob = NULL,
                   tags = c("Discriminant Analysis", "L1 Regularization", 
                            "Implicit Feature Selection", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$lambda, x$K),])

@@ -40,4 +40,4 @@ modelInfo <- list(library = c("earth", "mda"),
                     unique(unlist(eachFit))
                   },
                   levels = function(x) x$levels,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$degree, x$nprune),])

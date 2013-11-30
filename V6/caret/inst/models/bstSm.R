@@ -66,4 +66,4 @@ modelInfo <- list(library = "bst",
                   },
                   tags = c("Ensemble Model", "Boosting", "Implicit Feature Selection"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$mstop, x$nu),] )

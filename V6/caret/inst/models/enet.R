@@ -72,4 +72,4 @@ modelInfo <- list(library = "elasticnet",
                   },
                   tags = c("Linear Regression", "Implicit Feature Selection", "L1 Regularization"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$fraction, -x$lambda),])

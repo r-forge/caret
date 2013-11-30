@@ -25,4 +25,4 @@ modelInfo <- list(library = "hda",
                     as.data.frame(predict(modelFit$naivebayes, tmp, type = "raw"))
                   },
                   tags = c("Discriminant Analysis", "Linear Classifier", "Regularization"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$newdim, -x$lambda, x$gamma),])

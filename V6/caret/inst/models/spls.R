@@ -35,4 +35,4 @@ modelInfo <- list(library = "spls",
                   tags = c("Partial Least Squares", "Feature Extraction", "Linear Classifier", "Linear Regression",
                            "L1 Regularization"),
                   levels = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$eta, x$K),])

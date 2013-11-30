@@ -25,4 +25,4 @@ modelInfo <- list(library = c("KRLS", "kernlab"),
                   },
                   tags = c("Kernel Method", "L2 Regularization", "Radial Basis Function"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$lambda),])

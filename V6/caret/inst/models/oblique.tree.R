@@ -26,4 +26,4 @@ modelInfo <- list(library = c("oblique.tree"),
                     predict(modelFit, newdata, type = "vector")
                   },
                   tags = c("Tree-Based Model", "Implicit Feature Selection", "Oblique Tree"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$variable.selection),])

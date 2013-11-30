@@ -50,4 +50,4 @@ modelInfo <- list(library = "nnet",
                   predictors = function(x, ...) x$names,
                   levels = function(x) x$model[[1]]$lev,
                   tags = c("Neural Network", "Ensemble Model", "Bagging", "L2 Regularization"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$size, -x$decay),])

@@ -38,4 +38,4 @@ modelInfo <- list(library = "obliqueRF",
                   tags = c("Random Forest", "Oblique Tree", "Ridge Regression", 
                            "Implicit Feature Selection", "Ensemble Model",
                            "L2 Regularization"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

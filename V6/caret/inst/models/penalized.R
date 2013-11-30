@@ -28,4 +28,4 @@ modelInfo <- list(library = "penalized",
                   tags = c("Implicit Feature Selection", 
                            "L1 Regularization", "L2 Regularization",
                            "Linear Regression"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$lambda1, x$lambda2),])

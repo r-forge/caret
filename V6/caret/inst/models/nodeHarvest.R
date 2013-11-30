@@ -42,4 +42,4 @@ modelInfo <- list(library = c("nodeHarvest"),
                     out
                   },
                   tags = c("Tree-Based Model", "Implicit Feature Selection", "Ensemble Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$maxinter, x$mode),])

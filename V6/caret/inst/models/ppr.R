@@ -22,4 +22,4 @@ modelInfo <- list(library = NULL,
                   prob = NULL,
                   predictors = function(x, ...) x$xnames,
                   tags = "Feature Extraction",
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

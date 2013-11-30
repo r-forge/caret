@@ -51,4 +51,4 @@ modelInfo <- list(library = "relaxo",
                   tags = c("Implicit Feature Selection", 
                            "L1 Regularization", "L2 Regularization",
                            "Linear Regression"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$phi, -x$lambda),])

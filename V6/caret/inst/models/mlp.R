@@ -35,4 +35,4 @@ modelInfo <- list(library = "RSNNS",
                     out
                   },
                   tags = c("Neural Network"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$size),])

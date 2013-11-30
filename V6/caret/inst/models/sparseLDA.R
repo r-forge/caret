@@ -28,4 +28,4 @@ modelInfo <- list(library = c("sparseLDA"),
                     sparseLDA:::predict.sda(modelFit, newdata)$posterior,
                   tags = c("Discriminant Analysis", "L1 Regularization", 
                            "Implicit Feature Selection", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$NumVars, -x$lambda),])

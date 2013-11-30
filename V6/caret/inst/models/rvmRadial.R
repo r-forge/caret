@@ -30,4 +30,4 @@ modelInfo <- list(library = "kernlab",
                     out
                   },
                   tags = c("Kernel Method", "Relevance Vector Machines", "Radial Basis Function"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$sigma),])

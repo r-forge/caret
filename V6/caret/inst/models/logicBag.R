@@ -43,4 +43,4 @@ modelInfo <- list(library = "logicFS",
                   },
                   tags = c("Logic Regression", "Linear Classifier", "Linear Regression", "Logistic Regression",
                            "Bagging", "Ensemble Model"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$ntrees, x$nleaves),])

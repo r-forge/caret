@@ -86,4 +86,4 @@ modelInfo <- list(library = "partDSA",
                     rownames(out) <- names(tmp)
                     out
                   },
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$cut.off.growth, x$MPD),])

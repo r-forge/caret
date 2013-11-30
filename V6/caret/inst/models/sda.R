@@ -20,4 +20,4 @@ modelInfo <- list(library = c("sda"),
                     colnames(x$beta)
                   },
                   tags = c("Discriminant Analysis", "Regularization", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$diagonal, x$lambda),])

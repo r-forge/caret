@@ -22,4 +22,4 @@ modelInfo <- list(library = "kknn",
                   },
                   tags = "Prototype Models",
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x[,1]),])

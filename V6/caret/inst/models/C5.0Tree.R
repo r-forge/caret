@@ -17,4 +17,4 @@ modelInfo <- list(library = "C50",
                   },
                   varImp = function(object, ...) C5imp(object, ...),
                   tags = c("Tree-Based Model", "Implicit Feature Selection"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

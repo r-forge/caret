@@ -106,4 +106,4 @@ modelInfo <- list(library = "rpart",
                     out
                   },
                   tags = c("Tree-Based Model", "Implicit Feature Selection", "Cost Sensitive Learning"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$cp, -x$Cost),])

@@ -36,4 +36,4 @@ modelInfo <- list(library = "LogicReg",
                     if(length(varNums) > 0) colnames(x$binary)[varNums] else NA
                   },
                   tags = c("Logic Regression", "Linear Classifier", "Linear Regression", "Logistic Regression"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$ntrees, x$treesize),])

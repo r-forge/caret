@@ -47,4 +47,4 @@ modelInfo <- list(library = "nnet",
                   predictors = function(x, ...) rownames(x$pc$rotation),
                   levels = function(x) x$model$lev,
                   tags = c("Neural Network", "Feature Extraction", "L2 Regularization"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$size, -x$decay),])

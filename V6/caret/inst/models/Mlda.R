@@ -15,4 +15,4 @@ modelInfo <- list(library = "HiDimDA",
                   },
                   prob = NULL,
                   tags = c("Discriminant Analysis", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

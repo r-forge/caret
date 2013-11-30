@@ -41,4 +41,4 @@ modelInfo <- list(library = "ada",
                   },
                   tags = c("Tree-Based Model", "Ensemble Model", "Boosting", 
                            "Implicit Feature Selection"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$iter, x$maxdepth, x$nu),])

@@ -23,4 +23,4 @@ modelInfo <- list(library = c("proxy", "protoclass"),
                                                                                 p = modelFit$Minkowski)))),
                   prob = NULL,
                   tags = c("Prototype Models"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$eps),])

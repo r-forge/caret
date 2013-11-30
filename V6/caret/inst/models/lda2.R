@@ -44,4 +44,4 @@ modelInfo <- list(library = "MASS",
                   predictors = function(x, ...) if(hasTerms(x)) predictors(x$terms) else colnames(x$means),
                   tags = c("Discriminant Analysis", "Linear Classifier"),
                   levels = function(x) names(x$prior),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

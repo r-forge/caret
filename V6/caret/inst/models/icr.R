@@ -11,4 +11,4 @@ modelInfo <- list(library = "fastICA",
                   predict = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata),
                   prob = NULL,
                   tags = c("Linear Regression", "Feature Extraction"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1]),])

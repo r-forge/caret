@@ -102,4 +102,4 @@ modelInfo <- list(library = c("party", "mboost"),
                   },
                   levels = function(x) levels(x$response),
                   tags = c("Tree-Based Model", "Ensemble Model", "Boosting"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$mstop, x$maxdepth),])

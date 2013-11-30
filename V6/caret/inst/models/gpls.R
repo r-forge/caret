@@ -20,5 +20,5 @@ modelInfo <- list(library = "gpls",
                     out[!(out %in% "Intercept")]
                   },
                   tags = c("Logistic Regression", "Partial Least Squares", "Linear Classifier"),
-                  sort = function(x) x,
+                  sort = function(x) x[order(x[,1]),],
                   levels = function(x) x$obsLevels)

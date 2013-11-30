@@ -91,4 +91,4 @@ modelInfo <- list(library = "mboost",
                   },
                   levels = function(x) levels(x$response),
                   tags = c("Generalized Linear Model", "Ensemble Model", "Boosting", "Linear Classifier"),
-                  sort = function(x) x)
+                  sort = function(x) x[order(x$mstop, x$prune),])

@@ -33,4 +33,4 @@ modelInfo <- list(library = "elasticnet",
                   },
                   tags = c("Linear Regression", "L2 Regularization"),
                   prob = NULL,
-                  sort = function(x) x)
+                  sort = function(x) x[order(-x$lambda),])

@@ -36,4 +36,4 @@ modelInfo <- list(library = "RWeka",
                     rownames(out) <- dat$varUsage$Var
                     out
                   },
-                  sort = function(x) x)
+                  sort = function(x) x[order(x[,1], decreasing = TRUE),])
