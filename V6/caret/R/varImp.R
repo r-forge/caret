@@ -98,7 +98,7 @@ varImp.bagEarth <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.C5.0 <- function(object, ...){
@@ -106,7 +106,7 @@ varImp.C5.0 <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.cubist <- function(object, weights = c(0.5, 0.5), ...){
@@ -114,7 +114,7 @@ varImp.cubist <- function(object, weights = c(0.5, 0.5), ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, weights = weights, ...)
+  code$varImp(object, weights = weights, ...)
 }
 
 varImp.dsa <- function(object, cuts = NULL, ...){
@@ -122,7 +122,7 @@ varImp.dsa <- function(object, cuts = NULL, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, cuts = cuts, ...)
+  code$varImp(object, cuts = cuts, ...)
 }
 
 varImp.glm <- function(object, ...){
@@ -130,7 +130,7 @@ varImp.glm <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.glmnet <- function(object, lambda = NULL, ...){
@@ -138,7 +138,7 @@ varImp.glmnet <- function(object, lambda = NULL, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, lambda = lambda, ...)
+  code$varImp(object, lambda = lambda, ...)
 }
 
 varImp.JRip <- function(object, ...){
@@ -146,7 +146,7 @@ varImp.JRip <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.multinom <- function(object, ...){
@@ -154,7 +154,7 @@ varImp.multinom <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.nnet <- function(object, ...){
@@ -162,7 +162,7 @@ varImp.nnet <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.PART <- function(object, ...){
@@ -170,7 +170,7 @@ varImp.PART <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.RRF <- function(object, ...){
@@ -178,7 +178,7 @@ varImp.RRF <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.rpart <- function(object, surrogates = FALSE, competes = TRUE, ...){
@@ -186,7 +186,7 @@ varImp.rpart <- function(object, surrogates = FALSE, competes = TRUE, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, surrogates = surrogates, competes = competes, ...)
+  code$varImp(object, surrogates = surrogates, competes = competes, ...)
 }
 
 varImp.randomForest <- function(object, ...){
@@ -194,7 +194,7 @@ varImp.randomForest <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.gbm <- function(object, numTrees, ...){
@@ -202,7 +202,7 @@ varImp.gbm <- function(object, numTrees, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, numTrees = numTrees, ...)
+  code$varImp(object, numTrees = numTrees, ...)
 }
 
 varImp.classbagg <- function(object, ...){
@@ -210,7 +210,7 @@ varImp.classbagg <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.regbagg <- function(object, ...){
@@ -218,7 +218,7 @@ varImp.regbagg <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.pamrtrained <- function(object, threshold, data, ...){
@@ -226,7 +226,7 @@ varImp.pamrtrained <- function(object, threshold, data, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, threshold = threshold, data = data, ...)
+  code$varImp(object, threshold = threshold, data = data, ...)
 }
 
 varImp.lm <- function(object, ...){
@@ -234,7 +234,7 @@ varImp.lm <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.mvr <- function(object, estimate = NULL, ...){
@@ -242,7 +242,7 @@ varImp.mvr <- function(object, estimate = NULL, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, estimate = estimate, ...)
+  code$varImp(object, estimate = estimate, ...)
 }
 
 varImp.earth <- function(object, value = "gcv", ...){
@@ -250,7 +250,7 @@ varImp.earth <- function(object, value = "gcv", ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, value = value, ...)
+  code$varImp(object, value = value, ...)
 }
 
 varImp.RandomForest <- function(object, ...){
@@ -258,7 +258,7 @@ varImp.RandomForest <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.plsda <- function(object, ...){
@@ -266,7 +266,7 @@ varImp.plsda <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, ...)
+  code$varImp(object, ...)
 }
 
 varImp.fda <- function(object, value = "gcv", ...){
@@ -274,5 +274,5 @@ varImp.fda <- function(object, value = "gcv", ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(x, value = value, ...)
+  code$varImp(object, value = value, ...)
 }
