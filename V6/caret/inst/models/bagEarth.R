@@ -111,6 +111,7 @@ modelInfo <- list(library = "earth",
                     rownames(out) <- names(meanImp)
                     out
                   },
+                  levels = function(x) x$levels,
                   tags = c("Multivariate Adaptive Regression Splines", "Ensemble Model", 
                            "Implicit Feature Selection", "Bagging"),
                   sort = function(x) x)

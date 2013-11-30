@@ -39,4 +39,5 @@ modelInfo <- list(library = c("earth", "mda"),
                     eachFit <- lapply(x$fit, fdaPreds)
                     unique(unlist(eachFit))
                   },
+                  levels = function(x) x$levels,
                   sort = function(x) x)

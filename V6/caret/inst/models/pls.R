@@ -116,5 +116,6 @@ modelInfo <- list(library = "pls",
                     as.data.frame(out)
                   },
                   predictors = function(x, ...) rownames(x$projection),
+                  levels = function(x) x$obsLevels,
                   tags = c("Partial Least Squares", "Feature Extraction", "Linear Classifier", "Linear Regression"),
                   sort = function(x) x[order(-x$ncomp),,drop = FALSE])

@@ -16,4 +16,5 @@ modelInfo <- list(library = "klaR",
                     predict(modelFit, newdata)$posterior,
                   predictors = function(x, ...) x$varnames,
                   tags = c("Discriminant Analysis", "Polynomial Model"),
+                  levels = function(x) names(x$prior),
                   sort = function(x) x)

@@ -133,5 +133,6 @@ modelInfo <- list(library = "earth",
                     }
                     out
                   },
+                  levels = function(x) x$levels,
                   tags = c("Multivariate Adaptive Regression Splines", "Implicit Feature Selection"),
                   sort = function(x) x)

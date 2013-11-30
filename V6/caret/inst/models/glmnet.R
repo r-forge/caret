@@ -140,6 +140,7 @@ modelInfo <- list(library = "glmnet",
                     
                     out
                   },
+                  levels = function(x) if(any(names(x) == "obsLevels")) x$obsLevels else NULL,
                   tags = c("Generalized Linear Model", "Implicit Feature Selection", 
                            "L1 Regularization", "L2 Regularization", "Linear Classifier",
                            "Linear Regression"),

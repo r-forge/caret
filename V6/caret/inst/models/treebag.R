@@ -23,12 +23,19 @@ modelInfo <- list(library = "ipred",
                     unique(unlist(eachTree))
                   },
                   varImp = function(object, ...) {
-                    allImp <- lapply(object$fit, varImp, ...)
-                    impDF <- as.data.frame(allImp)
-                    meanImp <- apply(impDF, 1, mean)
-                    out <- data.frame(Overall = meanImp)
-                    rownames(out) <- names(meanImp)
+                    allImp <- lapply(object$mtrees, function(x) varImp(x$btree), ...)
+                    allImp <- lapply(allImp, 
+                                     function(x) {
+                                       x$variable <- rownames(x)
+                                       x
+                                     })
+                    allImp <- do.call("rbind", allImp)
+                    meanImp <- ddply(allImp, .(variable), 
+                                     function(x) c(Overall = mean(x$Overall)))
+                    out <- data.frame(Overall = meanImp$Overall)
+                    rownames(out) <- meanImp$variable
                     out
                   },
                   tags = c("Tree-Based Model", "Ensemble Model", "Bagging"), 
+                  levels = function(x) levels(x$y),
                   sort = function(x) x)

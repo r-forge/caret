@@ -50,7 +50,11 @@ modelInfo <- list(library = "randomForest",
                       varImp <- data.frame(Overall = varImp[,"%IncMSE"])
                     else {
                       retainNames <- levels(object$y)
-                      varImp <- varImp[, retainNames]
+                      if(all(retainNames %in% colnames(varImp))) {
+                        varImp <- varImp[, retainNames]
+                      } else {
+                        varImp <- data.frame(Overall = varImp[,1])
+                      }
                     }
                     
                     out <- as.data.frame(varImp)
@@ -60,5 +64,6 @@ modelInfo <- list(library = "randomForest",
                     }
                     out
                   },
+                  levels = function(x) x$classes,
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection"),
                   sort = function(x) x)

@@ -100,5 +100,6 @@ modelInfo <- list(library = c("party", "mboost"),
                   predictors = function(x, ...) {
                     strsplit(variable.names(x), ", ")[[1]]
                   },
+                  levels = function(x) levels(x$response),
                   tags = c("Tree-Based Model", "Ensemble Model", "Boosting"),
                   sort = function(x) x)
