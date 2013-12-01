@@ -366,6 +366,8 @@ S3method(predictors, terms)
 S3method(predictors, formula)
 S3method(predictors, list)
 S3method(predictors, default)
+S3method(predictors, rfe)
+S3method(predictors, sbf)
 
 S3method(confusionMatrix, table)
 
