@@ -18,7 +18,7 @@ train.default <- function(x, y,
   
   if(is.list(method)) {
     minNames <- c("library", "type", "parameters", "grid",
-                  "loop", "fit", "predict", "prob")
+                  "fit", "predict", "prob")
     nameCheck <- minNames %in% names(method) 
     if(!all(nameCheck)) stop(paste("some required components are missing:",
                                    paste(minNames[!nameCheck], collapse = ", ")))
