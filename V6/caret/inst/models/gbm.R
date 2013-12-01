@@ -150,12 +150,11 @@ modelInfo <- list(library = "gbm",
                     out
                   },
                   predictors = function(x, ...) {
-                    varList <- if(caret:::hasTerms(x)) predictors(x$terms) else colnames(x$data$x.order)
-                    relImp <- summary(x, plotit = FALSE)
-                    varUsed <- as.character(subset(relImp, rel.inf != 0)$var)
-                    caret:::basicVars(varList, varUsed) 
+                    vi <- relative.influence(x, n.trees = x$tuneValue$.n.trees)
+                    names(vi)[vi > 0]
                   },
-                  varImp = function(object, numTrees = object$n.trees, ...) {
+                  varImp = function(object, numTrees = NULL, ...) {
+                    if(is.null(numTrees)) numTrees <- object$tuneValue$.n.trees
                     varImp <- relative.influence(object, n.trees = numTrees)
                     out <- data.frame(varImp)
                     colnames(out) <- "Overall"
