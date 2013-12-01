@@ -197,7 +197,7 @@ varImp.randomForest <- function(object, ...){
   code$varImp(object, ...)
 }
 
-varImp.gbm <- function(object, numTrees, ...){
+varImp.gbm <- function(object, numTrees = NULL, ...){
   code <- getModelInfo("gbm", regex = FALSE)[[1]]
   checkInstall(code$library)
   for(i in seq(along = code$library))
