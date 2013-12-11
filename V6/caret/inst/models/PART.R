@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RWeka",
+modelInfo <- list(label = "Rule-Based Classifier",
+                  library = "RWeka",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('threshold', 'pruned'),

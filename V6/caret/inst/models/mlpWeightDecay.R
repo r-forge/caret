@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RSNNS",
+modelInfo <- list(label = "Multi-Layer Perceptron",
+                  library = "RSNNS",
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('size', 'decay'),

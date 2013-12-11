@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("klaR", "MASS"),
+modelInfo <- list(label = "Linear Discriminant Analysis with Stepwise Feature Selection",
+                  library = c("klaR", "MASS"),
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c("maxvar", "direction"),

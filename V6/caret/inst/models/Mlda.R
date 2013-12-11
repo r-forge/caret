@@ -1,4 +1,5 @@
-modelInfo <- list(library = "HiDimDA",
+modelInfo <- list(label = "Maximum Uncertainty Linear Discriminant Analysis",
+                  library = "HiDimDA",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('parameter'),

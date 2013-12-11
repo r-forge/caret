@@ -1,4 +1,5 @@
-modelInfo <- list(library = "glmnet",
+modelInfo <- list(label = "glmnet",
+                  library = "glmnet",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('alpha', 'lambda'),
                                           class = c("numeric", "numeric"),

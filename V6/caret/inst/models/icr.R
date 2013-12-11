@@ -1,4 +1,5 @@
-modelInfo <- list(library = "fastICA",
+modelInfo <- list(label = "Independent Component Regression",
+                  library = "fastICA",
                   loop = NULL,
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('n.comp'),

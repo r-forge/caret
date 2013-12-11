@@ -1,4 +1,5 @@
-modelInfo <- list(library = "superpc",
+modelInfo <- list(label = "Supervised Principal Component Analysis",
+                  library = "superpc",
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('threshold', 'n.components'),
                                           class = c('numeric', 'numeric'),

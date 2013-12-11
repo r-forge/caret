@@ -1,4 +1,5 @@
-modelInfo <- list(library = "nnet",
+modelInfo <- list(label = "Model Averaged Neural Network", 
+                  library = "nnet",
                   loop = NULL,
                   type = c("Classification", "Regression"),
                   parameters = data.frame(parameter = c('size', 'decay', 'bag'),

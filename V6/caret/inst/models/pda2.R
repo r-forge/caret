@@ -1,4 +1,5 @@
-modelInfo <- list(library = "mda",
+modelInfo <- list(label = "Penalized Discriminant Analysis",
+                  library = "mda",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('df'),

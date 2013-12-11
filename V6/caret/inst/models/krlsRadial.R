@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("KRLS", "kernlab"),
+modelInfo <- list(label = "Radial Basis Function Kernel Regularized Least Squares",
+                  library = c("KRLS", "kernlab"),
                   loop = NULL,
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('lambda', 'sigma'),

@@ -1,4 +1,5 @@
-modelInfo <- list(library = "MASS",
+modelInfo <- list(label = "Linear Discriminant Analysis",
+                  library = "MASS",
                   loop = function(grid) {
                     grid <- grid[order(grid$.dimen, decreasing = TRUE),, drop = FALSE]
                     loop <- grid[1,,drop = FALSE]

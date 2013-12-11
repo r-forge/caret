@@ -1,4 +1,5 @@
-modelInfo <- list(library = "kernlab",
+modelInfo <- list(label = "Gaussian Process with Polynomial Kernel",
+                  library = "kernlab",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('degree', 'scale'),
                                           class = c("numeric", "numeric"),

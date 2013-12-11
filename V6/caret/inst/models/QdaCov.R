@@ -1,4 +1,5 @@
-modelInfo <- list(library = "rrcov",
+modelInfo <- list(label = "Robust Quadratic Discriminant Analysis",
+                  library = "rrcov",
                   loop = NULL,
                   type = "Classification",
                   parameters = data.frame(parameter = "parameter",

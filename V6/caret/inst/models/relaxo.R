@@ -1,4 +1,5 @@
-modelInfo <- list(library = "relaxo",
+modelInfo <- list(label = "Relaxed Lasso",
+                  library = "relaxo",
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('lambda', 'phi'),
                                           class = c('numeric', 'numeric'),

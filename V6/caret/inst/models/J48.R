@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RWeka",
+modelInfo <- list(label = "C4.5-like Trees",
+                  library = "RWeka",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = "C",

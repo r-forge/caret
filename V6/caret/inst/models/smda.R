@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("sparseLDA"),
+modelInfo <- list(label = "Sparse Mixture Discriminant Analysis",
+                  library = c("sparseLDA"),
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('NumVars', 'lambda', "R"),
@@ -22,11 +23,11 @@ modelInfo <- list(library = c("sparseLDA"),
                          Rj = param$.R,
                          lambda = param$.lambda,
                          stop = -param$.NumVars,
-                         ...)
-                  ,
+                         ...),
                   predict = function(modelFit, newdata, submodels = NULL)
-                    sparseLDA:::predict(modelFit, newdata)$class,
+                    predict(modelFit, newdata)$class,
                   prob = NULL,
+                  predictors = function(x, ...) x$varNames,
                   tags = c("Discriminant Analysis", "L1 Regularization", 
                            "Implicit Feature Selection", "Mixture Model"),
                   sort = function(x) x[order(x$NumVars, x$R, -x$lambda),])

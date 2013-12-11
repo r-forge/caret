@@ -1,4 +1,5 @@
-modelInfo <- list(library = "caTools",
+modelInfo <- list(label = "Boosted Logistic Regression",
+                  library = "caTools",
                   loop = function(grid) {            
                     ## Get the largest value of ncomp to fit the "full" model
                     loop <- grid[which.max(grid$.nIter),,drop = FALSE]

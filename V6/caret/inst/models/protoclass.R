@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("proxy", "protoclass"),
+modelInfo <- list(label = "Greedy Prototype Selection",
+                  library = c("proxy", "protoclass"),
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('eps', 'Minkowski'),

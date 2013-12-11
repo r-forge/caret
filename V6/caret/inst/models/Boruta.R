@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("Boruta", "randomForest"),
+modelInfo <- list(label = "Random Forest with Additional Feature Selection", 
+                  library = c("Boruta", "randomForest"),
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('mtry'),
                                           class = c("numeric"),

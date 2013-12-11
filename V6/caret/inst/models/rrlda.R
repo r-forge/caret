@@ -1,4 +1,5 @@
-modelInfo <- list(library = "rrlda",
+modelInfo <- list(label = "Robust Regularized Linear Discriminant Analysis",
+                  library = "rrlda",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('lambda', 'hp', 'penalty'),

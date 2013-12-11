@@ -1,4 +1,5 @@
-modelInfo <- list(library = NULL,
+modelInfo <- list(label = "k-Nearest Neighbors",
+                  library = NULL,
                   loop = NULL,
                   type = c("Classification", "Regression"),
                   parameters = data.frame(parameter = "k",

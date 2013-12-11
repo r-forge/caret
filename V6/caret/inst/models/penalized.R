@@ -1,4 +1,5 @@
-modelInfo <- list(library = "penalized",
+modelInfo <- list(label = "Penalized Linear Regression",
+                  library = "penalized",
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('lambda1', 'lambda2'),
                                           class = c('numeric', 'numeric'),

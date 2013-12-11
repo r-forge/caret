@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("sda"),
+modelInfo <- list(label = "Shrinkage Discriminant Analysis",
+                  library = c("sda"),
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('diagonal','lambda'),

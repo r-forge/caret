@@ -1,4 +1,5 @@
-modelInfo <- list(library = NULL,
+modelInfo <- list(label = "Projection Pursuit Regression",
+                  library = NULL,
                   loop = NULL,
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('nterms'),

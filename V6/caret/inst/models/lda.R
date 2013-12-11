@@ -1,4 +1,5 @@
-modelInfo <- list(library = "MASS",
+modelInfo <- list(label = "Linear Discriminant Analysis",
+                  library = "MASS",
                   loop = NULL,
                   type = "Classification",
                   parameters = data.frame(parameter = "parameter",

@@ -1,8 +1,9 @@
-modelInfo <- list(library = "leaps",
+modelInfo <- list(label = "Linear Regression with Stepwise Selection",
+                  library = "leaps",
                   type = "Regression",
                   parameters = data.frame(parameter = 'nvmax',
                                           class = "numeric",
-                                          label = 'Maximum Size of Subsets'),
+                                          label = 'Maximum Number of Predictors'),
                   grid = function(x, y, len = NULL) data.frame(.nvmax = 2:(len+1)),
                   loop = function(grid) {   
                     grid <- grid[order(grid$.nvmax, decreasing = TRUE),, drop = FALSE]
@@ -34,6 +35,7 @@ modelInfo <- list(library = "leaps",
                     if(!is.null(submodels))
                     {
                       numTerms <- unlist(lapply(betas, length))
+                      if(any(names(betas[[length(betas)]]) == "(Intercept)")) numTerms <- numTerms - 1
                       ## Need to find the elements of betas that 
                       ## correspond to the values of submodels$.nvmax
                       

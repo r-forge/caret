@@ -1,4 +1,5 @@
-modelInfo <- list(library = "nnet",
+modelInfo <- list(label = "Neural Networks with Feature Extraction",
+                  library = "nnet",
                   loop = NULL,
                   type = c("Classification", "Regression"),
                   parameters = data.frame(parameter = c('size', 'decay'),

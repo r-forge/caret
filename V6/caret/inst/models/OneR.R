@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RWeka",
+modelInfo <- list(label = "Single Rule Classification",
+                  library = "RWeka",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('parameter'),

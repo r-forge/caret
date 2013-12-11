@@ -1,4 +1,5 @@
-modelInfo <- list(library = "kernlab",
+modelInfo <- list(label = "Support Vector Machines with Polynomial Kernel",
+                  library = "kernlab",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('degree', 'scale', 'C'),
                                           class = c("numeric", "numeric", "numeric"),

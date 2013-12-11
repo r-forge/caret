@@ -1,4 +1,5 @@
-modelInfo <- list(library = "rFerns",
+modelInfo <- list(label = "Random Ferns",
+                  library = "rFerns",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('depth'),

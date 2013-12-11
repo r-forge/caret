@@ -1,4 +1,5 @@
-modelInfo <- list(library = "kernlab",
+modelInfo <- list(label = "Least Squares Support Vector Machine",
+                  library = "kernlab",
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('parameter'),
                                           class = c("character"),

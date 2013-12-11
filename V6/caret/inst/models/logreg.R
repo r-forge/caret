@@ -1,4 +1,5 @@
-modelInfo <- list(library = "LogicReg",
+modelInfo <- list(label = "Logic Regression",
+                  library = "LogicReg",
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('treesize', 'ntrees'),

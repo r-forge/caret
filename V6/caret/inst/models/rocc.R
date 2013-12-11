@@ -1,4 +1,5 @@
-modelInfo <- list(library = "rocc",
+modelInfo <- list(label = "ROC-Based Classifier",
+                  library = "rocc",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('xgenes'),

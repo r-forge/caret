@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("oblique.tree"),
+modelInfo <- list(label = "Oblique Trees",
+                  library = c("oblique.tree"),
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('oblique.splits', 'variable.selection'),

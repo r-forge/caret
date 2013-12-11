@@ -1,4 +1,5 @@
-modelInfo <- list(library = "randomForest",
+modelInfo <- list(label = "Random Forest",
+                  library = "randomForest",
                   loop = NULL,
                   type = c("Classification", "Regression"),
                   parameters = data.frame(parameter = "mtry",

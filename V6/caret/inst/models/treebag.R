@@ -1,4 +1,5 @@
-modelInfo <- list(library = "ipred",
+modelInfo <- list(label = "Bagged CART",
+                  library = "ipred",
                   loop = NULL,
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = "parameter",

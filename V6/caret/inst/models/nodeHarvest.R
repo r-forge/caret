@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("nodeHarvest"),
+modelInfo <- list(label = "Tree-Based Ensembles",
+                  library = c("nodeHarvest"),
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('maxinter', 'mode'),

@@ -1,4 +1,5 @@
-modelInfo <- list(library = "logicFS",
+modelInfo <- list(label = "Bagged Logic Regression",
+                  library = "logicFS",
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('nleaves', 'ntrees'),

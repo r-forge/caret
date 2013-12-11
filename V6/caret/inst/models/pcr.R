@@ -1,4 +1,5 @@
-modelInfo <- list(library = "pls",
+modelInfo <- list(label = "Principal Component Analysis",
+                  library = "pls",
                   type = "Regression",
                   parameters = data.frame(parameter = 'ncomp',
                                           class = "numeric",

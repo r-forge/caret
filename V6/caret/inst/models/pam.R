@@ -1,4 +1,5 @@
-modelInfo <- list(library = "pamr",
+modelInfo <- list(label = "Nearest Shrunken Centroids",
+                  library = "pamr",
                   type = "Classification",
                   parameters = data.frame(parameter = 'threshold',
                                           class = "numeric",
@@ -72,7 +73,9 @@ modelInfo <- list(library = "pamr",
                     varIndex <- pamr.predict(x, newx = newdata, threshold = threshold, type = "nonzero")
                     colnames(newdata)[varIndex]
                   },
-                  varImp = function (object, threshold, data, ...) {
+                  varImp = function (object, threshold = NULL, data = NULL, ...) {
+                    if(is.null(data)) data <- object$xData
+                    if(is.null(threshold)) threshold <- object$tuneValue$.threshold
                     if( dim(object$centroids)[1] != dim(data)[2]) 
                       stop("the number of columns (=variables) is not consistent with the pamr object")
                     

@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("sparseLDA"),
+modelInfo <- list(label = "Sparse Linear Discriminant Analysis",
+                  library = c("sparseLDA"),
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('NumVars', 'lambda'),

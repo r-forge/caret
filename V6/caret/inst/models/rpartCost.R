@@ -1,4 +1,5 @@
-modelInfo <- list(library = "rpart",
+modelInfo <- list(label = "Cost-Sensitive CART",
+                  library = "rpart",
                   type = "Classification",
                   parameters = data.frame(parameter = c('cp', 'Cost'),
                                           class = c("numeric", "numeric"),

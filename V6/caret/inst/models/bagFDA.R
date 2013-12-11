@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("earth", "mda"),
+modelInfo <- list(label = "Bagged Flexible Discriminant Analysis", 
+                  library = c("earth", "mda"),
                   loop = NULL,
                   type = "Classification",
                   parameters = data.frame(parameter = c("degree", "nprune"),
@@ -38,6 +39,14 @@ modelInfo <- list(library = c("earth", "mda"),
                     }
                     eachFit <- lapply(x$fit, fdaPreds)
                     unique(unlist(eachFit))
+                  },
+                  varImp = function(object, ...) {
+                    allImp <- lapply(object$fit, varImp, ...)
+                    impDF <- as.data.frame(allImp)
+                    meanImp <- apply(impDF, 1, mean)
+                    out <- data.frame(Overall = meanImp)
+                    rownames(out) <- names(meanImp)
+                    out
                   },
                   levels = function(x) x$levels,
                   sort = function(x) x[order(x$degree, x$nprune),])

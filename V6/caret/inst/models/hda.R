@@ -1,4 +1,5 @@
-modelInfo <- list(library = "hda",
+modelInfo <- list(label = "Heteroscedastic Discriminant Analysis",
+                  library = "hda",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('gamma', 'lambda', 'newdim'),

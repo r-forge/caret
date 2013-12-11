@@ -1,4 +1,5 @@
-modelInfo <- list(library = "foba",
+modelInfo <- list(label = "Ridge Regression with Variable Selection",
+                  library = "foba",
                   type = "Regression",
                   parameters = data.frame(parameter = c('k', 'lambda'),
                                           class = c("numeric", "numeric"),
@@ -68,6 +69,7 @@ modelInfo <- list(library = "foba",
                     library(foba)
                     names(predict(x, k = k, type = "coefficients")$selected.variables)                    
                   },
-                  tags = c("Linear Regression", "Implicit Feature Selection", "L1 Regularization"),
+                  tags = c("Linear Regression", "Ridge Regression", 
+                           "L2 Regularization", "Feature Selection Wrapper"),
                   prob = NULL,
                   sort = function(x) x[order(x$k, -x$lambda),])

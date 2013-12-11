@@ -1,4 +1,5 @@
-modelInfo <- list(library = "elasticnet",
+modelInfo <- list(label = "Ridge Regression",
+                  library = "elasticnet",
                   type = "Regression",
                   parameters = data.frame(parameter = c('lambda'),
                                           class = c("numeric"),

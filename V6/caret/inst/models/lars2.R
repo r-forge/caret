@@ -1,4 +1,5 @@
-modelInfo <- list(library = "lars",
+modelInfo <- list(label = "Least Angle Regression",
+                  library = "lars",
                   type = "Regression",
                   parameters = data.frame(parameter = 'step',
                                           class = "numeric",

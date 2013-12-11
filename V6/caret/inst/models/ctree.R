@@ -1,4 +1,5 @@
-modelInfo <- list(library = "party",
+modelInfo <- list(label = "Conditional Inference Tree",
+                  library = "party",
                   loop = NULL,
                   type = c("Classification", "Regression"),
                   parameters = data.frame(parameter = 'mincriterion',
