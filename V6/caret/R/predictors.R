@@ -21,6 +21,7 @@ predictors.train <- function(x, ...) {
 
 predictors.default <- function(x, ...) {
   cls <- model2method(class(x)[1])
+  if(cls == "gam")  cls <- if(any(names(x) == "optimizer")) "gam" else "gamLoess"
   code <- getModelInfo(cls, regex = FALSE)[[1]]
   if(!is.null(code)) {
     if(!is.null(code$predictors)){
