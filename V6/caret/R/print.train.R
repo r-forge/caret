@@ -21,6 +21,7 @@
       out
     }   
 
+  if(!is.null(x$modelInfo$label)) cat(x$modelInfo$label, "\n\n")
   if(printCall) printCall(x$call)
 
   if(!is.null(x$trainingData))
