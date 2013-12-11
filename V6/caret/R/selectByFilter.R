@@ -133,7 +133,7 @@ sbf <- function (x, ...) UseMethod("sbf")
   
   resamples <- switch(sbfControl$returnResamp,
                       none = NULL, 
-                      all = resamples)
+                      all =, final = resamples)
 
   endTime <- proc.time()
   times <- list(everything = endTime - startTime,
@@ -301,7 +301,7 @@ sbfControl <- function(functions = NULL,
                        number = ifelse(method %in% c("cv", "repeatedcv"), 10, 25),
                        repeats = ifelse(method %in% c("cv", "repeatedcv"), 1, number),
                        verbose = FALSE,
-                       returnResamp = "all",
+                       returnResamp = "final",
                        p = .75,
                        index = NULL,
                        timingSamps = 0,
