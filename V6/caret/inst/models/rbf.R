@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RSNNS",
+modelInfo <- list(label = "Radial Basis Function Network",
+                  library = "RSNNS",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('size'),

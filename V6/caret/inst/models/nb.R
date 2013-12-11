@@ -1,4 +1,5 @@
-modelInfo <- list(library = "klaR",
+modelInfo <- list(label = "Naive Bayes",
+                  library = "klaR",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('fL', 'usekernel'),

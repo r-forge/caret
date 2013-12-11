@@ -1,4 +1,5 @@
-modelInfo <- list(library = "rpart",
+modelInfo <- list(label = "CART",
+                  library = "rpart",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('cp'),
                                           class = c("numeric"),

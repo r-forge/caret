@@ -1,4 +1,5 @@
-modelInfo <- list(library = "HDclassif",
+modelInfo <- list(label = "High Dimensional Discriminant Analysis",
+                  library = "HDclassif",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('threshold', 'model'),

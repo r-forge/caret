@@ -1,4 +1,5 @@
-modelInfo <- list(library = "neuralnet",
+modelInfo <- list(label = "Neural Network",
+                  library = "neuralnet",
                   loop = NULL,
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('layer1', 'layer2', 'layer3'),

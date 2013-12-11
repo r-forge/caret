@@ -1,4 +1,5 @@
-modelInfo <- list(library = "ada",
+modelInfo <- list(label = "Boosted Classification Trees",
+                  library = "ada",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('iter', 'maxdepth', 'nu'),

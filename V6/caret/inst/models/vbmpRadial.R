@@ -1,4 +1,5 @@
-modelInfo <- list(library = "vbmp",
+modelInfo <- list(label = "Variational Bayesian Multinomial Probit Regression",
+                  library = "vbmp",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('estimateTheta'),

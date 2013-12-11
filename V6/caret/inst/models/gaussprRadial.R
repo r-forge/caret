@@ -1,4 +1,5 @@
-modelInfo <- list(library = "kernlab",
+modelInfo <- list(label = "Gaussian Process with Radial Basis Function Kernel",
+                  library = "kernlab",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('sigma'),
                                           class = c("numeric"),

@@ -1,4 +1,5 @@
-modelInfo <- list(library = "stepPlr",
+modelInfo <- list(label = "Penalized Logistic Regression",
+                  library = "stepPlr",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('lambda', 'cp'),

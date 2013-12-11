@@ -1,4 +1,5 @@
-modelInfo <- list(library = "qrnn",
+modelInfo <- list(label = "Quantile Regression Neural Network",
+                  library = "qrnn",
                   loop = NULL,
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('n.hidden', 'penalty', 'bag'),

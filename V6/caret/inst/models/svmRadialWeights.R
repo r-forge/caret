@@ -1,4 +1,5 @@
-modelInfo <- list(library = "kernlab",
+modelInfo <- list(label = "Support Vector Machines with Class Weights",
+                  library = "kernlab",
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('sigma', 'C', 'Weight'),
                                           class = c("numeric", "numeric", "numeric"),

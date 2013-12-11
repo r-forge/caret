@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RWeka",
+modelInfo <- list(label = "Model Tree",
+                  library = "RWeka",
                   loop = NULL,
                   type = "Regression",
                   parameters = data.frame(parameter = c('pruned', 'smoothed', 'rules'),

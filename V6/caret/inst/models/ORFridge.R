@@ -1,4 +1,5 @@
-modelInfo <- list(library = "obliqueRF",
+modelInfo <- list(label = "Oblique Random Forest",
+                  library = "obliqueRF",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = "mtry",

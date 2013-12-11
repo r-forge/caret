@@ -1,4 +1,5 @@
-modelInfo <- list(library = "nnet",
+modelInfo <- list(label = "Penalized Multinomial Regression",
+                  library = "nnet",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('decay'),

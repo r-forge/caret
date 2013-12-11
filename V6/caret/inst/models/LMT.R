@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RWeka",
+modelInfo <- list(label = "Logistic Model Trees",
+                  library = "RWeka",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = "iter",

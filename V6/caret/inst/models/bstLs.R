@@ -1,4 +1,5 @@
-modelInfo <- list(library = "bst",
+modelInfo <- list(label = "Boosted Linear Model", 
+                  library = "bst",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('mstop', 'nu'),
                                           class = c("numeric", "numeric"),

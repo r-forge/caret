@@ -1,4 +1,5 @@
-modelInfo <- list(library = "arm",
+modelInfo <- list(label = "Bayesian Generalized Linear Model", 
+                  library = "arm",
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = "parameter",

@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("SDDA"),
+modelInfo <- list(label = "Stepwise Diagonal Linear Discriminant Analysis",
+                  library = c("SDDA"),
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c("parameter"),

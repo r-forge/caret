@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("KRLS"),
+modelInfo <- list(label ="Polynomial Kernel Regularized Least Squares",
+                  library = c("KRLS"),
                   loop = NULL,
                   type = c('Regression'),
                   parameters = data.frame(parameter = c('lambda', 'degree'),

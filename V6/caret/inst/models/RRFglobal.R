@@ -1,4 +1,5 @@
-modelInfo <- list(library = "RRF",
+modelInfo <- list(label = "Regularized Random Forest",
+                  library = "RRF",
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('mtry', 'coefReg'),
@@ -43,8 +44,12 @@ modelInfo <- list(library = "RRF",
                       varImp <- data.frame(Overall = varImp[,"%IncMSE"])
                     else {
                       retainNames <- levels(object$y)
-                      varImp <- varImp[, retainNames]
-                    } 
+                      if(all(retainNames %in% colnames(varImp))) {
+                        varImp <- varImp[, retainNames]
+                      } else {
+                        varImp <- data.frame(Overall = varImp[,1])
+                      }
+                    }  
                     out <- as.data.frame(varImp)
                     if(dim(out)[2] == 2) {
                       tmp <- apply(out, 1, mean)

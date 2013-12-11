@@ -1,4 +1,5 @@
-modelInfo <- list(library = "class",
+modelInfo <- list(label = "Learning Vector Quantization",
+                  library = "class",
                   loop = NULL,
                   type = "Classification",
                   parameters = data.frame(parameter = c("size", "k"),

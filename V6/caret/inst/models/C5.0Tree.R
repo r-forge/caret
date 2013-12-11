@@ -1,4 +1,5 @@
-modelInfo <- list(library = "C50",
+modelInfo <- list(label = "Single C5.0 Tree", 
+                  library = "C50",
                   loop = NULL,
                   type = "Classification",
                   parameters = data.frame(parameter = c('parameter'),

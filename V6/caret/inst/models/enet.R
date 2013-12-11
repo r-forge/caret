@@ -1,4 +1,5 @@
-modelInfo <- list(library = "elasticnet",
+modelInfo <- list(label = "Elasticnet",
+                  library = "elasticnet",
                   type = "Regression",
                   parameters = data.frame(parameter = c('fraction', 'lambda'),
                                           class = c("numeric", "numeric"),

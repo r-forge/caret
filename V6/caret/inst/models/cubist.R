@@ -1,4 +1,5 @@
-modelInfo <- list(library = "Cubist",
+modelInfo <- list(label = "Cubist",
+                  library = "Cubist",
                   loop = function(grid) { 
                     ## Here, we want `loop` to be a data frame with the unique values
                     ## of `committees`. We don't need `neighbors` until `predit.cubist` 

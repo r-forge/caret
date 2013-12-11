@@ -1,4 +1,5 @@
-modelInfo <- list(library = "earth",
+modelInfo <- list(label = "Multivariate Adaptive Regression Spline",
+                  library = "earth",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('nprune', 'degree'),
                                           class = c("numeric", "numeric"),

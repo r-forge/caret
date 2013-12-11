@@ -1,4 +1,5 @@
-modelInfo <- list(library = NULL,
+modelInfo <- list(label = "Linear Regression",
+                  library = NULL,
                   loop = NULL,
                   type = "Regression",
                   parameters = data.frame(parameter = "parameter",

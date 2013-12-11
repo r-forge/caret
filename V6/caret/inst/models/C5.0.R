@@ -1,4 +1,5 @@
-modelInfo <- list(library = "C50",
+modelInfo <- list(label = "C5.0", 
+                  library = "C50",
                   loop = function(grid) {     
                     loop <- ddply(grid, c(".model", ".winnow"),
                                   function(x) c(.trials = max(x$.trials)))                 

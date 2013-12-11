@@ -1,4 +1,5 @@
-modelInfo <- list(library = "MASS",
+modelInfo <- list(label = "Robust Linear Model",
+                  library = "MASS",
                   loop = NULL,
                   type = "Regression",
                   parameters = data.frame(parameter = "parameter",

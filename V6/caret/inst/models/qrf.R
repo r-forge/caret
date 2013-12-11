@@ -1,4 +1,5 @@
-modelInfo <- list(library = "quantregForest",
+modelInfo <- list(label = "Quantile Random Forest",
+                  library = "quantregForest",
                   loop = NULL,
                   type = c("Regression"),
                   parameters = data.frame(parameter = "mtry",

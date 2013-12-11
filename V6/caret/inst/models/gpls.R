@@ -1,4 +1,5 @@
-modelInfo <- list(library = "gpls",
+modelInfo <- list(label = "Generalized Partial Least Squares",
+                  library = "gpls",
                   loop = NULL,
                   type = c('Classification'),
                   parameters = data.frame(parameter = c('K.prov'),

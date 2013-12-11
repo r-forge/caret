@@ -1,4 +1,5 @@
-modelInfo <- list(library = "kohonen",
+modelInfo <- list(label = "Self-Organizing Map", 
+                  library = "kohonen",
                   loop = NULL,
                   type = c("Classification", "Regression"),
                   parameters = data.frame(parameter = c("xdim", "ydim", "xweight", "topo"),

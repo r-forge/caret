@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("extraTrees"),
+modelInfo <- list(label = "Random Forest by Randomization",
+                  library = c("extraTrees"),
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('mtry', 'numRandomCuts'),

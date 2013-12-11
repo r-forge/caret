@@ -1,4 +1,5 @@
-modelInfo <- list(library = "spls",
+modelInfo <- list(label = "Sparse Partial Least Squares",
+                  library = "spls",
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('K', 'eta', 'kappa'),
                                           class = c('numeric', 'numeric', 'numeric'),

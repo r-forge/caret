@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("ipred"),
+modelInfo <- list(label = "Stabilized Linear Discriminant Analysis",
+                  library = c("ipred"),
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = c('parameter'),

@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("evtree"),
+modelInfo <- list(label = "Tree Models from Genetic Algorithms",
+                  library = c("evtree"),
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('alpha'),

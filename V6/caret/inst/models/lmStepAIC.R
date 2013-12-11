@@ -1,4 +1,5 @@
-modelInfo <- list(library = "MASS",
+modelInfo <- list(label = "Linear Regression with Stepwise Selection",
+                  library = "MASS",
                   loop = NULL,
                   type = "Regression",
                   parameters = data.frame(parameter = "parameter",

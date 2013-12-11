@@ -1,4 +1,5 @@
-modelInfo <- list(library = "mgcv",
+modelInfo <- list(label = "Generalized Additive Model using Splines",
+                  library = "mgcv",
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('select', 'method'),
@@ -39,8 +40,27 @@ modelInfo <- list(library = "mgcv",
                     out
                   },
                   predictors = function(x, ...) {
-                    tmp <- varImp(x, scale = FALSE)
-                    rownames(tmp)[tmp$Overall > 0]
+                    predictors(x$terms)
+                  },
+                  varImp = function(object, ...) {
+                    smoothed <- summary(object)$s.table[, "p-value", drop = FALSE]
+                    linear <- summary(object)$p.table
+                    linear <- linear[, grepl("^Pr", colnames(linear)), drop = FALSE] 
+                    gams <- rbind(smoothed, linear)
+                    gams <- gams[rownames(gams) != "(Intercept)",,drop = FALSE]
+                    rownames(gams) <- gsub("^s\\(", "", rownames(gams))
+                    rownames(gams) <- gsub("\\)$", "", rownames(gams))
+                    colnames(gams)[1] <- "Overall"
+                    gams <- as.data.frame(gams)
+                    gams$Overall <- -log10(gams$Overall)
+                    allPreds <- colnames(attr(object$terms,"factors"))
+                    extras <- allPreds[!(allPreds %in% rownames(gams))]
+                    if(any(extras)) {
+                      tmp <- data.frame(Overall = rep(NA, length(extras)))
+                      rownames(tmp) <- extras
+                      gams <- rbind(gams, tmp)
+                    }
+                    gams
                   },
                   tags = c("Generalized Linear Model"),
                   sort = function(x) x)

@@ -1,4 +1,5 @@
-modelInfo <- list(library = "rrcovHD",
+modelInfo <- list(label = "SIMCA",
+                  library = "rrcovHD",
                   loop = NULL,
                   type = c("Classification"),
                   parameters = data.frame(parameter = 'parameter',

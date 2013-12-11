@@ -1,4 +1,5 @@
-modelInfo <- list(library = "kknn",
+modelInfo <- list(label = "k-Nearest Neighbors",
+                  library = "kknn",
                   loop = NULL,
                   type = c('Regression', 'Classification'),
                   parameters = data.frame(parameter = c('kmax', 'distance', 'kernel'),

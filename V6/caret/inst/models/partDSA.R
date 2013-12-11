@@ -1,4 +1,5 @@
-modelInfo <- list(library = "partDSA",
+modelInfo <- list(label = "partDSA",
+                  library = "partDSA",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('cut.off.growth', 'MPD'),
                                           class = c("numeric", "numeric"),

@@ -1,4 +1,5 @@
-modelInfo <- list(library = "MASS",
+modelInfo <- list(label = "Generalized Linear Model with Stepwise Feature Selection",
+                  library = "MASS",
                   loop = NULL,
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = "parameter",

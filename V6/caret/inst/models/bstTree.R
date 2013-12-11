@@ -1,4 +1,5 @@
-modelInfo <- list(library = "bst",
+modelInfo <- list(label = "Boosted Tree", 
+                  library = "bst",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('mstop', 'maxdepth', 'nu'),
                                           class = c("numeric", "numeric", "numeric"),

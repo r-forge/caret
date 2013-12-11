@@ -1,4 +1,5 @@
-modelInfo <- list(library = c("earth", "mda"),
+modelInfo <- list(label = "Flexible Discriminant Analysis",
+                  library = c("earth", "mda"),
                   loop = NULL,
                   type = "Classification",
                   parameters = data.frame(parameter = c("degree", "nprune"),

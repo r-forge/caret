@@ -1,4 +1,5 @@
-modelInfo <- list(library = "klaR",
+modelInfo <- list(label = "Regularized Discriminant Analysis",
+                  library = "klaR",
                   loop = NULL,
                   type = "Classification",
                   parameters = data.frame(parameter = c("gamma", "lambda"),
