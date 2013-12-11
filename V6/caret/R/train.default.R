@@ -339,10 +339,8 @@ train.default <- function(x, y,
   if(!is.null(models$sort)) performance <- models$sort(performance)
 
   if(any(is.na(performance[, metric])))
-  {
     warning("missing values found in aggregated results")
-    print(performance)
-  }
+
   
   if(trControl$verboseIter && nrow(performance) > 1)
     {
