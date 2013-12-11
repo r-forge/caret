@@ -101,6 +101,14 @@ varImp.bagEarth <- function(object, ...){
   code$varImp(object, ...)
 }
 
+varImp.bagFDA <- function(object, ...){
+  code <- getModelInfo("bagFDA", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(object, ...)
+}
+
 varImp.C5.0 <- function(object, ...){
   code <- getModelInfo("C5.0", regex = FALSE)[[1]]
   checkInstall(code$library)
@@ -226,7 +234,10 @@ varImp.pamrtrained <- function(object, threshold, data, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(object, threshold = threshold, data = data, ...)
+  code$varImp(object, 
+              threshold = object$bestTune$.threshold, 
+              data = object$finalModel$xData, 
+              ...)
 }
 
 varImp.lm <- function(object, ...){
@@ -271,6 +282,15 @@ varImp.plsda <- function(object, ...){
 
 varImp.fda <- function(object, value = "gcv", ...){
   code <- getModelInfo("fda", regex = FALSE)[[1]]
+  checkInstall(code$library)
+  for(i in seq(along = code$library))
+    do.call("require", list(package = code$library[i]))
+  code$varImp(object, value = value, ...)
+}
+
+varImp.gam <- function(object, ...){
+  mod <- if(any(names(object) == "optimizer")) "gam" else "gamLoess"
+  code <- getModelInfo(mod, regex = FALSE)[[1]]
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
