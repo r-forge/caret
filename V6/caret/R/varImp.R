@@ -294,5 +294,5 @@ varImp.gam <- function(object, ...){
   checkInstall(code$library)
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
-  code$varImp(object, value = value, ...)
+  code$varImp(object, ...)
 }
