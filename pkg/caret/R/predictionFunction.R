@@ -892,12 +892,6 @@ predictionFunction <- function(method, modelFit, newdata, preProc = NULL, param 
                                } else out <- predict(modelFit, newbin = newdata)
                              out
                            },
-                           logforest =
-                           {
-                             library(LogicForest)
-                             ifelse(predict(modelFit, newdata = newdata)$LFprediction == 1,
-                                    modelFit$obsLevels[1], modelFit$obsLevels[2])
-                           },
                            logicBag =
                            {
                              library(logicFS)
