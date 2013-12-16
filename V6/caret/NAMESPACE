@@ -186,6 +186,7 @@ export(anovaScores,
        upSample,
        varImp,
        varImp.bagEarth,
+       varImp.bagFDA,
        xyplot.rfe,
        varImp.plsda
        )
@@ -238,9 +239,11 @@ S3method(varImp, classbagg)
 S3method(varImp, regbagg)
 S3method(varImp, pamrtrained)
 S3method(varImp, lm)
+S3method(varImp, glm)
 S3method(varImp, mvr)
 S3method(varImp, earth)
 S3method(varImp, bagEarth)
+S3method(varImp, bagFDA)
 S3method(varImp, RandomForest)
 S3method(varImp, rfe)
 S3method(varImp, sbf)
@@ -255,6 +258,7 @@ S3method(varImp, JRip)
 S3method(varImp, C5.0)
 S3method(varImp, nnet)
 S3method(varImp, glmnet)
+S3method(varImp, gam)
 
 S3method(densityplot, train)
 S3method(histogram,   train)
