@@ -34,6 +34,6 @@ modelInfo <- list(label = "Gaussian Process with Radial Basis Function Kernel",
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Support Vector Machines", "Radial Basis Function"),
+                  tags = c("Kernel Method", "Gaussian Process", "Radial Basis Function"),
                   levels = function(x) lev(x),
                   sort = function(x) x)

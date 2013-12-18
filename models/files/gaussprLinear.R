@@ -29,6 +29,6 @@ modelInfo <- list(label = "Gaussian Process",
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Support Vector Machines", "Linear Classifier"),
+                  tags = c("Kernel Method", "Gaussian Process", "Linear Classifier"),
                   levels = function(x) lev(x),
                   sort = function(x) x)

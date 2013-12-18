@@ -34,6 +34,6 @@ modelInfo <- list(label = "Gaussian Process with Polynomial Kernel",
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Support Vector Machines", "Polynomial Model"),
+                  tags = c("Kernel Method", "Gaussian Process", "Polynomial Model"),
                   levels = function(x) lev(x),
                   sort = function(x) x)

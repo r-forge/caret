@@ -88,6 +88,7 @@ modelInfo <- list(label = "Support Vector Machines with Polynomial Kernel",
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Support Vector Machines", "Polynomial Model"),
+                  tags = c("Kernel Method", "Support Vector Machines", "Polynomial Model",
+                           "Robust Methods"),
                   levels = function(x) lev(x),
                   sort = function(x) x[order(x$degree, x$C, x$scale),])

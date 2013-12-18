@@ -16,7 +16,8 @@ modelInfo <- list(label = "Regularized Discriminant Analysis",
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata)$posterior,
                   predictors = function(x, ...) x$varnames,
-                  tags = c("Discriminant Analysis", "Polynomial Model"),
+                  tags = c("Discriminant Analysis", "Polynomial Model", "Regularization",
+                           "Linear Classifier"),
                   levels = function(x) names(x$prior),
                   sort = function(x) {
                     # since lds is less complex than qda, we

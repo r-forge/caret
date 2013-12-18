@@ -89,7 +89,8 @@ modelInfo <- list(label = "Support Vector Machines with Radial Basis Function Ke
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Support Vector Machines", "Radial Basis Function"),
+                  tags = c("Kernel Method", "Support Vector Machines", "Radial Basis Function",
+                           "Robust Methods"),
                   levels = function(x) lev(x),
                   sort = function(x) {
                     # If the cost is high, the decision boundary will work hard to

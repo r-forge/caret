@@ -30,5 +30,6 @@ modelInfo <- list(label = "Relevance Vector Machines with Radial Basis Function 
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Relevance Vector Machines", "Radial Basis Function"),
+                  tags = c("Kernel Method", "Relevance Vector Machines", "Radial Basis Function",
+                           "Robust Methods"),
                   sort = function(x) x[order(-x$sigma),])

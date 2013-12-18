@@ -25,5 +25,6 @@ modelInfo <- list(label = "Relevance Vector Machines with Linear Kernel",
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Relevance Vector Machines", "Linear Regression"),
+                  tags = c("Kernel Method", "Relevance Vector Machines", "Linear Regression",
+                           "Robust Methods"),
                   sort = function(x) x)

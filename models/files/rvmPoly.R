@@ -31,5 +31,6 @@ modelInfo <- list(label = "Relevance Vector Machines with Polynomial Kernel",
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Relevance Vector Machines", "Polynomial Model"),
+                  tags = c("Kernel Method", "Relevance Vector Machines", "Polynomial Model",
+                           "Robust Methods"),
                   sort = function(x) x[order(x$degree, x$scale),])
