@@ -74,5 +74,5 @@ modelInfo <- list(label = "Generalized Additive Model using Splines",
                     }
                     gams
                   },
-                  tags = c("Generalized Linear Model"),
+                  tags = c("Generalized Linear Model", "Generalized Additive Model"),
                   sort = function(x) x)

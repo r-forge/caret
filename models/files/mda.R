@@ -18,5 +18,5 @@ modelInfo <- list(label = "Mixture Discriminant Analysis",
                   prob = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata, type = "posterior"),
                   predictors = function(x, ...) predictors(x$terms),
-                  tags = c("Discriminant Analysis"),
+                  tags = c("Discriminant Analysis", "Mixture Model"),
                   sort = function(x) x[order(x[,1]),])

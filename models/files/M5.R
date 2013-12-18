@@ -34,7 +34,8 @@ modelInfo <- list(label = "Model Tree",
                     predict(modelFit, newdata),
                   prob = NULL,
                   predictors = function(x, ...) predictors(x$terms),
-                  tags = c("Rule-Based Model", "Tree-Based Model", "Linear Regression", "Implicit Feature Selection"),
+                  tags = c("Rule-Based Model", "Tree-Based Model", "Linear Regression", "Implicit Feature Selection",
+                           "Model Tree"),
                   sort = function(x) {
                     x$pruned <- factor(as.character(x$pruned), levels = c("Yes", "No"))
                     x$smoothed <- factor(as.character(x$smoothed), levels = c("Yes", "No"))

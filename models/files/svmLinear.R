@@ -82,7 +82,8 @@ modelInfo <- list(label = "Support Vector Machines with Linear Kernel",
                     if(is.null(out)) out <-NA
                     out
                   },
-                  tags = c("Kernel Method", "Support Vector Machines","Linear Regression", "Linear Classifier"),
+                  tags = c("Kernel Method", "Support Vector Machines","Linear Regression", "Linear Classifier",
+                           "Robust Methods"),
                   levels = function(x) lev(x),
                   sort = function(x) {
                     # If the cost is high, the decision boundary will work hard to
