@@ -1,23 +1,24 @@
-library(R2HTML)
 library(caret)
+library(randomForest)
+library(mlbench)
+library(AppliedPredictiveModeling)
+library(ellipse)
+library(doMC)
+library(rpart)
+library(kernlab)
+library(klaR)
+library(proxy)
+library(earth)
+library(MASS)
+library(party)
+library(pls)
+library(Hmisc)
+library(caTools)
+library(googleVis)
 
-setwd("~/Code/caret/html/")
+setwd("~/Code/caret/html_knit/")
 
 startPath <- getwd()
-
-## pull printOutput and others out to this file
-
-###########################################################################
-
-printOutput <- function(foo, wd = 70)
-  {
-    options(width = 70)
-    tt <- capture.output(foo, file = NULL)
-
-    tt <- paste("<pre>", tt, "</pre>", sep = "")
-    cat(paste(tt, collpase = "\n"))
-    invisible(tt)
-  }
 
 ###########################################################################
 
@@ -25,10 +26,10 @@ dPath <- paste("html_",format(Sys.time(), "%Y_%m_%d_%H_%M"), sep = "")
 dir.create(dPath)
                  
 rnwFiles <- c("index", "datasets", "misc", "preprocess", "visualizations",
-              "bytag", "featureSelection", "training", "other",
-              "varImp", "parallel", "splitting")
+              "featureSelection", "training", "other", "bytag", 
+              "varImp", "parallel", "splitting", "custom_models")
 
-rnwFiles <- paste(rnwFiles, ".Rnw", sep = "")
+rnwFiles <- paste(rnwFiles, ".Rhtml", sep = "")
 file.copy(rnwFiles, file.path(getwd(), dPath, rnwFiles))
 
 file.copy(list.files(pattern = "png$"),
@@ -46,20 +47,22 @@ file.copy("style.css",
           file.path(getwd(), dPath, "style.css"))
 file.copy("parallel.pdf",
           file.path(getwd(), dPath, "parallel.pdf"))
+file.copy("template.html",
+          file.path(getwd(), dPath, "template.html"))
 setwd(file.path(getwd(), dPath))
 pathName <- paste(file.path(getwd()), "/", sep = "")
 
 ###########################################################################
 
-for(i in seq(along = rnwFiles))
-  {
-    cat("###########################################################################\n",
-        "Sweaving", rnwFiles[i], "\n")
-    Sweave(rnwFiles[i],
-           driver = RweaveHTML,
-           output = gsub(".Rnw", ".html", rnwFiles[i]))
+library(knitr)
 
-  }
+for(fileIndex in seq(along = rnwFiles)) {
+  cat("###########################################################################\n",
+      "Knitting", rnwFiles[fileIndex], "\n")
+  knit(rnwFiles[fileIndex],
+       output = gsub(".Rhtml", ".html", rnwFiles[fileIndex]))
+  
+}
 
 
 unlink(list.files(pattern = "Rnw$"))
