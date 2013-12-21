@@ -117,14 +117,11 @@
       <div id="page">
 	<div id="content">
 	
-	<p>
-  The results look like this:
-  </p>
   <script src="d3.v3.min.js"></script>
 <script>
 
-var width = 960,
-    height = 800;
+var width = 800, 
+    height = 400;
 
 var color = d3.scale.category20();
 
@@ -173,7 +170,7 @@ d3.json("models.json", function(error, graph) {
 
 </script>
 
-<p>Orange is regression only, dark blue is classification only and light blue is &ldquo;dual use&rdquo;. Hover over a circle to get the model name and the model code used by the <tt>caret</tt> package and refreshing the screen will re-configure the layout. There are a few clusters of analogous models. In all, there are some small tweaks that I should make to the tags but I think they cluster models fairly well. What do you think?</p>
+<p>Orange is regression only, dark blue is classification only and light blue is &ldquo;dual use&rdquo;. Hover over a circle to get the model name and the model code used by the <tt>caret</tt> package and refreshing the screen will re-configure the layout. </p>
 
 	</div>
 	<!-- end #content -->
