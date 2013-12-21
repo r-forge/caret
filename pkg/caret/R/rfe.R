@@ -499,7 +499,7 @@ treebagFuncs <- list(summary = defaultSummary,
                      },
                      rank = function(object, x, y)
                      {
-                       vimp <- varImp(object, scale = FALSE)
+                       vimp <- varImp(object)
                        vimp <- vimp[
                                     order(vimp$Overall, decreasing = TRUE)
                                     ,,drop = FALSE]
