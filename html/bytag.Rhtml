@@ -13,13 +13,14 @@ session <- paste(format(Sys.time(), "%a %b %d %Y"),
                  R.Version()$version.string)
 printModelInfo <- function(x) {
   txt <- paste("<h1>", x$label, "</h1>\n",
-               "<p><code>method = '", x$method_value, "'</code></p>\n",
+               "<p><tt><span class=\"mx arg\">method</span> = <span class=\"mx str\">'", 
+               x$method_value, "'</span></tt></p>\n",
                "<p><b>Type</b>: ", paste(x$type, collapse = ", "), "</p>\n",
                sep = "")
   if(all(x$parameters$parameter == "parameter")) {
     txt <- paste(txt, "<p>No Tuning Parameters</p>\n", sep = "")
     } else {
-      prm <- paste("'<code>", x$parameters$parameter, "</code>' (", x$parameters$label, ")", sep = "")
+      prm <- paste("<code><span class=\"mx arg\">", x$parameters$parameter, "</span></code> (", x$parameters$label, ")", sep = "")
       txt <- paste(txt, 
                    paste("<p><b>Tuning Parameters</b>: ", 
                          paste(prm, collapse = ", "), "</p>\n", sep = ""), sep = "")
@@ -122,6 +123,34 @@ refs <- paste(refs, collapse = "\n", sep = "")
 refs <- paste('  <ul>', refs, '  </ul>', sep = "\n")
 cat(refs)
     end.rcode-->
+    
+<!--begin.rcode table, results='hide', echo=FALSE, message=FALSE
+mods <- getModelInfo()
+
+reformat <- function(x) {
+  if(all(as.character(x$parameters$parameter) == "parameter")) {
+    pList <- "None"
+  } else {
+    pList <- paste(as.character(x$parameters$parameter), 
+          collapse = ", ", sep = "")
+  }
+  data.frame(Model = x$label,
+             Method = "",
+             Type = paste(sort(x$type), collapse = ", ", sep = ""),
+             Packages = paste(x$library, collapse = ", ", sep = ""),
+             Param = pList,
+             stringsAsFactors = FALSE)
+}
+
+modelTable <- lapply(mods, reformat)
+modelTable <- rbind.fill(modelTable)
+modelTable$Type[grepl(",", modelTable$Type)] <- "Dual Use"
+modelTable$Method <- names(mods)
+colnames(modelTable)[2] <- "method Argument Value"
+colnames(modelTable)[5] <- "Tuning Parameters"
+print(gvisTable(modelTable, options = list(width = "800px")),
+      file = "modelList.html")    
+    end.rcode-->    
 <div style="clear: both;">&nbsp;</div>
   </div>
   <!-- end #content -->

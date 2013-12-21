@@ -1,3 +1,37 @@
+/* mirror knitr styles */
+
+.mx.num {
+  color: #AF0F91;
+}
+.mx.str {
+  color: #317ECC;
+}
+.mx.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.mx.opt {
+  color: #000000;
+}
+.mx.std {
+  color: #585858;
+}
+.mx.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.mx.kwb {
+  color: #B05A65;
+}
+.mx.arg {
+  font-family: "courier";
+  color: #55aa55;
+}
+.mx.funCall {
+  font-family: "courier";
+  color: #BC5A65;
+  font-weight: bold;
+}
 
 /*
 Design by Free CSS Templates
@@ -19,11 +53,13 @@ Released for free under a Creative Commons Attribution 2.5 License
 	font-family : verdana, arial;
 	font-weight:bold;
 }
+/*
 pre {
 	font-size: 12px;
 	color:black;
 	line-height:50%;
 }
+*/
 body {
 	margin: 0;
 	padding: 0;
@@ -33,10 +69,10 @@ body {
 	color: #302226;
 }
 code {
-	color: #0000FF;
+	color: #302226;
 }
 strong {
-	color: #800000;
+	color: #FAAC58;
 }
 
 h1, h2, h3 {
@@ -48,19 +84,19 @@ h1, h2, h3 {
 }
 
 h1 {
-	font-size: 2em;
+	font-size: 2.2em;
 	margin-bottom: 20px;
 	margin-top: 20px;
 }
 
 h2 {
-	font-size: 2.8em;
-		margin-bottom: 20px;
+	font-size: 1.8em;
+	margin-bottom: 20px;
 	margin-top: 20px;
 }
 
 h3 {
-	font-size: 1.6em;
+	font-size: 1.4em;
 	margin-bottom: 20px;
 	margin-top: 20px;	
 }
