@@ -48,7 +48,7 @@ preProcess(x, ...)
   \item{\dots}{additional arguments to pass to \code{\link[fastICA]{fastICA}}, such as \code{n.comp}}
 }
 \details{
-The Box-Cox and Yeo-Johnson transformations have been "repurposed" here: they are being used to transform the predictor variables. The Box-Cox transformation was developed for transforming the response variable while another method, the Box-Tidwell transformation, was created to estimate transformations of predictor data. However, the Box-Cox method is simpler, more computationally efficient and is equally effective for estimating power transformations. The Yeo-Johnson transformation is similar to the Box-Cox model but can accommodate predictors with zero and/or negative values (while the predictors values for the Box-Cox transformation must be strictly positive.) The exponential transformation of Manly (1976) can also be used for positive or negative data.
+The Box-Cox, Yeo-Johnson and exponential transformations have been "repurposed" here: they are being used to transform the predictor variables. The Box-Cox transformation was developed for transforming the response variable while another method, the Box-Tidwell transformation, was created to estimate transformations of predictor data. However, the Box-Cox method is simpler, more computationally efficient and is equally effective for estimating power transformations. The Yeo-Johnson transformation is similar to the Box-Cox model but can accommodate predictors with zero and/or negative values (while the predictors values for the Box-Cox transformation must be strictly positive.) The exponential transformation of Manly (1976) can also be used for positive or negative data.
  
 The "range" transformation scales the data to be within [0, 1]. If new samples have values larger or smaller than those in the training set, values will be outside of this range.
 
@@ -78,9 +78,12 @@ The function will throw an error of any variables in \code{x} has less than two 
   \item{median}{a vector of medians (if median imputation was requested)}
 }
 
-\author{ Max Kuhn }
+\author{ Max Kuhn, median imputation by Zachary Mayer }
 
-\references{Kuhn (2008), Building predictive models in R using the caret (\url{http://www.jstatsoft.org/v28/i05/})
+\references{
+\url{http://caret.r-forge.r-project.org/preprocess.html}
+
+Kuhn (2008), Building predictive models in R using the caret (\url{http://www.jstatsoft.org/v28/i05/})
 
 Box, G. E. P. and Cox, D. R. (1964) An analysis of transformations (with discussion). Journal of the Royal Statistical Society B, 26, 211-252.
 
