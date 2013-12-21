@@ -290,11 +290,12 @@ centered and scaled descriptors from the MDRR data before and after
 the spatial sign transformation. The predictors should be centered and
 scaled before applying this transformation.</p>
 
-<!--begin.rcode set1, echo=FALSE,results='hide'
-trellis.par.set(theme1)
+<!--begin.rcode set1
+library(AppliedPredictiveModeling)
+transparentTheme(trans = .4)
     end.rcode-->  
     
-<!--begin.rcode pp_SpatSignBefore, tidy=FALSE 
+<!--begin.rcode pp_SpatSignBefore, tidy=FALSE, fig.height=5, fig.width=5 
 plotSubset <- data.frame(scale(mdrrDescr[, c("nC", "X4v")])) 
 xyplot(nC ~ X4v,
        data = plotSubset,
@@ -305,7 +306,7 @@ xyplot(nC ~ X4v,
 
 <p>After the spatial sign:</p>
 
-<!--begin.rcode pp_SpatSignAfter, tidy=FALSE 
+<!--begin.rcode pp_SpatSignAfter, tidy=FALSE, fig.height=5, fig.width=5 
 transformed <- spatialSign(plotSubset)
 transformed <- as.data.frame(transformed)
 xyplot(nC ~ X4v, 
@@ -355,7 +356,7 @@ This image shows a scatterplot matrix of the class distances for the held-out sa
 </p>
 
   
-<!--begin.rcode pp_splom, tidy=FALSE 
+<!--begin.rcode pp_splom, tidy=FALSE, fig.height=5, fig.width=5 
 xyplot(dist.Active ~ dist.Inactive,
        data = distances, 
        groups = testMDRR, 

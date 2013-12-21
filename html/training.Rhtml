@@ -132,7 +132,11 @@ First, a specific model must be chosen. Currently,
 <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>; see <a href="modelList.html"><tt>train</tt> Model List</a> 
 or <a href="bytag.html"><tt>train</tt> Models By Tag</a> for details. 
 On these pages, there are lists of tuning parameters that can
-potentially be optimized.  The first step in tuning the model (line
+potentially be optimized.  
+<a href="custom_models.html">User-defined models</a> can also be created.
+</p>
+
+<p>The first step in tuning the model (line
 1 in the algorithm above is to choose a set of
 parameters to evaluate. For example, if fitting a Partial Least Squares
 (PLS) model, the number of PLS components to evaluate must be specified. 
@@ -196,7 +200,7 @@ fitControl <- trainControl(## 10-fold CV
                            repeats = 10)
     end.rcode-->
 <p>
-More information about <span class="mx funCall">trainControl</span> is given in the section on "X" below.
+More information about <span class="mx funCall">trainControl</span> is given in  <a href="#custom">a section below</a>.
 </p>
 
 <p>The first two arguments to <span class="mx funCall">train</span> are the predictor and
@@ -268,13 +272,16 @@ tuning/complexity parameters and building the final model.
 
 <p>
 As previously mentioned,<span class="mx funCall">train</span> can pre-process the data in
-various ways prior to model fitting. The <span class="mx funCall">train</span> function
+various ways prior to model fitting. The function
 <span class="mx funCall">preProcess</span> is automatically used. This function can be used
 for centering and scaling, imputation (see details below),
 applying the spatial sign transformation and feature extraction via
 principal component analysis or independent component
-analysis. Options to the <span class="mx funCall">preProcess</span> function can be passed
-via the <span class="mx funCall">trainControl</span> function.  
+analysis. 
+</p>
+<p>
+To specify what pre-processing should occur, the <span class="mx funCall">train</span> function has an argument called <span class="mx arg">preProcess</span>. This argument takes a character string of methods that would normally be passed to the <span class="mx arg">method</span> argument of the <a href="preprocess.html"><span class="mx funCall">preProcess</span> function</a>. Additional options to the <span class="mx funCall">preProcess</span> function can be passed
+via the <span class="mx funCall">trainControl</span> function. 
 </p>
 <p>
 These processing steps would be applied during any predictions
@@ -284,7 +291,7 @@ pre-processing would <b>not</b> be applied to predictions that
 directly use the <code>object$finalModel</code> object.  
 </p>
 <p>
-For imputation, there are two methods currently implemented:
+For imputation, there are three methods currently implemented:
 </p>
 
   <ul>
@@ -301,6 +308,8 @@ For imputation, there are two methods currently implemented:
   sample requires imputation, the values for the other predictors are
   fed through the bagged tree and the prediction is used as the new
   value. This model can have significant computational cost.</li>
+  <li> the median of the predictor's training set values can be used
+  to estimate the missing data.</li>  
   </ul>
 <p>
 If there are missing values in the training set, PCA and ICA models
@@ -311,22 +320,19 @@ only use complete samples.
 <h2>Alternate Tuning Grids</h2>
 <p>
 The tuning parameter grid can be specified by the user. The argument
-<span class="mx arg">tuneGrid</span> can take a data frame with columns for each tuning
-parameter. The column
-names should be the same as the fitting function's arguments with a
-period preceding the name. For the previously mentioned RDA example, the names would be
-<code>.gamma</code> and <code>.lambda</code>. <span class="mx funCall">train</span> will tune the
+<span class="mx arg">tuneGrid</span> can take a data frame with columns for each tuning parameter. The column names should be the same as the fitting function's arguments. For the previously mentioned RDA example, the names would be
+<code>gamma</code> and <code>lambda</code>. <span class="mx funCall">train</span> will tune the
 model over each combination of values in the rows. 
 </p>
 <p>
-We can fix the learning rate and evaluate more than three values of
+For the boosted tree model, we can fix the learning rate and evaluate more than three values of
 <span class="mx arg">n.trees</span>: 
 </p>
 
 <!--begin.rcode train_gbm2,cache=TRUE,tidy=FALSE,results='hide'
-gbmGrid <-  expand.grid(.interaction.depth = c(1, 5, 9), 
-                        .n.trees = (1:30)*50, 
-                        .shrinkage = 0.1)
+gbmGrid <-  expand.grid(interaction.depth = c(1, 5, 9), 
+                        n.trees = (1:30)*50, 
+                        shrinkage = 0.1)
                         
 nrow(gbmGrid)
 
@@ -364,7 +370,6 @@ trellis.par.set(caretTheme())
 plot(gbmFit2)  
     end.rcode-->
     
-    
 <p>Other performance metrics can be shown using the <span class="mx arg">metric</span> option:
 
 
@@ -384,6 +389,14 @@ plot(gbmFit2, metric = "Kappa", plotType = "level",
      scales = list(x = list(rot = 90)))
     end.rcode-->
 
+    
+<p>A <span class="mx funCall">ggplot</span> method can also be used:</p>
+
+<!--begin.rcode train_ggplot1,fig.width=8.5,fig.height=4  
+ggplot(gbmFit2)  
+    end.rcode-->
+
+
 <p>There are also plot functions that show more detailed representations of the 
 resampled estimates. See <code>?xyplot.train</code> for more details.
 </p>
@@ -401,7 +414,8 @@ The function <span class="mx funCall">trainControl</span> generates parameters t
 control how models are created, with possible values: 
 </p>
 <ul>
- <li> <span class="mx arg">method</span>: The resampling method: <tt><!--rinline '"boot"' --></tt>,  <tt><!--rinline '"cv"' --></tt>, <tt><!--rinline '"LOOCV"' --></tt>, <tt><!--rinline '"LGOCV"' --></tt>, <tt><!--rinline '"repeatedcv"' --></tt>, and <tt><!--rinline '"oob"' --></tt>. The
+ <li> <span class="mx arg">method</span>: The resampling method: <tt><!--rinline '"boot"' --></tt>,  <tt><!--rinline '"cv"' --></tt>, <tt><!--rinline '"LOOCV"' --></tt>, <tt><!--rinline '"LGOCV"' --></tt>, <tt><!--rinline '"repeatedcv"' --></tt>, <tt><!--rinline '"timeslice"' --></tt> and <tt><!--rinline '"oob"' --></tt>. 
+ The
   last value, out-of-bag estimates, can only be used by random
   forest, bagged trees, bagged earth, bagged flexible discriminant
   analysis, or conditional tree forest models. GBM models are not
@@ -424,12 +438,13 @@ control how models are created, with possible values:
   called <code>trainingData</code>.  </li>
  <li> <span class="mx arg">p</span>: For leave-group out cross-validation: the training
   percentage  </li>
- <li> <span class="mx arg">classProbs</span>: a logical value determining whether
+  <li>For <span class="mx arg">method</span><tt> = <!--rinline '"timeslice"' --></tt>, <span class="mx funCall">trainControl</span> has options <span class="mx arg">initialWindow</span>, <span class="mx arg">horizon</span> and <span class="mx arg">fixedWindow</span> that govern how <a href="splitting.html">cross-validation can be used for time series data. </a> 
+  <li> <span class="mx arg">classProbs</span>: a logical value determining whether
   class probabilities should be computed for held-out samples
   during resample.  </li>
- <li> <span class="mx arg">index</span>: a list with elements for each resampling
+ <li> <span class="mx arg">index</span> and <span class="mx arg">indexOut</span>: optional lists with elements for each resampling
   iteration. Each list element is the sample rows used for training
-  at that iteration. When these values are not specified,
+  at that iteration or should be held-out. When these values are not specified,
   <span class="mx funCall">train</span> will generate them.  </li>
  <li> <span class="mx arg">summaryFunction</span>: a function to compute alternate
   performance summaries. 
@@ -443,7 +458,9 @@ control how models are created, with possible values:
   the following values: <tt><!--rinline '"all"' --></tt>, <tt><!--rinline '"final"' --></tt> or
   <tt><!--rinline '"none"' --></tt>. This specifies how much of the resampled
   performance measures to save. </li>  
+  <li> <span class="mx arg">allowParallel</span>: a logical that governs whether <span class="mx funCall">train</span> should <a href="parallel.html">use parallel processing (if availible). </a>  </li>
 </ul>
+<p>There are several other options not discussed here.<p/>
 
 <div id="metrics"></div> 
 <h2>Alternate Performance Metrics</h2>
@@ -601,15 +618,8 @@ following arguments:
 printSelected <- function(x)
   {
     tmp <- x$bestTune
-    names(tmp) <- gsub(".", " ", names(tmp), fixed = TRUE)
     tmp <- paste(names(tmp), "=", tmp)
     paste(tmp, collapse = ", ")
-  }
-getTrainPerf <- function(x)
-  {
-    bst <- x$bestTune
-    names(bst) <- substring(names(bst), 2)
-    merge(bst, x$results)
   }
     end.rcode-->   
   
@@ -629,7 +639,8 @@ model based on (<i>x</i>-<i>x</i><sub>best</sub>)/<i>x</i><sub>best</sub>x 100, 
 difference. For example, to select parameter values based on a 2% loss of performance: 
 </p>
 <!--begin.rcode train_tolerance
-whichTwoPct <- tolerance(gbmFit3$results, "ROC", 2, TRUE)  
+whichTwoPct <- tolerance(gbmFit3$results, metric = "ROC", 
+                         tol = 2, maximize = TRUE)  
 cat("best model within 2 pct of best:\n")
 gbmFit3$results[whichTwoPct,1:6]
     end.rcode-->
@@ -638,7 +649,7 @@ gbmFit3$results[whichTwoPct,1:6]
 This indicates that we can get a less complex model with an area under the ROC curve 
 of <!--rinline I(round(gbmFit3$results[whichTwoPct,"ROC"], 3)) --> (compared
 to the "pick the best" value of 
- <!--rinline I(round(getTrainPerf(gbmFit3)$ROC, 3)) -->). 
+ <!--rinline I(round(getTrainPerf(gbmFit3)[1,"TrainROC"], 3)) -->). 
 </p>
 <p>
 The main issue with these functions is related to ordering the models
@@ -682,9 +693,9 @@ different syntax is used.
 <p>For <span class="mx funCall">predict.train</span>, the type options are standardized to be <tt><!--rinline '"class"' --></tt> and <tt><!--rinline '"prob"' --></tt> (the underlying code matches these to the appropriate choices for each model. For example:
 </p>
 <!--begin.rcode train_pred1
-predict(gbmFit3, head(testing))
+predict(gbmFit3, newdata = head(testing))
 
-predict(gbmFit3, head(testing), type = "prob")
+predict(gbmFit3, newdata = head(testing), type = "prob")
     end.rcode-->
 
 <div id="resamp"></div> 
@@ -768,17 +779,8 @@ summary(resamps)
 <p>
 There are several <pkg>lattice</pkg> plot methods that can be used to visualize
 the resampling distributions: density plots, box-whisker plots,
-scatterplot matrices and scatterplots of summary statistics. In the
-latter case, the plot consists of a scatterplot between the two
-models, as shown in the figure below. In the next figure, density plots
-of the data are shown. In this figure,  the <i>R</i><sup>2</sup> distributions
-indicate that M5 rules and MARS appear to be
-similar to one another but different from the two tree-based
-models. However, this pattern is inconsistent with the root
-mean squared error distributions.
+scatterplot matrices and scatterplots of summary statistics. For example:
 </p>
-
-<p>A variety of plots can be created for the resampling results:</p>
 
 <!--begin.rcode train_resample_box,fig.width=9,fig.height=4
 trellis.par.set(theme1)

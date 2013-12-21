@@ -15,8 +15,10 @@ library(pls)
 library(Hmisc)
 library(caTools)
 library(googleVis)
+library(class)
+library(e1071)
 
-setwd("~/Code/caret/html_knit/")
+setwd("~/Code/caret/html/")
 
 startPath <- getwd()
 
