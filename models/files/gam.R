@@ -6,7 +6,7 @@ modelInfo <- list(label = "Generalized Additive Model using Splines",
                                           class = c('logical', 'character'),
                                           label = c('Feature Selection', 'Method')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.select = c(TRUE, FALSE), .method = "GCV.Cp"),
+                    expand.grid(select = c(TRUE, FALSE), method = "GCV.Cp"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
@@ -15,8 +15,8 @@ modelInfo <- list(label = "Generalized Additive Model using Splines",
                     mgcv:::gam(modForm,
                                data = dat,
                                family = dist,
-                               select = param$.select,
-                               method = param$.method,
+                               select = param$select,
+                               method = param$method,
                                ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {

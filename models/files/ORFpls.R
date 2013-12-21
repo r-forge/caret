@@ -28,7 +28,7 @@ modelInfo <- list(label = "Oblique Random Forest",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    data.frame(.mtry = tuneSeq)
+                    data.frame(mtry = tuneSeq)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
                     obliqueRF(as.matrix(x), y, training_method = "pls", ...),

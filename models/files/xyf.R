@@ -6,17 +6,17 @@ modelInfo <- list(label = "Self-Organizing Maps",
                                           class = c(rep("numeric", 3), "character"),
                                           label = c("Row", "Columns", "X Weight", "Topology")),
                   grid = function(x, y, len = NULL) {
-                    out <- expand.grid(.xdim = 1:len, .ydim = 2:(len+1),
-                                       .xweight = seq(.5, .9, length = len))
-                    out$.topo <- "hexagonal"
-                    subset(out, .xdim >= .ydim)
+                    out <- expand.grid(xdim = 1:len, ydim = 2:(len+1),
+                                       xweight = seq(.5, .9, length = len))
+                    out$topo <- "hexagonal"
+                    subset(out, xdim >= ydim)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
                     xyf(as.matrix(x),
                         Y = if(is.factor(y)) classvec2classmat(y) else y,
-                        xweight = param$.xweight,
+                        xweight = param$xweight,
                         contin = !is.factor(y),
-                        grid = somgrid(param$.xdim, param$.ydim, param$.topo),
+                        grid = somgrid(param$xdim, param$ydim, param$topo),
                         ...),
                   predict = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, as.matrix(newdata))$prediction,

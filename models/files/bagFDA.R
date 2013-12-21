@@ -13,16 +13,16 @@ modelInfo <- list(label = "Bagged Flexible Discriminant Analysis",
                     maxTerms <- nrow(mod$fit$dirs) - 1
                     
                     maxTerms <- min(200, floor(maxTerms * .75) + 2)
-                    data.frame(.nprune = unique(floor(seq(2, to = maxTerms, length = len))),
-                               .degree = 1)
+                    data.frame(nprune = unique(floor(seq(2, to = maxTerms, length = len))),
+                               degree = 1)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     bagFDA(.outcome ~ ., 
                            data = dat, 
-                           degree = param$.degree,
-                           nprune = param$.nprune, ...)
+                           degree = param$degree,
+                           nprune = param$nprune, ...)
                   },
                   tags = c("Multivariate Adaptive Regression Splines", "Ensemble Model", 
                            "Implicit Feature Selection", "Bagging"),

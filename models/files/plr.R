@@ -5,13 +5,13 @@ modelInfo <- list(label = "Penalized Logistic Regression",
                   parameters = data.frame(parameter = c('lambda', 'cp'),
                                           class = c('numeric', 'character'),
                                           label = c('L2 Penalty', 'Complexity Parameter')),
-                  grid = function(x, y, len = NULL) expand.grid(.cp = "bic", 
-                                                                .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
+                  grid = function(x, y, len = NULL) expand.grid(cp = "bic", 
+                                                                lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...){
                     y <- ifelse(y == levels(y)[1], 1, 0)
                     plr(x, y,
-                        lambda = param$.lambda,
-                        cp = as.character(param$.cp),
+                        lambda = param$lambda,
+                        cp = as.character(param$cp),
                         ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL)  {

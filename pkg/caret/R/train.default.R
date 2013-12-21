@@ -114,6 +114,8 @@ train.default <- function(x, y,
   
   if(trControl$method != "oob" & is.null(trControl$index)) names(trControl$index) <- prettySeq(trControl$index)
 
+  if(!is.data.frame(x)) x <- as.data.frame(x)
+  
   ## Gather all the pre-processing info. We will need it to pass into the grid creation
   ## code so that there is a concorance between the data used for modeling and grid creation
   if(!is.null(preProcess))
@@ -124,10 +126,8 @@ train.default <- function(x, y,
   
   ## If no default training grid is specified, get one. We have to pass in the formula
   ## and data for some models (rpart, pam, etc - see manual for more details)
-  if(is.null(tuneGrid))
-  {
-    if(!is.null(ppOpt) && length(models$parameters$parameter) > 1 && as.character(models$parameters$parameter) != "parameter")
-    {
+  if(is.null(tuneGrid)) {
+    if(!is.null(ppOpt) && length(models$parameters$parameter) > 1 && as.character(models$parameters$parameter) != "parameter") {
       pp <- list(method = ppOpt$options)
       if("ica" %in% pp$method) pp$n.comp <- ppOpt$ICAcomp
       if("pca" %in% pp$method) pp$thresh <- ppOpt$thresh
@@ -137,15 +137,18 @@ train.default <- function(x, y,
       tuneGrid <- models$grid(predict(ppObj, x), y, tuneLength)
       rm(ppObj, pp)
     } else tuneGrid <- models$grid(x, y, tuneLength)
-  } else {
-    ## Check tuning parameter names
-    tuneNames <- as.character(models$parameters$parameter)
-    tuneNames <- paste(".", sort(tuneNames), sep = "")
-    goodNames <- all.equal(tuneNames, sort(names(tuneGrid)))
-    if(!is.logical(goodNames) || !goodNames)
-      stop(paste("The tuning parameter grid must have columns",
-                 paste(tuneNames, collapse = ", ")))
   }
+  dotNames <- hasDots(tuneGrid, models)
+  if(dotNames) colnames(tuneGrid) <- gsub("^\\.", "", colnames(tuneGrid))
+  ## Check tuning parameter names
+  tuneNames <- as.character(models$parameters$parameter)
+  goodNames <- all.equal(sort(tuneNames), sort(names(tuneGrid)))
+  
+  if(!is.logical(goodNames) || !goodNames) {
+    stop(paste("The tuning parameter grid should have columns",
+               paste(tuneNames, collapse = ", ", sep = "")))
+  }
+  
 
   ##------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -222,7 +225,7 @@ train.default <- function(x, y,
   ##         out <- tmp
   ##
   
-  paramCols <- paste(".", as.character(models$parameters$parameter), sep = "")
+  # paramCols <- paste(".", as.character(models$parameters$parameter), sep = "")
   
   if(is.function(models$loop)){
     trainInfo <- models$loop(tuneGrid)
@@ -312,7 +315,7 @@ train.default <- function(x, y,
       resampleResults <- tmp$resample
     }
   }
-  
+
     ## TODO we used to give resampled results for LOO
   if(!(trControl$method %in% c("LOOCV", "oob")))
     {
@@ -403,21 +406,17 @@ train.default <- function(x, y,
       byResample <- NULL        
     } 
 
-  names(bestTune) <- paste(".", names(bestTune), sep = "")   
+  # names(bestTune) <- paste(".", names(bestTune), sep = "")   
 
   ## Reorder rows of performance
   orderList <- list()
-  for(i in seq(along = paramNames))
-    {
-      orderList[[i]] <- performance[,paramNames[i]]
-    }
+  for(i in seq(along = paramNames)) orderList[[i]] <- performance[,paramNames[i]]
   names(orderList) <- paramNames
   performance <- performance[do.call("order", orderList),]      
 
   if(trControl$verboseIter)
     {
-    bestText <- paste(paste(gsub("^\\.", "",
-                                 names(bestTune)), "=",
+    bestText <- paste(paste(names(bestTune), "=",
                             format(bestTune, digits = 3)),
                       collapse = ", ")
     if(nrow(performance) == 1) bestText <- "final model"
@@ -448,7 +447,7 @@ train.default <- function(x, y,
 
   ## To use predict.train and automatically use the optimal lambda,
   ## we need to save it
-  if(method == "glmnet") finalModel$lambdaOpt <- bestTune$.lambda
+  if(method == "glmnet") finalModel$lambdaOpt <- bestTune$lambda
 
   if(trControl$returnData) { 
     outData <- if(!is.data.frame(x)) as.data.frame(x) else x

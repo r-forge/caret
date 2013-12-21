@@ -28,10 +28,10 @@ modelInfo <- list(label = "Random Forest by Randomization",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    expand.grid(.mtry = tuneSeq, .numRandomCuts = 1:len)
+                    expand.grid(mtry = tuneSeq, numRandomCuts = 1:len)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    extraTrees(x, y, mtry = param$.mtry, numRandomCuts = param$.numRandomCuts, ...),
+                    extraTrees(x, y, mtry = param$mtry, numRandomCuts = param$numRandomCuts, ...),
                   predict = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata),
                   prob = NULL,

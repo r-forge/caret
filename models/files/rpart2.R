@@ -19,11 +19,11 @@ modelInfo <- list(label = "CART",
                         "Truncating the grid to", nrow(initialFit), ".\n\n")
                       tuneSeq <-  as.data.frame(initialFit)
                     } else tuneSeq <-  as.data.frame(initialFit[1:len,])
-                    colnames(tuneSeq) <- ".maxdepth"
+                    colnames(tuneSeq) <- "maxdepth"
                     tuneSeq
                   },
                   loop = function(grid) {
-                    grid <- grid[order(grid$.maxdepth, decreasing = TRUE),, drop = FALSE]
+                    grid <- grid[order(grid$maxdepth, decreasing = TRUE),, drop = FALSE]
                     loop <- grid[1,,drop = FALSE]
                     submodels <- list(grid[-1,,drop = FALSE])
                     list(loop = loop, submodels = submodels)
@@ -32,11 +32,11 @@ modelInfo <- list(label = "CART",
                     theDots <- list(...)
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$maxdepth <- param$.maxdepth
+                      theDots$control$maxdepth <- param$maxdepth
                       theDots$control$xval <- 0 
                       ctl <- theDots$control
                       theDots$control <- NULL    
-                    } else ctl <- rpart.control(maxdepth = param$.maxdepth, xval = 0)  
+                    } else ctl <- rpart.control(maxdepth = param$maxdepth, xval = 0)  
                     
                     ## check to see if weights were passed in (and availible)
                     if(!is.null(wts)) theDots$weights <- wts    
@@ -69,7 +69,7 @@ modelInfo <- list(label = "CART",
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
-                      cpValues <- depth2cp(modelFit$cptable, submodels$.maxdepth)
+                      cpValues <- depth2cp(modelFit$cptable, submodels$maxdepth)
                       for(j in seq(along = cpValues))
                       {
                         prunedFit <- prune.rpart(modelFit, cp = cpValues[j])
@@ -93,7 +93,7 @@ modelInfo <- list(label = "CART",
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
-                      cpValues <- depth2cp(modelFit$cptable, submodels$.maxdepth)
+                      cpValues <- depth2cp(modelFit$cptable, submodels$maxdepth)
                       
                       for(j in seq(along = cpValues))
                       {

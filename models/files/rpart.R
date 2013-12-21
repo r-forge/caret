@@ -14,15 +14,15 @@ modelInfo <- list(label = "CART",
                     
                     if(nrow(initialFit) < len)
                     {
-                      tuneSeq <- data.frame(.cp = seq(min(initialFit[, "CP"]), 
+                      tuneSeq <- data.frame(cp = seq(min(initialFit[, "CP"]), 
                                                       max(initialFit[, "CP"]), 
                                                       length = len))
-                    } else tuneSeq <-  data.frame(.cp = initialFit[1:len,"CP"])
-                    colnames(tuneSeq) <- ".cp"
+                    } else tuneSeq <-  data.frame(cp = initialFit[1:len,"CP"])
+                    colnames(tuneSeq) <- "cp"
                     tuneSeq
                   },
                   loop = function(grid) {
-                    grid <- grid[order(grid$.cp, decreasing = FALSE),, drop = FALSE]
+                    grid <- grid[order(grid$cp, decreasing = FALSE),, drop = FALSE]
                     loop <- grid[1,,drop = FALSE]
                     submodels <- list(grid[-1,,drop = FALSE])
                     list(loop = loop, submodels = submodels)
@@ -31,11 +31,11 @@ modelInfo <- list(label = "CART",
                     theDots <- list(...)
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$cp <- param$.cp
+                      theDots$control$cp <- param$cp
                       theDots$control$xval <- 0 
                       ctl <- theDots$control
                       theDots$control <- NULL
-                    } else ctl <- rpart.control(cp = param$.cp, xval = 0)   
+                    } else ctl <- rpart.control(cp = param$cp, xval = 0)   
                     
                     ## check to see if weights were passed in (and availible)
                     if(!is.null(wts)) theDots$weights <- wts    
@@ -59,10 +59,9 @@ modelInfo <- list(label = "CART",
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
-
-                      for(j in seq(along = submodels$.cp))
+                      for(j in seq(along = submodels$cp))
                       {
-                        prunedFit <- prune.rpart(modelFit, cp = submodels$.cp[j])
+                        prunedFit <- prune.rpart(modelFit, cp = submodels$cp[j])
                         tmp[[j+1]]  <- predict(prunedFit, newdata, type=pType)
                       }
                       out <- tmp
@@ -77,9 +76,9 @@ modelInfo <- list(label = "CART",
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
-                      for(j in seq(along = submodels$.cp))
+                      for(j in seq(along = submodels$cp))
                       {
-                        prunedFit <- prune.rpart(modelFit, cp = submodels$.cp[j])
+                        prunedFit <- prune.rpart(modelFit, cp = submodels$cp[j])
                         tmpProb <- predict(prunedFit, newdata, type = "prob")
                         tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels, drop = FALSE])
                       }

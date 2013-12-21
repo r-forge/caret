@@ -5,19 +5,19 @@ modelInfo <- list(label = "Sparse Partial Least Squares",
                                           class = c('numeric', 'numeric', 'numeric'),
                                           label = c('#Components', 'Threshold', 'Kappa')),
                   grid = function(x, y, len = NULL) {
-                    expand.grid(.K = 1:len, 
-                                .eta = seq(.1, .9, length = len), 
-                                .kappa = .5)
+                    expand.grid(K = 1:len, 
+                                eta = seq(.1, .9, length = len), 
+                                kappa = .5)
                   },
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     if(is.factor(y))
                     {
-                      caret:::splsda(x, y, K = param$.K, eta = param$.eta,
-                                     kappa = param$.kappa, ...)
+                      caret:::splsda(x, y, K = param$K, eta = param$eta,
+                                     kappa = param$kappa, ...)
                     } else {
-                      spls(x, y, K = param$.K, eta = param$.eta,
-                           kappa = param$.kappa, ...)
+                      spls(x, y, K = param$K, eta = param$eta,
+                           kappa = param$kappa, ...)
                     }          
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {

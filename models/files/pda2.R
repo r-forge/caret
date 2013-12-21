@@ -6,7 +6,7 @@ modelInfo <- list(label = "Penalized Discriminant Analysis",
                                           class = c('numeric'),
                                           label = c('Degrees of Freedom')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.df = 2* (0:(len - 1) + 1)),
+                    data.frame(df = 2* (0:(len - 1) + 1)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
@@ -16,13 +16,13 @@ modelInfo <- list(label = "Penalized Discriminant Analysis",
                                  data = dat,
                                  method = gen.ridge,
                                  weights = wts,
-                                 df = param$.df,
+                                 df = param$df,
                                  ...)
                     } else {
                       out <- fda(as.formula(".outcome ~ ."),
                                  data = dat,
                                  method = gen.ridge,
-                                 df = param$.df,
+                                 df = param$df,
                                  ...)
                     }
                     out                   

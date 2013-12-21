@@ -24,38 +24,38 @@ modelInfo <- list(label = "Ridge Regression with Variable Selection",
                           length(tuneSeq), ".\n\n")      
                     }
                   
-                    expand.grid(.lambda = 10 ^ seq(-5, -1, length = len),
-                                .k = tuneSeq)
+                    expand.grid(lambda = 10 ^ seq(-5, -1, length = len),
+                                k = tuneSeq)
                     },
                   loop = function(grid) {   
-                    grid <- grid[order(grid$.lambda, grid$.k, decreasing = TRUE),, drop = FALSE]  
-                    uniqueLambda <- unique(grid$.lambda)
-                    loop <- data.frame(.lambda = uniqueLambda)
-                    loop$.k <- NA
+                    grid <- grid[order(grid$lambda, grid$k, decreasing = TRUE),, drop = FALSE]  
+                    uniqueLambda <- unique(grid$lambda)
+                    loop <- data.frame(lambda = uniqueLambda)
+                    loop$k <- NA
                     
                     submodels <- vector(mode = "list", length = length(uniqueLambda))
                     
                     for(i in seq(along = uniqueLambda))
                     {
-                      subK <- grid[grid$.lambda == uniqueLambda[i],".k"]
-                      loop$.k[loop$.lambda == uniqueLambda[i]] <- subK[which.max(subK)]
-                      submodels[[i]] <- data.frame(.k = subK[-which.max(subK)])
+                      subK <- grid[grid$lambda == uniqueLambda[i],"k"]
+                      loop$k[loop$lambda == uniqueLambda[i]] <- subK[which.max(subK)]
+                      submodels[[i]] <- data.frame(k = subK[-which.max(subK)])
                     }  
                     list(loop = loop, submodels = submodels)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    foba(as.matrix(x), y, lambda = param$.lambda, ...),
+                    foba(as.matrix(x), y, lambda = param$lambda, ...),
                   predict = function(modelFit, newdata, submodels = NULL) {
-                    out <- predict(modelFit, newdata, k = modelFit$tuneValue$.k, type = "fit")$fit
+                    out <- predict(modelFit, newdata, k = modelFit$tuneValue$k, type = "fit")$fit
                     
                     if(!is.null(submodels))
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
                       
-                      for(j in seq(along = submodels$.k))
+                      for(j in seq(along = submodels$k))
                       {
-                        tmp[[j+1]] <- predict(modelFit, newdata, k = submodels$.k[j], type = "fit")$fit
+                        tmp[[j+1]] <- predict(modelFit, newdata, k = submodels$k[j], type = "fit")$fit
                       }
                       out <- tmp
                     }
@@ -64,7 +64,7 @@ modelInfo <- list(label = "Ridge Regression with Variable Selection",
                   predictors = function(x, k = NULL, ...) {
                     if(is.null(k))
                     {
-                      if(!is.null(x$tuneValue)) k <- x$tuneValue$.k[1]  else stop("Please specify k")
+                      if(!is.null(x$tuneValue)) k <- x$tuneValue$k[1]  else stop("Please specify k")
                     }
                     library(foba)
                     names(predict(x, k = k, type = "coefficients")$selected.variables)                    

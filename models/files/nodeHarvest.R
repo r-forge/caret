@@ -6,20 +6,20 @@ modelInfo <- list(label = "Tree-Based Ensembles",
                                           class = c('numeric', 'character'),
                                           label = c('Maximum Interaction Depth', 'Prediction Mode')),
                   grid = function(x, y, len = NULL)
-                    expand.grid(.maxinter = 1:len, .mode = c("mean", "outbag")),
+                    expand.grid(maxinter = 1:len, mode = c("mean", "outbag")),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...){
                     if(is.numeric(y))
                     {
                       out <- nodeHarvest(x, y,
-                                         maxinter = param$.maxinter,
-                                         mode = param$.mode,
+                                         maxinter = param$maxinter,
+                                         mode = param$mode,
                                          ...)
                     } else {
                       if(length(levels(y)) > 2) stop("Two Class problems only")
                       out <- nodeHarvest(x,
                                          ifelse(y == levels(y)[1], 1, 0),
-                                         maxinter = param$.maxinter,
-                                         mode = param$.mode,
+                                         maxinter = param$maxinter,
+                                         mode = param$mode,
                                          ...)                          
                     }
                     out   

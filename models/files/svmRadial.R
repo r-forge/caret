@@ -7,8 +7,8 @@ modelInfo <- list(label = "Support Vector Machines with Radial Basis Function Ke
                   grid = function(x, y, len = NULL) {
                     library(kernlab)
                     sigmas <- sigest(as.matrix(x), na.action = na.omit, scaled = TRUE)  
-                    expand.grid(.sigma = mean(sigmas[-2]),
-                                .C = 2 ^((1:len) - 3))
+                    expand.grid(sigma = mean(as.vector(sigmas[-2])),
+                                C = 2 ^((1:len) - 3))
                   },
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
@@ -16,13 +16,13 @@ modelInfo <- list(label = "Support Vector Machines with Radial Basis Function Ke
                     {
                       out <- ksvm(x = as.matrix(x), y = y,
                                   kernel = rbfdot,
-                                  kpar = list(sigma = param$.sigma),
-                                  C = param$.C, ...)
+                                  kpar = list(sigma = param$sigma),
+                                  C = param$C, ...)
                     } else {
                       out <- ksvm(x = as.matrix(x), y = y,
                                   kernel = rbfdot,
-                                  kpar = list(sigma = param$.sigma),
-                                  C = param$.C,
+                                  kpar = list(sigma = param$sigma),
+                                  C = param$C,
                                   prob.model = classProbs,
                                   ...)
                     }
@@ -73,8 +73,8 @@ modelInfo <- list(label = "Support Vector Machines with Radial Basis Function Ke
                       out <- out[, lev(modelFit), drop = FALSE]
                     } else {
                       warning("kernlab class probability calculations failed; returning NAs")
-                      out <- matrix(NA, nrow(newdata) * length(obsLevels), ncol = length(obsLevels))
-                      colnames(out) <- obsLevels
+                      out <- matrix(NA, nrow(newdata) * length(lev(modelFit)), ncol = length(lev(modelFit)))
+                      colnames(out) <- lev(modelFit)
                     }
                     out
                   },

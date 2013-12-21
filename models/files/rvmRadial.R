@@ -8,12 +8,12 @@ modelInfo <- list(label = "Relevance Vector Machines with Radial Basis Function 
                   grid = function(x, y, len = NULL) {
                     library(kernlab)
                     sigmas <- sigest(as.matrix(x), na.action = na.omit, scaled = TRUE)   
-                    data.frame(.sigma = mean(sigmas[-2]))
+                    data.frame(sigma = mean(as.vector(sigmas[-2])))
                     },
                   fit = function(x, y, wts, param, lev, last,classProbs, ...) {
                     kernlab:::rvm(x = as.matrix(x), y = y,
                                   kernel = rbfdot,
-                                  kpar = list(sigma = param$.sigma),
+                                  kpar = list(sigma = param$sigma),
                                   ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL)

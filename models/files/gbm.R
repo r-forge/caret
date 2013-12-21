@@ -4,19 +4,19 @@ modelInfo <- list(label = "Stochastic Gradient Boosting",
                   parameters = data.frame(parameter = c('n.trees', 'interaction.depth', 'shrinkage'),
                                           class = c("numeric", "numeric", "numeric"),
                                           label = c('# Boosting Iterations', 'Max Tree Depth', 'Shrinkage')),
-                  grid = function(x, y, len = NULL) expand.grid(.interaction.depth = seq(1, len),
-                                                                .n.trees = floor((1:len) * 50),
-                                                                .shrinkage = .1),
+                  grid = function(x, y, len = NULL) expand.grid(interaction.depth = seq(1, len),
+                                                                n.trees = floor((1:len) * 50),
+                                                                shrinkage = .1),
                   loop = function(grid) {     
-                    loop <- ddply(grid, c(".shrinkage", ".interaction.depth"),
-                                  function(x) c(.n.trees = max(x$.n.trees)))
+                    loop <- ddply(grid, c("shrinkage", "interaction.depth"),
+                                  function(x) c(n.trees = max(x$n.trees)))
                     submodels <- vector(mode = "list", length = nrow(loop))
-                    for(i in seq(along = loop$.n.trees))
+                    for(i in seq(along = loop$n.trees))
                     {
-                      index <- which(grid$.interaction.depth == loop$.interaction.depth[i] & 
-                                       grid$.shrinkage == loop$.shrinkage[i])
-                      trees <- grid[index, ".n.trees"] 
-                      submodels[[i]] <- data.frame(.n.trees = trees[trees != loop$.n.trees[i]])
+                      index <- which(grid$interaction.depth == loop$interaction.depth[i] & 
+                                       grid$shrinkage == loop$shrinkage[i])
+                      trees <- grid[index, "n.trees"] 
+                      submodels[[i]] <- data.frame(n.trees = trees[trees != loop$n.trees[i]])
                     }    
                     list(loop = loop, submodels = submodels)
                   },
@@ -43,9 +43,9 @@ modelInfo <- list(label = "Stochastic Gradient Boosting",
                     
                     modArgs <- list(x = x,
                                     y = y,
-                                    interaction.depth = param$.interaction.depth,
-                                    n.trees = param$.n.trees,
-                                    shrinkage = param$.shrinkage, 
+                                    interaction.depth = param$interaction.depth,
+                                    n.trees = param$n.trees,
+                                    shrinkage = param$shrinkage, 
                                     distribution = modDist)
                     
                     if(length(theDots) > 0) modArgs <- c(modArgs, theDots)
@@ -54,7 +54,7 @@ modelInfo <- list(label = "Stochastic Gradient Boosting",
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata, type = "response",
-                                   n.trees = modelFit$tuneValue$.n.trees)
+                                   n.trees = modelFit$tuneValue$n.trees)
                     out[is.nan(out)] <- NA
                     
                     out <- switch(modelFit$distribution$name,
@@ -76,7 +76,7 @@ modelInfo <- list(label = "Stochastic Gradient Boosting",
                     
                     if(!is.null(submodels))
                     {
-                      tmp <- predict(modelFit, newdata, type = "response", n.trees = submodels$.n.trees)
+                      tmp <- predict(modelFit, newdata, type = "response", n.trees = submodels$n.trees)
                       out <- switch(modelFit$distribution$name,
                                     multinomial = {
                                       ## The output is a 3D array that is
@@ -106,7 +106,7 @@ modelInfo <- list(label = "Stochastic Gradient Boosting",
                   },
                   prob = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata, type = "response",
-                                   n.trees = modelFit$tuneValue$.n.trees)
+                                   n.trees = modelFit$tuneValue$n.trees)
                     
                     out[is.nan(out)] <- NA
                     
@@ -129,7 +129,7 @@ modelInfo <- list(label = "Stochastic Gradient Boosting",
                     
                     if(!is.null(submodels))
                     {
-                      tmp <- predict(modelFit, newdata, type = "response", n.trees = submodels$.n.trees)
+                      tmp <- predict(modelFit, newdata, type = "response", n.trees = submodels$n.trees)
                       tmp <- switch(modelFit$distribution$name,
                                     multinomial = {
                                       ## The output is a 3D array that is
@@ -151,11 +151,11 @@ modelInfo <- list(label = "Stochastic Gradient Boosting",
                     out
                   },
                   predictors = function(x, ...) {
-                    vi <- relative.influence(x, n.trees = x$tuneValue$.n.trees)
+                    vi <- relative.influence(x, n.trees = x$tuneValue$n.trees)
                     names(vi)[vi > 0]
                   },
                   varImp = function(object, numTrees = NULL, ...) {
-                    if(is.null(numTrees)) numTrees <- object$tuneValue$.n.trees
+                    if(is.null(numTrees)) numTrees <- object$tuneValue$n.trees
                     varImp <- relative.influence(object, n.trees = numTrees)
                     out <- data.frame(varImp)
                     colnames(out) <- "Overall"

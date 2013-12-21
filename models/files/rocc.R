@@ -28,11 +28,11 @@ modelInfo <- list(label = "ROC-Based Classifier",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    data.frame(.xgenes = tuneSeq)
+                    data.frame(xgenes = tuneSeq)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     newY <- factor(ifelse(y == levels(y)[1], 1, 0), levels = c("0", "1"))
-                    tr.rocc(g = t(as.matrix(x)), out = newY, xgenes = param$.xgenes)
+                    tr.rocc(g = t(as.matrix(x)), out = newY, xgenes = param$xgenes)
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     tmp <- p.rocc(modelFit, t(as.matrix(newdata)))

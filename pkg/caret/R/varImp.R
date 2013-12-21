@@ -235,7 +235,7 @@ varImp.pamrtrained <- function(object, threshold, data, ...){
   for(i in seq(along = code$library))
     do.call("require", list(package = code$library[i]))
   code$varImp(object, 
-              threshold = object$bestTune$.threshold, 
+              threshold = object$bestTune$threshold, 
               data = object$finalModel$xData, 
               ...)
 }

@@ -5,7 +5,7 @@ modelInfo <- list(label = "Multivariate Adaptive Regression Splines",
                                           class = c("numeric"),
                                           label = c('Product Degree')),
                   grid = function(x, y, len = NULL) {
-                    data.frame(.degree = 1)
+                    data.frame(degree = 1)
                   },
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
@@ -13,13 +13,13 @@ modelInfo <- list(label = "Multivariate Adaptive Regression Splines",
                     theDots$keepxy <- TRUE 
                     
                     modelArgs <- c(list(x = x, y = y,
-                                        degree = param$.degree),
+                                        degree = param$degree),
                                    theDots)
                     if(is.factor(y)) modelArgs$glm <- list(family=binomial)
                     
                     tmp <- do.call("earth", modelArgs)
                     
-                    tmp$call["degree"] <-  param$.degree
+                    tmp$call["degree"] <-  param$degree
                     tmp 
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {

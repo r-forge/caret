@@ -1,3 +1,12 @@
+hasDots <- function(grid, info) {
+  mnames <- sort(as.character(info$parameters$parameter))
+  mnames2 <- paste(".", mnames, sep = "")
+  gnames <- sort(colnames(grid))
+  out <- all.equal(mnames2, gnames)
+  if(class(out)[1] != "logical") out <- FALSE
+  out
+}
+
 model2method <- function(x)
 {
   ## There are some disconnecs between the object class and the

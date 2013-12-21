@@ -5,12 +5,12 @@ modelInfo <- list(label = "Cubist",
                     ## of `committees`. We don't need `neighbors` until `predit.cubist` 
                     ## is used.
                     
-                    grid <- grid[order(-grid$.committees, grid$.neighbors, decreasing = TRUE),, drop = FALSE]
+                    grid <- grid[order(-grid$committees, grid$neighbors, decreasing = TRUE),, drop = FALSE]
                     
-                    uniqueCom <- unique(grid$.committees)
+                    uniqueCom <- unique(grid$committees)
                     
-                    loop <- data.frame(.committees = uniqueCom)
-                    loop$.neighbors <- NA
+                    loop <- data.frame(committees = uniqueCom)
+                    loop$neighbors <- NA
                     
                     submodels <- vector(mode = "list", length = length(uniqueCom))
                     ## For each value of committees, find the largest 
@@ -19,9 +19,9 @@ modelInfo <- list(label = "Cubist",
                     ## `submodels`.
                     for(i in seq(along = uniqueCom))
                     {
-                      subK <- grid[grid$.committees == uniqueCom[i],".neighbors"]
-                      loop$.neighbors[loop$.committees == uniqueCom[i]] <- subK[which.max(subK)]
-                      submodels[[i]] <- data.frame(.neighbors = subK[-which.max(subK)])
+                      subK <- grid[grid$committees == uniqueCom[i],"neighbors"]
+                      loop$neighbors[loop$committees == uniqueCom[i]] <- subK[which.max(subK)]
+                      submodels[[i]] <- data.frame(neighbors = subK[-which.max(subK)])
                     }    
                     list(loop = loop, submodels = submodels)
                   },
@@ -29,22 +29,22 @@ modelInfo <- list(label = "Cubist",
                   parameters = data.frame(parameter = c('committees', 'neighbors'),
                                           class = rep('numeric', 2),
                                           label = c('#Committees', '#Instances')),
-                  grid = function(x, y, len = NULL) expand.grid(.neighbors = c(0, 5, 9),
-                                                                .committees = c(1, 10, 20)),
+                  grid = function(x, y, len = NULL) expand.grid(neighbors = c(0, 5, 9),
+                                                                committees = c(1, 10, 20)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
-                    out <- cubist(x, y, committees =  param$.committees, ...)
-                    if(last) out$tuneValue$.neighbors <- param$.neighbors
+                    out <- cubist(x, y, committees =  param$committees, ...)
+                    if(last) out$tuneValue$neighbors <- param$neighbors
                     out
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {
-                    out <- predict(modelFit, newdata, neighbors = modelFit$tuneValue$.neighbors)
+                    out <- predict(modelFit, newdata, neighbors = modelFit$tuneValue$neighbors)
                     if(!is.null(submodels))
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
                       
-                      for(j in seq(along = submodels$.neighbors)) 
-                        tmp[[j+1]] <- predict(modelFit, newdata, neighbors = submodels$.neighbors[j])
+                      for(j in seq(along = submodels$neighbors)) 
+                        tmp[[j+1]] <- predict(modelFit, newdata, neighbors = submodels$neighbors[j])
                       
                       out <- tmp
                     }

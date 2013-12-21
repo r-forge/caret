@@ -14,27 +14,27 @@ modelInfo <- list(label = "Cost-Sensitive CART",
                     
                     if(nrow(initialFit) < len)
                     {
-                      tuneSeq <- expand.grid(.cp = seq(min(initialFit[, "CP"]), 
+                      tuneSeq <- expand.grid(cp = seq(min(initialFit[, "CP"]), 
                                                       max(initialFit[, "CP"]), 
                                                       length = len),
-                                             .Cost = 1:len)
-                    } else tuneSeq <-  expand.grid(.cp = initialFit[1:len,"CP"], .Cost = 1:len)
-                    colnames(tuneSeq)[1] <- ".cp"
+                                             Cost = 1:len)
+                    } else tuneSeq <-  expand.grid(cp = initialFit[1:len,"CP"], Cost = 1:len)
+                    colnames(tuneSeq)[1] <- "cp"
                     tuneSeq
                   },
                   loop = function(grid) {
-                    grid <- grid[order(grid$.Cost, grid$.cp, decreasing = TRUE),, drop = FALSE]
-                    uniqueCost <- unique(grid$.Cost)            
-                    loop <- data.frame(.Cost = uniqueCost)
-                    loop$.cp <- NA
+                    grid <- grid[order(grid$Cost, grid$cp, decreasing = TRUE),, drop = FALSE]
+                    uniqueCost <- unique(grid$Cost)            
+                    loop <- data.frame(Cost = uniqueCost)
+                    loop$cp <- NA
                     
                     submodels <- vector(mode = "list", length = length(uniqueCost))
                     
                     for(i in seq(along = uniqueCost))
                     {
-                      subCP <- grid[grid$.Cost == uniqueCost[i],".cp"]
-                      loop$.cp[loop$.Cost == uniqueCost[i]] <- subCP[which.min(subCP)]
-                      submodels[[i]] <- data.frame(.cp = subCP[-which.max(subCP)])
+                      subCP <- grid[grid$Cost == uniqueCost[i],"cp"]
+                      loop$cp[loop$Cost == uniqueCost[i]] <- subCP[which.min(subCP)]
+                      submodels[[i]] <- data.frame(cp = subCP[-which.max(subCP)])
                     }  
                     list(loop = loop, submodels = submodels)
                   },
@@ -42,13 +42,13 @@ modelInfo <- list(label = "Cost-Sensitive CART",
                     theDots <- list(...)
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$cp <- param$.cp
+                      theDots$control$cp <- param$cp
                       theDots$control$xval <- 0 
                       ctl <- theDots$control
                       theDots$control <- NULL
-                    } else ctl <- rpart.control(cp = param$.cp, xval = 0)   
+                    } else ctl <- rpart.control(cp = param$cp, xval = 0)   
                     
-                    lmat <-matrix(c(0, 1, param$.Cost, 0), ncol = 2)
+                    lmat <-matrix(c(0, 1, param$Cost, 0), ncol = 2)
                     rownames(lmat) <- colnames(lmat) <- levels(y)
                     if(any(names(theDots) == "parms"))
                     {
@@ -78,10 +78,9 @@ modelInfo <- list(label = "Cost-Sensitive CART",
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
-
-                      for(j in seq(along = submodels$.cp))
+                      for(j in seq(along = submodels$cp))
                       {
-                        prunedFit <- prune.rpart(modelFit, cp = submodels$.cp[j])
+                        prunedFit <- prune.rpart(modelFit, cp = submodels$cp[j])
                         tmp[[j+1]]  <- predict(prunedFit, newdata, type=pType)
                       }
                       out <- tmp
@@ -96,9 +95,9 @@ modelInfo <- list(label = "Cost-Sensitive CART",
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
-                      for(j in seq(along = submodels$.cp))
+                      for(j in seq(along = submodels$cp))
                       {
-                        prunedFit <- prune.rpart(modelFit, cp = submodels$.cp[j])
+                        prunedFit <- prune.rpart(modelFit, cp = submodels$cp[j])
                         tmpProb <- predict(prunedFit, newdata, type = "prob")
                         tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels, drop = FALSE])
                       }

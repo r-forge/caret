@@ -4,24 +4,24 @@ modelInfo <- list(label = "Support Vector Machines with Polynomial Kernel",
                   parameters = data.frame(parameter = c('degree', 'scale', 'C'),
                                           class = c("numeric", "numeric", "numeric"),
                                           label = c('Polynomial Degree', 'Cost','Scale')),
-                  grid = function(x, y, len = NULL) expand.grid(.degree = seq(1, min(len, 3)),      
-                                                                .scale = 10 ^((1:len) - 4),
-                                                                .C = 2 ^((1:len) - 3)),
+                  grid = function(x, y, len = NULL) expand.grid(degree = seq(1, min(len, 3)),      
+                                                                scale = 10 ^((1:len) - 4),
+                                                                C = 2 ^((1:len) - 3)),
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     if(any(names(list(...)) == "prob.model") | is.numeric(y))
                     {
                       out <- ksvm(x = as.matrix(x), y = y,
-                                  kernel = polydot(degree = param$.degree,
-                                                   scale = param$.scale,
+                                  kernel = polydot(degree = param$degree,
+                                                   scale = param$scale,
                                                    offset = 1),
-                                  C = param$.C, ...)
+                                  C = param$C, ...)
                     } else {
                       out <- ksvm(x = as.matrix(x), y = y,
-                                  kernel = polydot(degree = param$.degree,
-                                                   scale = param$.scale,
+                                  kernel = polydot(degree = param$degree,
+                                                   scale = param$scale,
                                                    offset = 1),
-                                  C = param$.C,
+                                  C = param$C,
                                   prob.model = classProbs,
                                   ...)
                     }
@@ -72,8 +72,8 @@ modelInfo <- list(label = "Support Vector Machines with Polynomial Kernel",
                       out <- out[, lev(modelFit), drop = FALSE]
                     } else {
                       warning("kernlab class probability calculations failed; returning NAs")
-                      out <- matrix(NA, nrow(newdata) * length(obsLevels), ncol = length(obsLevels))
-                      colnames(out) <- obsLevels
+                      out <- matrix(NA, nrow(newdata) * length(lev(modelFit)), ncol = length(lev(modelFit)))
+                      colnames(out) <- lev(modelFit)
                     }
                     out
                   },
@@ -84,7 +84,7 @@ modelInfo <- list(label = "Support Vector Machines with Polynomial Kernel",
                     } else {
                       out <- colnames(attr(x, "xmatrix"))
                     }
-                    if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+                    if(is.null(out)) out <- names(attr(x, "scaling")$xscale$`scaled:center`)
                     if(is.null(out)) out <-NA
                     out
                   },

@@ -4,9 +4,9 @@ modelInfo <- list(label = "Linear Regression with Stepwise Selection",
                   parameters = data.frame(parameter = 'nvmax',
                                           class = "numeric",
                                           label = 'Maximum Number of Predictors'),
-                  grid = function(x, y, len = NULL) data.frame(.nvmax = 2:(len+1)),
+                  grid = function(x, y, len = NULL) data.frame(nvmax = 2:(len+1)),
                   loop = function(grid) {   
-                    grid <- grid[order(grid$.nvmax, decreasing = TRUE),, drop = FALSE]
+                    grid <- grid[order(grid$nvmax, decreasing = TRUE),, drop = FALSE]
                     loop <- grid[1,,drop = FALSE]
                     submodels <- list(grid[-1,,drop = FALSE])
                     list(loop = loop, submodels = submodels)
@@ -19,7 +19,7 @@ modelInfo <- list(label = "Linear Regression with Stepwise Selection",
                   
                     regsubsets(x, y,
                                weights = if(!is.null(wts)) wts else rep(1, length(y)),
-                               nbest = 1, nvmax = param$.nvmax, method = "seqrep", ...)
+                               nbest = 1, nvmax = param$nvmax, method = "seqrep", ...)
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     foo <- function(b, x) x[,names(b),drop = FALSE] %*% b
@@ -37,16 +37,15 @@ modelInfo <- list(label = "Linear Regression with Stepwise Selection",
                       numTerms <- unlist(lapply(betas, length))
                       if(any(names(betas[[length(betas)]]) == "(Intercept)")) numTerms <- numTerms - 1
                       ## Need to find the elements of betas that 
-                      ## correspond to the values of submodels$.nvmax
+                      ## correspond to the values of submodels$nvmax
                       
-                      keepers <- which(numTerms %in% submodels$.nvmax)
-                      if(length(keepers) != length(submodels$.nvmax))
-                        stop("Some values of '.nvmax' are not in the model sequence.")
+                      keepers <- which(numTerms %in% submodels$nvmax)
+                      if(length(keepers) != length(submodels$nvmax))
+                        stop("Some values of 'nvmax' are not in the model sequence.")
                       
                       ## The grid code sorted from largest to smallest, so 
                       ## to match them, reverse the order
                       keepers <- rev(keepers)
-
                       preds <- lapply(betas[keepers], foo, x= newdata)
                       preds <- do.call("cbind", preds)
                       

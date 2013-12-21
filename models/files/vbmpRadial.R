@@ -5,15 +5,15 @@ modelInfo <- list(label = "Variational Bayesian Multinomial Probit Regression",
                   parameters = data.frame(parameter = c('estimateTheta'),
                                           class = c('character'),
                                           label = c('Theta Estimated')),
-                  grid = function(x, y, len = NULL) data.frame(.estimateTheta = "yes"),
+                  grid = function(x, y, len = NULL) data.frame(estimateTheta = "yes"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$bThetaEstimate <- ifelse(param$.estimateTheta == "Yes", TRUE, FALSE)
+                      theDots$control$bThetaEstimate <- ifelse(param$estimateTheta == "Yes", TRUE, FALSE)
                       ctl <- theDots$control
                       theDots$control <- NULL
-                    } else ctl <- list(bThetaEstimate = ifelse(param$.estimateTheta == "Yes", TRUE, FALSE))                        
+                    } else ctl <- list(bThetaEstimate = ifelse(param$estimateTheta == "Yes", TRUE, FALSE))                        
                     if(any(names(theDots) == "theta"))
                     {
                       theta <- theDots$theta

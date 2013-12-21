@@ -6,9 +6,9 @@ modelInfo <- list(label = "Naive Bayes",
                                           class = c('numeric', 'logical'),
                                           label = c('Laplace Correction', 'Distribution Type')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.usekernel = c(TRUE, FALSE), .fL = 0),
+                    data.frame(usekernel = c(TRUE, FALSE), fL = 0),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    NaiveBayes(x, y, usekernel= param$.usekernel, fL = param$.fL, ...),
+                    NaiveBayes(x, y, usekernel= param$usekernel, fL = param$fL, ...),
                   predict = function(modelFit, newdata, submodels = NULL) {
                     if(is.vector(newdata)) newdata <- as.data.frame(newdata)
                     predict(modelFit , newdata)$class

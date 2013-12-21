@@ -16,21 +16,20 @@ modelInfo <- list(label = "Conditional Inference Random Forest",
                           "unique complexity parameters in default grid.",
                           "Truncating the grid to", length(tuneSeq), ".\n\n")      
                     }
-                    data.frame(.mtry = tuneSeq)
+                    data.frame(mtry = tuneSeq)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
-
                     theDots <- list(...)
                     
                     if(any(names(theDots) == "controls"))
                     {
-                      theDots$controls@gtctrl@mtry <- as.integer(param$.mtry) 
+                      theDots$controls@gtctrl@mtry <- as.integer(param$mtry) 
                       ctl <- theDots$controls
                       theDots$controls <- NULL
                       
-                    } else ctl <- cforest_control(mtry = param$.mtry)
+                    } else ctl <- cforest_control(mtry = param$mtry)
                     
                     ## pass in any model weights
                     if(!is.null(wts)) theDots$weights <- wts

@@ -5,24 +5,24 @@ modelInfo <- list(label = "Boosted Classification Trees",
                   parameters = data.frame(parameter = c('iter', 'maxdepth', 'nu'),
                                           class = rep("numeric", 3),
                                           label = c('#Trees', 'Max Tree Depth', 'Learning Rate')),
-                  grid = function(x, y, len = NULL) expand.grid(.iter = floor((1:len) * 50),
-                                                                .maxdepth = seq(1, len),         
-                                                                .nu = .1),
+                  grid = function(x, y, len = NULL) expand.grid(iter = floor((1:len) * 50),
+                                                                maxdepth = seq(1, len),         
+                                                                nu = .1),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$maxdepth <- param$.maxdepth 
+                      theDots$control$maxdepth <- param$maxdepth 
                       ctl <- theDots$control
                       theDots$control <- NULL
                       
-                    } else ctl <- rpart.control(maxdepth = param$.maxdepth) 
+                    } else ctl <- rpart.control(maxdepth = param$maxdepth) 
                     
                     modelArgs <- c(list(x = x,
                                         y = y,
-                                        iter = param$.iter,
-                                        nu = param$.nu,              
+                                        iter = param$iter,
+                                        nu = param$nu,              
                                         control = ctl),
                                    theDots)
                     

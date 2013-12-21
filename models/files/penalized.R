@@ -5,14 +5,14 @@ modelInfo <- list(label = "Penalized Linear Regression",
                                           class = c('numeric', 'numeric'),
                                           label = c('L1 Penalty', 'L2 Penalty')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.lambda1 = 2^((1:len) -1),
-                                .lambda2 = 2^((1:len) -1)),
+                    expand.grid(lambda1 = 2^((1:len) -1),
+                                lambda2 = 2^((1:len) -1)),
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     penalized(y, x,
                               model = "linear",
-                              lambda1 = param$.lambda1,
-                              lambda2 = param$.lambda2,
+                              lambda1 = param$lambda1,
+                              lambda2 = param$lambda2,
                               ...) 
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {

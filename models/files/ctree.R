@@ -6,33 +6,27 @@ modelInfo <- list(label = "Conditional Inference Tree",
                                           class = 'numeric',
                                           label = '1 - P-Value Threshold'),
                   grid = function(x, y, len = NULL) {
-                    data.frame(.mincriterion = seq(from = .99, to = 0.01, length = len))
+                    data.frame(mincriterion = seq(from = .99, to = 0.01, length = len))
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
-
                     theDots <- list(...)
-
                     if(any(names(theDots) == "controls"))
                       {
-                        theDots$controls@gtctrl@mincriterion <- param$.mincriterion
+                        theDots$controls@gtctrl@mincriterion <- param$mincriterion
                         ctl <- theDots$controls
                         theDots$controls <- NULL
-
                       } else ctl <- do.call(getFromNamespace("ctree_control", "party"), 
-                                            list(mincriterion = param$.mincriterion))
-
+                                            list(mincriterion = param$mincriterion))
                     ## pass in any model weights
                     if(!is.null(wts)) theDots$weights <- wts
-
                     modelArgs <- c(
                                    list(
                                         formula = as.formula(".outcome ~ ."),
                                         data = dat,
                                         controls = ctl),
                                    theDots)
-
                     out <- do.call(getFromNamespace("ctree", "party"), modelArgs)
                     out
                   },

@@ -6,7 +6,7 @@ modelInfo <- list(label = "Maximum Uncertainty Linear Discriminant Analysis",
                                           class = c("character"),
                                           label = c('parameter')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.parameter = "none"),
+                    data.frame(parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
                     Mlda(x, y, q = param$.q, maxq = param$.q, ...),
                   predict = function(modelFit, newdata, submodels = NULL) {

@@ -4,18 +4,18 @@ modelInfo <- list(label = "Support Vector Machines with Linear Kernel",
                   parameters = data.frame(parameter = c('C'),
                                           class = c("numeric"),
                                           label = c("Cost")),
-                  grid = function(x, y, len = NULL) data.frame(.C = 1),
+                  grid = function(x, y, len = NULL) data.frame(C = 1),
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     if(any(names(list(...)) == "prob.model") | is.numeric(y))
                     {
                       out <- ksvm(x = as.matrix(x), y = y,
                                   kernel = vanilladot(),
-                                  C = param$.C, ...)
+                                  C = param$C, ...)
                     } else {
                       out <- ksvm(x = as.matrix(x), y = y,
                                   kernel = vanilladot(),
-                                  C = param$.C,
+                                  C = param$C,
                                   prob.model = classProbs,
                                   ...)
                     }
@@ -66,8 +66,8 @@ modelInfo <- list(label = "Support Vector Machines with Linear Kernel",
                       out <- out[, lev(modelFit), drop = FALSE]
                     } else {
                       warning("kernlab class probability calculations failed; returning NAs")
-                      out <- matrix(NA, nrow(newdata) * length(obsLevels), ncol = length(obsLevels))
-                      colnames(out) <- obsLevels
+                      out <- matrix(NA, nrow(newdata) * length(lev(modelFit)), ncol = length(lev(modelFit)))
+                      colnames(out) <- lev(modelFit)
                     }
                     out
                   },

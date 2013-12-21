@@ -5,7 +5,7 @@ modelInfo <- list(label = "Generalized Linear Model with Stepwise Feature Select
                   parameters = data.frame(parameter = "parameter",
                                           class = "character",
                                           label = "parameter"),
-                  grid = function(x, y, len = NULL) data.frame(.parameter = "none"),
+                  grid = function(x, y, len = NULL) data.frame(parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
@@ -61,4 +61,3 @@ modelInfo <- list(label = "Generalized Linear Model with Stepwise Feature Select
                   tags = c("Generalized Linear Model", "Feature Selection Wrapper", "Linear Classifier",
                            "Implicit Feature Selection"),
                   sort = function(x) x)
-

@@ -5,9 +5,9 @@ modelInfo <- list(label = "The lasso",
                                           class = "numeric",
                                           label = 'Fraction of Full Solution'),
                   grid = function(x, y, len = NULL)
-                    expand.grid(.fraction = seq(.1, .9, length = len)),
+                    expand.grid(fraction = seq(.1, .9, length = len)),
                   loop = function(grid) {   
-                    grid <- grid[order(grid$.fraction, decreasing = TRUE),, drop = FALSE]
+                    grid <- grid[order(grid$fraction, decreasing = TRUE),, drop = FALSE]
                     loop <- grid[1,,drop = FALSE]
                     submodels <- list(grid[-1,,drop = FALSE])     
                     list(loop = loop, submodels = submodels)
@@ -17,7 +17,7 @@ modelInfo <- list(label = "The lasso",
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, 
                                    newdata, 
-                                   s = modelFit$tuneValue$.fraction, 
+                                   s = modelFit$tuneValue$fraction, 
                                    mode = "fraction")$fit
                     
                     if(!is.null(submodels))
@@ -30,13 +30,13 @@ modelInfo <- list(label = "The lasso",
                             as.data.frame(
                               predict(modelFit,
                                       newx = as.matrix(newdata),
-                                      s = submodels$.fraction,
+                                      s = submodels$fraction,
                                       mode = "fraction")$fit)))
                         
                       } else {
                         tmp <- predict(modelFit,
                                        newx = as.matrix(newdata),
-                                       s = submodels$.fraction,
+                                       s = submodels$fraction,
                                        mode = "fraction")$fit
                         out <- c(list(if(is.matrix(out)) out[,1]  else out),  list(tmp))
                       }
@@ -48,7 +48,7 @@ modelInfo <- list(label = "The lasso",
                     {
                       if(!is.null(x$tuneValue))
                       {
-                        s <- x$tuneValue$.fraction
+                        s <- x$tuneValue$fraction
                       } else stop("must supply a vaue of s")
                       out <- predict(x, s = s,
                                      type = "coefficients",

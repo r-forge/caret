@@ -5,14 +5,14 @@ modelInfo <- list(label = "Gaussian Process with Polynomial Kernel",
                                           class = c("numeric", "numeric"),
                                           label = c('Polynomial Degree', 'Scale')),
                   grid = function(x, y, len = NULL) {
-                    expand.grid(.degree = seq(1, min(len, 3)),      
-                                .scale = 10 ^((1:len) - 4))
+                    expand.grid(degree = seq(1, min(len, 3)),      
+                                scale = 10 ^((1:len) - 4))
                   },
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     gausspr(x = as.matrix(x), y = y,
-                            kernel = polydot(degree = param$.degree,
-                                             scale = param$.scale,
+                            kernel = polydot(degree = param$degree,
+                                             scale = param$scale,
                                              offset = 1), ...)         
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {  
@@ -30,7 +30,7 @@ modelInfo <- list(label = "Gaussian Process with Polynomial Kernel",
                     } else {
                       out <- colnames(attr(x, "xmatrix"))
                     }
-                    if(is.null(out)) out <- names(attr(x, "scaling")$x.scale$`scaled:center`)
+                    if(is.null(out)) out <- names(attr(x, "scaling")$xscale$`scaled:center`)
                     if(is.null(out)) out <-NA
                     out
                   },

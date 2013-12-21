@@ -29,14 +29,14 @@ modelInfo <- list(label = "Regularized Random Forest",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    expand.grid(.mtry = tuneSeq,
-                                .coefReg = seq(0.01, 1, length = len),
-                                .coefImp = seq(0, 1, length = len))
+                    expand.grid(mtry = tuneSeq,
+                                coefReg = seq(0.01, 1, length = len),
+                                coefImp = seq(0, 1, length = len))
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     theDots$importance <- TRUE
-                    args <- list(x = x, y = y, mtry = param$.mtry)
+                    args <- list(x = x, y = y, mtry = param$mtry)
                     args <- c(args, theDots)                       
                     firstFit <- do.call("randomForest", args)
                     firstImp <- randomForest:::importance(firstFit)
@@ -44,9 +44,9 @@ modelInfo <- list(label = "Regularized Random Forest",
                     {
                       firstImp <- firstImp[,"MeanDecreaseGini"]/max(firstImp[,"MeanDecreaseGini"])
                     } else firstImp <- firstImp[,"%IncMSE"]/max(firstImp[,"%IncMSE"])
-                    firstImp <- ((1 - param$.coefImp) * param$.coefReg) + (param$.coefImp * firstImp)
+                    firstImp <- ((1 - param$coefImp) * param$coefReg) + (param$coefImp * firstImp)
                     
-                    RRF(x, y, mtry = param$.mtry, coefReg = firstImp, ...)
+                    RRF(x, y, mtry = param$mtry, coefReg = firstImp, ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),

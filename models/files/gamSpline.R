@@ -6,14 +6,13 @@ modelInfo <- list(label = "Generalized Additive Model using Splines",
                                           class = c('numeric'),
                                           label = c('Degrees of Freedom')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.df = seq(1, 3, length = len)),
+                    expand.grid(df = seq(1, 3, length = len)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
-
                     gam:::gam(caret:::smootherFormula(x,
                                               smoother = "s",
-                                              df = param$.df),
+                                              df = param$df),
                               data = dat,
                               family =  if(is.factor(y)) binomial() else  gaussian(),
                               ...)
