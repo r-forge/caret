@@ -61,7 +61,7 @@ parameters, this plot is created inside conditioning panels/facets.
 library(klaR)
 rdaFit <- train(Species ~ .,
                 data = iris, 
-                "rda", 
+                method = "rda", 
                 control = trainControl(method = "cv"))
 plot(rdaFit)
 plot(rdaFit, plotType = "level")

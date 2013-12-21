@@ -37,6 +37,8 @@ sbfControl(functions = NULL,
 }
 
 \details{
+More details on this function can be found at \url{http://caret.r-forge.r-project.org/featureselection.html}.
+
 Simple filter-based feature selection requires function to be specified for some operations. 
 
 The \code{fit} function builds the model based on the current data set. The arguments for the function must be:
