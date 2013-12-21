@@ -28,11 +28,11 @@ modelInfo <- list(label = "Regularized Random Forest",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    expand.grid(.mtry = tuneSeq,
-                                .coefReg = seq(0.01, 1, length = len))
+                    expand.grid(mtry = tuneSeq,
+                                coefReg = seq(0.01, 1, length = len))
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-                    RRF(x, y, mtry = param$.mtry, coefReg = param$.coefReg, ...)
+                    RRF(x, y, mtry = param$mtry, coefReg = param$coefReg, ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
@@ -59,4 +59,3 @@ modelInfo <- list(label = "Regularized Random Forest",
                   },
                   tags = c("Random Forest", "Ensemble Model", "Bagging", "Implicit Feature Selection", "Regularization"),
                   sort = function(x) x[order(x$coefReg),])
-

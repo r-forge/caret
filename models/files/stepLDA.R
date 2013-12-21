@@ -6,12 +6,12 @@ modelInfo <- list(label = "Linear Discriminant Analysis with Stepwise Feature Se
                                           class = c("numeric", "character"),
                                           label = c('Maximum #Variables', 'Search Direction')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.maxvar = Inf, .direction = "both"),
+                    data.frame(maxvar = Inf, direction = "both"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...){
                     out <- stepclass(x, y,
                                      method = "lda",
-                                     maxvar = param$.maxvar,
-                                     direction = as.character(param$.direction),
+                                     maxvar = param$maxvar,
+                                     direction = as.character(param$direction),
                                      ...)
                     out$fit <- lda(x[, out$model$name, drop = FALSE], y, ...)
                     out

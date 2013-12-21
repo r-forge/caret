@@ -5,10 +5,10 @@ modelInfo <- list(label = "Ridge Regression",
                                           class = c("numeric"),
                                           label = c('Weight Decay')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
+                    expand.grid(lambda = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-                    enet(as.matrix(x), y, lambda = param$.lambda)  
+                    enet(as.matrix(x), y, lambda = param$lambda)  
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     predict(modelFit, as.matrix(newdata), 

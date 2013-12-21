@@ -6,7 +6,7 @@ modelInfo <- list(label = "Radial Basis Function Network",
                                           class = c('numeric'),
                                           label = c('Activation Limit for Conflicting Classes')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.negativeThreshold =  10 ^(-(1:len))),
+                    data.frame(negativeThreshold =  10 ^(-(1:len))),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     
@@ -17,8 +17,8 @@ modelInfo <- list(label = "Radial Basis Function Network",
                     }
                     if(any(names(theDots) == "learnFuncParams"))
                     {
-                      theDots$learnFuncParams[2] <- param$.negativeThreshold
-                    } else theDots$learnFuncParams <-c(0.4,  param$.negativeThreshold, 5)
+                      theDots$learnFuncParams[2] <- param$negativeThreshold
+                    } else theDots$learnFuncParams <-c(0.4,  param$negativeThreshold, 5)
                     
                     
                     y <- RSNNS:::decodeClassLabels(y)

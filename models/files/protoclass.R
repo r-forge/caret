@@ -5,13 +5,13 @@ modelInfo <- list(label = "Greedy Prototype Selection",
                   parameters = data.frame(parameter = c('eps', 'Minkowski'),
                                           class = c('numeric', 'numeric'),
                                           label = c('Ball Size', 'Distance Order')),
-                  grid = function(x, y, len = NULL) data.frame(.eps = 1:len, .Minkowski = 2),
+                  grid = function(x, y, len = NULL) data.frame(eps = 1:len, Minkowski = 2),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     out <- protoclass(x = x, y = y, 
                                       dxz = as.matrix(proxy:::dist(x, x, 
                                                                    method = "Minkowski", 
-                                                                   p = as.double(param$.Minkowski))),
-                                      eps = param$.eps, 
+                                                                   p = as.double(param$Minkowski))),
+                                      eps = param$eps, 
                                       ...)
                     out$Minkowski <- 2
                     out$training <- x

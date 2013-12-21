@@ -5,11 +5,11 @@ modelInfo <- list(label = "Bagged Logic Regression",
                   parameters = data.frame(parameter = c('nleaves', 'ntrees'),
                                           class = c('numeric', 'numeric'),
                                           label = c('Maximum Number of Leaves', 'Number of Trees')),
-                  grid = function(x, y, len = NULL) expand.grid(.ntrees = (1:len) + 1, .nleaves = 2^((1:len) + 6)),
+                  grid = function(x, y, len = NULL) expand.grid(ntrees = (1:len) + 1, nleaves = 2^((1:len) + 6)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...){
                     logic.bagging(as.matrix(x), y,
-                                  ntrees = param$.ntrees,
-                                  nleaves = param$.nleaves,
+                                  ntrees = param$ntrees,
+                                  nleaves = param$nleaves,
                                   ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {

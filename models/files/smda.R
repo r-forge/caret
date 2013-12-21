@@ -14,15 +14,15 @@ modelInfo <- list(label = "Sparse Mixture Discriminant Analysis",
                       if(p < 500 ) tuneSeq <- floor(seq(2, to = p, length = len))
                       else tuneSeq <- floor(2^seq(1, to = log(p, base = 2), length = len))
                     }
-                    expand.grid(.NumVars = tuneSeq,
-                                .R = (1:len) + 1,
-                                .lambda = c(0, 10 ^ seq(-1, -4, length = len - 1)))
+                    expand.grid(NumVars = tuneSeq,
+                                R = (1:len) + 1,
+                                lambda = c(0, 10 ^ seq(-1, -4, length = len - 1)))
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
                     smda(x, y,
-                         Rj = param$.R,
-                         lambda = param$.lambda,
-                         stop = -param$.NumVars,
+                         Rj = param$R,
+                         lambda = param$lambda,
+                         stop = -param$NumVars,
                          ...),
                   predict = function(modelFit, newdata, submodels = NULL)
                     predict(modelFit, newdata)$class,

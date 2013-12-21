@@ -5,13 +5,13 @@ modelInfo <- list(label = "k-Nearest Neighbors",
                   parameters = data.frame(parameter = "k",
                                           class = "numeric",
                                           label = "#Neighbors"),
-                  grid = function(x, y, len = NULL) data.frame(.k = (5:((2 * len)+4))[(5:((2 * len)+4))%%2 > 0]),
+                  grid = function(x, y, len = NULL) data.frame(k = (5:((2 * len)+4))[(5:((2 * len)+4))%%2 > 0]),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     if(is.factor(y))
                     {
-                      knn3(as.matrix(x), y, k = param$.k, ...)
+                      knn3(as.matrix(x), y, k = param$k, ...)
                     } else {
-                      knnreg(as.matrix(x), y, k = param$.k, ...)
+                      knnreg(as.matrix(x), y, k = param$k, ...)
                     }
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {

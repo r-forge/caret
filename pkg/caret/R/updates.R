@@ -16,17 +16,19 @@ update.train <- function(object, param = NULL, ...)
   } else {
     ## check for original data
     if(is.null(object$trainingData)) stop("original training data is needed; use returnData = TRUE in trainControl()")
-    
-    
+        
     if(is.list(param)) param <- as.data.frame(param)
+    dotNames <- hasDots(param, object$modelInfo)
+    if(dotNames) colnames(param) <- gsub("^\\.", "", colnames(param))
+    
     if(!is.data.frame(param)) stop("param should be a data frame or a named list")
     if(nrow(param) > 1) stop("only one set of parameters should be specified")
     
     paramNames <- as.character(object$modelInfo$parameter$parameter)
     if(length(paramNames) != ncol(param))
-      stop(paste("Parameters should be", paste(".", paramNames, sep = "", collapse = ", ")))
-    if(any(sort(names(param)) != sort(paste(".", paramNames, sep = ""))))
-      stop(paste("Parameters should be", paste(".", paramNames, sep = "", collapse = ", ")))
+      stop(paste("Parameters should be", paste(paramNames, sep = "", collapse = ", ")))
+    if(any(sort(names(param)) != sort(paste(paramNames, sep = ""))))
+      stop(paste("Parameters should be", paste(paramNames, sep = "", collapse = ", ")))
     
     ## get pre-processing options
     if(!is.null(object$preProcess))
@@ -36,13 +38,14 @@ update.train <- function(object, param = NULL, ...)
     } else ppOpt <- NULL
     
     ## refit model with new parameters
-    args <- list(data = object$trainingData, 
-                 method = object$method, 
+    args <- list(x = object$trainingData[, colnames(object$trainingData) != ".outcome"],
+                 y = object$trainingData$.outcome,
+                 method = object$modelInfo, 
                  tuneValue = param, 
                  obsLevels = levels(object$trainingData$.outcome),
                  pp = ppOpt,
                  last = TRUE,
-                 custom = object$control$custom$model)
+                 classProbs = object$control$classProbs)
     if(length(object$dots) > 0) args <- c(args, object$dots)
     finalFinalModel <- do.call("createModel", args)
     object$finalModel <- finalFinalModel$fit

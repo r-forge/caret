@@ -6,7 +6,7 @@ modelInfo <- list(label = "Rule-Based Classifier",
                                           class = c("numeric", "character"),
                                           label = "Confidence Threshold", 'Pruning'),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.threshold = 0.25, .pruned = "yes"),
+                    data.frame(threshold = 0.25, pruned = "yes"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
@@ -14,13 +14,13 @@ modelInfo <- list(label = "Rule-Based Classifier",
                     
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$U <- ifelse(param$.pruned == "No", TRUE, FALSE)
-                      theDots$control$C <- param$.threshold
+                      theDots$control$U <- ifelse(param$pruned == "No", TRUE, FALSE)
+                      theDots$control$C <- param$threshold
                       ctl <- theDots$control
                       theDots$control <- NULL
                       
-                    } else ctl <- Weka_control(N = ifelse(param$.pruned == "No", TRUE, FALSE),
-                                               C = param$.threshold) 
+                    } else ctl <- Weka_control(N = ifelse(param$pruned == "No", TRUE, FALSE),
+                                               C = param$threshold) 
                     
                     modelArgs <- c(list(formula = as.formula(".outcome ~ ."),
                                         data = dat,

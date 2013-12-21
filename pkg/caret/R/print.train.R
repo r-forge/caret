@@ -113,7 +113,6 @@
       numParam <- length(x$bestTune)
 
       finalTune <- x$bestTune
-      names(finalTune) <- substring(names(finalTune), 2)
 
       optValues <- paste(names(finalTune), "=", format(finalTune, digits = digits))
       optString <- paste(
@@ -143,7 +142,7 @@
       tuneAcc <- tuneAcc[, !(names(tuneAcc) %in% rmCols)]	
     }
 
-  params <- gsub("^\\.", "", names(x$bestTune))
+  params <- names(x$bestTune)
   
   if(!all(params == "parameter"))
     {

@@ -2,9 +2,9 @@ modelInfo <- list(label = "Boosted Logistic Regression",
                   library = "caTools",
                   loop = function(grid) {            
                     ## Get the largest value of ncomp to fit the "full" model
-                    loop <- grid[which.max(grid$.nIter),,drop = FALSE]
+                    loop <- grid[which.max(grid$nIter),,drop = FALSE]
                     
-                    submodels <- grid[-which.max(grid$.nIter),,drop = FALSE]
+                    submodels <- grid[-which.max(grid$nIter),,drop = FALSE]
                     
                     ## This needs to be excased in a list in case there are more
                     ## than one tuning parameter
@@ -15,11 +15,11 @@ modelInfo <- list(label = "Boosted Logistic Regression",
                   parameters = data.frame(parameter = 'nIter',
                                           class = 'numeric',
                                           label = '# Boosting Iterations'),
-                  grid = function(x, y, len = NULL) data.frame(.nIter = 1 + ((1:len)*10)),
+                  grid = function(x, y, len = NULL) data.frame(nIter = 1 + ((1:len)*10)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     ## There is another package with a function called `LogitBoost`
                     ## so we call using the namespace
-                    caTools::LogitBoost(as.matrix(x), y, nIter = param$.nIter)
+                    caTools::LogitBoost(as.matrix(x), y, nIter = param$nIter)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     ## This model was fit with the maximum value of nIter
@@ -34,11 +34,11 @@ modelInfo <- list(label = "Boosted Logistic Regression",
                       out <- vector(mode = "list", length = nrow(submodels) + 1)
                       out[[1]] <- tmp
                       
-                      for(j in seq(along = submodels$.nIter))
+                      for(j in seq(along = submodels$nIter))
                       {
                         out[[j+1]] <- caTools::predict.LogitBoost(modelFit,
                                                                   newdata,
-                                                                  nIter = submodels$.nIter[j])
+                                                                  nIter = submodels$nIter[j])
                       }
                     }
                     out                   
@@ -52,12 +52,12 @@ modelInfo <- list(label = "Boosted Logistic Regression",
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
                       
-                      for(j in seq(along = submodels$.nIter))
+                      for(j in seq(along = submodels$nIter))
                       {                           
                         tmpProb <- caTools::predict.LogitBoost(modelFit,
                                                                newdata,
                                                                type = "raw",
-                                                               nIter = submodels$.nIter[j])
+                                                               nIter = submodels$nIter[j])
                         tmpProb <- out <- t(apply(tmpProb, 1, function(x) x/sum(x)))
                         tmp[[j+1]] <- as.data.frame(tmpProb[, modelFit$obsLevels,drop = FALSE])           
                       }

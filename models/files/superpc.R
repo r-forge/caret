@@ -5,11 +5,11 @@ modelInfo <- list(label = "Supervised Principal Component Analysis",
                                           class = c('numeric', 'numeric'),
                                           label = c('Threshold', '#Components')),
                   grid = function(x, y, len = NULL) {
-                    expand.grid(.n.components = 1:3, .threshold = seq(.1, .9, length = len))
+                    expand.grid(n.components = 1:3, threshold = seq(.1, .9, length = len))
                   },
                   loop = function(grid) {
-                    largest <- which(grid$.n.components == max(grid$.n.components) &
-                                       grid$.threshold == max(grid$.threshold))
+                    largest <- which(grid$n.components == max(grid$n.components) &
+                                       grid$threshold == max(grid$threshold))
                     loop <- grid[largest,, drop = FALSE]
                     submodels <- list(grid[-largest,, drop = FALSE])
                     list(loop = loop, submodels = submodels)           
@@ -26,21 +26,21 @@ modelInfo <- list(label = "Supervised Principal Component Analysis",
                     out <- superpc.predict(modelFit,
                                            modelFit$data,
                                            newdata = list(x=t(newdata)),
-                                           n.components = modelFit$tuneValue$.n.components,
-                                           threshold = modelFit$tuneValue$.threshold)$v.pred.1df
+                                           n.components = modelFit$tuneValue$n.components,
+                                           threshold = modelFit$tuneValue$threshold)$v.pred.1df
                     
                     if(!is.null(submodels))
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
                       
-                      for(j in seq(along = submodels$.threshold))
+                      for(j in seq(along = submodels$threshold))
                       {
                         tmp[[j+1]] <- superpc.predict(modelFit,
                                                       modelFit$data,
                                                       newdata = list(x=t(newdata)),
-                                                      threshold = submodels$.threshold[j],
-                                                      n.components = submodels$.n.components[j])$v.pred.1df
+                                                      threshold = submodels$threshold[j],
+                                                      n.components = submodels$n.components[j])$v.pred.1df
                       }
                       out <- tmp
                     }

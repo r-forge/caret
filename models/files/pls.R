@@ -5,9 +5,9 @@ modelInfo <- list(label = "Partial Least Squares",
                                           class = "numeric",
                                           label = '#Components'),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.ncomp = seq(1, min(ncol(x) - 1, len), by = 1)),
+                    data.frame(ncomp = seq(1, min(ncol(x) - 1, len), by = 1)),
                   loop = function(grid) {     
-                    grid <- grid[order(grid$.ncomp, decreasing = TRUE),, drop = FALSE]
+                    grid <- grid[order(grid$ncomp, decreasing = TRUE),, drop = FALSE]
                     loop <- grid[1,,drop = FALSE]
                     submodels <- list(grid[-1,,drop = FALSE])  
                     list(loop = loop, submodels = submodels)
@@ -15,11 +15,11 @@ modelInfo <- list(label = "Partial Least Squares",
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {   
                     out <- if(is.factor(y))
                     {      
-                      plsda(x, y, method = "oscorespls", ncomp = param$.ncomp, ...)
+                      plsda(x, y, method = "oscorespls", ncomp = param$ncomp, ...)
                     } else {
                       dat <- x
                       dat$.outcome <- y
-                      plsr(.outcome ~ ., data = dat, method = "oscorespls", ncomp = param$.ncomp, ...)
+                      plsr(.outcome ~ ., data = dat, method = "oscorespls", ncomp = param$ncomp, ...)
                     }
                     out
                   },
@@ -38,15 +38,15 @@ modelInfo <- list(label = "Partial Least Squares",
                       
                       if(modelFit$problemType == "Classification")
                       {
-                        if(length(submodels$.ncomp) > 1)
+                        if(length(submodels$ncomp) > 1)
                         {
-                          tmp <- as.list(predict(modelFit, newdata, ncomp = submodels$.ncomp))
-                        } else tmp <- list(predict(modelFit, newdata, ncomp = submodels$.ncomp))
+                          tmp <- as.list(predict(modelFit, newdata, ncomp = submodels$ncomp))
+                        } else tmp <- list(predict(modelFit, newdata, ncomp = submodels$ncomp))
                         
                       } else {
                         tmp <- as.list(
                           as.data.frame(
-                            apply(predict(modelFit, newdata, ncomp = submodels$.ncomp), 3, function(x) list(x))))
+                            apply(predict(modelFit, newdata, ncomp = submodels$ncomp), 3, function(x) list(x))))
                       }
                       
                       out <- c(list(out), tmp)   
@@ -55,7 +55,7 @@ modelInfo <- list(label = "Partial Least Squares",
                   },
                   prob = function(modelFit, newdata, submodels = NULL) {
                     if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
-                    out <- predict(modelFit, newdata, type = "prob",  ncomp = modelFit$tuneValue$.ncomp)
+                    out <- predict(modelFit, newdata, type = "prob",  ncomp = modelFit$tuneValue$ncomp)
                     if(length(dim(out)) == 3){
                       if(dim(out)[1] > 1) {
                         out <- out[,,1]
@@ -68,9 +68,9 @@ modelInfo <- list(label = "Partial Least Squares",
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
                       
-                      for(j in seq(along = submodels$.ncomp))
+                      for(j in seq(along = submodels$ncomp))
                       {
-                        tmpProb <- predict(modelFit, newdata, type = "prob",  ncomp = submodels$.ncomp[j])
+                        tmpProb <- predict(modelFit, newdata, type = "prob",  ncomp = submodels$ncomp[j])
                         if(length(dim(tmpProb)) == 3){
                           if(dim(tmpProb)[1] > 1) {
                             tmpProb <- tmpProb[,,1]

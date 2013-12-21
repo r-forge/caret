@@ -14,12 +14,12 @@ modelInfo <- list(label = "Radial Basis Function Kernel Regularized Least Square
                       out <- seq(sigmaEstimate[1], sigmaEstimate[3], length = len)
                     } else out <- 10 ^((1:len) - 3)
                     
-                    expand.grid(.lambda = NA, .sigma = 1/out)
+                    expand.grid(lambda = NA, sigma = 1/out)
                   }
                   ,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-                    krls(x, y, lambda = if(is.na(param$.lambda)) NULL else param$.lambda,
-                         sigma = param$.sigma, ...)
+                    krls(x, y, lambda = if(is.na(param$lambda)) NULL else param$lambda,
+                         sigma = param$sigma, ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     predict(modelFit, newdata)$fit[,1]

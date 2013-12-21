@@ -27,18 +27,18 @@ modelInfo <- list(label = "Random Forest with Additional Feature Selection",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    data.frame(.mtry = tuneSeq)
+                    data.frame(mtry = tuneSeq)
                   },
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
-                    fs <- Boruta(x, y, mtry = param$.mtry, ...)
+                    fs <- Boruta(x, y, mtry = param$mtry, ...)
                     keepers <- as.character(names(fs$finalDecision)[fs$finalDecision == "Confirmed"])
-                    out <- randomForest(x[,keepers, drop = FALSE], y, mtry = param$.mtry, ...)
+                    out <- randomForest(x[,keepers, drop = FALSE], y, mtry = param$mtry, ...)
                     out$Boruta <- fs
                     out
                     },
                   predict = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL) predict(modelFit, newdata, type = "prob") ,
-                  tags = c("Tree-Based Model", "Ensemble Model", "Feature Selection Wrapper"),
+                  tags = c("Tree-Based Model", "Ensemble Model", "Feature Selection Wrapper", "Random Forest"),
                   levels = function(x) x$classes,
                   sort = function(x) x[order(x[,1]),])

@@ -6,18 +6,18 @@ modelInfo <- list(label = "Neural Network",
                                           class = c('numeric', 'numeric', 'numeric'),
                                           label = c('#Hidden Units in Layer 1', '#Hidden Units in Layer 2', '#Hidden Units in Layer 3')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.layer1 = ((1:len) * 2) - 1, .layer2 = 0, .layer3 = 0),
+                    expand.grid(layer1 = ((1:len) * 2) - 1, layer2 = 0, layer3 = 0),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     colNames <- colnames(x)
                     dat <- x
                     dat$.outcome <- y
                     form <- as.formula(paste(".outcome ~",paste(colNames, collapse = "+")))
-                    if(param$.layer1 == 0) stop("the first layer must have at least one hidden unit")
-                    if(param$.layer2 == 0 & param$.layer2 > 0) stop("the second layer must have at least one hidden unit if a third layer is specified")
-                    nodes <- c(param$.layer1)
-                    if(param$.layer2 > 0) {
-                      nodes <- c(nodes, param$.layer2)
-                      if(param$.layer3 > 0) nodes <- c(nodes, param$.layer3)
+                    if(param$layer1 == 0) stop("the first layer must have at least one hidden unit")
+                    if(param$layer2 == 0 & param$layer2 > 0) stop("the second layer must have at least one hidden unit if a third layer is specified")
+                    nodes <- c(param$layer1)
+                    if(param$layer2 > 0) {
+                      nodes <- c(nodes, param$layer2)
+                      if(param$layer3 > 0) nodes <- c(nodes, param$layer3)
                     }
                     neuralnet(form, data = dat, hidden = nodes, ...)
                   },

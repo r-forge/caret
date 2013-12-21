@@ -2,10 +2,21 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in version 5.18-12}{
+\section{Changes in version 6.0-12}{
 \itemize{
+\item A new system for user-defined models has been added. See 
+\href{http://caret.r-forge.r-project.org/custom_models.html}{http://caret.r-forge.r-project.org/custom_models.html}.
+
+\item When creating the grid of tuning parameter values, the column 
+names no longer need to be preceded by a period. Periods can still be 
+used as before but are not required. This isn't guaranteed to break
+backwards compatibility but it may in some cases. 
+
  \item \code{logicForest} models were removed since the package is
  now archived.
+
+ \item \code{CSimca} and \code{RSimca} models from the \cpkg{rrcovHD} 
+ package were added.
 
  \item \code{panel.lift2} and \code{xyplot.lift} now have an argument 
  called \code{values} that show the percentages of samples found for
@@ -14,6 +25,9 @@
 \item \code{train}, \code{rfe} and \code{sbf} should no longer throw 
 a warning that "executing %dopar% sequentially: no parallel backend registered".
 
+\item A \code{ggplot} method for \code{train} was added.
+
+\item Imputation via medians was added to \code{preProcess} by Zachary Mayer.
  }
 }
 

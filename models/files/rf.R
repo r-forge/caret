@@ -28,10 +28,10 @@ modelInfo <- list(label = "Random Forest",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    data.frame(.mtry = tuneSeq)
+                    data.frame(mtry = tuneSeq)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    randomForest(x, y, mtry = param$.mtry, ...),
+                    randomForest(x, y, mtry = param$mtry, ...),
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL)

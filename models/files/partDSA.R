@@ -5,36 +5,36 @@ modelInfo <- list(label = "partDSA",
                                           class = c("numeric", "numeric"),
                                           label = c('Number of Terminal Partitions', 'Minimum Percent Difference')),
                   grid = function(x, y, len = NULL)
-                    expand.grid(.cut.off.growth = 1:len, .MPD = .1),
+                    expand.grid(cut.off.growth = 1:len, MPD = .1),
                   loop = function(grid) {   
-                    grid <- grid[order(grid$.MPD, grid$.cut.off.growth, decreasing = TRUE),, drop = FALSE]
+                    grid <- grid[order(grid$MPD, grid$cut.off.growth, decreasing = TRUE),, drop = FALSE]
                     
-                    uniqueMPD <- unique(grid$.MPD)
+                    uniqueMPD <- unique(grid$MPD)
                     
-                    loop <- data.frame(.MPD = uniqueMPD)
-                    loop$.cut.off.growth <- NA
+                    loop <- data.frame(MPD = uniqueMPD)
+                    loop$cut.off.growth <- NA
                     
                     submodels <- vector(mode = "list", length = length(uniqueMPD))
                     
                     for(i in seq(along = uniqueMPD))
                     {
-                      subCuts <- grid[grid$.MPD == uniqueMPD[i],".cut.off.growth"]
-                      loop$.cut.off.growth[loop$.MPD == uniqueMPD[i]] <- subCuts[which.max(subCuts)]
-                      submodels[[i]] <- data.frame(.cut.off.growth = subCuts[-which.max(subCuts)])
+                      subCuts <- grid[grid$MPD == uniqueMPD[i],"cut.off.growth"]
+                      loop$cut.off.growth[loop$MPD == uniqueMPD[i]] <- subCuts[which.max(subCuts)]
+                      submodels[[i]] <- data.frame(cut.off.growth = subCuts[-which.max(subCuts)])
                     }
                     list(loop = loop, submodels = submodels)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
                     partDSA(x, y,
                             control = DSA.control(
-                              cut.off.growth = param$.cut.off.growth,
-                              MPD = param$.MPD,
+                              cut.off.growth = param$cut.off.growth,
+                              MPD = param$MPD,
                               vfold = 1),
                             ...),
                   predict = function(modelFit, newdata, submodels = NULL) {
                     if(!is.null(submodels))
                     {
-                      tmp <- c(modelFit$tuneValue$.cut.off.growth, submodels$.cut.off.growth)
+                      tmp <- c(modelFit$tuneValue$cut.off.growth, submodels$cut.off.growth)
                       
                       ## There are cases where the number of models saved by the function is
                       ## less than the values in cut.off.growth (e.g. cut.off.growth = 1:10
@@ -66,7 +66,7 @@ modelInfo <- list(label = "partDSA",
                   predictors = function(x, cuts = NULL, ...) {
                     if(is.null(cuts) & !is.null(x$tuneValue))
                     {
-                      cuts <- x$tuneValue$.cut.off.growth[1]
+                      cuts <- x$tuneValue$cut.off.growth[1]
                     } else {
                       if(is.null(cuts)) stop("please supply a value for 'cuts'")
                     }
@@ -78,7 +78,7 @@ modelInfo <- list(label = "partDSA",
                   varImp = function(object, cuts = NULL, ...) {
                     if(is.null(cuts) & !is.null(object$tuneValue))
                     {
-                      cuts <- object$tuneValue$.cut.off.growth[1]
+                      cuts <- object$tuneValue$cut.off.growth[1]
                     } else {
                       if(is.null(cuts)) stop("please supply a value for 'cuts'")
                     }

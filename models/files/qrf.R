@@ -28,10 +28,10 @@ modelInfo <- list(label = "Quantile Random Forest",
                         "Truncating the grid to",
                         length(tuneSeq), ".\n\n")      
                     }
-                    data.frame(.mtry = tuneSeq)
+                    data.frame(mtry = tuneSeq)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    quantregForest(x, y, mtry = param$.mtry, ...),
+                    quantregForest(x, y, mtry = param$mtry, ...),
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata, quantiles = .5)
                     if(is.matrix(out)) out <- out[,1]

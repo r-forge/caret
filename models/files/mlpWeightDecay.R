@@ -6,8 +6,8 @@ modelInfo <- list(label = "Multi-Layer Perceptron",
                                           class = c('numeric', 'numeric'),
                                           label = c('#Hidden Units', 'Weight Decay')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.size =  ((1:len) * 2) - 1, 
-                               .decay = c(0, 10 ^ seq(-1, -4, length = len - 1))),
+                    expand.grid(size =  ((1:len) * 2) - 1, 
+                               decay = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     theDots <- theDots[!(names(theDots) %in% c("size", "linOut"))]
@@ -19,9 +19,9 @@ modelInfo <- list(label = "Multi-Layer Perceptron",
                     if(any(names(theDots) == "learnFuncParams"))
                     {
                       prms <- theDots$learnFuncParams
-                      prms[3] <-  param$.decay
+                      prms[3] <-  param$decay
                       warning("Over-riding weight decay value in the 'learnFuncParams' argument you passed in. Other values are retained")
-                    } else prms <- c(0.2, param$.decay, 0.0, 0.0)    
+                    } else prms <- c(0.2, param$decay, 0.0, 0.0)    
                     
                     if(is.factor(y)) {
                       y <- RSNNS:::decodeClassLabels(y)
@@ -31,7 +31,7 @@ modelInfo <- list(label = "Multi-Layer Perceptron",
                                  y = y,
                                  learnFunc = "BackpropWeightDecay",
                                  learnFuncParams = prms,                                
-                                 size = param$.size,
+                                 size = param$size,
                                  linOut = lin)
                     args <- c(args, theDots)
                     do.call("mlp", args)

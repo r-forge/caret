@@ -5,20 +5,20 @@ modelInfo <- list(label = "glmnet",
                                           class = c("numeric", "numeric"),
                                           label = c('Mixing Percentage', 'Regularization Parameter')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.alpha = seq(0.1, 1, length = len),
-                                .lambda = seq(.1, 3, length = 3 * len)),
+                    expand.grid(alpha = seq(0.1, 1, length = len),
+                                lambda = seq(.1, 3, length = 3 * len)),
                   loop = function(grid) {  
-                    alph <- unique(grid$.alpha)
+                    alph <- unique(grid$alpha)
                     
-                    loop <- data.frame(.alpha = alph)
-                    loop$.lambda <- NA
+                    loop <- data.frame(alpha = alph)
+                    loop$lambda <- NA
                     
                     submodels <- vector(mode = "list", length = length(alph))
                     for(i in seq(along = alph))
                     {
-                      np <- grid[grid$.alpha == alph[i],".lambda"]
-                      loop$.lambda[loop$.alpha == alph[i]] <- np[which.max(np)]
-                      submodels[[i]] <- data.frame(.lambda = np[-which.max(np)])
+                      np <- grid[grid$alpha == alph[i],"lambda"]
+                      loop$lambda[loop$alpha == alph[i]] <- np[which.max(np)]
+                      submodels[[i]] <- data.frame(lambda = np[-which.max(np)])
                     }  
                     list(loop = loop, submodels = submodels)
                   },
@@ -42,11 +42,11 @@ modelInfo <- list(label = "glmnet",
                     
                     modelArgs <- c(list(x = as.matrix(x),
                                         y = y,
-                                        alpha = param$.alpha),
+                                        alpha = param$alpha),
                                    theDots)
                     
                     out <- do.call("glmnet", modelArgs) 
-                    if(!is.na(param$.lambda[1])) out$lambdaOpt <- param$.lambda[1]
+                    if(!is.na(param$lambda[1])) out$lambdaOpt <- param$lambda[1]
                     out 
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
@@ -62,9 +62,9 @@ modelInfo <- list(label = "glmnet",
                     {
                       if(length(modelFit$obsLevels) < 2)
                       {
-                        tmp <- as.list(as.data.frame(predict(modelFit, newdata, s = submodels$.lambda)))
+                        tmp <- as.list(as.data.frame(predict(modelFit, newdata, s = submodels$lambda)))
                       } else {
-                        tmp <- predict(modelFit, newdata, s = submodels$.lambda, type = "class")
+                        tmp <- predict(modelFit, newdata, s = submodels$lambda, type = "class")
                         tmp <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
                       }
                       out <- c(list(out), tmp)
@@ -75,7 +75,7 @@ modelInfo <- list(label = "glmnet",
                     obsLevels <- if("classnames" %in% names(modelFit)) modelFit$classnames else NULL
                     probs <- predict(modelFit,
                                      as.matrix(newdata),
-                                     s = submodels$.lambda,
+                                     s = submodels$lambda,
                                      type = "response")
                     if(length(obsLevels) == 2) {
                       probs <- cbind(1-probs, probs)
@@ -86,7 +86,7 @@ modelInfo <- list(label = "glmnet",
                     {
                       tmp <- predict(modelFit,
                                      as.matrix(newdata),
-                                     s = submodels$.lambda,
+                                     s = submodels$lambda,
                                      type = "response")
                       if(length(obsLevels) == 2) {
                         tmp <- as.list(as.data.frame(tmp))

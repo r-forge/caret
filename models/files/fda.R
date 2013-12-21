@@ -13,15 +13,15 @@ modelInfo <- list(label = "Flexible Discriminant Analysis",
                     maxTerms <- nrow(mod$fit$dirs) - 1
                     
                     maxTerms <- min(200, floor(maxTerms * .75) + 2)
-                    data.frame(.nprune = unique(floor(seq(2, to = maxTerms, length = len))),
-                               .degree = 1)
+                    data.frame(nprune = unique(floor(seq(2, to = maxTerms, length = len))),
+                               degree = 1)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     fda(.outcome ~ ., data = dat, method = earth, 
-                        degree = param$.degree,
-                        nprune = param$.nprune, ...)
+                        degree = param$degree,
+                        nprune = param$nprune, ...)
                   },
                   tags = c("Multivariate Adaptive Regression Splines", "Implicit Feature Selection"),
                   predict = function(modelFit, newdata, submodels = NULL) 

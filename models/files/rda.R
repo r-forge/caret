@@ -6,10 +6,10 @@ modelInfo <- list(label = "Regularized Discriminant Analysis",
                                           class = rep("numeric", 2),
                                           label = c("Gamma", "Lambda")),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.gamma = seq(0, 1, length = len), 
-                                .lambda =  seq(0, 1, length = len)),
+                    expand.grid(gamma = seq(0, 1, length = len), 
+                                lambda =  seq(0, 1, length = len)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-                    rda(x, y, gamma = param$.gamma, param = tuneValue$.lambda, ...)
+                    rda(x, y, gamma = param$gamma, param = tuneValue$lambda, ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata)$class,

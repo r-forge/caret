@@ -8,14 +8,14 @@ modelInfo <- list(label = "Support Vector Machines with Class Weights",
                     library(kernlab)
                     if(length(levels(y)) != 2) stop("This model is only available for two class problem. ")
                     sigmas <- sigest(as.matrix(x), na.action = na.omit, scaled = TRUE)  
-                    expand.grid(.sigma = mean(sigmas[-2]),
-                                .C = 2 ^((1:len) - 3),
-                                .Weight = 1:len)
+                    expand.grid(sigma = mean(as.vector(sigmas[-2])),
+                                C = 2 ^((1:len) - 3),
+                                Weight = 1:len)
                   },
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
-                    if(param$.Weight != 1) {
-                      wts <- c(param$.Weight, 1)
+                    if(param$Weight != 1) {
+                      wts <- c(param$Weight, 1)
                       names(wts) <- levels(y)
                     } else wts <- NULL
                     
@@ -26,15 +26,15 @@ modelInfo <- list(label = "Support Vector Machines with Class Weights",
                     {
                       out <- ksvm(x = as.matrix(x), y = y,
                                   kernel = rbfdot,
-                                  kpar = list(sigma = param$.sigma),
+                                  kpar = list(sigma = param$sigma),
                                   class.weights = wts,
-                                  C = param$.C, ...)
+                                  C = param$C, ...)
                     } else {
                       out <- ksvm(x = as.matrix(x), y = y,
                                   kernel = rbfdot,
-                                  kpar = list(sigma = param$.sigma),
+                                  kpar = list(sigma = param$sigma),
                                   class.weights = wts,
-                                  C = param$.C,
+                                  C = param$C,
                                   prob.model = classProbs,
                                   ...)
                     }

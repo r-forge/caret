@@ -1,14 +1,14 @@
 modelInfo <- list(label = "Penalized Linear Discriminant Analysis",
                   library = "penalizedLDA",
                   loop = function(grid) {
-                    loop <- ddply(grid, .(.lambda), function(x) c(.K = max(x$.K)))
-                    if(length(unique(loop$.K)) == 1) return(list(loop = loop, submodels = NULL))
+                    loop <- ddply(grid, .(lambda), function(x) c(K = max(x$K)))
+                    if(length(unique(loop$K)) == 1) return(list(loop = loop, submodels = NULL))
                     submodels <- vector(mode = "list", length = nrow(loop))
-                    for(i in seq(along = loop$.K))
+                    for(i in seq(along = loop$K))
                     {
-                      index <- which(grid$.lambda == loop$.lambda[i])
-                      subK <- grid[index, ".K"]
-                      otherK <- data.frame(.K = subK[subK != loop$.K[i]])
+                      index <- which(grid$lambda == loop$lambda[i])
+                      subK <- grid[index, "K"]
+                      otherK <- data.frame(K = subK[subK != loop$K[i]])
                       if(nrow(otherK) > 0) submodels[[i]] <- otherK
                     }    
                     list(loop = loop, submodels = submodels)
@@ -18,12 +18,12 @@ modelInfo <- list(label = "Penalized Linear Discriminant Analysis",
                                           class = c('numeric', 'numeric'),
                                           label = c('L1 Penalty', '#Discriminant Functions')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.lambda = 10 ^ seq(-1, -4, length = len), 
-                               .K = length(levels(y)) - 1),
+                    data.frame(lambda = 10 ^ seq(-1, -4, length = len), 
+                               K = length(levels(y)) - 1),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
                     penalizedLDA:::PenalizedLDA(as.matrix(x), as.numeric(y),
-                                                lambda = param$.lambda,
-                                                K = param$.K,
+                                                lambda = param$lambda,
+                                                K = param$K,
                                                 ...),
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out0 <- predict(modelFit, newdata)$ypred
@@ -31,9 +31,8 @@ modelInfo <- list(label = "Penalized Linear Discriminant Analysis",
                     out <- modelFit$obsLevels[out]
                     if(!is.null(submodels))
                     {
-                      tmp <- out0[, submodels$.K,drop = FALSE]
+                      tmp <- out0[, submodels$K,drop = FALSE]
                       tmp <- apply(tmp, 2, function(x, l) l[x], l = modelFit$obsLevels)
-
                       out <- as.data.frame(cbind(out, tmp), stringsAsFactors = FALSE)                                 
                     }
                     out

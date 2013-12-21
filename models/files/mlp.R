@@ -6,7 +6,7 @@ modelInfo <- list(label = "Multi-Layer Perceptron",
                                           class = c('numeric'),
                                           label = c('#Hidden Units')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.size =  ((1:len) * 2) - 1),
+                    data.frame(size =  ((1:len) * 2) - 1),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     theDots <- theDots[!(names(theDots) %in% c("size", "linOut"))]                   
@@ -17,7 +17,7 @@ modelInfo <- list(label = "Multi-Layer Perceptron",
                     } else lin <- TRUE
                     args <- list(x = x,
                                  y = y,
-                                 size = param$.size,
+                                 size = param$size,
                                  linOut = lin)
                     args <- c(args, theDots)
                     do.call("mlp", args)

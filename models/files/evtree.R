@@ -6,7 +6,7 @@ modelInfo <- list(label = "Tree Models from Genetic Algorithms",
                                           class = c('numeric'),
                                           label = c('Complexity Parameter')),
                   grid = function(x, y, len = NULL)
-                    data.frame(.alpha = seq(0, 1, length = len)),
+                    data.frame(alpha = seq(0, 1, length = len)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...){
                     dat <- x
                     dat$.outcome <- y
@@ -14,10 +14,10 @@ modelInfo <- list(label = "Tree Models from Genetic Algorithms",
                     
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$alpha <- param$.alpha 
+                      theDots$control$alpha <- param$alpha 
                       ctl <- theDots$control
                       theDots$control <- NULL
-                    } else ctl <- evtree.control(alpha = param$.alpha)          
+                    } else ctl <- evtree.control(alpha = param$alpha)          
                     
                     ## pass in any model weights
                     if(!is.null(wts)) theDots$weights <- wts

@@ -6,7 +6,7 @@ modelInfo <- list(label = "Penalized Discriminant Analysis",
                                           class = c('numeric'),
                                           label = c('Shrinkage Penalty Coefficient')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.lambda = 1:len),
+                    data.frame(lambda = 1:len),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
@@ -16,13 +16,13 @@ modelInfo <- list(label = "Penalized Discriminant Analysis",
                                  data = dat,
                                  method = gen.ridge,
                                  weights = wts,
-                                 lambda = param$.lambda,
+                                 lambda = param$lambda,
                                  ...)
                     } else {
                       out <- fda(as.formula(".outcome ~ ."),
                                  data = dat,
                                  method = gen.ridge,
-                                 lambda = param$.lambda,
+                                 lambda = param$lambda,
                                  ...)
                     }
                     out                   

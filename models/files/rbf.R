@@ -6,7 +6,7 @@ modelInfo <- list(label = "Radial Basis Function Network",
                                           class = c('numeric'),
                                           label = c('#Hidden Units')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.size =  ((1:len) * 2) + 9),
+                    data.frame(size =  ((1:len) * 2) + 9),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     theDots <- list(...)
                     theDots <- theDots[!(names(theDots) %in% c("size", "linOut"))]
@@ -32,7 +32,7 @@ modelInfo <- list(label = "Radial Basis Function Network",
                     } else lin <- TRUE
                     args <- list(x = x,
                                  y = y,                           
-                                 size = param$.size,
+                                 size = param$size,
                                  linOut = lin)
                     args <- c(args, theDots)
                     do.call("rbf", args)

@@ -5,17 +5,17 @@ modelInfo <- list(label = "Logistic Model Trees",
                   parameters = data.frame(parameter = "iter",
                                           class = "numeric",
                                           label = "# Iteratons"),
-                  grid = function(x, y, len = NULL) data.frame(.iter = 1+(0:(len-1)) * 20),
+                  grid = function(x, y, len = NULL) data.frame(iter = 1+(0:(len-1)) * 20),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     theDots <- list(...)
                     
                     if(any(names(theDots) == "control")) {
-                      theDots$control$I <- param$.iter 
+                      theDots$control$I <- param$iter 
                       ctl <- theDots$control
                       theDots$control <- NULL
-                    } else ctl <- Weka_control(I = param$.iter) 
+                    } else ctl <- Weka_control(I = param$iter) 
                     
                     modelArgs <- c(list(formula = as.formula(".outcome ~ ."),
                                         data = dat,

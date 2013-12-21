@@ -5,8 +5,8 @@ modelInfo <- list(label = "Neural Networks with Feature Extraction",
                   parameters = data.frame(parameter = c('size', 'decay'),
                                           class = rep("numeric", 2),
                                           label = c('#Hidden Units', 'Weight Decay')),
-                  grid = function(x, y, len = NULL) expand.grid(.size = ((1:len) * 2) - 1, 
-                                                                .decay = c(0, 10 ^ seq(-1, -4, length = len - 1))),
+                  grid = function(x, y, len = NULL) expand.grid(size = ((1:len) * 2) - 1, 
+                                                                decay = c(0, 10 ^ seq(-1, -4, length = len - 1))),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     library(nnet)
                     dat <- x
@@ -16,13 +16,13 @@ modelInfo <- list(label = "Neural Networks with Feature Extraction",
                       out <- pcaNNet(.outcome ~ .,
                                      data = dat,
                                      weights = wts,                                       
-                                     size = param$.size,
-                                     decay = param$.decay,
+                                     size = param$size,
+                                     decay = param$decay,
                                      ...)
                     } else out <- pcaNNet(.outcome ~ .,
                                           data = dat,
-                                          size = param$.size,
-                                          decay = param$.decay,
+                                          size = param$size,
+                                          decay = param$decay,
                                           ...)
                     out
                   },

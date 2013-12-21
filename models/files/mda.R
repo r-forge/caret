@@ -6,12 +6,12 @@ modelInfo <- list(label = "Mixture Discriminant Analysis",
                                           class = c('numeric'),
                                           label = c('#Subclasses Per Class')),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.subclasses = (1:len) + 1),
+                    data.frame(subclasses = (1:len) + 1),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
                     mda(as.formula(".outcome ~ ."), data = dat, 
-                        subclasses = param$.subclasses, ...)      
+                        subclasses = param$subclasses, ...)      
                   },
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),

@@ -6,12 +6,12 @@ modelInfo <- list(label = "Robust Regularized Linear Discriminant Analysis",
                                           class = c('numeric', 'numeric', 'character'),
                                           label = c('Penalty Parameter', 'Robustness Parameter', 'Penalty Type')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(.lambda = (1:len)*.25,
-                                .hp = seq(.5, 1, length = len),
-                                .penalty = "L2"),
+                    expand.grid(lambda = (1:len)*.25,
+                                hp = seq(.5, 1, length = len),
+                                penalty = "L2"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-                    rrlda:::rrlda(x, as.numeric(y), lambda = param$.lambda,
-                                  hp = param$.hp, penalty = as.character(param$.penalty), ...)    
+                    rrlda:::rrlda(x, as.numeric(y), lambda = param$lambda,
+                                  hp = param$hp, penalty = as.character(param$penalty), ...)    
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, newdata)$class

@@ -22,10 +22,10 @@ modelInfo <- list(label = "Least Angle Regression",
                           "Truncating the grid to",
                           length(tuneSeq), ".\n\n")      
                     }
-                    data.frame(.step = tuneSeq)
+                    data.frame(step = tuneSeq)
                   },
                   loop = function(grid) {   
-                    grid <- grid[order(grid$.step, decreasing = TRUE),, drop = FALSE]
+                    grid <- grid[order(grid$step, decreasing = TRUE),, drop = FALSE]
                     loop <- grid[1,,drop = FALSE]
                     submodels <- list(grid[-1,,drop = FALSE])     
                     list(loop = loop, submodels = submodels)
@@ -37,20 +37,20 @@ modelInfo <- list(label = "Least Angle Regression",
                                    as.matrix(newdata),
                                    type = "fit",
                                    mode = "step",
-                                   s = modelFit$tuneValue$.step)$fit
+                                   s = modelFit$tuneValue$step)$fit
                     
                     if(!is.null(submodels))
                     {
                       tmp <- vector(mode = "list", length = nrow(submodels) + 1)
                       tmp[[1]] <- out
                       
-                      for(j in seq(along = submodels$.step))
+                      for(j in seq(along = submodels$step))
                       {
                         tmp[[j+1]] <- predict(modelFit,
                                               as.matrix(newdata),
                                               type = "fit",
                                               mode = "step",
-                                              s = submodels$.step[j])$fit
+                                              s = submodels$step[j])$fit
                       }
                       out <- tmp
                     }

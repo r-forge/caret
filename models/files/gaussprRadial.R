@@ -7,13 +7,13 @@ modelInfo <- list(label = "Gaussian Process with Radial Basis Function Kernel",
                   grid = function(x, y, len = NULL) {
                     library(kernlab)
                     sigmas <- sigest(as.matrix(x), na.action = na.omit, scaled = TRUE)  
-                    expand.grid(.sigma = mean(sigmas[-2]))
+                    expand.grid(sigma = mean(sigmas[-2]))
                   },
                   loop = NULL,
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     gausspr(x = as.matrix(x), y = y,
                             kernel = rbfdot,
-                            kpar = list(sigma = param$.sigma), ...)         
+                            kpar = list(sigma = param$sigma), ...)         
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {  
                     out <- predict(modelFit, as.matrix(newdata))

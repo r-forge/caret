@@ -6,14 +6,14 @@ modelInfo <- list(label = "Oblique Trees",
                                           class = c('character', 'character'),
                                           label = c('Oblique Splits', 'Variable Selection Method')),
                   grid = function(x, y, len = NULL)
-                    expand.grid(.oblique.splits = c("only", "on", "off"),
-                                .variable.selection = c("none", "model.selection.aic")),
+                    expand.grid(oblique.splits = c("only", "on", "off"),
+                                variable.selection = c("none", "model.selection.aic")),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...){
                     dat <- x
                     dat$.outcome <- y
                     oblique.tree(.outcome ~ ., data = dat,
-                                 oblique.splits = as.character(param$.oblique.splits),
-                                 variable.selection = as.character(param$.variable.selection),
+                                 oblique.splits = as.character(param$oblique.splits),
+                                 variable.selection = as.character(param$variable.selection),
                                  ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL){

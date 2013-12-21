@@ -6,34 +6,30 @@ modelInfo <- list(label = "Conditional Inference Tree",
                                           class = c('numeric'),
                                           label = c('Max Tree Depth')),
                   grid = function(x, y, len = NULL) {
-                    data.frame(.maxdepth = 1:len)
+                    data.frame(maxdepth = 1:len)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
-
                     theDots <- list(...)
                     if(any(names(theDots) == "controls"))
                     {
-                      theDots$controls@tgctrl@maxdepth <- param$.maxdepth
+                      theDots$controls@tgctrl@maxdepth <- param$maxdepth
                       theDots$controls@gtctrl@mincriterion <- 0
                       ctl <- theDots$controls
                       theDots$controls <- NULL
                       
                     } else ctl <- do.call(getFromNamespace("ctree_control", "party"), 
-                                          list(maxdepth = param$.maxdepth,
+                                          list(maxdepth = param$maxdepth,
                                                mincriterion = 0))
-
                     ## pass in any model weights
                     if(!is.null(wts)) theDots$weights <- wts
-
                     modelArgs <- c(
                                    list(
                                         formula = as.formula(".outcome ~ ."),
                                         data = dat,
                                         controls = ctl),
                                    theDots)
-
                     out <- do.call(getFromNamespace("ctree", "party"), modelArgs)
                     out
                   },

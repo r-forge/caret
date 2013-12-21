@@ -5,9 +5,9 @@ modelInfo <- list(label = "Generalized Partial Least Squares",
                   parameters = data.frame(parameter = c('K.prov'),
                                           class = c('numeric'),
                                           label = c('#Components')),
-                  grid = function(x, y, len = NULL) data.frame(.K.prov =seq(1, len)),
+                  grid = function(x, y, len = NULL) data.frame(K.prov =seq(1, len)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    gpls(x, y, K.prov = param$.K.prov, ...),
+                    gpls(x, y, K.prov = param$K.prov, ...),
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata)$class,
                   prob = function(modelFit, newdata, submodels = NULL) {

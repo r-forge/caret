@@ -6,7 +6,7 @@ modelInfo <- list(label = "Single Rule Classification",
                                           class = c("character"),
                                           label = "none"),
                   grid = function(x, y, len = NULL) 
-                    data.frame(.parameter = "none"),
+                    data.frame(parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
