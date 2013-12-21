@@ -32,6 +32,7 @@ test_reg_loo_model <- train(trainX, trainY, method = "rvmLinear", trControl = rc
 #########################################################################
 
 test_reg_predictors1 <- predictors(test_reg_cv_model)
+
 test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
 
 #########################################################################

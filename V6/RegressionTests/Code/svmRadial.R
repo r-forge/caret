@@ -16,7 +16,9 @@ cctrl2 <- trainControl(method = "LOOCV")
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
-                             method = "svmRadial", 
+                             method = "svmRadial",
+                             tuneGrid = data.frame(.C = c(.25, .5, 1),
+                                                   .sigma = .05), 
                              trControl = cctrl1,
                              preProc = c("center", "scale"))
 
@@ -24,10 +26,14 @@ test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
-                              method = "svmRadial", 
+                              method = "svmRadial",
+                              tuneGrid = data.frame(.C = c(.25, .5, 1),
+                                                    .sigma = .05), 
                               trControl = cctrl2,
                               preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
@@ -48,7 +54,9 @@ rctrl2 <- trainControl(method = "LOOCV")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
-                           method = "svmRadial", 
+                           method = "svmRadial",
+                           tuneGrid = data.frame(.C = c(.25, .5, 1),
+                                                 .sigma = .05), 
                            trControl = rctrl1,
                            preProc = c("center", "scale"))
 test_reg_pred <- predict(test_reg_cv_model, testX)
@@ -56,14 +64,17 @@ test_reg_pred <- predict(test_reg_cv_model, testX)
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, 
                             method = "svmRadial",
+                            tuneGrid = data.frame(.C = c(.25, .5, 1),
+                                                  .sigma = .05),
                             trControl = rctrl2,
                             preProc = c("center", "scale"))
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
 test_reg_predictors1 <- predictors(test_reg_cv_model)
+
+test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
 test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
 
 #########################################################################

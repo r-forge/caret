@@ -22,6 +22,7 @@ test_class_cv_model <- train(trainX, trainY,
                              method = "LMT", 
                              trControl = cctrl1,
                              metric = "ROC", 
+                             tuneGrid = data.frame(.iter = c(1, 3, 5)),
                              preProc = c("center", "scale"))
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
@@ -30,15 +31,17 @@ test_class_prob <- predict(test_class_cv_model, testing[, -ncol(testing)], type 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
                               method = "LMT", 
-                              trControl = cctrl2,
+                              trControl = cctrl2, 
+                              tuneGrid = data.frame(.iter = c(1, 3, 5)),
                               metric = "ROC", 
                               preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
 
 #########################################################################
 

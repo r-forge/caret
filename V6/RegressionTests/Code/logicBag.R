@@ -25,7 +25,8 @@ set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "logicBag", 
                              trControl = cctrl1,
-                             B = 3)
+                             B = 3,
+                             seed = 1)
 
 test_class_pred <- predict(test_class_cv_model, testX)
 
@@ -33,8 +34,11 @@ set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
                               method = "logicBag", 
                               trControl = cctrl2,
-                              B = 3)
+                              B = 3,
+                              seed = 1)
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
@@ -59,21 +63,21 @@ set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
                            method = "logicBag", 
                            trControl = rctrl1,
-                           B = 3)
+                           B = 3,
+                           seed = 1)
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, 
                             method = "logicBag",
                             trControl = rctrl2,
-                            B = 3)
+                            B = 3,
+                            seed = 1)
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
 test_reg_predictors1 <- predictors(test_reg_cv_model)
-test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
 
 #########################################################################
 

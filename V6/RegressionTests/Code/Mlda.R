@@ -28,6 +28,8 @@ test_class_loo_model <- train(trainX, trainY,
                               trControl = cctrl2,
                               preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 

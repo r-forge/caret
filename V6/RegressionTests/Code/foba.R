@@ -17,8 +17,13 @@ trainY <- logBBB[inTrain[[1]]]
 testX <- bbbDescr[-inTrain[[1]], ]
 testY <- logBBB[-inTrain[[1]]]
 
-rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
-rctrl2 <- trainControl(method = "LOOCV")
+rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
+                       seed = list(a = 1:9, b = 1:9, c = 1:9, d = 10))
+
+seeds <- vector(mode = "list", length = 189)
+for(i in 1:189) seeds[[i]] <- i:(i+3)
+seeds[[189]] <- 1
+rctrl2 <- trainControl(method = "LOOCV", seed = seeds)
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, method = "foba", trControl = rctrl1,
@@ -32,7 +37,6 @@ test_reg_loo_model <- train(trainX, trainY, method = "foba", trControl = rctrl2,
 #########################################################################
 
 test_reg_predictors1 <- predictors(test_reg_cv_model)
-test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
 
 #########################################################################
 

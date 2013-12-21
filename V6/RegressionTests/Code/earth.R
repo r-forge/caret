@@ -14,10 +14,13 @@ trainY <- training$Class
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 cctrl2 <- trainControl(method = "LOOCV")
 
+egrid <- data.frame(.degree = 1, .nprune = (2:4)*2)
+
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "earth", 
                              trControl = cctrl1,
+                             tuneGrid = egrid,
                              preProc = c("center", "scale"))
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
@@ -26,8 +29,11 @@ set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
                               method = "earth", 
                               trControl = cctrl2,
+                              tuneGrid = egrid,
                               preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
@@ -50,6 +56,7 @@ set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
                            method = "earth", 
                            trControl = rctrl1,
+                           tuneGrid = egrid,
                            preProc = c("center", "scale"))
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
@@ -57,14 +64,18 @@ set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, 
                             method = "earth",
                             trControl = rctrl2,
+                            tuneGrid = egrid,
                             preProc = c("center", "scale"))
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
 test_reg_predictors1 <- predictors(test_reg_cv_model)
-test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
+
+#########################################################################
+
+test_class_imp <- varImp(test_class_cv_model)
+test_reg_imp <- varImp(test_reg_cv_model)
 
 #########################################################################
 

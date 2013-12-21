@@ -13,15 +13,25 @@ trainY <- training$Class
 
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        classProbs = TRUE, 
-                       summaryFunction = twoClassSummary)
+                       summaryFunction = twoClassSummary,
+                       seed = list(a = 1:9, b = 1:9, c = 1:9, d = 10))
+
+
+seeds <- vector(mode = "list", length = 189)
+for(i in 1:189) seeds[[i]] <- i:(i+3)
+seeds[[189]] <- 1
+
 cctrl2 <- trainControl(method = "LOOCV",
-                       classProbs = TRUE, summaryFunction = twoClassSummary)
+                       classProbs = TRUE, summaryFunction = twoClassSummary,
+                       seeds= seeds)
 cctrl3 <- trainControl(method = "oob")
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "bagEarth", 
                              trControl = cctrl1,
+                             tuneGrid = data.frame(.degree = 1,
+                                                   .nprune = 2:4),
                              metric = "ROC", 
                              preProc = c("center", "scale"),
                              B = 10)
@@ -33,14 +43,20 @@ set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
                               method = "bagEarth", 
                               trControl = cctrl2,
+                              tuneGrid = data.frame(.degree = 1,
+                                                    .nprune = 2:4),
                               metric = "ROC", 
                               preProc = c("center", "scale"),
                               B = 10)
 test_levels <- levels(test_class_cv_model)
-
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
+  
 set.seed(849)
 test_class_oob_model <- train(trainX, trainY, 
-                              method = "bagEarth", 
+                              method = "bagEarth",
+                              tuneGrid = data.frame(.degree = 1,
+                                                    .nprune = 2:4), 
                               trControl = cctrl3,
                               B = 10)
 
@@ -58,8 +74,14 @@ trainY <- logBBB[inTrain[[1]]]
 testX <- bbbDescr[-inTrain[[1]], ]
 testY <- logBBB[-inTrain[[1]]]
 
-rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
-rctrl2 <- trainControl(method = "LOOCV")
+rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
+                       seed = list(a = 1:9, b = 1:9, c = 1:9, d = 10))
+
+seeds <- vector(mode = "list", length = 189)
+for(i in 1:189) seeds[[i]] <- i:(i+3)
+seeds[[189]] <- 1
+
+rctrl2 <- trainControl(method = "LOOCV", seeds = seeds)
 rctrl3 <- trainControl(method = "oob")
 
 set.seed(849)
@@ -67,6 +89,8 @@ test_reg_cv_model <- train(trainX, trainY,
                            method = "bagEarth", 
                            trControl = rctrl1,
                            preProc = c("center", "scale"),
+                           tuneGrid = data.frame(.degree = 1,
+                                                 .nprune = 2:4),
                            B = 10)
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
@@ -75,6 +99,8 @@ test_reg_loo_model <- train(trainX, trainY,
                             method = "bagEarth",
                             trControl = rctrl2,
                             preProc = c("center", "scale"),
+                            tuneGrid = data.frame(.degree = 1,
+                                                  .nprune = 2:4),
                             B = 10)
 
 set.seed(849)
@@ -82,14 +108,19 @@ test_reg_oob_model <- train(trainX, trainY,
                             method = "bagEarth",
                             trControl = rctrl3,
                             preProc = c("center", "scale"),
+                            tuneGrid = data.frame(.degree = 1,
+                                                  .nprune = 2:4),
                             B = 10)
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
 test_reg_predictors1 <- predictors(test_reg_cv_model)
-test_reg_predictors2 <- predictors(test_reg_cv_model$finalModel)
+
+#########################################################################
+
+test_class_imp <- varImp(test_class_cv_model)
+test_reg_imp <- varImp(test_reg_cv_model)
 
 #########################################################################
 

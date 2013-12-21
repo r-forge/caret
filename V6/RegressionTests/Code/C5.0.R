@@ -22,6 +22,7 @@ test_class_cv_model <- train(trainX, trainY,
                              method = "C5.0", 
                              trControl = cctrl1,
                              metric = "ROC", 
+                             control = C5.0Control(seed = 1),
                              preProc = c("center", "scale"))
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
@@ -29,16 +30,22 @@ test_class_prob <- predict(test_class_cv_model, testing[, -ncol(testing)], type 
 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
-                            method = "C5.0", 
-                            trControl = cctrl2,
-                            metric = "ROC", 
-                            preProc = c("center", "scale"))
+                              method = "C5.0", 
+                              trControl = cctrl2,
+                              metric = "ROC", 
+                              control = C5.0Control(seed = 1), 
+                              preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+
+#########################################################################
+
+test_class_imp <- varImp(test_class_cv_model)
 
 #########################################################################
 
