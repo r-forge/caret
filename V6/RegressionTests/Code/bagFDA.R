@@ -19,7 +19,9 @@ cctrl2 <- trainControl(method = "LOOCV",
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
-                             method = "bagFDA", 
+                             method = "bagFDA",
+                             tuneGrid = data.frame(.degree = 1,
+                                                   .nprune = 2:4), 
                              trControl = cctrl1,
                              metric = "ROC", 
                              preProc = c("center", "scale"),
@@ -30,17 +32,24 @@ test_class_prob <- predict(test_class_cv_model, testing[, -ncol(testing)], type 
 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
-                              method = "bagFDA", 
+                              method = "bagFDA",
+                              tuneGrid = data.frame(.degree = 1,
+                                                    .nprune = 2:4), 
                               trControl = cctrl2,
                               metric = "ROC", 
                               preProc = c("center", "scale"),
                               B = 10)
 test_levels <- levels(test_class_cv_model)
-
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
+  
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+
+#########################################################################
+
+test_class_imp <- varImp(test_class_cv_model)
 
 #########################################################################
 

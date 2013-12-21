@@ -22,12 +22,14 @@ rctrl2 <- trainControl(method = "LOOCV")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, method = "krlsPoly", trControl = rctrl1,
-                           preProc = c("center", "scale"), print.level = 0)
+                           preProc = c("center", "scale"), print.level = 0,
+                           tuneGrid = data.frame(.lambda = NA, .degree = 1:2))
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, method = "krlsPoly", trControl = rctrl2,
-                            preProc = c("center", "scale"), print.level = 0)
+                            preProc = c("center", "scale"), print.level = 0,
+                            tuneGrid = data.frame(.lambda = NA, .degree = 1:2))
 
 #########################################################################
 

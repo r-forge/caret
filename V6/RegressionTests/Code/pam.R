@@ -13,9 +13,11 @@ trainY <- training$Class
 
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        classProbs = TRUE, 
-                       summaryFunction = twoClassSummary)
+                       summaryFunction = twoClassSummary,
+                       returnData = TRUE)
 cctrl2 <- trainControl(method = "LOOCV",
-                       classProbs = TRUE, summaryFunction = twoClassSummary)
+                       classProbs = TRUE, summaryFunction = twoClassSummary,
+                       returnData = TRUE)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -34,11 +36,18 @@ test_class_loo_model <- train(trainX, trainY,
                               metric = "ROC", 
                               preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
+
 test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+
+#########################################################################
+
+test_class_imp <- varImp(test_class_cv_model)
 
 #########################################################################
 

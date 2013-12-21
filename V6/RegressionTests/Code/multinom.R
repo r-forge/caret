@@ -36,11 +36,16 @@ test_class_loo_model <- train(trainX, trainY,
                               preProc = c("center", "scale"),
                               trace = FALSE)
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
 test_class_predictors1 <- predictors(test_class_cv_model)
-test_class_predictors2 <- predictors(test_class_cv_model$finalModel)
+
+#########################################################################
+
+test_class_imp <- varImp(test_class_cv_model)
 
 #########################################################################
 

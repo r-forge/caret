@@ -38,7 +38,9 @@ test_class_loo_model <- train(trainX, trainY,
                               confidence = 0.8,
                               maxRuns = 11)
 test_levels <- levels(test_class_cv_model)
-
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
+  
 #########################################################################
 
 data(BloodBrain)

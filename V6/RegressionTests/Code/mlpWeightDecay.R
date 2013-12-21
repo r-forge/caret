@@ -14,20 +14,30 @@ trainY <- training$Class
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 cctrl2 <- trainControl(method = "LOOCV")
 
+library(RSNNS)
+
+grid <- expand.grid(.decay = c(0, .01), .size = 1:3)
+
+setSnnsRSeedValue(1)
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "mlpWeightDecay", 
                              trControl = cctrl1,
+                             tuneGrid = grid,
                              preProc = c("center", "scale"))
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
 
+setSnnsRSeedValue(1)
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
                               method = "mlpWeightDecay", 
                               trControl = cctrl2,
+                              tuneGrid = grid,
                               preProc = c("center", "scale"))
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
@@ -46,16 +56,20 @@ testY <- logBBB[-inTrain[[1]]]
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
 
+setSnnsRSeedValue(1)
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
-                           method = "mlpWeightDecay", 
+                           method = "mlpWeightDecay",
+                           tuneGrid = grid, 
                            trControl = rctrl1,
                            preProc = c("center", "scale"))
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
+setSnnsRSeedValue(1)
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, 
                             method = "mlpWeightDecay",
+                            tuneGrid = grid,
                             trControl = rctrl2,
                             preProc = c("center", "scale"))
 

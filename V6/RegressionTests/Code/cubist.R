@@ -21,11 +21,19 @@ rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
 
 set.seed(849)
-test_reg_cv_model <- train(trainX, trainY, method = "cubist", trControl = rctrl1)
+test_reg_cv_model <- train(trainX, trainY, method = "cubist", 
+                           trControl = rctrl1,
+                           control = cubistControl(seed = 1))
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
 set.seed(849)
-test_reg_loo_model <- train(trainX, trainY, method = "cubist", trControl = rctrl2)
+test_reg_loo_model <- train(trainX, trainY, method = "cubist", 
+                            trControl = rctrl1,
+                            control = cubistControl(seed = 1))
+
+#########################################################################
+
+test_reg_imp <- varImp(test_reg_cv_model)
 
 #########################################################################
 

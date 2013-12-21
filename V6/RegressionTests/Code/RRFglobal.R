@@ -19,7 +19,10 @@ test_class_cv_model <- train(trainX, trainY,
                              method = "RRFglobal", 
                              trControl = cctrl1,
                              preProc = c("center", "scale"),
-                             ntree = 50)
+                             tuneGrid = expand.grid(.mtry = 2:4,
+                                                    .coefReg = c(0.1, .5, 1)),
+                             ntree = 50,
+                             importance = TRUE)
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
 
@@ -28,8 +31,12 @@ test_class_loo_model <- train(trainX, trainY,
                               method = "RRFglobal", 
                               trControl = cctrl2,
                               preProc = c("center", "scale"),
+                              tuneGrid = expand.grid(.mtry = 2:4,
+                                                     .coefReg = c(0.1, .5, 1)),
                               ntree = 50)
 test_levels <- levels(test_class_cv_model)
+if(!all(levels(trainY) %in% test_levels))
+  cat("wrong levels")
 
 #########################################################################
 
@@ -53,15 +60,25 @@ test_reg_cv_model <- train(trainX, trainY,
                            method = "RRFglobal", 
                            trControl = rctrl1,
                            preProc = c("center", "scale"),
-                           ntree = 50)
+                           tuneGrid = expand.grid(.mtry = 2:4,
+                                                  .coefReg = c(0.1, .5, 1)),
+                           ntree = 50,
+                           importance = TRUE)
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, 
                             method = "RRFglobal",
                             trControl = rctrl2,
+                            tuneGrid = expand.grid(.mtry = 2:4,
+                                                   .coefReg = c(0.1, .5, 1)),
                             preProc = c("center", "scale"),
                             ntree = 50)
+
+#########################################################################
+
+test_class_imp <- varImp(test_class_cv_model)
+test_reg_imp <- varImp(test_reg_cv_model)
 
 #########################################################################
 
