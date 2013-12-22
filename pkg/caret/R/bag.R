@@ -130,7 +130,7 @@ bagControl <- function(fit = NULL, predict = NULL, aggregate = NULL, downSample 
   m <- match.call(expand.dots = FALSE)  
   mIndex <- match(c("formula", "data", "subset", "weights", "na.action"), names(m), 0)
   m <- m[c(1, mIndex)]
-  m$... <- NULL
+  m$... <- m$B <- m$vars <- m$bagControl <- NULL
   m$na.action <- na.action
   m[[1]] <- as.name("model.frame")
   m <- eval(m, parent.frame())
