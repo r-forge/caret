@@ -56,8 +56,8 @@ nominalTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, tes
   resampleIndex <- ctrl$index
   if(ctrl$method %in% c("boot632"))
   {
-    resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
-    ctrl$indexOut <- c(list("AllData" = rep(0, nrow(dat))),  ctrl$indexOut)
+    resampleIndex <- c(list("AllData" = rep(0, nrow(x))), resampleIndex)
+    ctrl$indexOut <- c(list("AllData" = rep(0, nrow(x))),  ctrl$indexOut)
   }
   `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   
@@ -78,7 +78,7 @@ nominalTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, tes
     modelIndex <- resampleIndex[[iter]]
     holdoutIndex <- ctrl$indexOut[[iter]]
   } else {
-    modelIndex <- 1:nrow(dat)
+    modelIndex <- 1:nrow(x)
     holdoutIndex <- modelIndex
   }
   
@@ -287,7 +287,7 @@ nominalTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, tes
   pred <- if(ctrl$savePredictions)  rbind.fill(result[names(result) == "pred"]) else NULL
   if(ctrl$method %in% c("boot632"))
   {
-    perfNames <- names(ctrl$summaryFunction(data.frame(obs = dat$.outcome, pred = sample(dat$.outcome)),
+    perfNames <- names(ctrl$summaryFunction(data.frame(obs = y, pred = sample(y)),
                                             lev = lev,
                                             model = method))
     apparent <- subset(resamples, Resample == "AllData")
@@ -478,7 +478,7 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
   ppp <- c(ppp, ctrl$preProcOptions)
   
   resampleIndex <- ctrl$index
-  if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
+  if(ctrl$method %in% c("boot632")) resampleIndex <- c(list("AllData" = rep(0, nrow(x))), resampleIndex)
   
   `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
   result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
@@ -492,7 +492,7 @@ nominalSbfWorkflow <- function(x, y, ppOpts, ctrl, lev, ...)
     modelIndex <- resampleIndex[[iter]]
     holdoutIndex <- -unique(resampleIndex[[iter]])
   } else {
-    modelIndex <- 1:nrow(dat)
+    modelIndex <- 1:nrow(x)
     holdoutIndex <- modelIndex
   }
   
@@ -702,189 +702,3 @@ looRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
 }
 
 
-
-adaptiveTrainWorkflow <- function(dat, info, method, ppOpts, ctrl, lev, testing = FALSE, ...)
-{
-  library(caret)
-  loadNamespace("caret")
-  ppp <- list(options = ppOpts)
-  ppp <- c(ppp, ctrl$preProcOptions)
-  
-  printed <- format(info$loop, digits = 4)
-  colnames(printed) <- gsub("^\\.", "", colnames(printed))
-  
-  burnIn <- 5
-  diffThreshold <- .25
-  
-  ## For 632 estimator, add an element to the index of zeros to trick it into
-  ## fitting and predicting the full data set.
-  
-  resampleIndex <- ctrl$index
-  if(ctrl$method %in% c("boot632"))
-  {
-    resampleIndex <- c(list("AllData" = rep(0, nrow(dat))), resampleIndex)
-    ctrl$indexOut <- c(list("AllData" = rep(0, nrow(dat))),  ctrl$indexOut)
-  }
-  
-  `%op%` <- `%do%`
-  
-  ## use regular for loop here as to easily adjust the loop data
-  result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %do% {
-    library(caret)
-    if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE],
-                                          names(resampleIndex), iter)
-    
-    if(names(resampleIndex)[iter] != "AllData")
-    {
-      modelIndex <- resampleIndex[[iter]]
-      holdoutIndex <- ctrl$indexOut[[iter]]
-    } else {
-      modelIndex <- 1:nrow(dat)
-      holdoutIndex <- modelIndex
-    }
-    
-    subResult <- foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop")  %op% {
-      mod <- try(
-        caret:::createModel(data = dat[modelIndex,,drop = FALSE ],
-                            method = method,
-                            tuneValue = info$loop[parm,,drop = FALSE],
-                            obsLevels = lev,
-                            pp = ppp,
-                            custom = ctrl$custom$model,
-                            classProbs = ctrl$classProbs,
-                            ...),
-        silent = TRUE)
-      
-      predicted <- try(
-        caret:::predictionFunction(method = method,
-                                   modelFit = mod$fit,
-                                   newdata = dat[holdoutIndex, !(names(dat) %in% c(".outcome", ".modelWeights")), drop = FALSE],
-                                   preProc = mod$preProc,
-                                   param = info$seqParam[[parm]],
-                                   custom = ctrl$custom$prediction),
-        silent = TRUE)
-      
-      if(is.factor(dat$.outcome)) predicted <- factor(as.character(predicted), levels = lev)
-      tmp <-  data.frame(pred = predicted,
-                         obs = dat$.outcome[holdoutIndex],
-                         stringsAsFactors = FALSE)
-      ## Sometimes the code above does not coerce the first
-      ## columnn to be named "pred" so force it
-      names(tmp)[1] <- "pred"
-      if(ctrl$classProbs) tmp <- cbind(tmp, probValues)
-      
-      ##################################
-      thisResample <- ctrl$summaryFunction(tmp,
-                                           lev = lev,
-                                           model = method)
-      
-      ## if classification, get the confusion matrix
-      if(length(lev) > 1) thisResample <- c(thisResample, caret:::flatTable(tmp$pred, tmp$obs))
-      thisResample <- as.data.frame(t(thisResample))
-      thisResample <- cbind(thisResample, info$loop[parm,,drop = FALSE])
-    } ## end loop over parameters
-    
-    subResult$Resample <- names(resampleIndex)[iter]
-    if(iter <= burnIn)
-    {
-      currentResults <- if(iter == 1) subResult else rbind(currentResults, subResult)
-    } else {
-      paramResults <- paramTest(currentResults, metric = "RMSE", ".C", maximize = FALSE)
-      print(paramResults)
-      selectedParam <- subset(paramResults, min_prob >= diffThreshold)
-      if(nrow(selectedParam) == 0) selectedParam <- paramResults[which.max(paramResults$min_prob),,drop = FALSE]
-      selectedParam <- selectedParam[, names(selectedParam) %in% names(info$loop),drop = FALSE]
-      print(selectedParam)
-      
-      info$loop <- merge(selectedParam, info$loop)
-      if(ctrl$verboseIter) cat("Number of tuning parameters reduced to", nrow(info$loop), "\n")
-    }
-    
-    if(ctrl$verboseIter) caret:::progress(printed[parm,,drop = FALSE],
-                                          names(resampleIndex), iter, FALSE)
-    list(resamples = subResult)
-  } ## end loop over resamples
-  
-  resamples <- rbind.fill(result[names(result) == "resamples"])
-  pred <- if(ctrl$savePredictions)  rbind.fill(result[names(result) == "pred"]) else NULL
-  if(ctrl$method %in% c("boot632"))
-  {
-    perfNames <- names(ctrl$summaryFunction(data.frame(obs = dat$.outcome, pred = sample(dat$.outcome)),
-                                            lev = lev,
-                                            model = method))
-    apparent <- subset(resamples, Resample == "AllData")
-    apparent <- apparent[,!grepl("^\\.cell|Resample", colnames(apparent)),drop = FALSE]
-    names(apparent)[which(names(apparent) %in% perfNames)] <- paste(names(apparent)[which(names(apparent) %in% perfNames)],
-                                                                    "Apparent", sep = "")
-    names(apparent) <- gsub("^\\.", "", names(apparent))
-    if(any(!complete.cases(apparent[,!grepl("^cell|Resample", colnames(apparent)),drop = FALSE])))
-    {
-      warning("There were missing values in the apparent performance measures.")
-    }        
-    resamples <- subset(resamples, Resample != "AllData")
-  }
-  names(resamples) <- gsub("^\\.", "", names(resamples))
-  
-  if(any(!complete.cases(resamples[,!grepl("^cell|Resample", colnames(resamples)),drop = FALSE])))
-  {
-    warning("There were missing values in resampled performance measures.")
-  }
-  out <- ddply(resamples[,!grepl("^cell|Resample", colnames(resamples)),drop = FALSE],
-               info$model$parameter,
-               caret:::MeanSD, exclude = info$model$parameter)
-  
-  if(ctrl$method %in% c("boot632"))
-  {
-    out <- merge(out, apparent)
-    for(p in seq(along = perfNames))
-    {
-      const <- 1-exp(-1)
-      out[, perfNames[p]] <- (const * out[, perfNames[p]]) +  ((1-const) * out[, paste(perfNames[p],"Apparent", sep = "")])
-    }
-  }
-  
-  list(performance = out, resamples = resamples, predictions = if(ctrl$savePredictions) pred else NULL)
-}
-
-
-paramTest <- function(x, metric = names(x)[1], param, maximize = TRUE)
-{
-  paramValues <- x[, param, drop = FALSE]
-  paramValues <- paramValues[!duplicated(paramValues),,drop = FALSE]
-  paramValues$.setting <- paste("param", gsub(" ", "0", format(1:nrow(paramValues))), sep = "")
-  x <- merge(x, paramValues, all.x = TRUE)
-  horz <- reshape(x[, c("Resample", metric, ".setting")], 
-                  direction = "wide", 
-                  v.names = metric, 
-                  timevar = ".setting", 
-                  idvar = "Resample") 
-  horz <- horz[order(horz$Resample),
-               c("Resample", sort(grep(metric, colnames(horz), value = TRUE)))]
-  colnames(horz) <- gsub(paste(metric, ".", sep = ""), "", colnames(horz))
-  min_probs <- getBestP(horz[, -1], maximize = maximize)
-  merge(paramValues, min_probs)
-}
-
-getBestP <- function(dat, maximize = TRUE)
-{
-  pvals <- diffs <- matrix(NA, nrow = ncol(dat), ncol = ncol(dat))
-  colnames(pvals) <- colnames(dat)
-  alt <- if(maximize) "greater" else "less"
-  for(Row in 1:ncol(dat))
-  {
-    for(Col in Row:ncol(dat))
-    {
-      if(Row != Col)
-      {
-        
-        tmp <- t.test(dat[,Row] - dat[,Col], alternative = alt)
-        pvals[Row,Col] <- tmp$p.value
-        pvals[Col,Row] <- 1- pvals[Row,Col]
-        diffs[Row,Col] <- tmp$estimate
-        diffs[Col,Row] <- -diffs[Row,Col]        
-      }
-    }
-  }  
-  data.frame(.setting = colnames(dat),
-             min_prob = apply(pvals, 2, min, na.rm = TRUE))
-}
