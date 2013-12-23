@@ -258,6 +258,11 @@ resampName <- function(x, numbers = TRUE)
     resampleN <- unlist(lapply(x$control$index, length))
     numResamp <- length(resampleN)
     out <- switch(tolower(x$control$method),
+                  timeslice = paste("Rolling Forecasting Origin Resampling (",
+                                    x$control$horizon, " held-out with",
+                                    ifelse(x$control$fixedWindow, " a ", " no "),
+                                    "fixed window)", sep = ""),
+                  oob = "Out of Bag Resampling",
                   boot =, boot632 = paste("Bootstrapped (", numResamp, " reps)", sep = ""),
                   cv = paste("Cross-Validated (", x$control$number, " fold)", sep = ""),
                   repeatedcv = paste("Cross-Validated (", x$control$number, " fold, repeated ",
@@ -266,6 +271,8 @@ resampName <- function(x, numbers = TRUE)
                                 round(x$control$p, 2), "%)", sep = ""))
   } else {
     out <- switch(tolower(x$control$method),
+                  timeslice = "Rolling Forecasting Origin Resampling",
+                  oob = "Out of Bag Resampling",
                   boot = "(Bootstrap)",
                   boot632 = "(Bootstrap 632 Rule)",
                   cv = "(Cross-Validation)",
