@@ -1,3 +1,3 @@
 #!/bin/bash
 
-R --slave -f runUnitTests.R
+R --slave -f runUnitTests.R > testrun.out 2>&1
