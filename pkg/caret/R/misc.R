@@ -1,3 +1,20 @@
+phoneySummary <- function(y, ctrl, lev, metric, method) {
+  ## get phoney performance to obtain the names of the outputs
+  testOutput <- data.frame(pred = sample(y, min(10, length(y))),
+                           obs = sample(y, min(10, length(y))))
+  
+  if(ctrl$classProbs)
+  {
+    for(i in seq(along = lev)) testOutput[, lev[i]] <- runif(nrow(testOutput))
+    testOutput[, lev] <- t(apply(testOutput[, lev], 1, function(x) x/sum(x)))
+  } else {
+    if(metric == "ROC" & !ctrl$classProbs)
+      stop("train()'s use of ROC codes requires class probabilities. See the classProbs option of trainControl()")
+  }
+  ctrl$summaryFunction(testOutput, lev, method)
+}
+
+
 hasDots <- function(grid, info) {
   mnames <- sort(as.character(info$parameters$parameter))
   mnames2 <- paste(".", mnames, sep = "")

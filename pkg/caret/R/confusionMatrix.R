@@ -164,7 +164,7 @@ confusionMatrix.train <- function(data, norm = "overall", dnn = c("Prediction", 
 {
   if(data$modelType == "Regression") stop("confusion matrices are only valid for classification models")
   if(!norm %in% c("none", "overall", "average")) stop("values for norm should be 'none', 'overall', 'byClass' or 'average'")
-  if(data$control$method %in% c("oob", "LOOCV")) stop("cannot compute confusion matrices for leave-one-out and out-of-bag resampling")
+  if(data$control$method %in% c("oob", "LOOCV", "none")) stop("cannot compute confusion matrices for leave-one-out, out-of-bag resampling or no resampling")
   if(!is.null(data$control$index))
   {
     resampleN <- unlist(lapply(data$control$index, length))
@@ -258,6 +258,7 @@ resampName <- function(x, numbers = TRUE)
     resampleN <- unlist(lapply(x$control$index, length))
     numResamp <- length(resampleN)
     out <- switch(tolower(x$control$method),
+                  none = "None",
                   timeslice = paste("Rolling Forecasting Origin Resampling (",
                                     x$control$horizon, " held-out with",
                                     ifelse(x$control$fixedWindow, " a ", " no "),
@@ -271,6 +272,7 @@ resampName <- function(x, numbers = TRUE)
                                 round(x$control$p, 2), "%)", sep = ""))
   } else {
     out <- switch(tolower(x$control$method),
+                  none = "None", 
                   timeslice = "Rolling Forecasting Origin Resampling",
                   oob = "Out of Bag Resampling",
                   boot = "(Bootstrap)",
