@@ -13,6 +13,7 @@ trainY <- training$Class
 
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 cctrl2 <- trainControl(method = "LOOCV")
+cctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_class_cv_model <- train(trainX[, 1:3], trainY, 
@@ -33,6 +34,16 @@ test_class_pred <- predict(test_class_cv_model, testing[, 1:3])
 #                                                      .R = 2:3,
 #                                                      .lambda = c(.1, .2)),
 #                               preProc = c("center", "scale"))
+
+set.seed(849)
+test_class_none_model <- train(trainX[, 1:3], trainY, 
+                               method = "smda", 
+                               trControl = cctrl3,
+                               tuneGrid = test_class_cv_model$bestTune,
+                               preProc = c("center", "scale"))
+
+test_class_none_pred <- predict(test_class_none_model, testing[, 1:3])
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")

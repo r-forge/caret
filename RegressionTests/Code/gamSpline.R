@@ -16,7 +16,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        summaryFunction = twoClassSummary)
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
-cctrl3 <- trainControl(method = "oob")
+cctrl3 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 
 set.seed(849)
 test_class_cv_model <- train(trainX[, 1:3], trainY, 
@@ -34,6 +35,18 @@ test_class_loo_model <- train(trainX[, 1:3], trainY,
                               trControl = cctrl2,
                               metric = "ROC", 
                               preProc = c("center", "scale"))
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "gamSpline", 
+                               trControl = cctrl3,
+                               tuneLength = 1,
+                               metric = "ROC", 
+                               preProc = c("center", "scale"))
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
@@ -54,7 +67,7 @@ testY <- logBBB[-inTrain[[1]]]
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
-rctrl3 <- trainControl(method = "oob")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX[, 1:3], trainY, 
@@ -68,6 +81,15 @@ test_reg_loo_model <- train(trainX[, 1:3], trainY,
                             method = "gamSpline",
                             trControl = rctrl2,
                             preProc = c("center", "scale"))
+
+
+set.seed(849)
+test_reg_none_model <- train(trainX[, 1:3], trainY, 
+                             method = "gamSpline", 
+                             trControl = rctrl3,
+                             tuneLength = 1,
+                             preProc = c("center", "scale"))
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

@@ -13,6 +13,7 @@ trainY <- training$Class
 
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 cctrl2 <- trainControl(method = "LOOCV")
+cctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -34,6 +35,17 @@ test_class_loo_model <- train(trainX, trainY,
                               tuneGrid = expand.grid(.mtry = 2:4,
                                                      .coefReg = c(0.1, .5, 1)),
                               ntree = 50)
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "RRFglobal", 
+                               trControl = cctrl3,
+                               tuneGrid = test_class_cv_model$bestTune,
+                               preProc = c("center", "scale"),
+                               ntree = 50)
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
@@ -54,6 +66,7 @@ testY <- logBBB[-inTrain[[1]]]
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
@@ -74,6 +87,16 @@ test_reg_loo_model <- train(trainX, trainY,
                                                    .coefReg = c(0.1, .5, 1)),
                             preProc = c("center", "scale"),
                             ntree = 50)
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "RRFglobal", 
+                             trControl = rctrl3,
+                             tuneGrid = test_reg_cv_model$bestTune,
+                             preProc = c("center", "scale"),
+                             ntree = 50)
+test_reg_none_pred <- predict(test_reg_none_model, testX)
+
 
 #########################################################################
 

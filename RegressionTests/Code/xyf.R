@@ -16,6 +16,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        summaryFunction = twoClassSummary)
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
+cctrl3 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -33,6 +35,18 @@ test_class_loo_model <- train(trainX, trainY,
                               trControl = cctrl2,
                               metric = "ROC", 
                               preProc = c("center", "scale"))
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "xyf", 
+                               trControl = cctrl3,
+                               tuneGrid = test_class_cv_model$bestTune,
+                               metric = "ROC", 
+                               preProc = c("center", "scale"))
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
@@ -53,6 +67,7 @@ testY <- logBBB[-inTrain[[1]]]
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
@@ -66,6 +81,14 @@ test_reg_loo_model <- train(trainX, trainY,
                             method = "xyf",
                             trControl = rctrl2,
                             preProc = c("center", "scale"))
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "xyf", 
+                             trControl = rctrl3,
+                             tuneGrid = test_reg_cv_model$bestTune,
+                             preProc = c("center", "scale"))
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

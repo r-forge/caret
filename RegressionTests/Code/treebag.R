@@ -17,6 +17,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
 cctrl3 <- trainControl(method = "oob")
+cctrl4 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -47,6 +49,20 @@ test_class_oob_model <- train(trainX, trainY,
                               nbagg = 7,
                               keepX = TRUE)
 
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "treebag", 
+                               trControl = cctrl4,
+                               tuneGrid = test_class_cv_model$bestTune,
+                               metric = "ROC", 
+                               preProc = c("center", "scale"),
+                               nbagg = 7,
+                               keepX = TRUE)
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
+
 #########################################################################
 
 data(BloodBrain)
@@ -64,6 +80,7 @@ testY <- logBBB[-inTrain[[1]]]
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
 rctrl3 <- trainControl(method = "oob")
+rctrl4 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
@@ -87,6 +104,16 @@ test_reg_oob_model <- train(trainX, trainY,
                             preProc = c("center", "scale"),
                             nbagg = 7,
                             keepX = TRUE)
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "treebag", 
+                             trControl = rctrl4,
+                             tuneGrid = test_reg_cv_model$bestTune,
+                             preProc = c("center", "scale"),
+                             nbagg = 7,
+                             keepX = TRUE)
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

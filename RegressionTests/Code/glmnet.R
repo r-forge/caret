@@ -13,7 +13,8 @@ trainY <- training$Class
 
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 cctrl2 <- trainControl(method = "LOOCV")
-
+cctrl3 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "glmnet", 
@@ -31,12 +32,25 @@ test_class_loo_model <- train(trainX, trainY,
                               preProc = c("center", "scale"),
                               tuneGrid = expand.grid(.alpha = c(.07, .11),
                                                      .lambda = c(.1, .5)))
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "glmnet", 
+                               trControl = cctrl3,
+                               metric = "ROC", 
+                               preProc = c("center", "scale"),
+                               tuneGrid = expand.grid(.alpha = c(.11),
+                                                      .lambda = c(.5)))
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
 
 #########################################################################
 
+library(glmnet)
 ## From ?cv.glmnet 
 set.seed(1010)
 n=1000;p=100
@@ -51,6 +65,7 @@ cvob1=cv.glmnet(x,y)
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(x, y, method = "glmnet",
@@ -66,6 +81,14 @@ test_reg_loo_model <- train(x, y, method = "glmnet",
                             trControl = rctrl2,
                             tuneGrid = data.frame(.alpha = c(.5, 1),
                                                   .lambda = cvob1$lambda))
+
+set.seed(849)
+test_reg_none_model <- train(x, y, 
+                             method = "glmnet", 
+                             trControl = rctrl3,
+                             tuneGrid = test_reg_cv_model$bestTune,
+                             preProc = c("center", "scale"))
+test_reg_none_pred <- predict(test_reg_none_model, x)
 
 #########################################################################
 

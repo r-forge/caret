@@ -19,6 +19,7 @@ testY <- logBBB[-inTrain[[1]]]
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, method = "krlsRadial", trControl = rctrl1,
@@ -30,6 +31,15 @@ set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, method = "krlsRadial", trControl = rctrl2,
                             preProc = c("center", "scale"), print.level = 0,
                             tuneGrid = data.frame(.lambda = NA, .sigma = c(10, 20, 30)))
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "krlsRadial", 
+                             trControl = rctrl3,
+                             print.level = 0,
+                             tuneGrid = data.frame(.lambda = NA, .sigma = c(20)),
+                             preProc = c("center", "scale"))
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 
