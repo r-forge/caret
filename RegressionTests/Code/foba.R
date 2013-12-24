@@ -24,6 +24,7 @@ seeds <- vector(mode = "list", length = 189)
 for(i in 1:189) seeds[[i]] <- i:(i+3)
 seeds[[189]] <- 1
 rctrl2 <- trainControl(method = "LOOCV", seed = seeds)
+rctrl3 <- trainControl(method = "none", seed = seeds)
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, method = "foba", trControl = rctrl1,
@@ -33,6 +34,15 @@ test_reg_pred <- predict(test_reg_cv_model, testX)
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, method = "foba", trControl = rctrl2,
                             preProc = c("center", "scale"))
+
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "foba", 
+                             trControl = rctrl3,
+                             tuneLength = 1,
+                             preProc = c("center", "scale"))
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

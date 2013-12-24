@@ -19,6 +19,7 @@ testY <- logBBB[-inTrain[[1]]]
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, method = "cubist", 
@@ -30,6 +31,15 @@ set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, method = "cubist", 
                             trControl = rctrl1,
                             control = cubistControl(seed = 1))
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "cubist", 
+                             trControl = rctrl3,
+                             tuneGrid = data.frame(committees = 5, neighbors = 3),
+                             preProc = c("center", "scale"),
+                             control = cubistControl(seed = 1))
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

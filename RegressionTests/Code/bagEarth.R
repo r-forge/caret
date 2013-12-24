@@ -25,6 +25,9 @@ cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary,
                        seeds= seeds)
 cctrl3 <- trainControl(method = "oob")
+cctrl4 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary,
+                       seeds= seeds)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -60,6 +63,16 @@ test_class_oob_model <- train(trainX, trainY,
                               trControl = cctrl3,
                               B = 10)
 
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "bagEarth", 
+                               trControl = cctrl4,
+                               tuneLength = 1, 
+                               preProc = c("center", "scale"),
+                               B = 10)
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
 #########################################################################
 
 data(BloodBrain)
@@ -83,6 +96,7 @@ seeds[[189]] <- 1
 
 rctrl2 <- trainControl(method = "LOOCV", seeds = seeds)
 rctrl3 <- trainControl(method = "oob")
+rctrl4 <- trainControl(method = "none", seeds = seeds)
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
@@ -111,6 +125,15 @@ test_reg_oob_model <- train(trainX, trainY,
                             tuneGrid = data.frame(.degree = 1,
                                                   .nprune = 2:4),
                             B = 10)
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "bagEarth", 
+                             trControl = rctrl4,
+                             tuneLength = 1,
+                             preProc = c("center", "scale"),
+                             B = 10)
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

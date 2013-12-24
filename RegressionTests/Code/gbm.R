@@ -21,7 +21,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
 cctrl3 <- trainControl(method = "oob")
-
+cctrl4 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "gbm", 
@@ -42,6 +43,18 @@ test_class_loo_model <- train(trainX, trainY,
                               preProc = c("center", "scale"),
                               tuneGrid = gbmGrid,
                               verbose = FALSE)
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "gbm", 
+                               trControl = cctrl4,
+                               tuneGrid = gbmGrid[nrow(gbmGrid),],
+                               verbose = FALSE,
+                               metric = "ROC", 
+                               preProc = c("center", "scale"))
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
@@ -63,6 +76,7 @@ testY <- logBBB[-inTrain[[1]]]
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
 rctrl3 <- trainControl(method = "oob")
+rctrl4 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
@@ -80,6 +94,15 @@ test_reg_loo_model <- train(trainX, trainY,
                             preProc = c("center", "scale"),
                             tuneGrid = gbmGrid,
                             verbose = FALSE)
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "gbm", 
+                             trControl = rctrl4,
+                             tuneGrid = gbmGrid[nrow(gbmGrid),],
+                             verbose = FALSE,
+                             preProc = c("center", "scale"))
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

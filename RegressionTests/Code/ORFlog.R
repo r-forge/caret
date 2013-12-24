@@ -16,6 +16,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        summaryFunction = twoClassSummary)
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
+cctrl3 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -23,7 +25,8 @@ test_class_cv_model <- train(trainX, trainY,
                              trControl = cctrl1,
                              metric = "ROC", 
                              preProc = c("center", "scale"),
-                             verbose = FALSE)
+                             verbose = FALSE,
+                             ntree = 20)
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
 test_class_prob <- predict(test_class_cv_model, testing[, -ncol(testing)], type = "prob")
@@ -34,7 +37,22 @@ test_class_loo_model <- train(trainX, trainY,
                               trControl = cctrl2,
                               metric = "ROC", 
                               preProc = c("center", "scale"),
-                              verbose = FALSE)
+                              verbose = FALSE,
+                              ntree = 20)
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "ORFlog", 
+                               trControl = cctrl3,
+                               tuneLength = 1,
+                               metric = "ROC", 
+                               preProc = c("center", "scale"),
+                               verbose = FALSE,
+                               ntree = 20)
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")

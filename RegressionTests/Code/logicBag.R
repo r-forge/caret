@@ -20,6 +20,7 @@ testY <- testing$Class
 
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 cctrl2 <- trainControl(method = "LOOCV")
+cctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -36,6 +37,18 @@ test_class_loo_model <- train(trainX, trainY,
                               trControl = cctrl2,
                               B = 3,
                               seed = 1)
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "logicBag", 
+                               trControl = cctrl3,
+                               tuneLength = 1,
+                               preProc = c("center", "scale"),
+                               B = 3,
+                               seed = 1)
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")

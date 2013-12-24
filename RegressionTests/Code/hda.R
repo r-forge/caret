@@ -17,6 +17,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        summaryFunction = twoClassSummary)
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
+cctrl3 <- trainControl(method = "none",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -36,6 +38,21 @@ test_class_loo_model <- train(trainX, trainY,
                               metric = "ROC", 
                               preProc = c("center", "scale"),
                               verbose = FALSE)
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "hda", 
+                               trControl = cctrl3,
+                               tuneGrid = expand.grid(gamma = .5, 
+                                                      lambda =  .5,
+                                                      newdim = 2),
+                               metric = "ROC", 
+                               preProc = c("center", "scale"),
+                               verbose = FALSE)
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")

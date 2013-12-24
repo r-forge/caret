@@ -26,6 +26,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        classProbs = TRUE)
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE)
+cctrl3 <- trainControl(method = "none",
+                       classProbs = TRUE)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -41,6 +43,17 @@ test_class_loo_model <- train(trainX, trainY,
                             method = "lda2", 
                             trControl = cctrl2,
                             preProc = c("center", "scale"))
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "lda2", 
+                               trControl = cctrl3,
+                               tuneGrid = test_class_cv_model$bestTune,
+                               preProc = c("center", "scale"))
+
+test_class_none_pred <- predict(test_class_none_model, testX)
+test_class_none_prob <- predict(test_class_none_model, testX, type = "prob")
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")

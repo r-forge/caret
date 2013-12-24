@@ -13,6 +13,7 @@ trainY <- training$Class
 
 cctrl1 <- trainControl(method = "cv", number = 10, returnResamp = "all")
 cctrl2 <- trainControl(method = "LOOCV")
+cctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -29,6 +30,17 @@ test_class_loo_model <- train(trainX, trainY,
                               trControl = cctrl2,
                               preProc = c("center", "scale"),
                               ntree = 50)
+
+set.seed(849)
+test_class_none_model <- train(trainX, trainY, 
+                               method = "extraTrees", 
+                               trControl = cctrl3,
+                               tuneLength = 1,
+                               preProc = c("center", "scale"),
+                               ntree = 50)
+
+test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
@@ -49,6 +61,7 @@ testY <- logBBB[-inTrain[[1]]]
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
@@ -64,6 +77,16 @@ test_reg_loo_model <- train(trainX, trainY,
                             trControl = rctrl2,
                             preProc = c("center", "scale"),
                             ntree = 50)
+
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "extraTrees", 
+                             trControl = rctrl3,
+                             tuneLength = 1,
+                             preProc = c("center", "scale"),
+                             ntree = 50)
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 

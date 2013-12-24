@@ -19,6 +19,7 @@ testY <- logBBB[-inTrain[[1]]]
 
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
+rctrl3 <- trainControl(method = "none")
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, method = "relaxo", trControl = rctrl1,
@@ -28,6 +29,14 @@ test_reg_pred <- predict(test_reg_cv_model, testX)
 set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, method = "relaxo", trControl = rctrl2,
                             preProc = c("center", "scale"))
+
+set.seed(849)
+test_reg_none_model <- train(trainX, trainY, 
+                             method = "relaxo", 
+                             trControl = rctrl3,
+                             tuneGrid = test_reg_cv_model$bestTune,
+                             preProc = c("center", "scale"))
+test_reg_none_pred <- predict(test_reg_none_model, testX)
 
 #########################################################################
 
