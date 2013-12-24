@@ -28,14 +28,15 @@ modelInfo <- list(label = "CART",
                     list(loop = loop, submodels = submodels)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
+                    cpValue <- if(!last) param$cp else 0
                     theDots <- list(...)
                     if(any(names(theDots) == "control"))
                     {
-                      theDots$control$cp <- param$cp
+                      theDots$control$cp <- cpValue
                       theDots$control$xval <- 0 
                       ctl <- theDots$control
                       theDots$control <- NULL
-                    } else ctl <- rpart.control(cp = param$cp, xval = 0)   
+                    } else ctl <- rpart.control(cp = cpValue, xval = 0)   
                     
                     ## check to see if weights were passed in (and availible)
                     if(!is.null(wts)) theDots$weights <- wts    
@@ -47,6 +48,8 @@ modelInfo <- list(label = "CART",
                     modelArgs$data$.outcome <- y
                     
                     out <- do.call("rpart", modelArgs)
+                    
+                    if(last) out <- prune.rpart(modelFit, cp = param$cp)
                     out           
                     },
                   predict = function(modelFit, newdata, submodels = NULL) {                  
