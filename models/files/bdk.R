@@ -9,7 +9,7 @@ modelInfo <- list(label = "Self-Organizing Map",
                     out <- expand.grid(xdim = 1:len, ydim = 2:(len+1),
                                        xweight = seq(.5, .9, length = len))
                     out$topo <- "hexagonal"
-                    subset(out, xdim >= ydim)
+                    subset(out, xdim <= ydim)
                   },
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
                     bdk(as.matrix(x),
