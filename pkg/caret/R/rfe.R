@@ -521,7 +521,7 @@ gamFuncs <- list(summary = defaultSummary,
                    library(mgcv)
                    dat <- if(is.data.frame(x)) x else as.data.frame(x)
                    dat$y <- y
-                   args <- list(formula = caret:::gamFormula(x, smoother = "s", y = "y"),
+                   args <- list(formula = gamFormula(x, smoother = "s", y = "y"),
                                 data = dat,
                                 family = if(!is.factor(y)) gaussian else  binomial)
                    do.call("gam", args)
