@@ -35,7 +35,7 @@ test_reg_none_model <- train(trainX, trainY,
                              method = "M5Rules", 
                              trControl = rctrl3,
                              tuneGrid = expand.grid(pruned = "No", 
-                                                    smoothed = c("Yes"),
+                                                    smoothed = c("Yes")),
                              preProc = c("center", "scale"))
 test_reg_none_pred <- predict(test_reg_none_model, testX)
 
