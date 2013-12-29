@@ -5,33 +5,43 @@ model <- "glmnet"
 
 #########################################################################
 
-set.seed(2)
-training <- twoClassSim(100)
-testing <- twoClassSim(500)
-trainX <- training[, -ncol(training)]
-trainY <- training$Class
+set.seed(545)
 
-cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
-cctrl2 <- trainControl(method = "LOOCV")
+data(mdrr)
+mdrrDescr <- mdrrDescr[, -nearZeroVar(mdrrDescr)]
+mdrrDescr <- mdrrDescr[, -findCorrelation(cor(mdrrDescr), .8)]
+
+inTrain <- createDataPartition(mdrrClass)
+trainX <- mdrrDescr[inTrain[[1]], ]
+trainY <- mdrrClass[inTrain[[1]]]
+testX <- mdrrDescr[-inTrain[[1]], ]
+testY <- mdrrClass[-inTrain[[1]]]
+
+cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
+cctrl2 <- trainControl(method = "LOOCV",
+                       classProbs = TRUE, summaryFunction = twoClassSummary)
 cctrl3 <- trainControl(method = "none",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "glmnet", 
                              trControl = cctrl1,
+                             metric = "ROC",
                              preProc = c("center", "scale"),
-                             tuneGrid = expand.grid(.alpha = seq(.07, .11, length = 15),
+                             tuneGrid = expand.grid(.alpha = seq(.05, 1, length = 15),
                                                     .lambda = c((1:5)/10)))
 
-test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
+test_class_pred <- predict(test_class_cv_model, testX)
 
 set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
                               method = "glmnet", 
                               trControl = cctrl2,
+                              metric = "ROC",
                               preProc = c("center", "scale"),
-                              tuneGrid = expand.grid(.alpha = c(.07, .11),
-                                                     .lambda = c(.1, .5)))
+                              tuneGrid = expand.grid(.alpha = seq(.05, 1, length = 15),
+                                                     .lambda = c((1:5)/10)))
 
 set.seed(849)
 test_class_none_model <- train(trainX, trainY, 
@@ -42,11 +52,44 @@ test_class_none_model <- train(trainX, trainY,
                                tuneGrid = expand.grid(.alpha = c(.11),
                                                       .lambda = c(.5)))
 
-test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
+test_class_none_pred <- predict(test_class_none_model, testX)
 
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
+
+#########################################################################
+
+cctrl4 <- trainControl(method = "cv", number = 3, classProbs = TRUE)
+cctrl5 <- trainControl(method = "LOOCV", classProbs = TRUE)
+cctrl6 <- trainControl(method = "none", classProbs = TRUE)
+
+set.seed(849)
+test_class_cv_3_model <- train(Species ~ ., data = iris, 
+                               method = "glmnet", 
+                               trControl = cctrl4,
+                               preProc = c("center", "scale"),
+                               tuneGrid = expand.grid(.alpha = seq(.05, 1, length = 15),
+                                                      .lambda = c((1:5)/10)))
+
+test_class_pred <- predict(test_class_cv_3_model, iris[, 1:4])
+
+set.seed(849)
+test_class_loo_3_model <- train(Species ~ ., data = iris[sample(1:150, 20),], 
+                                method = "glmnet", 
+                                trControl = cctrl5,
+                                preProc = c("center", "scale"),
+                                tuneGrid = expand.grid(.alpha = seq(.05, 1, length = 15),
+                                                       .lambda = c((1:5)/10)))
+
+set.seed(849)
+test_class_none_3_model <- train(Species ~ ., data = iris, 
+                                 method = "glmnet", 
+                                 trControl = cctrl6,
+                                 preProc = c("center", "scale"),
+                                 tuneGrid = test_class_cv_3_model$bestTune)
+
+test_class_none_pred <- predict(test_class_none_3_model, iris[, 1:4])
 
 #########################################################################
 
