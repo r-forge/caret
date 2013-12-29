@@ -195,13 +195,7 @@ nominalTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, tes
     ## merge the fixed and seq parameter values together
     allParam <- caret:::expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
     allParam <- allParam[complete.cases(allParam),, drop = FALSE]
-    
-    #     ## For ctree, we had to repeat the first value
-    #     if(method == "ctree") allParam <- allParam[!duplicated(allParam),, drop = FALSE]
-    #     
-    #     ## For glmnet, we fit all the lambdas but x$fixed has an NA
-    #     if(method == "glmnet") allParam <- allParam[complete.cases(allParam),, drop = FALSE]
-    
+ 
     ## collate the predicitons across all the sub-models
     predicted <- lapply(predicted,
                         function(x, y, lv)
@@ -218,14 +212,17 @@ nominalTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, tes
     {
       for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
     }
-    
+ 
     if(ctrl$savePredictions)
     {
+
       tmpPred <- predicted
       for(modIndex in seq(along = tmpPred))
       {
         tmpPred[[modIndex]]$rowIndex <- holdoutIndex
-        tmpPred[[modIndex]] <- cbind(tmpPred[[modIndex]], allParam[modIndex,,drop = FALSE])
+        tmpPred[[modIndex]] <- merge(tmpPred[[modIndex]], 
+                                     allParam[modIndex,,drop = FALSE],
+                                     all = TRUE)
       }
       tmpPred <- rbind.fill(tmpPred)
       tmpPred$Resample <- names(resampleIndex)[iter]
@@ -261,7 +258,8 @@ nominalTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, tes
     {
       tmpPred <- tmp
       tmpPred$rowIndex <- holdoutIndex
-      tmpPred <- cbind(tmpPred, info$loop[parm,,drop = FALSE])
+      tmpPred <- merge(tmpPred, info$loop[parm,,drop = FALSE],
+                       all = TRUE)
       tmpPred$Resample <- names(resampleIndex)[iter]
     } else tmpPred <- NULL
     
