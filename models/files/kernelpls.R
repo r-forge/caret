@@ -1,4 +1,4 @@
-modelInfo <- list(label = "Partial Least Squqres",
+modelInfo <- list(label = "Partial Least Squares",
                   library = "pls",
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = 'ncomp',
