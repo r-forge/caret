@@ -1,4 +1,4 @@
-phoneySummary <- function(y, ctrl, lev, metric, method) {
+evalSummaryFunction <- function(y, ctrl, lev, metric, method) {
   ## get phoney performance to obtain the names of the outputs
   testOutput <- data.frame(pred = sample(y, min(10, length(y))),
                            obs = sample(y, min(10, length(y))))

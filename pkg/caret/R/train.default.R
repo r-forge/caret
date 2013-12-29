@@ -267,7 +267,7 @@ train.default <- function(x, y,
     {
       perfNames <- if(modelType == "Regression") c("RMSE", "Rsquared") else  c("Accuracy", "Kappa")    
     } else {
-      testSummary <- phoneySummary(y, trControl, classLevels, metric, method)
+      testSummary <- evalSummaryFunction(y, trControl, classLevels, metric, method)
       perfNames <- names(testSummary)
     }
     
@@ -370,7 +370,7 @@ train.default <- function(x, y,
     bestTune <- performance[bestIter, paramNames, drop = FALSE]
   } else {
     bestTune <- tuneGrid
-    performance <- phoneySummary(y, trControl, classLevels, metric, method)
+    performance <- evalSummaryFunction(y, trControl, classLevels, metric, method)
     perfNames <- names(performance)
     performance <- as.data.frame(t(performance))
     performance <- cbind(performance, tuneGrid)
