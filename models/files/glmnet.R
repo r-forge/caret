@@ -9,13 +9,10 @@ modelInfo <- list(label = "glmnet",
                                 lambda = seq(.1, 3, length = 3 * len)),
                   loop = function(grid) {  
                     alph <- unique(grid$alpha)
-                    
                     loop <- data.frame(alpha = alph)
                     loop$lambda <- NA
-                    
                     submodels <- vector(mode = "list", length = length(alph))
-                    for(i in seq(along = alph))
-                    {
+                    for(i in seq(along = alph)) {
                       np <- grid[grid$alpha == alph[i],"lambda"]
                       loop$lambda[loop$alpha == alph[i]] <- np[which.max(np)]
                       submodels[[i]] <- data.frame(lambda = np[-which.max(np)])
@@ -27,13 +24,10 @@ modelInfo <- list(label = "glmnet",
                     
                     theDots <- list(...)
                     
-                    if(all(names(theDots) != "family"))
-                    {
-                      if(!is.na(numLev))
-                      {
+                    if(all(names(theDots) != "family")) {
+                      if(!is.na(numLev)) {
                         fam <- ifelse(numLev > 2, "multinomial", "binomial")
-                      } else fam <- "gaussian"
-                      
+                      } else fam <- "gaussian"    
                       theDots$family <- fam   
                     }
                     
@@ -51,21 +45,20 @@ modelInfo <- list(label = "glmnet",
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     if(!is.matrix(newdata)) newdata <- as.matrix(newdata)
-                    if(length(modelFit$obsLevels) < 2)
-                    {
-                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt)[,1]
+                    if(length(modelFit$obsLevels) < 2) {
+                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt)
                     } else {
-                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt, type = "class")[,1]
+                      out <- predict(modelFit, newdata, s = modelFit$lambdaOpt, type = "class")
                     }
+                    if(is.matrix(out)) out <- out[,1]
                       
-                    if(!is.null(submodels))
-                    {
-                      if(length(modelFit$obsLevels) < 2)
-                      {
+                    if(!is.null(submodels)) {
+                      if(length(modelFit$obsLevels) < 2) {
                         tmp <- as.list(as.data.frame(predict(modelFit, newdata, s = submodels$lambda)))
                       } else {
                         tmp <- predict(modelFit, newdata, s = submodels$lambda, type = "class")
-                        tmp <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
+                        tmp <- if(is.matrix(tmp)) as.data.frame(tmp, stringsAsFactors = FALSE) else as.character(tmp)
+                        tmp <- as.list(tmp)
                       }
                       out <- c(list(out), tmp)
                     } 
@@ -75,15 +68,17 @@ modelInfo <- list(label = "glmnet",
                     obsLevels <- if("classnames" %in% names(modelFit)) modelFit$classnames else NULL
                     probs <- predict(modelFit,
                                      as.matrix(newdata),
-                                     s = submodels$lambda,
+                                     s = modelFit$lambdaOpt,
                                      type = "response")
                     if(length(obsLevels) == 2) {
-                      probs <- cbind(1-probs, probs)
+                      probs <- as.vector(probs)
+                      probs <- as.data.frame(cbind(1-probs, probs))
                       colnames(probs) <- modelFit$obsLevels
-                    } else probs <- probs[,,1]
-                    
-                    if(!is.null(submodels))
-                    {
+                    } else {
+                      probs <- as.data.frame(probs[,,1,drop = FALSE])
+                      names(probs) <- modelFit$obsLevels
+                    }
+                    if(!is.null(submodels)) {
                       tmp <- predict(modelFit,
                                      as.matrix(newdata),
                                      s = submodels$lambda,
@@ -91,54 +86,49 @@ modelInfo <- list(label = "glmnet",
                       if(length(obsLevels) == 2) {
                         tmp <- as.list(as.data.frame(tmp))
                         tmp <- lapply(tmp,
-                                      function(x, lev)
-                                      {
-                                        tmp <- data.frame(x, 1-x)
+                                      function(x, lev) {
+                                        x <- as.vector(x)
+                                        tmp <- data.frame(1-x, x)
                                         names(tmp) <- lev
                                         tmp
                                       },
                                       lev = modelFit$obsLevels)
                       } else tmp <- apply(tmp, 3, function(x) data.frame(x))
-                      probs <- list(probs, tmp)
+                      probs <- if(is.list(tmp)) c(list(probs), tmp) else list(probs, tmp)
                     }
                     probs
                   },
                   predictors = function(x, lambda = NULL, ...) {
+                    browser()
                     if(is.null(lambda))
                     {
                       if(length(lambda) > 1) stop("Only one value of lambda is allowed right now")
-                      if(!is.null(x$lambdaOpt))
-                      {
+                      if(!is.null(x$lambdaOpt)) {
                         lambda <- x$lambdaOpt
                       } else stop("must supply a vaue of lambda")
                     }
                     allVar <- if(is.list(x$beta)) rownames(x$beta[[1]]) else rownames(x$beta)
                     out <- unlist(predict(x, s = lambda, type = "nonzero"))
                     out <- unique(out)
-                    if(length(out) > 0)
-                    {
+                    if(length(out) > 0) {
                       out <- out[!is.na(out)]
                       out <- allVar[out]
                     }
                     out
                   },
                   varImp = function(object, lambda = NULL, ...) {
-                    if(is.null(lambda))
-                    {
+                    if(is.null(lambda)) {
                       if(length(lambda) > 1) stop("Only one value of lambda is allowed right now")
-                      if(!is.null(object$lambdaOpt))
-                      {
+                      if(!is.null(object$lambdaOpt)) {
                         lambda <- object$lambdaOpt
                       } else stop("must supply a vaue of lambda")
                     }
                     beta <- predict(object, s = lambda, type = "coef")
-                    if(is.list(beta))
-                    {
+                    if(is.list(beta)) {
                       out <- do.call("cbind", lapply(beta, function(x) x[,1]))
                       out <- as.data.frame(out)
                     } else out <- data.frame(Overall = beta[,1])
                     out <- out[rownames(out) != "(Intercept)",,drop = FALSE]
-                    
                     out
                   },
                   levels = function(x) if(any(names(x) == "obsLevels")) x$obsLevels else NULL,
