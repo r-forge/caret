@@ -77,7 +77,7 @@ preProcess.default <- function(x, method = c("center", "scale"),
 
   if(any(method == "YeoJohnson"))
     {
-      library(car)
+
       yjWrap <- function(x, numUnique = numUnique)
         {
           if(length(unique(x)) >= numUnique)
@@ -94,14 +94,14 @@ preProcess.default <- function(x, method = c("center", "scale"),
       yj <- lapply(x, yjWrap, numUnique = numUnique)
       if(verbose) cat(" applying them to training data\n")
       ## Find a better way of doing this
-      lam <- unlist(lapply(yj, function(x) if(class(x) == "powerTransform") coef(x) else NA))
+      lam <- unlist(lapply(yj, function(x) if(class(x) == "powerTransform") x$lambda else NA))
       lam <- lam[!is.na(lam)]
       if(length(lam) > 0)
         {
           for(i in seq(along = lam))
             {
               who <-  gsub("\\.Y1$", "", names(lam)[i])
-              x[,who] <- yjPower(x[,who], coef(yj[[who]]))
+              x[,who] <- yjPower(x[,who], yj[[who]]$lambda)
             }
         }
     } else yj <- NULL
@@ -287,14 +287,14 @@ predict.preProcess <- function(object, newdata, ...)
 
   if(!is.null(object$yj))
     {
-      lam <- unlist(lapply(object$yj, function(x) if(class(x) == "powerTransform") coef(x) else NA))
+      lam <- unlist(lapply(object$yj, function(x) if(class(x) == "powerTransform") x$lambda else NA))
       lam <- lam[!is.na(lam)]
       if(length(lam) > 0)
         {
           for(i in seq(along = lam))
             {
               who <-  gsub("\\.Y1$", "", names(lam)[i])
-              newdata[,who] <- yjPower(newdata[,who], coef(object$yj[[who]]))
+              newdata[,who] <- yjPower(newdata[,who], object$yj[[who]]$lambda)
             }
         }
     }  
@@ -424,11 +424,11 @@ print.preProcess <- function(x, ...)
       cat("Lambda estimates for Yeo-Johnson transformation:\n")
       if(length(x$yj) < 11)
          {
-           lmbda <- unlist(lapply(x$yj, function(x) if(class(x) == "powerTransform") coef(x) else NA))
+           lmbda <- unlist(lapply(x$yj, function(x) if(class(x) == "powerTransform") x$lambda else NA))
            naLmbda <- sum(is.na(lmbda))
            cat(paste(round(lmbda[!is.na(lmbda)], 2), collapse = ", "))
            if(naLmbda > 0) cat(" (#NA: ", naLmbda, ")\n", sep = "")
-         } else print(summary(unlist(lapply(x$yj, function(x) if(class(x) == "powerTransform") coef(x) else NA))))
+         } else print(summary(unlist(lapply(x$yj, function(x) if(class(x) == "powerTransform") x$lambda else NA))))
       cat("\n")
     }  
   
