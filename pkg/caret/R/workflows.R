@@ -344,83 +344,82 @@ looTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testing
   if(!is.null(method$library)) pkgs <- c(pkgs, method$library)
   
   result <- foreach(iter = seq(along = ctrl$index), .combine = "rbind", .verbose = FALSE, .packages = pkgs, .errorhandling = "stop") %:%
-    foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = pkgs, .errorhandling = "stop") %op%
-{
-  
-  if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[[iter]][parm])
-  if(testing) cat("after loops\n")
-  library(caret)
-  if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE],
-                                names(ctrl$index), iter, TRUE)
-  
-  mod <- createModel(x = x[ctrl$index[[iter]],,drop = FALSE ],
-                     y = y[ctrl$index[[iter]] ],
-                     wts = wts[ctrl$index[[iter]] ],
-                     method = method,
-                     tuneValue = info$loop[parm,,drop = FALSE],
-                     obsLevels = lev,
-                     pp = ppp,
-                     classProbs = ctrl$classProbs,
-                     ...)
-  
-  holdoutIndex <- -unique(ctrl$index[[iter]])
-  
-  predicted <- predictionFunction(method = method,
-                                  modelFit = mod$fit,
-                                  newdata = x[-ctrl$index[[iter]],, drop = FALSE],
-                                  preProc = mod$preProc,
-                                  param = info$submodels[[parm]])
-  
-  if(testing) print(head(predicted))
-  if(ctrl$classProbs)
-  {
-    probValues <- probFunction(method = method,
-                               modelFit = mod$fit,
-                               newdata = x[holdoutIndex,, drop = FALSE],
-                               preProc = mod$preProc,
-                               param = info$submodels[[parm]])
-    if(testing) print(head(probValues))
-  }
-  
-  ##################################
-  
-  if(!is.null(info$submodels))
-  {
-    ## collate the predictions across all the sub-models
-    predicted <- lapply(predicted,
-                        function(x, y, lv)
-                        {
-                          if(!is.factor(x) & is.character(x)) x <- factor(as.character(x), levels = lv)
-                          data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
-                        },
-                        y = y[holdoutIndex],
-                        lv = lev)
-    if(testing) print(head(predicted))
-    
-    ## same for the class probabilities
-    if(ctrl$classProbs)
-    {
-      for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
+    foreach(parm = 1:nrow(info$loop), .combine = "rbind", .verbose = FALSE, .packages = pkgs, .errorhandling = "stop") %op% {
+      
+      if(!(length(ctrl$seeds) == 1 && is.na(ctrl$seeds))) set.seed(ctrl$seeds[[iter]][parm])
+      if(testing) cat("after loops\n")
+      library(caret)
+      if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE],
+                                    names(ctrl$index), iter, TRUE)
+      
+      mod <- createModel(x = x[ctrl$index[[iter]],,drop = FALSE ],
+                         y = y[ctrl$index[[iter]] ],
+                         wts = wts[ctrl$index[[iter]] ],
+                         method = method,
+                         tuneValue = info$loop[parm,,drop = FALSE],
+                         obsLevels = lev,
+                         pp = ppp,
+                         classProbs = ctrl$classProbs,
+                         ...)
+      
+      holdoutIndex <- -unique(ctrl$index[[iter]])
+      
+      predicted <- predictionFunction(method = method,
+                                      modelFit = mod$fit,
+                                      newdata = x[-ctrl$index[[iter]],, drop = FALSE],
+                                      preProc = mod$preProc,
+                                      param = info$submodels[[parm]])
+      
+      if(testing) print(head(predicted))
+      if(ctrl$classProbs)
+      {
+        probValues <- probFunction(method = method,
+                                   modelFit = mod$fit,
+                                   newdata = x[holdoutIndex,, drop = FALSE],
+                                   preProc = mod$preProc,
+                                   param = info$submodels[[parm]])
+        if(testing) print(head(probValues))
+      }
+      
+      ##################################
+      
+      if(!is.null(info$submodels))
+      {
+        ## collate the predictions across all the sub-models
+        predicted <- lapply(predicted,
+                            function(x, y, lv)
+                            {
+                              if(!is.factor(x) & is.character(x)) x <- factor(as.character(x), levels = lv)
+                              data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
+                            },
+                            y = y[holdoutIndex],
+                            lv = lev)
+        if(testing) print(head(predicted))
+        
+        ## same for the class probabilities
+        if(ctrl$classProbs)
+        {
+          for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
+        }
+        predicted <- do.call("rbind", predicted)
+        allParam <- expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
+        rownames(predicted) <- NULL
+        predicted <- cbind(predicted, allParam)
+        ## if saveDetails then save and export 'predicted'
+      } else {
+        
+        if(is.factor(y)) predicted <- factor(as.character(predicted),
+                                             levels = lev)
+        predicted <-  data.frame(pred = predicted,
+                                 obs = y[holdoutIndex],
+                                 stringsAsFactors = FALSE)
+        if(ctrl$classProbs) predicted <- cbind(predicted, probValues)
+        predicted <- cbind(predicted, info$loop[parm,,drop = FALSE])
+      }
+      if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE],
+                                    names(ctrl$index), iter, FALSE)
+      predicted
     }
-    predicted <- do.call("rbind", predicted)
-    allParam <- expandParameters(info$loop[parm,,drop = FALSE], info$submodels[[parm]])
-    rownames(predicted) <- NULL
-    predicted <- cbind(predicted, allParam)
-    ## if saveDetails then save and export 'predicted'
-  } else {
-    
-    if(is.factor(y)) predicted <- factor(as.character(predicted),
-                                         levels = lev)
-    predicted <-  data.frame(pred = predicted,
-                             obs = y[holdoutIndex],
-                             stringsAsFactors = FALSE)
-    if(ctrl$classProbs) predicted <- cbind(predicted, probValues)
-    predicted <- cbind(predicted, info$loop[parm,,drop = FALSE])
-  }
-  if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE],
-                                names(ctrl$index), iter, FALSE)
-  predicted
-}
   
   names(result) <- gsub("^\\.", "", names(result))
   out <- ddply(result,
