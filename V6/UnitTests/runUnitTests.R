@@ -26,7 +26,7 @@ local({
     assertion
   }
 
-  runUnitTests <- function(x, y, f) {
+  runUnitTests <- function(models, x, y, f) {
     pkgs <- search()
     legalTypes <- c('Classification', 'Regression')
     loopFormals <- c('grid')
@@ -36,9 +36,6 @@ local({
     probFormals <- c('modelFit', 'newdata', 'submodels')
     # varImpFormals <- c('object', 'estimate', '...')
     sortFormals <- c('x')
-
-    models <- getModelInfo()
-    assert(! is.null(models), 'unable to load models', fail=TRUE)
 
     logfile <- file('testrun.log', 'w')
     files <- list(logfile, stderr())
@@ -116,9 +113,11 @@ local({
 
         if ("Classification" %in% m$type) {
           wts <- rep(1L, nrow(x))  # also try NULL?
+          tuneValue <- tuneGrid[1,,drop=FALSE]
+          obsLevels <- levels(y)
           log("Calling fit function for %s", modelName, files=files)
-          modelFit <- m$fit(x, y, wts=wts, param=tuneGrid[1,,drop=FALSE],
-                         lev=levels(y), last=FALSE,
+          modelFit <- m$fit(x, y, wts=wts, param=tuneValue,
+                         lev=obsLevels, last=FALSE,
                          classProbs=is.function(m$prob))
           print(class(modelFit))
           assert(! is.null(modelFit),
@@ -126,7 +125,16 @@ local({
                  fail=TRUE,
                  files=files)
 
+          if (!isS4(modelFit)) {
+            modelFit$vNames <- colnames(x)
+            modelFit$problemType <- "Classification"
+            modelFit$tuneValue <- tuneValue
+            modelFit$obsLevels <- obsLevels
+          }
+
           log("Calling predict function for %s", modelName, files=files)
+          if (interactive())
+            debug(m$predict)
           xp <- m$predict(modelFit, x)
           assert(! is.null(xp),
                  "predict function returned a NULL",
@@ -183,5 +191,15 @@ local({
   trainX <- training[, -ncol(training)]
   trainY <- training$Class
 
-  runUnitTests(trainX, trainY)
+  models <- getModelInfo()
+  args <- commandArgs(trailingOnly=TRUE)
+  if (length(args) > 0) {
+    args <- args[args %in% names(models)]
+    nms <- as.list(args)
+    names(nms) <- args
+    models <- lapply(nms, function(nm) models[[nm]])
+  }
+  if (interactive())
+    debug(runUnitTests)
+  runUnitTests(models, trainX, trainY)
 })
