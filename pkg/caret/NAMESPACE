@@ -1,7 +1,8 @@
 useDynLib(caret)
-import(lattice, ggplot2)
-importFrom(stats, prcomp)
-import(cluster, foreach, methods, plyr, reshape2)
+import(foreach, methods, plyr, reshape2, ggplot2, lattice)
+importFrom(car, powerTransform, yjPower)
+importFrom(stats, prcomp, hclust)
+
 
 export(anovaScores,
        avNNet,
@@ -26,6 +27,7 @@ export(anovaScores,
        checkResamples,
        classDist,
        classDist.default,
+       cluster,
        confusionMatrix,
        confusionMatrix.train,
        contr.dummy,
