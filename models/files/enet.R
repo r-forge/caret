@@ -27,7 +27,7 @@ modelInfo <- list(label = "Elasticnet",
                     enet(as.matrix(x), y, lambda = param$lambda)  
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
-                    out <- predict(modelFit, as.matrix(newdata), 
+                    out <- predict(modelFit, newdata, 
                                    s = modelFit$tuneValue$fraction, 
                                    mode = "fraction")$fit
                     
@@ -40,13 +40,13 @@ modelInfo <- list(label = "Elasticnet",
                           as.list(
                             as.data.frame(
                               predict(modelFit,
-                                      newx = as.matrix(newdata),
+                                      newx = newdata,
                                       s = submodels$fraction,
                                       mode = "fraction")$fit)))
                         
                       } else {
                         tmp <- predict(modelFit,
-                                       newx = as.matrix(newdata),
+                                       newx = newdata,
                                        s = submodels$fraction,
                                        mode = "fraction")$fit
                         out <- c(list(if(is.matrix(out)) out[,1]  else out),  list(tmp))
