@@ -108,6 +108,7 @@ Released   : 20120902
      <li><a href="#within">Within-Model</a></li>
      <li><a href="#between">Between-Models</a></li>
   </ul>  
+  <li><a href="#notune">Fitting Models Without Parameter Tuning</a></li> 
  </ul>   
       
 <div id="builtin"></div> 
@@ -414,7 +415,7 @@ The function <span class="mx funCall">trainControl</span> generates parameters t
 control how models are created, with possible values: 
 </p>
 <ul>
- <li> <span class="mx arg">method</span>: The resampling method: <tt><!--rinline '"boot"' --></tt>,  <tt><!--rinline '"cv"' --></tt>, <tt><!--rinline '"LOOCV"' --></tt>, <tt><!--rinline '"LGOCV"' --></tt>, <tt><!--rinline '"repeatedcv"' --></tt>, <tt><!--rinline '"timeslice"' --></tt> and <tt><!--rinline '"oob"' --></tt>. 
+ <li> <span class="mx arg">method</span>: The resampling method: <tt><!--rinline '"boot"' --></tt>,  <tt><!--rinline '"cv"' --></tt>, <tt><!--rinline '"LOOCV"' --></tt>, <tt><!--rinline '"LGOCV"' --></tt>, <tt><!--rinline '"repeatedcv"' --></tt>, <tt><!--rinline '"timeslice"' --></tt>, <tt><!--rinline '"none"' --></tt> and <tt><!--rinline '"oob"' --></tt>. 
  The
   last value, out-of-bag estimates, can only be used by random
   forest, bagged trees, bagged earth, bagged flexible discriminant
@@ -831,6 +832,35 @@ trellis.par.set(caretTheme())
 dotplot(difValues)
     end.rcode-->
 
+<div id="notune"></div> 
+<h1>Fitting Models Without Parameter Tuning</h1>
+
+<p>In cases where the model tuning values are known, <span class="mx funCall">train</span> can be used to fit the model to the entire training set without any resampling or parameter tuning. Using the <tt><!--rinline 'method = "none"' --></tt> option in <span class="mx funCall">trainControl</span> can be used. For example:
+</p>
+<!--begin.rcode train_noresamp,cache=TRUE,tidy=FALSE
+fitControl <- trainControl(method = "none", classProbs = TRUE)
+
+set.seed(825)
+gbmFit4 <- train(Class ~ ., data = training, 
+                 method = "gbm", 
+                 trControl = fitControl, 
+                 verbose = FALSE, 
+                 ## Only a single model can be passed to the
+                 ## function when no resampling is used:
+                 tuneGrid = data.frame(interaction.depth = 4,
+                                       n.trees = 100,
+                                       shrinkage = .1),
+                 metric = "ROC")
+gbmFit4
+    end.rcode-->
+
+<p>
+Note that <span class="mx funCall">plot.train</span>, <span class="mx funCall">resamples</span>, <span class="mx funCall">confusionMatrix.train</span> and several other functions will not work with this object but <span class="mx funCall">predict.train</span> and others will:
+</p>
+<!--begin.rcode train_noresamppred1
+predict(gbmFit4, newdata = head(testing))
+predict(gbmFit4, newdata = head(testing), type = "prob")
+    end.rcode-->
 
 <div style="clear: both;">&nbsp;</div>
   </div>
@@ -853,6 +883,7 @@ dotplot(difValues)
                 <li><a href="training.html">Model Training and Tuning</a></li>
                 <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
                  <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                 <li><a href="similarity.html"><tt>train</tt> Models By Similarity</a></li>
                 <li><a href="custom_models.html">Using Custom Models</a></li>
                 <li><a href="varimp.html">Variable Importance</a></li>
                 <li><a href="featureselection.html">Feature Selection</a></li>

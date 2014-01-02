@@ -7,6 +7,12 @@ session <- paste(format(Sys.time(), "%a %b %d %Y"),
                  packageDescription("caret")$Version,
                  "and",
                  R.Version()$version.string)
+
+hook_inline = knit_hooks$get('inline')
+knit_hooks$set(inline = function(x) {
+  if (is.character(x)) highr::hi_html(x) else hook_inline(x)
+  })
+opts_chunk$set(comment=NA, digits = 3)
     end.rcode-->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -71,16 +77,16 @@ session <- paste(format(Sys.time(), "%a %b %d %Y"),
 <p>
 as well as other functionality. 
 </p>
-<p><b>Shameless promotion!</b> I have a book out called <i>Applied Predictive Modeling</i> which features <strong>caret</strong> and over 40 other R packages. It is on sale at <a href="http://www.amazon.com/dp/1461468485">Amazon</a> or the <a href="http://www.springer.com/statistics/life+sciences%2C+medicine+%26+health/book/978-1-4614-6848-6">the publisher's website</a>. There is a <a href ="http://appliedpredictivemodeling.com/">companion website</a> too.
-</p> 
 <p>
 There are many different modeling functions in R. Some have different syntax for model training and/or prediction. The package started off as a way to provide a uniform interface the functions themselves, as well as a way to standardize common tasks (such parameter tuning and variable importance).
 </p>
+<p><b>Shameless promotion!</b> I have a book out called <i>Applied Predictive Modeling</i> which features <strong>caret</strong> and over 40 other R packages. It is on sale at <a href="http://www.amazon.com/dp/1461468485">Amazon</a> or the <a href="http://www.springer.com/statistics/life+sciences%2C+medicine+%26+health/book/978-1-4614-6848-6">the publisher's website</a>. There is a <a href ="http://appliedpredictivemodeling.com/">companion website</a> too.
+</p> 
 <p>
 There is also a paper on caret in the <a href="http://www.jstatsoft.org/v28/i05">Journal of Statistical Software</a>. The example data can be obtained <a href="descr.RData">here </a>(the predictors) and <a href="mutagen.RData">here</a> (the outcomes).
 </p>
 <p>
-The current release version can be found on <a href="http://cran.r-project.org/web/packages/caret/">CRAN</a>.
+The current release version can be found on <a href="http://cran.r-project.org/web/packages/caret/">CRAN</a>. 
 </p>
 <p>
 You can always email <a href="mailto:max.kuhn@pfizer.com">me</a> with questions, comments or suggestions.
@@ -107,6 +113,7 @@ You can always email <a href="mailto:max.kuhn@pfizer.com">me</a> with questions,
                 <li><a href="training.html">Model Training and Tuning</a></li>
                 <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
                 <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                 <li><a href="similarity.html"><tt>train</tt> Models By Similarity</a></li>
                 <li><a href="custom_models.html">Using Custom Models</a></li>
                 <li><a href="varimp.html">Variable Importance</a></li>
                 <li><a href="featureselection.html">Feature Selection</a></li>

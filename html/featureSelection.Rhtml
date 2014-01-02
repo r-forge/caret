@@ -219,7 +219,7 @@ The simulation will fit models with subset sizes of <!--rinline I(paste(sort(sub
 </p>
 
 <p>
-As previously mentioned, to fit linear models, the <code>lmFuncs</code> set of functions can be used. To do this, a control object is created with the <span class="mx funCall">rfeControl</span> function. We also specify that repeated 10-fold cross-validation should be used in line 2.1 of Algorithm 2. The number of folds can be changed via the <span class="mx arg">number</span> argument to <span class="mx funCall">rfeControl</span> (defaults to 10). The <span class="mx arg">verbose</span> option prevents copious amounts of output from being produced and the <span class="mx arg">returnResamp</span> argument specifies that the 50 performance estimates should be saved only for the optimal subset size.
+As previously mentioned, to fit linear models, the <code>lmFuncs</code> set of functions can be used. To do this, a control object is created with the <span class="mx funCall">rfeControl</span> function. We also specify that repeated 10-fold cross-validation should be used in line 2.1 of Algorithm 2. The number of folds can be changed via the <span class="mx arg">number</span> argument to <span class="mx funCall">rfeControl</span> (defaults to 10). The <span class="mx arg">verbose</span> option prevents copious amounts of output from being produced.
 </p>
 
 <!--begin.rcode select_load_lmProfile,tidy=FALSE,cache=TRUE
@@ -228,8 +228,7 @@ set.seed(10)
 ctrl <- rfeControl(functions = lmFuncs,
                    method = "repeatedcv",
                    repeats = 5,
-                   verbose = FALSE,
-                   returnResamp = "final")
+                   verbose = FALSE)
 
 lmProfile <- rfe(x, y,
                  sizes = subsets,
@@ -658,8 +657,7 @@ generalized additive model approach described previously.
 
 <!--begin.rcode select_sbf_rf,cache=TRUE
 filterCtrl <- sbfControl(functions = rfSBF, 
-                         method = "repeatedcv", repeats = 5,
-                         returnResamp = "final")
+                         method = "repeatedcv", repeats = 5)
 set.seed(10)
 rfWithFilter <- sbf(x, y, sbfControl = filterCtrl)
     end.rcode--> 
@@ -760,6 +758,7 @@ splom(bootValues, metric = "Rsquared")
                 <li><a href="training.html">Model Training and Tuning</a></li>
                 <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
                  <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                 <li><a href="similarity.html"><tt>train</tt> Models By Similarity</a></li>
                 <li><a href="custom_models.html">Using Custom Models</a></li>
                 <li><a href="varimp.html">Variable Importance</a></li>
                 <li><a href="featureselection.html">Feature Selection</a></li>

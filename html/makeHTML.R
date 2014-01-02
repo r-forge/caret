@@ -17,6 +17,9 @@ library(caTools)
 library(googleVis)
 library(class)
 library(e1071)
+library(mda)
+library(plyr)
+
 
 setwd("~/Code/caret/html/")
 
@@ -27,9 +30,9 @@ startPath <- getwd()
 dPath <- paste("html_",format(Sys.time(), "%Y_%m_%d_%H_%M"), sep = "")
 dir.create(dPath)
                  
-rnwFiles <- c("index", "datasets", "misc", "preprocess", "visualizations",
-              "featureSelection", "training", "other", "bytag", 
-              "varImp", "parallel", "splitting", "custom_models")
+rnwFiles <- c("index", "similarity", "datasets", "misc", "preprocess", "visualizations",
+              "featureSelection", "training", "bytag", 
+              "varImp", "parallel", "splitting", "custom_models", "other")
 
 rnwFiles <- paste(rnwFiles, ".Rhtml", sep = "")
 file.copy(rnwFiles, file.path(getwd(), dPath, rnwFiles))
@@ -51,6 +54,12 @@ file.copy("parallel.pdf",
           file.path(getwd(), dPath, "parallel.pdf"))
 file.copy("template.html",
           file.path(getwd(), dPath, "template.html"))
+file.copy("MaxDissim.gif",
+          file.path(getwd(), dPath, "MaxDissim.gif"))
+file.copy("d3.v3.js",
+          file.path(getwd(), dPath, "d3.v3.js"))
+file.copy("d3.v3.min.js",
+          file.path(getwd(), dPath, "d3.v3.min.js"))
 setwd(file.path(getwd(), dPath))
 pathName <- paste(file.path(getwd()), "/", sep = "")
 
