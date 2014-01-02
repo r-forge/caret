@@ -40,7 +40,7 @@ set.seed(849)
 test_class_none_model <- train(trainX, trainY, 
                                method = "logreg", 
                                trControl = cctrl3,
-                               tuneLength = 1,
+                               tuneGrid = test_class_cv_model$bestTune,
                                preProc = c("center", "scale"),
                                seed = 1)
 
