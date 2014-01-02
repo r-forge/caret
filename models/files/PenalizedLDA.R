@@ -1,5 +1,5 @@
 modelInfo <- list(label = "Penalized Linear Discriminant Analysis",
-                  library = "penalizedLDA",
+                  library = c("penalizedLDA", "plyr"),
                   loop = function(grid) {
                     loop <- ddply(grid, .(lambda), function(x) c(K = max(x$K)))
                     if(length(unique(loop$K)) == 1) return(list(loop = loop, submodels = NULL))

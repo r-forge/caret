@@ -1,5 +1,5 @@
 modelInfo <- list(label = "Stochastic Gradient Boosting",
-                  library = "gbm",
+                  library = c("gbm", "plyr"),
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('n.trees', 'interaction.depth', 'shrinkage'),
                                           class = c("numeric", "numeric", "numeric"),

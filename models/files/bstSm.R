@@ -1,5 +1,5 @@
 modelInfo <- list(label = "Boosted Smoothing Spline", 
-                  library = "bst",
+                  library = c("bst", "plyr"),
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('mstop', 'nu'),
                                           class = c("numeric", "numeric"),
