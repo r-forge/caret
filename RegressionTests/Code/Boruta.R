@@ -16,8 +16,8 @@ cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        summaryFunction = twoClassSummary)
 cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
-cctrl3 <- trainControl(method = "LOOCV",
-                       classProbs = TRUE, summaryFunction = twoClassSummary)
+cctrl3 <- trainControl(method = "none", classProbs = TRUE, 
+                       summaryFunction = twoClassSummary)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -25,7 +25,8 @@ test_class_cv_model <- train(trainX, trainY,
                              trControl = cctrl1,
                              metric = "ROC", 
                              preProc = c("center", "scale"),
-                             confidence = 0.8,
+                             tuneGrid = data.frame(mtry = 2:4),
+                             pValue = .1,
                              maxRuns = 11)
 
 test_class_pred <- predict(test_class_cv_model, testing[, -ncol(testing)])
@@ -37,17 +38,18 @@ test_class_loo_model <- train(trainX, trainY,
                               trControl = cctrl2,
                               metric = "ROC", 
                               preProc = c("center", "scale"),
-                              confidence = 0.8,
+                              tuneGrid = data.frame(mtry = 2:4),
+                              pValue = .1,
                               maxRuns = 11)
 
 set.seed(849)
 test_class_none_model <- train(trainX, trainY, 
                                method = "Boruta", 
                                trControl = cctrl3,
-                               tuneLength = 1,
+                               tuneGrid = data.frame(mtry = 2),
                                metric = "ROC", 
                                preProc = c("center", "scale"),
-                               confidence = 0.8,
+                               pValue = .1,
                                maxRuns = 11)
 
 test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
@@ -80,7 +82,8 @@ test_reg_cv_model <- train(trainX, trainY,
                            method = "Boruta", 
                            trControl = rctrl1,
                            preProc = c("center", "scale"),
-                           confidence = 0.8,
+                           tuneGrid = data.frame(mtry = 2:4),
+                           pValue = .1,
                            maxRuns = 11)
 test_reg_pred <- predict(test_reg_cv_model, testX)
 
@@ -89,7 +92,8 @@ test_reg_loo_model <- train(trainX, trainY,
                             method = "Boruta",
                             trControl = rctrl2,
                             preProc = c("center", "scale"),
-                            confidence = 0.8,
+                            tuneGrid = data.frame(mtry = 2:4),
+                            pValue = .1,
                             maxRuns = 11)
 
 set.seed(849)
@@ -98,7 +102,8 @@ test_reg_none_model <- train(trainX, trainY,
                              trControl = rctrl3,
                              tuneLength = 1,
                              preProc = c("center", "scale"),
-                             confidence = 0.8,
+                             tuneGrid = data.frame(mtry = 2),
+                             pValue = .1,
                              maxRuns = 11)
 test_reg_none_pred <- predict(test_reg_none_model, testX)
 
