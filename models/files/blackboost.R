@@ -1,5 +1,5 @@
 modelInfo <- list(label = "Boosted Tree", 
-                  library = c("party", "mboost"),
+                  library = c("party", "mboost", "plyr"),
                   type = c("Regression", "Classification"),
                   parameters = data.frame(parameter = c('mstop', 'maxdepth'),
                                           class = c("numeric", "numeric"),
