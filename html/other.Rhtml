@@ -39,7 +39,7 @@ session <- paste(format(Sys.time(), "%a %b %d %Y"),
   <body>
     <div id="wrapper">
       <div id="header-wrapper" class="container">
-	<div id="header" class="container">
+  <div id="header" class="container">
 	  <div id="logo">
 	    <h1><a href="#">Other Functions</a></h1>
 	  </div>
@@ -61,6 +61,14 @@ session <- paste(format(Sys.time(), "%a %b %d %Y"),
       <div id="page">
 	<div id="content">
 	
+<h1>Contents</h1>  
+<ul>
+  <li><a href="#test">Evaluating Test Sets</a></li> 
+  <li><a href="#lift">Evaluating Class Probabilities</a></li>
+  <li><a href="#affy">Processing Affy Arrays</a></li> 
+ </ul>   
+      
+<div id="test"></div>   
 <h1>Evaluating Test Sets</h1>
 <p>
 A function, <span class="mx funCall">postResample</span>, can be used obtain the same
@@ -135,9 +143,89 @@ confusion matrix during resampling. There are several methods for
 normalizing these values. See <code>?confusionMatrix.train</code> for details.
 </p>	
 	
-          <h1>Processing Affy Arrays</h1>
-          <p>
-            For Affymetrix gene chip data, RMA processing (<a href="http://nar.oxfordjournals.org/cgi/content/abstract/31/4/e150">Irizarry, 2003</a>) is a popular method of processing gene expression data. However, for predictive modeling, it has a drawback in that the processing is batch oriented; if an additional sample is collected, the RMA processing must be repeated using all the samples. This is mainly because of two steps in the processing: the quantile normalization process and the calculation of expression. Quantile normalization normalizes the data such that the between--chip distributions have equivalent quantiles and is very effective in improving the quality of the data. It is possible to let the samples in the training set define the reference distribution for normalization. For the expression calculation, a robust method such as a trimmed mean can be used to summarize the probe level data into a single summary metric per sample.
+<div id="lift"></div>    
+<h1>Evaluating Class Probabilities</h1>
+<p>  
+The package also contains two functions for class probability predictions for data sets with two classes.
+</p>
+<p>  
+The <span class="mx funCall">lift</span> function can be used to evaluate probabilities thresholds that can capture a certain percentage of <i>hits</i>. The function requires a set of sample probability predictions (not from the training set) and the true class labels. For example, we can simulate two-class samples using the <span class="mx funCall">twoClassSim</span> function and fit a set of models to the training set:
+</p>
+<!--begin.rcode lift_fits, tidy=FALSE
+set.seed(2)
+training <- twoClassSim(1000)
+eval <- twoClassSim(1000)
+testing <- twoClassSim(1000)
+
+ctrl <- trainControl(method = "cv",
+                     classProbs = TRUE, 
+                     summaryFunction = twoClassSummary)
+
+set.seed(1045)
+fdaModel <- train(Class ~ ., data = training, 
+                  method = "fda",
+                  metric = "ROC",
+                  tuneLength = 20,
+                  trControl = ctrl)
+set.seed(1045)
+ldaModel <- train(Class ~ ., data = training, 
+                  method = "lda",
+                  metric = "ROC",
+                  trControl = ctrl)
+
+set.seed(1045)
+c5Model <- train(Class ~ ., data = training, 
+                 method = "C5.0",
+                 metric = "ROC",
+                 tuneLength = 10,
+                 trControl = ctrl)
+
+## A summary of the resampling results:
+getTrainPerf(fdaModel)
+getTrainPerf(ldaModel)
+getTrainPerf(c5Model)
+
+    end.rcode--> 
+<p>
+From these models, we can predict the evaluation set and save the probabilities of being the first class:
+</p>
+<!--begin.rcode lift_preds, tidy=FALSE
+evalResults <- data.frame(Class = eval$Class)
+evalResults$FDA <- predict(fdaModel, eval, type = "prob")[,"Class1"]
+evalResults$LDA <- predict(ldaModel, eval, type = "prob")[,"Class1"]
+evalResults$C5.0 <- predict(c5Model, eval, type = "prob")[,"Class1"]
+head(evalResults)
+    end.rcode--> 
+<p>
+The <span class="mx funCall">lift</span> function does the calculations and the corresponding <span class="mx funCall">plot</span> function is used to plot the lift curve (although some call this the <i>gain</i> curve). The <span class="mx arg">value</span> argument creates reference lines.
+</p>    
+<!--begin.rcode lift_plot, tidy=FALSE,fig.width=8,fig.height=5
+trellis.par.set(caretTheme())
+liftData <- lift(Class ~ FDA + LDA + C5.0, data = evalResults)
+plot(liftData, values = 60, auto.key = list(columns = 3,
+                                            lines = TRUE,
+                                            points = FALSE))
+    end.rcode--> 
+<p>
+From this we can see that, to find 60 percent of the hits, a little more than 30 percent of the data can be sampled (when ordered by the probability predictions). The LDA model does somewhat worse than the other two models. 
+</p>
+<p>
+The other function is for probability calibration. Other functions in the <a href = "http://finzi.psych.upenn.edu/R/library/gbm/html/calibrate.plot.html"><strong>gbm</strong></a> package, the <a href = "http://finzi.psych.upenn.edu/R/library/rms/html/calibrate.html"><strong>rms</strong></a> package and others. These plots can be used to assess whether the value of the probability prediction is consistent with the event rate in the data. The format for the function is very similar to the <span class="mx funCall">lift</span> function:
+</p>
+<!--begin.rcode cal_plot, tidy=FALSE,fig.width=8,fig.height=5
+trellis.par.set(caretTheme())
+calData <- calibration(Class ~ FDA + LDA + C5.0, 
+                       data = evalResults, 
+                       cuts = 13)
+plot(calData, type = "l", auto.key = list(columns = 3,
+                                          lines = TRUE,
+                                          points = FALSE))
+    end.rcode--> 
+    
+<div id="affy"></div>      
+<h1>Processing Affy Arrays</h1>
+<p>
+For Affymetrix gene chip data, RMA processing (<a href="http://nar.oxfordjournals.org/cgi/content/abstract/31/4/e150">Irizarry, 2003</a>) is a popular method of processing gene expression data. However, for predictive modeling, it has a drawback in that the processing is batch oriented; if an additional sample is collected, the RMA processing must be repeated using all the samples. This is mainly because of two steps in the processing: the quantile normalization process and the calculation of expression. Quantile normalization normalizes the data such that the between--chip distributions have equivalent quantiles and is very effective in improving the quality of the data. It is possible to let the samples in the training set define the reference distribution for normalization. For the expression calculation, a robust method such as a trimmed mean can be used to summarize the probe level data into a single summary metric per sample.
           </p>
           <p>For example:</p>
 <!--begin.rcode eval=FALSE          
@@ -177,6 +265,7 @@ Batch2Step3 <- computeExprSet(Batch2Step2, "pmonly", "trimMean")
                 <li><a href="training.html">Model Training and Tuning</a></li>
                 <li><a href="modelList.html"><tt>train</tt> Model List</a></li>
                 <li><a href="bytag.html"><tt>train</tt> Models By Tag</a></li>
+                 <li><a href="similarity.html"><tt>train</tt> Models By Similarity</a></li>
                 <li><a href="custom_models.html">Using Custom Models</a></li>
                 <li><a href="varimp.html">Variable Importance</a></li>
                 <li><a href="featureselection.html">Feature Selection</a></li>
