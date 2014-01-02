@@ -11,7 +11,7 @@ modelInfo <- list(label = "Ridge Regression",
                     enet(as.matrix(x), y, lambda = param$lambda)  
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
-                    predict(modelFit, as.matrix(newdata), 
+                    predict(modelFit, newdata, 
                             s = 1, 
                             mode = "fraction")$fit
                   },

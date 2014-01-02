@@ -12,14 +12,15 @@ modelInfo <- list(label = "The lasso",
                     submodels <- list(grid[-1,,drop = FALSE])     
                     list(loop = loop, submodels = submodels)
                   },
-                  fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    enet(as.matrix(x), y, lambda = 0, ...),
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+                    enet(as.matrix(x), y, lambda = 0, ...)
+                    },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     out <- predict(modelFit, 
                                    newdata, 
                                    s = modelFit$tuneValue$fraction, 
                                    mode = "fraction")$fit
-                    
+
                     if(!is.null(submodels))
                     {
                       if(nrow(submodels) > 1)
@@ -29,13 +30,13 @@ modelInfo <- list(label = "The lasso",
                           as.list(
                             as.data.frame(
                               predict(modelFit,
-                                      newx = as.matrix(newdata),
+                                      newx = newdata,
                                       s = submodels$fraction,
                                       mode = "fraction")$fit)))
                         
                       } else {
                         tmp <- predict(modelFit,
-                                       newx = as.matrix(newdata),
+                                       newx = newdata,
                                        s = submodels$fraction,
                                        mode = "fraction")$fit
                         out <- c(list(if(is.matrix(out)) out[,1]  else out),  list(tmp))
