@@ -1,40 +1,3 @@
-## A copy of .Diag from the stats library follows.
-## Why? I was referencing an internal funciton from the stats library 
-## and CRAN changed the policy on this. I had just cleaned up almost
-## two dozen changes caused by new CRAN policies *and* had just removed
-## 54 package dependencies for caret when I submitted version 6.0-18. 
-## Here is the level of nastiness that sometimes occurs when one specific
-## person gets your update. 
-##
-## On 30/12/2013 19:49, Kuhn, Max wrote:
-## MK > This is a substantial update.
-## 
-## MK > There is one note below which violates the updated maintainer policies.
-## MK > I'm not sure how to handle since it is the secret sauce for the contrast
-## MK > function that I have. Rather than duplicating code in this package, I'd
-## MK > like to take some time to find a better solution.
-## 
-## Brian D. Ripley > Please resubmit when you have done so.
-## 
-## MK > Thanks and happy New Year,
-## 
-## Brian D. Ripley > It would be happier not having to waste time on people 
-## Brian D. Ripley > pushing their own interests like this!
-  
-BDRISAH <- function(nms, sparse) {
-  ## no error checking here
-  n <- as.integer(length(nms))
-  d <- c(n,n)
-  dn <- list(nms, nms)
-  if(sparse) {
-    if(is.null(tryCatch(loadNamespace("Matrix"), error = function(e)NULL)))
-      stop(gettextf("%s needs package 'Matrix' correctly installed",
-                    "contr*(.., sparse=TRUE)"),
-           domain = NA)
-    new("ddiMatrix", diag = "U", Dim = d, Dimnames = dn)
-  } else
-    array(c(rep.int(c(1, numeric(n)), n-1L), 1), d, dn)
-}
 
 contr.ltfr <- function (n, contrasts = TRUE, sparse = FALSE) 
 {
@@ -47,7 +10,7 @@ contr.ltfr <- function (n, contrasts = TRUE, sparse = FALSE)
     levels <- as.character(n)
     n <- length(n)
   }
-  contr <- BDRISAH(levels, sparse = sparse)
+  contr <- .RDiag(levels, sparse = sparse)
   if (contrasts) {
     if (n < 2L) stop(gettextf("contrasts not defined for %d degrees of freedom", n - 1L), domain = NA)
   }
