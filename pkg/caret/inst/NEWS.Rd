@@ -2,7 +2,7 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in version 6.0-19}{
+\section{Changes in version 6.0-21}{
 \itemize{
 \item A new system for user-defined models has been added. See 
 \href{http://caret.r-forge.r-project.org/custom_models.html}{http://caret.r-forge.r-project.org/custom_models.html}.
@@ -24,7 +24,13 @@ will occur.
  package were added.
 
  \item  Model \code{elm} from the \cpkg{elmNN} 
- package were added.
+ package was added.
+
+  \item  Models \code{rknn} and \code{rknnBel} from the \cpkg{rknn} 
+ package were added
+
+  \item  Model \code{brnn} from the \cpkg{brnn} 
+ package was added.
 
  \item \code{panel.lift2} and \code{xyplot.lift} now have an argument 
  called \code{values} that show the percentages of samples found for
