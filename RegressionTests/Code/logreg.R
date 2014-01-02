@@ -41,7 +41,6 @@ test_class_none_model <- train(trainX, trainY,
                                method = "logreg", 
                                trControl = cctrl3,
                                tuneGrid = test_class_cv_model$bestTune,
-                               preProc = c("center", "scale"),
                                seed = 1)
 
 test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
