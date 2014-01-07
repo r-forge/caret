@@ -26,18 +26,42 @@ local({
     assertion
   }
 
-  runUnitTests <- function(models, x, y, f) {
+  checkFormals <- function(fun, expectedFormals, ...,
+                           fail=FALSE, files=list(stderr())) {
+    if (is.function(fun)) {
+      fms <- formals(fun)
+      fargs <- names(fms)
+      alen <- length(fms)
+      xlen <- length(expectedFormals)
+      if (expectedFormals[[xlen]] == '...') {
+        assert(alen >= xlen, ..., fail=fail, files=files)
+        assert(all(fargs[1:(xlen-1)] == expectedFormals[1:(xlen-1)]), ...,
+               fail=fail, files=files)
+        assert(fargs[[alen]] == '...', ..., fail=fail, files=files)
+      } else {
+        assert(alen == xlen, ..., fail=fail, files=files)
+        assert(all(names(fms) == expectedFormals), ..., fail=fail, files=files)
+      }
+    }
+  }
+
+  runUnitTests <- function(models, logfile, verbose, x, y) {
     pkgs <- search()
     legalTypes <- c('Classification', 'Regression')
     loopFormals <- c('grid')
     gridFormals <- c('x', 'y', 'len')
-    fitFormals <- c('x', 'y', 'wts', 'param', 'lev', 'last', 'classProbs', '...')
+    fitFormals <- c('x', 'y', 'wts', 'param', 'lev', 'last',
+                    'classProbs', '...')
     predictFormals <- c('modelFit', 'newdata', 'submodels')
     probFormals <- c('modelFit', 'newdata', 'submodels')
-    # varImpFormals <- c('object', 'estimate', '...')
+    predictorsFormals <- c('x', '...')
+    varImpFormals <- c('object', '...')
+    levelsFormals <- c('x')
     sortFormals <- c('x')
+    expectedNames <- c('label', 'library', 'type', 'parameters', 'grid',
+                       'loop', 'fit', 'predict', 'prob',
+                       'predictors', 'varImp', 'levels', 'tags', 'sort')
 
-    logfile <- file('testrun.log', 'w')
     files <- list(logfile, stderr())
     cat(sprintf('Date: %s\n\n', date()), file=logfile)
 
@@ -45,13 +69,37 @@ local({
       modelName <- names(models)[[i]]
       log('\nTesting %s...', modelName, files=files)
       m <- models[[i]]
+
+      modelNames <- names(m)
+      unknownNames <- modelNames[! modelNames %in% expectedNames]
+      missingNames <- expectedNames[! expectedNames %in% modelNames]
+      if (length(missingNames) > 0) {
+        log('warning: missing model methods: %s',
+            paste(missingNames, collapse=' '),
+            files=files)
+      }
+      if (length(unknownNames) > 0) {
+        log('warning: unknown model methods: %s',
+            paste(unknownNames, collapse=' '),
+            files=files)
+      }
+
+      status <- 0
+      for(i in seq(along = m$library)) {
+        if (! require(m$library[i], character.only=TRUE, quietly=TRUE)) {
+          log('warning: unable to load package %s', m$library[i], files=files)
+          status <- -1
+        }
+      }
+      if (status != 0) {
+        next
+      }
+
       tryCatch({
         withCallingHandlers({
-          for(i in seq(along = m$library)) {
-            assert(require(m$library[i], character.only=TRUE, quietly=TRUE),
-                   'unable to load package %s', m$library[i], files=files)
-          }
-
+          assert(is.character(m$label) && length(m$label) == 1,
+                 "label isn't character type with one element",
+                 files=files)
           assert(is.character(m$type) && length(m$type) %in% c(1, 2) &&
                  all(m$type %in% legalTypes),
                  "type is set incorrectly",
@@ -59,58 +107,92 @@ local({
           assert(is.null(m$loop) || is.function(m$loop),
                  "loop isn't NULL or a function",
                  files=files)
-          assert(! is.function(m$loop) || all(names(formals(m$loop)) == loopFormals),
-                 "loop has incorrect arguments",
-                 files=files)
-          assert(is.data.frame(m$parameters),
-                 "parameters isn't a data frame",
+          checkFormals(m$loop, loopFormals,
+                       "loop has incorrect arguments",
+                       files=files)
+          assert(is.data.frame(m$parameters) &&
+                 is.factor(m$parameters$parameter) &&
+                 is.factor(m$parameters$class) &&
+                 is.factor(m$parameters$label),
+                 "parameters is not a correct data frame",
                  files=files)
           assert(is.function(m$grid),
                  "grid isn't a function",
                  files=files)
-          assert(! is.function(m$grid) || all(names(formals(m$grid)) == gridFormals),
-                 "grid has incorrect arguments",
-                 files=files)
+          checkFormals(m$grid, gridFormals,
+                       "grid has incorrect arguments",
+                       files=files)
           assert(is.function(m$fit),
                  "fit isn't a function",
                  files=files)
-          assert(! is.function(m$fit) || all(names(formals(m$fit)) == fitFormals),
-                 "fit has incorrect arguments",
-                 files=files)
+          checkFormals(m$fit, fitFormals,
+                       "fit has incorrect arguments",
+                       files=files)
           assert(is.function(m$predict),
                  "predict isn't a function",
                  files=files)
-          assert(! is.function(m$predict) ||
-                 all(names(formals(m$predict)) == predictFormals),
-                 "predict has incorrect arguments",
-                 files=files)
+          checkFormals(m$predict, predictFormals,
+                       "predict has incorrect arguments",
+                       files=files)
           assert(is.null(m$prob) || is.function(m$prob),
                  "prob isn't NULL or a function",
                  files=files)
-          assert(! is.function(m$prob) || all(names(formals(m$prob)) == probFormals),
-                 "prob has incorrect arguments",
+          checkFormals(m$prob, probFormals,
+                       "prob has incorrect arguments",
+                       files=files)
+          assert(is.null(m$predictors) || is.function(m$predictors),
+                 "predictors isn't NULL or a function",
                  files=files)
+          checkFormals(m$predictors, predictorsFormals,
+                       "predictors has incorrect arguments",
+                       files=files)
           assert(is.null(m$varImp) || is.function(m$varImp),
                  "varImp isn't NULL or a function",
                  files=files)
-          fargs <- names(formals(m$varImp))
-          fargc <- length(fargs)
-          assert(! is.function(m$varImp) ||
-                 (fargs[1] == 'object' && fargs[fargc] == '...'),
-                 "varImp has incorrect arguments",
+          checkFormals(m$varImp, varImpFormals,
+                       "varImp has incorrect arguments",
+                       files=files)
+          assert(is.null(m$levels) || is.function(m$levels),
+                 "levels isn't NULL or a function",
                  files=files)
-          assert(is.character(m$tag),
-                 "tag is not character type",
+          checkFormals(m$levels, levelsFormals,
+                       "levels has incorrect arguments",
+                       files=files)
+          assert(is.character(m$tags),
+                 "tags is not character type",
                  files=files)
           assert(is.function(m$sort),
                  "sort isn't a function",
                  files=files)
-          assert(! is.function(m$sort) || all(names(formals(m$sort)) == sortFormals),
-                 "sort has incorrect arguments",
-                 files=files)
+          checkFormals(m$sort, sortFormals,
+                       "sort has incorrect arguments",
+                       files=files)
 
           tuneGrid <- m$grid(x, y, 3)
           assert(is.data.frame(tuneGrid))
+
+          if (is.function(m$loop)) {
+            trainInfo <- m$loop(tuneGrid)
+            assert(is.list(trainInfo) &&
+                   all(c('loop', 'submodels') %in% names(trainInfo)),
+                   "loop function didn't return a correct list",
+                   files=files)
+            assert(is.data.frame(trainInfo$loop),
+                   "loop()$loop is not data frame",
+                   files=files)
+            assert(is.list(trainInfo$submodels) ||
+                   is.null(trainInfo$submodels),
+                   "loop()$submodels is not a list or NULL",
+                   files=files)
+            for (sm in trainInfo$submodels) {
+              assert(is.data.frame(sm),
+                     "loop()$submodels doesn't contain all data frames",
+                     files=files)
+              assert(all(colnames(sm) %in% names(trainInfo$loop)),
+                     "loop()$submodels contains a data frame with bad columns",
+                     files=files)
+            }
+          }
 
           if ("Classification" %in% m$type) {
             wts <- rep(1L, nrow(x))  # also try NULL?
@@ -134,8 +216,6 @@ local({
             }
 
             log("Calling predict function for %s", modelName, files=files)
-            if (interactive())
-              debug(m$predict)
             xp <- m$predict(modelFit, x)
             assert(! is.null(xp),
                    "predict function returned a NULL",
@@ -168,16 +248,16 @@ local({
             sink()
           }
         }
-        cat(paste0('error: ', conditionMessage(e), '\n'), file=stderr())
-        cat(sprintf('error testing model %s: continuing to next model\n', modelName))
-        cat(sprintf('error: %s: %s\n', modelName, conditionMessage(e)), file=logfile)
+        cat(sprintf('error: %s: %s\n', modelName, conditionMessage(e)),
+            file=logfile)
       })
 
       # Clean up after testing the model
-      rm(modelFit)
+      suppressWarnings(rm(modelFit))
       gvars <- ls(name=.GlobalEnv)
       if (length(gvars) > 0) {
-        log("Deleting global variable(s): %s", paste(gvars, collapse=" "), files=files)
+        log("Deleting global variable(s): %s", paste(gvars, collapse=" "),
+            files=files)
         rm(list=gvars, pos=.GlobalEnv)
       }
       curpkgs <- search()
@@ -200,7 +280,44 @@ local({
     sink(logfile)
     print(sessionInfo())
     sink()
-    close(logfile)
+  }
+
+  # Default option values
+  dbg <- character(0)
+  logname <- 'testrun.log'
+  modelfiles <- character(0)
+  pattern <- NULL
+  verbose <- FALSE
+
+  # Process command line
+  args <- commandArgs(trailingOnly=TRUE)
+  i <- 1
+  while (i <= length(args)) {
+    a <- args[[i]]
+    if (a == '-d') {
+      i <- i + 1
+      dbg <- c(dbg, args[[i]])
+    } else if (a == '-l') {
+      i <- i + 1
+      logname <- args[[i]]
+    } else if (a == '-p') {
+      i <- i + 1
+      pattern <- args[[i]]
+    } else if (a == '-v') {
+      verbose <- TRUE
+    } else {
+      modelfiles <- args[i:length(args)]
+      # Only keep ".R" files that exist
+      modelfiles <- modelfiles[grep('\\.R$', modelfiles) &
+                               file.exists(modelfiles)]
+      names(modelfiles) <- sub('\\.R$', '', basename(modelfiles))
+      if (length(modelfiles) == 0) {
+        cat('found no R model files\n', file=stderr())
+        quit(status=1, save='no')
+      }
+      break
+    }
+    i <- i + 1
   }
 
   options(warn=1)
@@ -209,15 +326,40 @@ local({
   trainX <- training[, -ncol(training)]
   trainY <- training$Class
 
-  models <- getModelInfo()
-  args <- commandArgs(trailingOnly=TRUE)
-  if (length(args) > 0) {
-    args <- args[args %in% names(models)]
-    nms <- as.list(args)
-    names(nms) <- args
-    models <- lapply(nms, function(nm) models[[nm]])
+  # Get the models list
+  if (length(modelfiles) > 0) {
+    # Model file names were specified on the command line
+    models <- lapply(modelfiles, function(mfile) {
+      source(mfile, local=TRUE)
+      modelInfo
+    })
+  } else {
+    models <- getModelInfo()
   }
-  if (interactive())
-    debug(runUnitTests)
-  runUnitTests(models, trainX, trainY)
+
+  # Filter models based on -p argument
+  if (! is.null(pattern)) {
+    models <- models[grep(pattern, names(models))]
+    if (length(models) == 0) {
+      cat(sprintf('no models were selected by pattern %s\n', pattern),
+          file=stderr())
+      quit(status=1, save='no')
+    }
+  }
+
+  # Set debug flag on specified model methods if interactive
+  if (length(dbg) > 0 && interactive()) {
+    for (mod in models) {
+      for (meth in dbg) {
+        debug(mod[[meth]])
+      }
+    }
+  }
+
+  # Open the log file
+  logfile <- file(logname, 'w')
+  on.exit(close(logfile))
+
+  # Run the unit tests
+  runUnitTests(models, logfile, verbose, trainX, trainY)
 })
