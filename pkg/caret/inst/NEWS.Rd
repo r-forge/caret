@@ -2,6 +2,13 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+\section{Changes in version 6.0-22}{
+\itemize{
+\item For some parallel processing technoligies, the package now export 
+more internal functions. 
+ }
+}
+
 \section{Changes in version 6.0-21}{
 \itemize{
 \item A new system for user-defined models has been added. See 
