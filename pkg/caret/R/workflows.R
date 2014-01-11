@@ -677,7 +677,8 @@ looRfeWorkflow <- function(x, y, sizes, ppOpts, ctrl, lev, ...)
   ppp <- c(ppp, ctrl$preProcOptions)
   
   resampleIndex <- ctrl$index
-  result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %dopar%
+  `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
+  result <- foreach(iter = seq(along = resampleIndex), .combine = "c", .verbose = FALSE, .packages = c("methods", "caret"), .errorhandling = "stop") %op%
 {
   library(caret)
   
