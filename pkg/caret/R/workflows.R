@@ -438,7 +438,9 @@ oobTrainWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev, testing
   printed <- format(info$loop)
   colnames(printed) <- gsub("^\\.", "", colnames(printed))
   `%op%` <- getOper(ctrl$allowParallel && getDoParWorkers() > 1)
-  result <- foreach(parm = 1:nrow(info$loop), .packages = c("methods", "caret"), .combine = "rbind") %op%
+  pkgs <- c("methods", "caret")
+  if(!is.null(method$library)) pkgs <- c(pkgs, method$library)
+  result <- foreach(parm = 1:nrow(info$loop), .packages = pkgs, .combine = "rbind") %op%
 {
   library(caret)
   if(ctrl$verboseIter) progress(printed[parm,,drop = FALSE], "", 1, TRUE)
