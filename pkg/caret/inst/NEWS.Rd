@@ -4,10 +4,13 @@
 
 \section{Changes in version 6.0-22}{
 \itemize{
-\item For some parallel processing technoligies, the package now export 
+\item For some parallel processing technologies, the package now export 
 more internal functions. 
+ 
+\item A bug was fixed in \code{rfe} that occured when LOO CV was used.
  }
 }
+
 
 \section{Changes in version 6.0-21}{
 \itemize{
