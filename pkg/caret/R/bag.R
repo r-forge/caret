@@ -23,12 +23,15 @@ bagControl <- function(fit = NULL, predict = NULL, aggregate = NULL, downSample 
 
    if(!is.null(vars) && vars < 1) stop("vars must be an integer > 0")
 
-  if(bagControl$downSample & is.numeric(y))
-    {
+  if(bagControl$downSample & is.numeric(y)) {
       warning("down-sampling with regression... downSample changed to FALSE")
       bagControl$downSample <- FALSE
     }
-
+  
+  if(is.null(bagControl$fit) | is.null(bagControl$predict) | 
+       is.null(bagControl$aggregate)) {
+    stop("The control arguments 'fit', 'predict' and 'aggregate' should have non-NULL values")
+  }
 
   fitter <- function(index, x, y, ctrl, v, ...)
     {
@@ -58,8 +61,7 @@ bagControl <- function(fit = NULL, predict = NULL, aggregate = NULL, downSample 
       fit <- ctrl$fit(subX, subY, ...)
       if(ctrl$oob)
         {
-          pred <- ctrl$pred(fit,
-                            x[-unique(index), subVars, drop = FALSE])
+          pred <- ctrl$predict(fit, x[-unique(index), subVars, drop = FALSE])
           if(is.vector(pred))
             {
               out <- data.frame(pred  = pred, obs = y[-unique(index)])
