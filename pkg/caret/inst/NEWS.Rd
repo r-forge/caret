@@ -8,6 +8,9 @@
 more internal functions. 
  
 \item A bug was fixed in \code{rfe} that occured when LOO CV was used.
+
+\item Another bug was fixed that occured for some models when 
+\code{tuneGrid} contained only a single model.
  }
 }
 
