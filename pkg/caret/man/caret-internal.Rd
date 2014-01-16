@@ -13,6 +13,10 @@
 \alias{MeanSD}
 \alias{sbfIter}
 \alias{gamFormula}
+\alias{bagEarthStats}
+\alias{cforestStats}
+\alias{ipredStats}
+\alias{rfStats}
 
 \description{Internal functions}
 \usage{
