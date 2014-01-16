@@ -17,10 +17,12 @@ bagControl <- function(fit = NULL, predict = NULL, aggregate = NULL, downSample 
   
 
 "bag.default" <-
-  function(x, y, B = 10, vars = ncol(x), bagControl = bagControl(),  ...)
+  function(x, y, B = 10, vars = ncol(x), bagControl = NULL,  ...)
 {
   funcCall <- match.call(expand.dots = TRUE)
 
+  if(is.null(bagControl)) stop("Please specify 'bagControl' with the appropriate functions")
+    
    if(!is.null(vars) && vars < 1) stop("vars must be an integer > 0")
 
   if(bagControl$downSample & is.numeric(y)) {
