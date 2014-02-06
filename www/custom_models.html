@@ -115,17 +115,20 @@ Released   : 20120902
   <a href="#Introduction">Introduction</a>
   </li>
   <li>
-  <a href="#Illustration1">An Illustrative Example: SVMs with Laplacian Kernels</a>
+  <a href="#Illustration1">Illustrative Example 1: SVMs with Laplacian Kernels</a>
   </li>
   <li>
   <a href="#Components">Model Components</a>
   </li>
   <li>
-  <a href="#Illustration2">A More Complicated Example: LogitBoost</a>
+  <a href="#Illustration2">Illustrative Example 2: Something More Complicated - LogitBoost</a>
   </li>
   <li>
-  <a href="#Illustration3">Another Example: SMOTE During Resampling</a>  </li>
+  <a href="#Illustration3">Illustrative Example 3: SMOTE During Resampling</a>  </li>
   </li>
+  <li>
+  <a href="#Illustration4">Illustrative Example 4: PLS Feature Extraction Pre-Processing</a>      
+  </li> 
  </ul>   
   
 <div id="Introduction"></div>
@@ -162,7 +165,7 @@ To use your own model, you can pass a list of these components to <tt><span clas
 </p>
 
 <div id="Illustration1"></div>
-<h1>An Illustrative Example: SVMs with Laplacian Kernels</h1>
+<h1>Illustrative Example 1: SVMs with Laplacian Kernels</h1>
 <p>
 The package currently contains support vector machine (SVM) models using linear, polynomial and radial basis function kernels. The <a href="http://cran.r-project.org/web/packages/kernlab/index.html"><strong>kernlab</strong></a>  package has other functions, including the Laplacian kernel. We will illustrate the model components for this model, which has two parameters: the standard cost parameter for SVMs and one kernel parameter (<tt>sigma</tt>)
 </p>
@@ -201,10 +204,10 @@ There are some basic components of the list for custom models. A brief descripti
   <span class="mx arg">prob</span> is a function that can be used to create class probabilities (if applicable)
   </li>
   <li>
-  <span class="mx arg">sort</span> is a function that sorts the parameter form most complex to least
+  <span class="mx arg">sort</span> is a function that sorts the parameter from most complex to least
   </li>
   <li>
-  <span class="mx arg">loop</span> is an <b>optional</b> function for advanced users for models that can create multiple submodel predictions form the same object.
+  <span class="mx arg">loop</span> is an <b>optional</b> function for advanced users for models that can create multiple submodel predictions from the same object.
   </li>
   <li>
   <span class="mx arg">levels</span> is an <b>optional</b> function, primarily for classification models using <tt>S4</tt> methods to return the factor levels of the outcome.
@@ -527,7 +530,7 @@ A plot of the data shows that the model doesn't change when the cost value is ab
 
 
 <div id="Illustration2"></div>
-<h1>A More Complicated Example: LogitBoost</h1>
+<h1>Illustrative Example 2: Something More Complicated - LogitBoost</h1>
 
 <h2>The loop Element</h2>
 
@@ -730,7 +733,7 @@ A few more notes:
 <span class="hl std">lb1</span>
 </pre></div>
 <div class="output"><pre class="knitr r">   user  system elapsed 
- 26.081   0.876   4.351 
+ 24.089   0.668   4.125 
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl com">## Now get rid of the submodel parts</span>
 <span class="hl std">lbFuncs2</span> <span class="hl kwb">&lt;-</span> <span class="hl std">lbFuncs</span>
@@ -746,11 +749,11 @@ A few more notes:
 <span class="hl std">lb2</span>
 </pre></div>
 <div class="output"><pre class="knitr r">   user  system elapsed 
- 14.885   0.750   9.678 
+ 14.220   0.707   9.179 
 </pre></div>
 </div></div>
 
-<p>On a data set with 157 instances and 60 predictors and a model that is tuned over only 3 parameter values, there is a 2.22-fold speed-up. If the model were more computationally taxing or the data set were larger or the number of tune parameters that were evaluated was larger, the speed-up would increase. Here is a plot of the speed-up for a few more values of <span class="mx arg">tuneLength</span>:
+<p>On a data set with 157 instances and 60 predictors and a model that is tuned over only 3 parameter values, there is a 2.23-fold speed-up. If the model were more computationally taxing or the data set were larger or the number of tune parameters that were evaluated was larger, the speed-up would increase. Here is a plot of the speed-up for a few more values of <span class="mx arg">tuneLength</span>:
 </p>
 
 <div class="chunk" id="custom_lb_times"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">bigGrid</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">nIter</span> <span class="hl std">=</span> <span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">151</span><span class="hl std">,</span> <span class="hl kwc">by</span> <span class="hl std">=</span> <span class="hl num">10</span><span class="hl std">))</span>
@@ -788,7 +791,7 @@ The speed-ups show a significant decrease in training time using this method.
 </p>
 
 <div id="Illustration3"></div>
-<h1>Another Example: SMOTE During Resampling</h1>
+<h1>Illustrative Example 3: SMOTE During Resampling</h1>
 
 <p>
 Other example is related to class imbalances. It might be helpful to sample the data so that  the classes have a more balanced frequency distribution in the training set. One way to do this is the <a href="http://scholar.google.com/scholar?hl=en&q=SMOTE">SMOTE algorithm</a> where the majority class is down-sampled while new instances are imputed in the minority class. To get a good sense of what the performance will be using cross-validation, we should run SMOTE within each resample (instead of once prior to the model training). 
@@ -866,6 +869,135 @@ Area under the curve: 0.744
 
 <p> For these data, SMOTE didn't seem to make much of a difference. </p>
 
+<div id="Illustration4"></div>
+<h1>Illustrative Example 4: PLS Feature Extraction Pre-Processing</h1>
+
+<p>PCA is a common tool for feature extraction prior to modeling but is <i>unsupervised</i>. Partial Least Squares (PLS) is essentially a supervised version of PCA. For some data sets, there may be some benefit to using PLS to generate new features from the original data (the PLS scores) then use those as an input into a different predictive model. PLS requires parameter tuning. In the example below, we use PLS on a data set with highly correlated predictors then use the PLS scores in a random forest model.
+</p>
+<p>The "trick" here is to save the PLS loadings along with the random forest model fit so that the loadings can be used on future samples for prediction. Also, the PLS and random forest models are <i>jointly</i> tuned instead of an initial modeling process that finalizes the PLS model, then builds the random forest model separately. In this was we optimize both at once. Another important point is that the resampling results reflect the variability in the random forest <i>and</i> PLS models. If we did PLS up-front then resampled the random forest model, we would under-estimate the noise in the modeling process. 
+</p>
+<p>The tecator spectroscopy data are used:
+</p>
+<div class="chunk" id="custom_meats"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">data</span><span class="hl std">(tecator)</span>
+
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">930</span><span class="hl std">)</span>
+
+<span class="hl com">## We will model the protein content data</span>
+<span class="hl std">trainMeats</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">createDataPartition</span><span class="hl std">(endpoints[,</span><span class="hl num">3</span><span class="hl std">],</span> <span class="hl kwc">p</span> <span class="hl std">=</span> <span class="hl num">3</span><span class="hl opt">/</span><span class="hl num">4</span><span class="hl std">)</span>
+<span class="hl std">absorpTrain</span>  <span class="hl kwb">&lt;-</span> <span class="hl std">absorp[trainMeats[[</span><span class="hl num">1</span><span class="hl std">]], ]</span>
+<span class="hl std">proteinTrain</span> <span class="hl kwb">&lt;-</span> <span class="hl std">endpoints[trainMeats[[</span><span class="hl num">1</span><span class="hl std">]],</span> <span class="hl num">3</span><span class="hl std">]</span>
+<span class="hl std">absorpTest</span>   <span class="hl kwb">&lt;-</span> <span class="hl std">absorp[</span><span class="hl opt">-</span><span class="hl std">trainMeats[[</span><span class="hl num">1</span><span class="hl std">]], ]</span>
+<span class="hl std">proteinTest</span>  <span class="hl kwb">&lt;-</span> <span class="hl std">endpoints[</span><span class="hl opt">-</span><span class="hl std">trainMeats[[</span><span class="hl num">1</span><span class="hl std">]],</span> <span class="hl num">3</span><span class="hl std">]</span>
+</pre></div>
+</div></div>
+
+
+<p>Here is the model code:</p>
+<div class="chunk" id="custom_pls_rf"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">pls_rf</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwc">label</span> <span class="hl std">=</span> <span class="hl str">&quot;PLS-RF&quot;</span><span class="hl std">,</span>
+               <span class="hl kwc">library</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;pls&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;randomForest&quot;</span><span class="hl std">),</span>
+               <span class="hl kwc">type</span> <span class="hl std">=</span> <span class="hl str">&quot;Regression&quot;</span><span class="hl std">,</span>
+               <span class="hl com">## Tune over both parameters at the same time</span>
+               <span class="hl kwc">parameters</span> <span class="hl std">=</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">parameter</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">'ncomp'</span><span class="hl std">,</span> <span class="hl str">'mtry'</span><span class="hl std">),</span>
+                                       <span class="hl kwc">class</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;numeric&quot;</span><span class="hl std">,</span> <span class="hl str">'numeric'</span><span class="hl std">),</span>
+                                       <span class="hl kwc">label</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">'#Components'</span><span class="hl std">,</span>
+                                                 <span class="hl str">'#Randomly Selected Predictors'</span><span class="hl std">)),</span>
+               <span class="hl kwc">grid</span> <span class="hl std">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">,</span> <span class="hl kwc">y</span><span class="hl std">,</span> <span class="hl kwc">len</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">) {</span>
+                 <span class="hl std">grid</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">expand.grid</span><span class="hl std">(</span><span class="hl kwc">ncomp</span> <span class="hl std">=</span> <span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl kwd">min</span><span class="hl std">(</span><span class="hl kwd">ncol</span><span class="hl std">(x)</span> <span class="hl opt">-</span> <span class="hl num">1</span><span class="hl std">, len),</span> <span class="hl kwc">by</span> <span class="hl std">=</span> <span class="hl num">1</span><span class="hl std">),</span>
+                                     <span class="hl kwc">mtry</span> <span class="hl std">=</span> <span class="hl num">1</span><span class="hl opt">:</span><span class="hl std">len)</span>
+                 <span class="hl com">## We can't have mtry &gt; ncomp</span>
+                 <span class="hl std">grid</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">subset</span><span class="hl std">(grid, mtry</span> <span class="hl opt">&lt;=</span> <span class="hl std">ncomp)</span>
+               <span class="hl std">},</span>
+               <span class="hl kwc">loop</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">,</span>
+               <span class="hl kwc">fit</span> <span class="hl std">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">,</span> <span class="hl kwc">y</span><span class="hl std">,</span> <span class="hl kwc">wts</span><span class="hl std">,</span> <span class="hl kwc">param</span><span class="hl std">,</span> <span class="hl kwc">lev</span><span class="hl std">,</span> <span class="hl kwc">last</span><span class="hl std">,</span> <span class="hl kwc">classProbs</span><span class="hl std">,</span> <span class="hl kwc">...</span><span class="hl std">) {</span>
+                 <span class="hl com">## First fit the pls model, generate the training set scores,</span>
+                 <span class="hl com">## then attach what is needed to the random forest object to </span>
+                 <span class="hl com">## be used later</span>
+
+                 <span class="hl com">## plsr only has a formula interface so create one data frame</span>
+                 <span class="hl std">dat</span> <span class="hl kwb">&lt;-</span> <span class="hl std">x</span>
+                 <span class="hl std">dat</span><span class="hl opt">$</span><span class="hl std">y</span> <span class="hl kwb">&lt;-</span> <span class="hl std">y</span>
+                 <span class="hl std">pre</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">plsr</span><span class="hl std">(y</span><span class="hl opt">~</span> <span class="hl std">.,</span> <span class="hl kwc">data</span> <span class="hl std">= dat,</span> <span class="hl kwc">ncomp</span> <span class="hl std">= param</span><span class="hl opt">$</span><span class="hl std">ncomp)</span>
+                 <span class="hl std">scores</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">predict</span><span class="hl std">(pre, x,</span> <span class="hl kwc">type</span> <span class="hl std">=</span> <span class="hl str">&quot;scores&quot;</span><span class="hl std">)</span>
+                 <span class="hl kwd">colnames</span><span class="hl std">(scores)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste</span><span class="hl std">(</span><span class="hl str">&quot;score&quot;</span><span class="hl std">,</span> <span class="hl num">1</span><span class="hl opt">:</span><span class="hl std">param</span><span class="hl opt">$</span><span class="hl std">ncomp,</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)</span>
+                 <span class="hl std">mod</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">randomForest</span><span class="hl std">(scores, y,</span> <span class="hl kwc">mtry</span> <span class="hl std">= param</span><span class="hl opt">$</span><span class="hl std">mtry, ...)</span>
+                 <span class="hl std">mod</span><span class="hl opt">$</span><span class="hl std">projection</span> <span class="hl kwb">&lt;-</span> <span class="hl std">pre</span><span class="hl opt">$</span><span class="hl std">projection</span>
+                 <span class="hl std">mod</span>
+               <span class="hl std">},</span>
+               <span class="hl kwc">predict</span> <span class="hl std">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">modelFit</span><span class="hl std">,</span> <span class="hl kwc">newdata</span><span class="hl std">,</span> <span class="hl kwc">submodels</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">) {</span>
+                 <span class="hl com">## Now apply the same scaling to the new samples</span>
+                 <span class="hl std">scores</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">as.matrix</span><span class="hl std">(newdata)</span>  <span class="hl opt">%*%</span> <span class="hl std">modelFit</span><span class="hl opt">$</span><span class="hl std">projection</span>
+                 <span class="hl kwd">colnames</span><span class="hl std">(scores)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">paste</span><span class="hl std">(</span><span class="hl str">&quot;score&quot;</span><span class="hl std">,</span> <span class="hl num">1</span><span class="hl opt">:</span><span class="hl kwd">ncol</span><span class="hl std">(scores),</span> <span class="hl kwc">sep</span> <span class="hl std">=</span> <span class="hl str">&quot;&quot;</span><span class="hl std">)</span>
+                 <span class="hl com">## Predict the random forest model</span>
+                 <span class="hl kwd">predict</span><span class="hl std">(modelFit, scores)</span>
+               <span class="hl std">},</span>
+               <span class="hl kwc">prob</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">,</span>
+               <span class="hl kwc">varImp</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">,</span>
+               <span class="hl kwc">predictors</span> <span class="hl std">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">,</span> <span class="hl kwc">...</span><span class="hl std">)</span> <span class="hl kwd">rownames</span><span class="hl std">(x</span><span class="hl opt">$</span><span class="hl std">projection),</span>
+               <span class="hl kwc">levels</span> <span class="hl std">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">) x</span><span class="hl opt">$</span><span class="hl std">obsLevels,</span>
+               <span class="hl kwc">sort</span> <span class="hl std">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">) x[</span><span class="hl kwd">order</span><span class="hl std">(x[,</span><span class="hl num">1</span><span class="hl std">]),])</span>
+</pre></div>
+</div></div>
+
+<p>We fit the models and look at the resampling results for the joint model:</p>
+<div class="chunk" id="custom_meat_mod1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">meatCtrl</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">trainControl</span><span class="hl std">(</span><span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;repeatedcv&quot;</span><span class="hl std">,</span> <span class="hl kwc">repeats</span> <span class="hl std">=</span> <span class="hl num">5</span><span class="hl std">)</span>
+
+<span class="hl com">## These will take a while for these data</span>
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">184</span><span class="hl std">)</span>
+<span class="hl std">plsrf</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(absorpTrain, proteinTrain,</span>
+               <span class="hl kwc">method</span> <span class="hl std">= pls_rf,</span>
+               <span class="hl kwc">preProc</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;center&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;scale&quot;</span><span class="hl std">),</span>
+               <span class="hl kwc">tuneLength</span> <span class="hl std">=</span> <span class="hl num">10</span><span class="hl std">,</span>
+               <span class="hl kwc">ntree</span> <span class="hl std">=</span> <span class="hl num">1000</span><span class="hl std">,</span>
+               <span class="hl kwc">trControl</span> <span class="hl std">= meatCtrl)</span>
+<span class="hl kwd">ggplot</span><span class="hl std">(plsrf,</span> <span class="hl kwc">plotType</span> <span class="hl std">=</span> <span class="hl str">&quot;level&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/custom_meat_mod1.png" title="plot of chunk custom_meat_mod1" alt="plot of chunk custom_meat_mod1" class="plot" /></div></div>
+
+<div class="chunk" id="custom_meat_mod2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com">## How does random forest do on its own?</span>
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">184</span><span class="hl std">)</span>
+<span class="hl std">rfOnly</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(absorpTrain, proteinTrain,</span>
+                <span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;rf&quot;</span><span class="hl std">,</span>
+                <span class="hl kwc">tuneLength</span> <span class="hl std">=</span> <span class="hl num">10</span><span class="hl std">,</span>
+                <span class="hl kwc">ntree</span> <span class="hl std">=</span> <span class="hl num">1000</span><span class="hl std">,</span>
+                <span class="hl kwc">trControl</span> <span class="hl std">= meatCtrl)</span>
+<span class="hl kwd">getTrainPerf</span><span class="hl std">(rfOnly)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">  TrainRMSE TrainRsquared method
+1     2.185        0.4958     rf
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">## How does random forest do on its own?</span>
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">184</span><span class="hl std">)</span>
+<span class="hl std">plsOnly</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(absorpTrain, proteinTrain,</span>
+                 <span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;pls&quot;</span><span class="hl std">,</span>
+                 <span class="hl kwc">tuneLength</span> <span class="hl std">=</span> <span class="hl num">20</span><span class="hl std">,</span>
+                 <span class="hl kwc">preProc</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;center&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;scale&quot;</span><span class="hl std">),</span>
+                 <span class="hl kwc">trControl</span> <span class="hl std">= meatCtrl)</span>
+<span class="hl kwd">getTrainPerf</span><span class="hl std">(plsOnly)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">  TrainRMSE TrainRsquared method
+1     0.629        0.9597    pls
+</pre></div>
+</div></div>
+
+<p>The test set results indicate that these data like the linear model more than anything:</p>
+<div class="chunk" id="custom_meat_test"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">postResample</span><span class="hl std">(</span><span class="hl kwd">predict</span><span class="hl std">(plsrf, absorpTest), proteinTest)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">    RMSE Rsquared 
+  1.3801   0.8126 
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">postResample</span><span class="hl std">(</span><span class="hl kwd">predict</span><span class="hl std">(rfOnly, absorpTest), proteinTest)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">    RMSE Rsquared 
+  2.0039   0.5898 
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl kwd">postResample</span><span class="hl std">(</span><span class="hl kwd">predict</span><span class="hl std">(plsOnly, absorpTest), proteinTest)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">    RMSE Rsquared 
+  0.7180   0.9438 
+</pre></div>
+</div></div>
+
+
 <div style="clear: both;">&nbsp;</div>
   </div>
   <!-- end #content -->
@@ -890,7 +1022,7 @@ Area under the curve: 0.744
                  <li><a href="similarity.html"><tt>train</tt> Models By Similarity</a></li>
                 <li><a href="custom_models.html">Using Custom Models</a></li>
                 <li><a href="varimp.html">Variable Importance</a></li>
-                <li><a href="featureSelection.html">Feature Selection</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
                 <li><a href="other.html">Other Functions</a></li>
                 <li><a href="parallel.html">Parallel Processing</a></li>
 </ul>
@@ -907,7 +1039,7 @@ Area under the curve: 0.744
 
 
   <div id="footer">
-  <p>Created on Thu Jan 02 2014 using caret version 6.0-21 and R Under development (unstable) (2013-12-28 r64574).</p>
+  <p>Created on Thu Feb 06 2014 using caret version 6.0-22 and R Under development (unstable) (2014-01-29 r64898).</p>
   </div>
   <!-- end #footer -->
 </body>

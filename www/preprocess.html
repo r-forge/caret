@@ -236,9 +236,9 @@ D.Dr08    527.00        0.3788   FALSE TRUE
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl std">nzv</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">nearZeroVar</span><span class="hl std">(mdrrDescr)</span>
 <span class="hl std">filteredDescr</span> <span class="hl kwb">&lt;-</span> <span class="hl std">mdrrDescr[,</span> <span class="hl opt">-</span><span class="hl std">nzv]</span>
-<span class="hl kwd">dim</span><span class="hl std">(mdrrDescr)</span>
+<span class="hl kwd">dim</span><span class="hl std">(filteredDescr)</span>
 </pre></div>
-<div class="output"><pre class="knitr r">[1] 528 342
+<div class="output"><pre class="knitr r">[1] 528 297
 </pre></div>
 </div></div>
 
@@ -518,7 +518,7 @@ This image shows a scatterplot matrix of the class distances for the held-out sa
                  <li><a href="similarity.html"><tt>train</tt> Models By Similarity</a></li>
                 <li><a href="custom_models.html">Using Custom Models</a></li>
                 <li><a href="varimp.html">Variable Importance</a></li>
-                <li><a href="featureSelection.html">Feature Selection</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
                 <li><a href="other.html">Other Functions</a></li>
                 <li><a href="parallel.html">Parallel Processing</a></li>
 	      </ul>
@@ -536,7 +536,7 @@ This image shows a scatterplot matrix of the class distances for the held-out sa
 
  
     <div id="footer">
-      <p>Created on Thu Jan 02 2014 using caret version 6.0-21 and R Under development (unstable) (2013-12-28 r64574).</p>
+      <p>Created on Thu Feb 06 2014 using caret version 6.0-22 and R Under development (unstable) (2014-01-29 r64898).</p>
     </div>
     <!-- end #footer -->
   </body>

@@ -116,7 +116,7 @@
     {"name":"Factor-Based Linear Discriminant Analysis (RFlda)","group":2},
     {"name":"Ridge Regression (ridge)","group":1},
     {"name":"Random k-Nearest Neighbors (rknn)","group":3},
-    {"name":"Random k-Nearest Neighbors (rknnBel)","group":3},
+    {"name":"Random k-Nearest Neighbors with Feature Selection (rknnBel)","group":3},
     {"name":"Robust Linear Model (rlm)","group":1},
     {"name":"ROC-Based Classifier (rocc)","group":2},
     {"name":"CART (rpart)","group":3},
