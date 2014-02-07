@@ -129,6 +129,9 @@ Released   : 20120902
   <li>
   <a href="#Illustration4">Illustrative Example 4: PLS Feature Extraction Pre-Processing</a>      
   </li> 
+  <li>
+  <a href="#Illustration5">Illustrative Example 5: Optimizing probability thresholds for class imbalances </a>      
+  </li>   
  </ul>   
   
 <div id="Introduction"></div>
@@ -733,7 +736,7 @@ A few more notes:
 <span class="hl std">lb1</span>
 </pre></div>
 <div class="output"><pre class="knitr r">   user  system elapsed 
- 24.089   0.668   4.125 
+  8.906   0.682   9.590 
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl com">## Now get rid of the submodel parts</span>
 <span class="hl std">lbFuncs2</span> <span class="hl kwb">&lt;-</span> <span class="hl std">lbFuncs</span>
@@ -749,11 +752,11 @@ A few more notes:
 <span class="hl std">lb2</span>
 </pre></div>
 <div class="output"><pre class="knitr r">   user  system elapsed 
- 14.220   0.707   9.179 
+ 17.506   1.307  18.814 
 </pre></div>
 </div></div>
 
-<p>On a data set with 157 instances and 60 predictors and a model that is tuned over only 3 parameter values, there is a 2.23-fold speed-up. If the model were more computationally taxing or the data set were larger or the number of tune parameters that were evaluated was larger, the speed-up would increase. Here is a plot of the speed-up for a few more values of <span class="mx arg">tuneLength</span>:
+<p>On a data set with 157 instances and 60 predictors and a model that is tuned over only 3 parameter values, there is a 1.96-fold speed-up. If the model were more computationally taxing or the data set were larger or the number of tune parameters that were evaluated was larger, the speed-up would increase. Here is a plot of the speed-up for a few more values of <span class="mx arg">tuneLength</span>:
 </p>
 
 <div class="chunk" id="custom_lb_times"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">bigGrid</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">nIter</span> <span class="hl std">=</span> <span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">151</span><span class="hl std">,</span> <span class="hl kwc">by</span> <span class="hl std">=</span> <span class="hl num">10</span><span class="hl std">))</span>
@@ -862,7 +865,7 @@ Call:
 roc.default(response = imbal_test$Class, predictor = ldaProb2,     levels = rev(levels(imbal_test$Class)))
 
 Data: ldaProb2 in 142 controls (imbal_test$Class Class2) < 1858 cases (imbal_test$Class Class1).
-Area under the curve: 0.744
+Area under the curve: 0.777
 </pre></div>
 </div></div>
 
@@ -963,7 +966,7 @@ Area under the curve: 0.744
 <span class="hl kwd">getTrainPerf</span><span class="hl std">(rfOnly)</span>
 </pre></div>
 <div class="output"><pre class="knitr r">  TrainRMSE TrainRsquared method
-1     2.185        0.4958     rf
+1     2.188        0.4941     rf
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl com">## How does random forest do on its own?</span>
 <span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">184</span><span class="hl std">)</span>
@@ -983,12 +986,12 @@ Area under the curve: 0.744
 <div class="chunk" id="custom_meat_test"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">postResample</span><span class="hl std">(</span><span class="hl kwd">predict</span><span class="hl std">(plsrf, absorpTest), proteinTest)</span>
 </pre></div>
 <div class="output"><pre class="knitr r">    RMSE Rsquared 
-  1.3801   0.8126 
+  1.3825   0.8116 
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">postResample</span><span class="hl std">(</span><span class="hl kwd">predict</span><span class="hl std">(rfOnly, absorpTest), proteinTest)</span>
 </pre></div>
 <div class="output"><pre class="knitr r">    RMSE Rsquared 
-  2.0039   0.5898 
+  2.0300   0.5741 
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">postResample</span><span class="hl std">(</span><span class="hl kwd">predict</span><span class="hl std">(plsOnly, absorpTest), proteinTest)</span>
 </pre></div>
@@ -998,6 +1001,285 @@ Area under the curve: 0.744
 </div></div>
 
 
+<div id="Illustration5"></div>
+<h1>Illustrative Example 5: Optimizing probability thresholds for class imbalances</h1>
+
+<p>This description was originally posted on <a href="http://appliedpredictivemodeling.com/blog/">this blog.</a></p>
+
+<p>
+One of the toughest problems in predictive model occurs when the classes have a severe imbalance. In <a href="http://appliedpredictivemodeling.com/">our book</a>, we spend <a href="http://rd.springer.com/chapter/10.1007/978-1-4614-6849-3_16">an entire chapter</a> on this subject itself. One consequence of this is that the performance is generally very biased against the class with the smallest frequencies. For example, if the data have a majority of samples belonging to the first class and very few in the second class, most predictive models will maximize accuracy by predicting everything to be the first class. As a result there's usually great sensitivity but poor specificity.
+
+As a demonstration will use a simulation system <a href="http://appliedpredictivemodeling.com/blog/2013/4/11/a-classification-simulation-system">described here</a>. By default it has about a 50-50 class frequency but we can change this by altering the function argument called <tt>intercept</tt>:
+
+<div class="chunk" id="custom_thresh_data"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(caret)</span>
+
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">442</span><span class="hl std">)</span>
+<span class="hl std">training</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">twoClassSim</span><span class="hl std">(</span><span class="hl kwc">n</span> <span class="hl std">=</span> <span class="hl num">500</span><span class="hl std">,</span> <span class="hl kwc">intercept</span> <span class="hl std">=</span> <span class="hl opt">-</span><span class="hl num">16</span><span class="hl std">)</span>
+<span class="hl std">testing</span>  <span class="hl kwb">&lt;-</span> <span class="hl kwd">twoClassSim</span><span class="hl std">(</span><span class="hl kwc">n</span> <span class="hl std">=</span> <span class="hl num">500</span><span class="hl std">,</span> <span class="hl kwc">intercept</span> <span class="hl std">=</span> <span class="hl opt">-</span><span class="hl num">16</span><span class="hl std">)</span>
+
+<span class="hl com">## Class frequencies</span>
+<span class="hl kwd">table</span><span class="hl std">(training</span><span class="hl opt">$</span><span class="hl std">Class)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">
+Class1 Class2 
+   450     50 
+</pre></div>
+</div></div>
+
+    
+<p>
+There is almost a 9:1 imbalance in these data.
+
+Let's use a standard random forest model with these data using the default value of <tt>mtry</tt>. We'll also use repeated 10-fold cross validation to get a sense of performance:
+</p>
+
+<div class="chunk" id="custom_thresh_mod0"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">949</span><span class="hl std">)</span>
+<span class="hl std">mod0</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(Class</span> <span class="hl opt">~</span> <span class="hl std">.,</span> <span class="hl kwc">data</span> <span class="hl std">= training,</span>
+              <span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;rf&quot;</span><span class="hl std">,</span>
+              <span class="hl kwc">metric</span> <span class="hl std">=</span> <span class="hl str">&quot;ROC&quot;</span><span class="hl std">,</span>
+              <span class="hl kwc">tuneGrid</span> <span class="hl std">=</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">mtry</span> <span class="hl std">=</span> <span class="hl num">3</span><span class="hl std">),</span>
+              <span class="hl kwc">ntree</span> <span class="hl std">=</span> <span class="hl num">1000</span><span class="hl std">,</span>
+              <span class="hl kwc">trControl</span> <span class="hl std">=</span> <span class="hl kwd">trainControl</span><span class="hl std">(</span><span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;repeatedcv&quot;</span><span class="hl std">,</span>
+                                       <span class="hl kwc">repeats</span> <span class="hl std">=</span> <span class="hl num">5</span><span class="hl std">,</span>
+                                       <span class="hl kwc">classProbs</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">,</span>
+                                       <span class="hl kwc">summaryFunction</span> <span class="hl std">= twoClassSummary))</span>
+<span class="hl kwd">getTrainPerf</span><span class="hl std">(mod0)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">  TrainROC TrainSens TrainSpec method
+1   0.9578    0.9991     0.332     rf
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">## Get the ROC curve</span>
+<span class="hl std">roc0</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">roc</span><span class="hl std">(testing</span><span class="hl opt">$</span><span class="hl std">Class,</span>
+            <span class="hl kwd">predict</span><span class="hl std">(mod0, testing,</span> <span class="hl kwc">type</span> <span class="hl std">=</span> <span class="hl str">&quot;prob&quot;</span><span class="hl std">)[,</span><span class="hl num">1</span><span class="hl std">],</span>
+            <span class="hl kwc">levels</span> <span class="hl std">=</span> <span class="hl kwd">rev</span><span class="hl std">(</span><span class="hl kwd">levels</span><span class="hl std">(testing</span><span class="hl opt">$</span><span class="hl std">Class)))</span>
+<span class="hl std">roc0</span>
+</pre></div>
+<div class="output"><pre class="knitr r">
+Call:
+roc.default(response = testing$Class, predictor = predict(mod0,     testing, type = "prob")[, 1], levels = rev(levels(testing$Class)))
+
+Data: predict(mod0, testing, type = "prob")[, 1] in 34 controls (testing$Class Class2) < 466 cases (testing$Class Class1).
+Area under the curve: 0.93
+</pre></div>
+<div class="source"><pre class="knitr r"><span class="hl com">## Now plot</span>
+<span class="hl kwd">plot</span><span class="hl std">(roc0,</span> <span class="hl kwc">print.thres</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">.5</span><span class="hl std">),</span> <span class="hl kwc">type</span> <span class="hl std">=</span> <span class="hl str">&quot;S&quot;</span><span class="hl std">,</span>
+     <span class="hl kwc">print.thres.pattern</span> <span class="hl std">=</span> <span class="hl str">&quot;%.3f (Spec = %.2f, Sens = %.2f)&quot;</span><span class="hl std">,</span>
+     <span class="hl kwc">print.thres.cex</span> <span class="hl std">=</span> <span class="hl num">.8</span><span class="hl std">,</span>
+     <span class="hl kwc">legacy.axes</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/custom_thresh_mod0.png" title="plot of chunk custom_thresh_mod0" alt="plot of chunk custom_thresh_mod0" class="plot" /></div><div class="rcode">
+<div class="output"><pre class="knitr r">
+Call:
+roc.default(response = testing$Class, predictor = predict(mod0,     testing, type = "prob")[, 1], levels = rev(levels(testing$Class)))
+
+Data: predict(mod0, testing, type = "prob")[, 1] in 34 controls (testing$Class Class2) < 466 cases (testing$Class Class1).
+Area under the curve: 0.93
+</pre></div>
+</div></div>
+
+    
+<p>
+The area under the ROC curve is very high, indicating that the model has very good predictive power for these data. The plot shows the default probability cut off value of 50%. The sensitivity and specificity values associated with this point indicate that performance is not that good when an actual call needs to be made on a sample. 
+</p>
+<p>
+One of the most common ways to deal with this is to determine an alternate probability cut off using the ROC curve. But to do this well, another set of data (not the test set) is needed to set the cut off and the test set is used to validate it. We don't have a lot of data this is difficult since we will be spending some of our data just to get a single cut off value.
+</p>
+<p>
+Alternatively the model can be tuned, using resampling, to determine any model tuning parameters as well as an appropriate cut off for the probabilities. 
+</p>
+<p>
+Suppose the model has one tuning parameter and we want to look at four candidate values for tuning. Suppose we also want to tune the probability cut off over 20 different thresholds. Now we have to look at 20×4=80 different models (and that is for each resample). One other feature that has been opened up his ability to use sequential parameters: these are tuning parameters that don't require a completely new model fit to produce predictions. In this case, we can fit one random forest model and get it's predicted class probabilities and evaluate the candidate probability cutoffs using these same hold-out samples. Here is what the model code looks like:
+</p>
+<div class="chunk" id="custom_thresh_code"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl com">## Get the model code for the original random forest method:</span>
+
+<span class="hl std">thresh_code</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">getModelInfo</span><span class="hl std">(</span><span class="hl str">&quot;rf&quot;</span><span class="hl std">,</span> <span class="hl kwc">regex</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">)[[</span><span class="hl num">1</span><span class="hl std">]]</span>
+<span class="hl std">thresh_code</span><span class="hl opt">$</span><span class="hl std">type</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;Classification&quot;</span><span class="hl std">)</span>
+<span class="hl com">## Add the threshold as another tuning parameter</span>
+<span class="hl std">thresh_code</span><span class="hl opt">$</span><span class="hl std">parameters</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">parameter</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;mtry&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;threshold&quot;</span><span class="hl std">),</span>
+                                     <span class="hl kwc">class</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;numeric&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;numeric&quot;</span><span class="hl std">),</span>
+                                     <span class="hl kwc">label</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;#Randomly Selected Predictors&quot;</span><span class="hl std">,</span>
+                                               <span class="hl str">&quot;Probability Cutoff&quot;</span><span class="hl std">))</span>
+<span class="hl com">## The default tuning grid code:</span>
+<span class="hl std">thresh_code</span><span class="hl opt">$</span><span class="hl std">grid</span> <span class="hl kwb">&lt;-</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">,</span> <span class="hl kwc">y</span><span class="hl std">,</span> <span class="hl kwc">len</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">) {</span>
+  <span class="hl std">p</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">ncol</span><span class="hl std">(x)</span>
+  <span class="hl kwd">expand.grid</span><span class="hl std">(</span><span class="hl kwc">mtry</span> <span class="hl std">=</span> <span class="hl kwd">floor</span><span class="hl std">(</span><span class="hl kwd">sqrt</span><span class="hl std">(p)),</span>
+              <span class="hl kwc">threshold</span> <span class="hl std">=</span> <span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl num">.01</span><span class="hl std">,</span> <span class="hl num">.99</span><span class="hl std">,</span> <span class="hl kwc">length</span> <span class="hl std">= len))</span>
+  <span class="hl std">}</span>
+
+<span class="hl com">## Here we fit a single random forest model (with a fixed mtry)</span>
+<span class="hl com">## and loop over the threshold values to get predictions from the same</span>
+<span class="hl com">## randomForest model.</span>
+<span class="hl std">thresh_code</span><span class="hl opt">$</span><span class="hl std">loop</span> <span class="hl kwb">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">grid</span><span class="hl std">) {</span>
+                 <span class="hl kwd">library</span><span class="hl std">(plyr)</span>
+                 <span class="hl std">loop</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">ddply</span><span class="hl std">(grid,</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;mtry&quot;</span><span class="hl std">),</span>
+                               <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">)</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl kwc">threshold</span> <span class="hl std">=</span> <span class="hl kwd">max</span><span class="hl std">(x</span><span class="hl opt">$</span><span class="hl std">threshold)))</span>
+                 <span class="hl std">submodels</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">vector</span><span class="hl std">(</span><span class="hl kwc">mode</span> <span class="hl std">=</span> <span class="hl str">&quot;list&quot;</span><span class="hl std">,</span> <span class="hl kwc">length</span> <span class="hl std">=</span> <span class="hl kwd">nrow</span><span class="hl std">(loop))</span>
+                 <span class="hl kwa">for</span><span class="hl std">(i</span> <span class="hl kwa">in</span> <span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl kwc">along</span> <span class="hl std">= loop</span><span class="hl opt">$</span><span class="hl std">threshold)) {</span>
+                   <span class="hl std">index</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">which</span><span class="hl std">(grid</span><span class="hl opt">$</span><span class="hl std">mtry</span> <span class="hl opt">==</span> <span class="hl std">loop</span><span class="hl opt">$</span><span class="hl std">mtry[i])</span>
+                   <span class="hl std">cuts</span> <span class="hl kwb">&lt;-</span> <span class="hl std">grid[index,</span> <span class="hl str">&quot;threshold&quot;</span><span class="hl std">]</span>
+                   <span class="hl std">submodels[[i]]</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">threshold</span> <span class="hl std">= cuts[cuts</span> <span class="hl opt">!=</span> <span class="hl std">loop</span><span class="hl opt">$</span><span class="hl std">threshold[i]])</span>
+                 <span class="hl std">}</span>
+                 <span class="hl kwd">list</span><span class="hl std">(</span><span class="hl kwc">loop</span> <span class="hl std">= loop,</span> <span class="hl kwc">submodels</span> <span class="hl std">= submodels)</span>
+               <span class="hl std">}</span>
+
+<span class="hl com">## Fit the model independent of the threshold parameter</span>
+<span class="hl std">thresh_code</span><span class="hl opt">$</span><span class="hl std">fit</span> <span class="hl kwb">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">,</span> <span class="hl kwc">y</span><span class="hl std">,</span> <span class="hl kwc">wts</span><span class="hl std">,</span> <span class="hl kwc">param</span><span class="hl std">,</span> <span class="hl kwc">lev</span><span class="hl std">,</span> <span class="hl kwc">last</span><span class="hl std">,</span> <span class="hl kwc">classProbs</span><span class="hl std">,</span> <span class="hl kwc">...</span><span class="hl std">) {</span>
+  <span class="hl kwa">if</span><span class="hl std">(</span><span class="hl kwd">length</span><span class="hl std">(</span><span class="hl kwd">levels</span><span class="hl std">(y))</span> <span class="hl opt">!=</span> <span class="hl num">2</span><span class="hl std">)</span>
+    <span class="hl kwd">stop</span><span class="hl std">(</span><span class="hl str">&quot;This works only for 2-class problems&quot;</span><span class="hl std">)</span>
+  <span class="hl kwd">randomForest</span><span class="hl std">(x, y,</span> <span class="hl kwc">mtry</span> <span class="hl std">= param</span><span class="hl opt">$</span><span class="hl std">mtry, ...)</span>
+  <span class="hl std">}</span>
+
+<span class="hl com">## Now get a probability prediction and use different thresholds to</span>
+<span class="hl com">## get the predicted class</span>
+<span class="hl std">thresh_code</span><span class="hl opt">$</span><span class="hl std">predict</span> <span class="hl kwb">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">modelFit</span><span class="hl std">,</span> <span class="hl kwc">newdata</span><span class="hl std">,</span> <span class="hl kwc">submodels</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">) {</span>
+  <span class="hl std">class1Prob</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">predict</span><span class="hl std">(modelFit,</span>
+                        <span class="hl std">newdata,</span>
+                        <span class="hl kwc">type</span> <span class="hl std">=</span> <span class="hl str">&quot;prob&quot;</span><span class="hl std">)[, modelFit</span><span class="hl opt">$</span><span class="hl std">obsLevels[</span><span class="hl num">1</span><span class="hl std">]]</span>
+  <span class="hl com">## Raise the threshold for class #1 and a higher level of</span>
+  <span class="hl com">## evidence is needed to call it class 1 so it should </span>
+  <span class="hl com">## decrease sensitivity and increase specificity</span>
+  <span class="hl std">out</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">ifelse</span><span class="hl std">(class1Prob</span> <span class="hl opt">&gt;=</span> <span class="hl std">modelFit</span><span class="hl opt">$</span><span class="hl std">tuneValue</span><span class="hl opt">$</span><span class="hl std">threshold,</span>
+                <span class="hl std">modelFit</span><span class="hl opt">$</span><span class="hl std">obsLevels[</span><span class="hl num">1</span><span class="hl std">],</span>
+                <span class="hl std">modelFit</span><span class="hl opt">$</span><span class="hl std">obsLevels[</span><span class="hl num">2</span><span class="hl std">])</span>
+  <span class="hl kwa">if</span><span class="hl std">(</span><span class="hl opt">!</span><span class="hl kwd">is.null</span><span class="hl std">(submodels))</span>
+    <span class="hl std">{</span>
+    <span class="hl std">tmp2</span> <span class="hl kwb">&lt;-</span> <span class="hl std">out</span>
+    <span class="hl std">out</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">vector</span><span class="hl std">(</span><span class="hl kwc">mode</span> <span class="hl std">=</span> <span class="hl str">&quot;list&quot;</span><span class="hl std">,</span> <span class="hl kwc">length</span> <span class="hl std">=</span> <span class="hl kwd">length</span><span class="hl std">(submodels</span><span class="hl opt">$</span><span class="hl std">threshold))</span>
+    <span class="hl std">out[[</span><span class="hl num">1</span><span class="hl std">]]</span> <span class="hl kwb">&lt;-</span> <span class="hl std">tmp2</span>
+    <span class="hl kwa">for</span><span class="hl std">(i</span> <span class="hl kwa">in</span> <span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl kwc">along</span> <span class="hl std">= submodels</span><span class="hl opt">$</span><span class="hl std">threshold)) {</span>
+      <span class="hl std">out[[i</span><span class="hl opt">+</span><span class="hl num">1</span><span class="hl std">]]</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">ifelse</span><span class="hl std">(class1Prob</span> <span class="hl opt">&gt;=</span> <span class="hl std">submodels</span><span class="hl opt">$</span><span class="hl std">threshold[[i]],</span>
+                           <span class="hl std">modelFit</span><span class="hl opt">$</span><span class="hl std">obsLevels[</span><span class="hl num">1</span><span class="hl std">],</span>
+                           <span class="hl std">modelFit</span><span class="hl opt">$</span><span class="hl std">obsLevels[</span><span class="hl num">2</span><span class="hl std">])</span>
+      <span class="hl std">}</span>
+    <span class="hl std">}</span>
+  <span class="hl std">out</span>
+  <span class="hl std">}</span>
+
+<span class="hl com">## The probabilities are always the same but we have to create</span>
+<span class="hl com">## mulitple versions of the probs to evaluate the data across</span>
+<span class="hl com">## thresholds</span>
+<span class="hl std">thresh_code</span><span class="hl opt">$</span><span class="hl std">prob</span> <span class="hl kwb">=</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">modelFit</span><span class="hl std">,</span> <span class="hl kwc">newdata</span><span class="hl std">,</span> <span class="hl kwc">submodels</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">) {</span>
+  <span class="hl std">out</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">as.data.frame</span><span class="hl std">(</span><span class="hl kwd">predict</span><span class="hl std">(modelFit, newdata,</span> <span class="hl kwc">type</span> <span class="hl std">=</span> <span class="hl str">&quot;prob&quot;</span><span class="hl std">))</span>
+  <span class="hl kwa">if</span><span class="hl std">(</span><span class="hl opt">!</span><span class="hl kwd">is.null</span><span class="hl std">(submodels))</span>
+    <span class="hl std">{</span>
+    <span class="hl std">probs</span> <span class="hl kwb">&lt;-</span> <span class="hl std">out</span>
+    <span class="hl std">out</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">vector</span><span class="hl std">(</span><span class="hl kwc">mode</span> <span class="hl std">=</span> <span class="hl str">&quot;list&quot;</span><span class="hl std">,</span> <span class="hl kwc">length</span> <span class="hl std">=</span> <span class="hl kwd">length</span><span class="hl std">(submodels</span><span class="hl opt">$</span><span class="hl std">threshold)</span><span class="hl opt">+</span><span class="hl num">1</span><span class="hl std">)</span>
+    <span class="hl std">out</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">lapply</span><span class="hl std">(out,</span> <span class="hl kwa">function</span><span class="hl std">(</span><span class="hl kwc">x</span><span class="hl std">) probs)</span>
+    <span class="hl std">}</span>
+  <span class="hl std">out</span>
+  <span class="hl std">}</span>
+</pre></div>
+</div></div>
+
+    
+<p>
+Basically, we define a list of model components (such as the fitting code, the prediction code, etc.) and feed this into the train function instead of using a pre-listed model string (such as <tt><span class="hl std">method</span> <span class="hl kwb">=</span> <span class="hl str">&quot;rf&quot;</span></tt>). For this model and these data, there was an 8% increase in training time to evaluate 20 additional values of the probability cut off.
+</p>
+<p>
+How do we optimize this model? Normally we might look at the area under the ROC curve as a metric to choose our final values. In this case the ROC curve is independent of the probability threshold so we have to use something else. A common technique to evaluate a candidate threshold is see how close it is to the perfect model where sensitivity and specificity are one. Our code will use the distance between the current model's performance and the best possible performance and then have train minimize this distance when choosing it's parameters. Here is the code that we use to calculate this:
+</p>
+<div class="chunk" id="custom_thresh_dist"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">fourStats</span> <span class="hl kwb">&lt;-</span> <span class="hl kwa">function</span> <span class="hl std">(</span><span class="hl kwc">data</span><span class="hl std">,</span> <span class="hl kwc">lev</span> <span class="hl std">=</span> <span class="hl kwd">levels</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">obs),</span> <span class="hl kwc">model</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">) {</span>
+  <span class="hl com">## This code will get use the area under the ROC curve and the</span>
+  <span class="hl com">## sensitivity and specificity values using the current candidate</span>
+  <span class="hl com">## value of the probability threshold.</span>
+  <span class="hl std">out</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl kwd">twoClassSummary</span><span class="hl std">(data,</span> <span class="hl kwc">lev</span> <span class="hl std">=</span> <span class="hl kwd">levels</span><span class="hl std">(data</span><span class="hl opt">$</span><span class="hl std">obs),</span> <span class="hl kwc">model</span> <span class="hl std">=</span> <span class="hl kwa">NULL</span><span class="hl std">))</span>
+
+  <span class="hl com">## The best possible model has sensitivity of 1 and specificity of 1. </span>
+  <span class="hl com">## How far are we from that value?</span>
+  <span class="hl std">coords</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">matrix</span><span class="hl std">(</span><span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">1</span><span class="hl std">, out[</span><span class="hl str">&quot;Spec&quot;</span><span class="hl std">], out[</span><span class="hl str">&quot;Sens&quot;</span><span class="hl std">]),</span>
+                   <span class="hl kwc">ncol</span> <span class="hl std">=</span> <span class="hl num">2</span><span class="hl std">,</span>
+                   <span class="hl kwc">byrow</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>
+  <span class="hl kwd">colnames</span><span class="hl std">(coords)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;Spec&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;Sens&quot;</span><span class="hl std">)</span>
+  <span class="hl kwd">rownames</span><span class="hl std">(coords)</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;Best&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;Current&quot;</span><span class="hl std">)</span>
+  <span class="hl kwd">c</span><span class="hl std">(out,</span> <span class="hl kwc">Dist</span> <span class="hl std">=</span> <span class="hl kwd">dist</span><span class="hl std">(coords)[</span><span class="hl num">1</span><span class="hl std">])</span>
+<span class="hl std">}</span>
+
+<span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">949</span><span class="hl std">)</span>
+<span class="hl std">mod1</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(Class</span> <span class="hl opt">~</span> <span class="hl std">.,</span> <span class="hl kwc">data</span> <span class="hl std">= training,</span>
+              <span class="hl kwc">method</span> <span class="hl std">= thresh_code,</span>
+              <span class="hl com">## Minimize the distance to the perfect model</span>
+              <span class="hl kwc">metric</span> <span class="hl std">=</span> <span class="hl str">&quot;Dist&quot;</span><span class="hl std">,</span>
+              <span class="hl kwc">maximize</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">,</span>
+              <span class="hl kwc">tuneLength</span> <span class="hl std">=</span> <span class="hl num">20</span><span class="hl std">,</span>
+              <span class="hl kwc">ntree</span> <span class="hl std">=</span> <span class="hl num">1000</span><span class="hl std">,</span>
+              <span class="hl kwc">trControl</span> <span class="hl std">=</span> <span class="hl kwd">trainControl</span><span class="hl std">(</span><span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;repeatedcv&quot;</span><span class="hl std">,</span>
+                                       <span class="hl kwc">repeats</span> <span class="hl std">=</span> <span class="hl num">5</span><span class="hl std">,</span>
+                                       <span class="hl kwc">classProbs</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">,</span>
+                                       <span class="hl kwc">summaryFunction</span> <span class="hl std">= fourStats))</span>
+
+<span class="hl std">mod1</span>
+</pre></div>
+<div class="output"><pre class="knitr r">Random Forest 
+
+500 samples
+ 15 predictors
+  2 classes: 'Class1', 'Class2' 
+
+No pre-processing
+Resampling: Cross-Validated (10 fold, repeated 5 times) 
+
+Summary of sample sizes: 450, 450, 450, 450, 450, 450, ... 
+
+Resampling results across tuning parameters:
+
+  threshold  ROC  Sens  Spec  Dist  ROC SD  Sens SD  Spec SD  Dist SD
+  0.01       1    1     0     1     0.03    0        0        0      
+  0.06       1    1     0     1     0.03    0        0        0      
+  0.1        1    1     0     1     0.03    0        0        0      
+  0.2        1    1     0     1     0.03    0        0        0      
+  0.2        1    1     0     1     0.03    0        0        0      
+  0.3        1    1     0     1     0.03    0        0        0      
+  0.3        1    1     0.03  1     0.03    0        0.08     0.08   
+  0.4        1    1     0.06  0.9   0.03    0        0.1      0.1    
+  0.4        1    1     0.1   0.9   0.03    0        0.2      0.2    
+  0.5        1    1     0.2   0.8   0.03    0        0.2      0.2    
+  0.5        1    1     0.4   0.6   0.03    0.01     0.2      0.2    
+  0.6        1    1     0.5   0.5   0.03    0.02     0.2      0.2    
+  0.6        1    1     0.6   0.4   0.03    0.03     0.2      0.2    
+  0.7        1    1     0.7   0.4   0.03    0.03     0.2      0.2    
+  0.7        1    1     0.7   0.3   0.03    0.04     0.2      0.2    
+  0.8        1    0.9   0.7   0.3   0.03    0.04     0.2      0.2    
+  0.8        1    0.9   0.8   0.2   0.03    0.04     0.1      0.1    
+  0.9        1    0.8   0.9   0.2   0.03    0.05     0.1      0.09   
+  0.9        1    0.7   1     0.3   0.03    0.07     0.03     0.07   
+  1          1    0.2   1     0.8   0.03    0.06     0        0.06   
+
+Tuning parameter 'mtry' was held constant at a value of 3
+Dist was used to select the optimal model using  the smallest value.
+The final values used for the model were mtry = 3 and threshold = 0.9. 
+</pre></div>
+</div></div>
+
+<p>
+results
+</p>
+<p>
+Using <tt><span class="hl kwd">ggplot</span><span class="hl std">(mod1)</span></tt> will show the performance profile. Instead here is a plot of the sensitivity, specificity, and distance to the perfect model:
+</p>
+<div class="chunk" id="custom_thresh_mod1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(reshape2)</span>
+<span class="hl std">metrics</span> <span class="hl kwb">&lt;-</span> <span class="hl std">mod1</span><span class="hl opt">$</span><span class="hl std">results[,</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">2</span><span class="hl std">,</span> <span class="hl num">4</span><span class="hl opt">:</span><span class="hl num">6</span><span class="hl std">)]</span>
+<span class="hl std">metrics</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">melt</span><span class="hl std">(metrics,</span> <span class="hl kwc">id.vars</span> <span class="hl std">=</span> <span class="hl str">&quot;threshold&quot;</span><span class="hl std">,</span>
+                <span class="hl kwc">variable.name</span> <span class="hl std">=</span> <span class="hl str">&quot;Resampled&quot;</span><span class="hl std">,</span>
+                <span class="hl kwc">value.name</span> <span class="hl std">=</span> <span class="hl str">&quot;Data&quot;</span><span class="hl std">)</span>
+
+<span class="hl kwd">ggplot</span><span class="hl std">(metrics,</span> <span class="hl kwd">aes</span><span class="hl std">(</span><span class="hl kwc">x</span> <span class="hl std">= threshold,</span> <span class="hl kwc">y</span> <span class="hl std">= Data,</span> <span class="hl kwc">color</span> <span class="hl std">= Resampled))</span> <span class="hl opt">+</span>
+  <span class="hl kwd">geom_line</span><span class="hl std">()</span> <span class="hl opt">+</span>
+  <span class="hl kwd">ylab</span><span class="hl std">(</span><span class="hl str">&quot;&quot;</span><span class="hl std">)</span> <span class="hl opt">+</span> <span class="hl kwd">xlab</span><span class="hl std">(</span><span class="hl str">&quot;Probability Cutoff&quot;</span><span class="hl std">)</span> <span class="hl opt">+</span>
+  <span class="hl kwd">theme</span><span class="hl std">(</span><span class="hl kwc">legend.position</span> <span class="hl std">=</span> <span class="hl str">&quot;top&quot;</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/custom_thresh_mod1.png" title="plot of chunk custom_thresh_mod1" alt="plot of chunk custom_thresh_mod1" class="plot" /></div></div>
+
+<p>
+You can see that as we increase the probability cut off for the first class it takes more and more evidence for a sample to be predicted as the first class. As a result the sensitivity goes down when the threshold becomes very large. The upside is that we can increase specificity in the same way. The blue curve shows the distance to the perfect model. The value of 0.89 was found to be optimal. 
+</p>
+<p>
+Now we can use the test set ROC curve to validate the cut off we chose by resampling. Here the cut off closest to the perfect model is 0.84. We were able to find a good probability cut off value without setting aside another set of data for tuning the cut off.
+</p>
+<p>
+One great thing about this code is that it will automatically apply the optimized probability threshold when predicting new samples. 
+</p>
+
+    
 <div style="clear: both;">&nbsp;</div>
   </div>
   <!-- end #content -->
