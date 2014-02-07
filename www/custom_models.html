@@ -736,7 +736,7 @@ A few more notes:
 <span class="hl std">lb1</span>
 </pre></div>
 <div class="output"><pre class="knitr r">   user  system elapsed 
-  8.906   0.682   9.590 
+  8.973   0.663   9.639 
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl com">## Now get rid of the submodel parts</span>
 <span class="hl std">lbFuncs2</span> <span class="hl kwb">&lt;-</span> <span class="hl std">lbFuncs</span>
@@ -752,11 +752,11 @@ A few more notes:
 <span class="hl std">lb2</span>
 </pre></div>
 <div class="output"><pre class="knitr r">   user  system elapsed 
- 17.506   1.307  18.814 
+ 17.463   1.314  18.778 
 </pre></div>
 </div></div>
 
-<p>On a data set with 157 instances and 60 predictors and a model that is tuned over only 3 parameter values, there is a 1.96-fold speed-up. If the model were more computationally taxing or the data set were larger or the number of tune parameters that were evaluated was larger, the speed-up would increase. Here is a plot of the speed-up for a few more values of <span class="mx arg">tuneLength</span>:
+<p>On a data set with 157 instances and 60 predictors and a model that is tuned over only 3 parameter values, there is a 1.95-fold speed-up. If the model were more computationally taxing or the data set were larger or the number of tune parameters that were evaluated was larger, the speed-up would increase. Here is a plot of the speed-up for a few more values of <span class="mx arg">tuneLength</span>:
 </p>
 
 <div class="chunk" id="custom_lb_times"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">bigGrid</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">data.frame</span><span class="hl std">(</span><span class="hl kwc">nIter</span> <span class="hl std">=</span> <span class="hl kwd">seq</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">151</span><span class="hl std">,</span> <span class="hl kwc">by</span> <span class="hl std">=</span> <span class="hl num">10</span><span class="hl std">))</span>
@@ -1209,7 +1209,9 @@ How do we optimize this model? Normally we might look at the area under the ROC 
 
 <span class="hl std">mod1</span>
 </pre></div>
-<div class="output"><pre class="knitr r">Random Forest 
+</div></div>
+
+<div class="chunk" id="custom_thresh_dist_print"><div class="rcode"><div class="output"><pre class="knitr r">Random Forest 
 
 500 samples
  15 predictors
@@ -1222,33 +1224,34 @@ Summary of sample sizes: 450, 450, 450, 450, 450, 450, ...
 
 Resampling results across tuning parameters:
 
-  threshold  ROC  Sens  Spec  Dist  ROC SD  Sens SD  Spec SD  Dist SD
-  0.01       1    1     0     1     0.03    0        0        0      
-  0.06       1    1     0     1     0.03    0        0        0      
-  0.1        1    1     0     1     0.03    0        0        0      
-  0.2        1    1     0     1     0.03    0        0        0      
-  0.2        1    1     0     1     0.03    0        0        0      
-  0.3        1    1     0     1     0.03    0        0        0      
-  0.3        1    1     0.03  1     0.03    0        0.08     0.08   
-  0.4        1    1     0.06  0.9   0.03    0        0.1      0.1    
-  0.4        1    1     0.1   0.9   0.03    0        0.2      0.2    
-  0.5        1    1     0.2   0.8   0.03    0        0.2      0.2    
-  0.5        1    1     0.4   0.6   0.03    0.01     0.2      0.2    
-  0.6        1    1     0.5   0.5   0.03    0.02     0.2      0.2    
-  0.6        1    1     0.6   0.4   0.03    0.03     0.2      0.2    
-  0.7        1    1     0.7   0.4   0.03    0.03     0.2      0.2    
-  0.7        1    1     0.7   0.3   0.03    0.04     0.2      0.2    
-  0.8        1    0.9   0.7   0.3   0.03    0.04     0.2      0.2    
-  0.8        1    0.9   0.8   0.2   0.03    0.04     0.1      0.1    
-  0.9        1    0.8   0.9   0.2   0.03    0.05     0.1      0.09   
-  0.9        1    0.7   1     0.3   0.03    0.07     0.03     0.07   
-  1          1    0.2   1     0.8   0.03    0.06     0        0.06   
+  threshold  ROC    Sens   Spec   Dist   ROC SD  Sens SD  Spec SD  Dist SD
+  0.01       0.958  1      0      1      0.034   0        0        0      
+  0.0616     0.958  1      0      1      0.034   0        0        0      
+  0.113      0.958  1      0      1      0.034   0        0        0      
+  0.165      0.958  1      0      1      0.034   0        0        0      
+  0.216      0.958  1      0      1      0.034   0        0        0      
+  0.268      0.958  1      0      1      0.034   0        0        0      
+  0.319      0.958  1      0.028  0.972  0.034   0        0.0809   0.0809 
+  0.371      0.958  1      0.064  0.936  0.034   0        0.124    0.124  
+  0.423      0.958  1      0.12   0.88   0.034   0        0.156    0.156  
+  0.474      0.958  1      0.232  0.768  0.034   0        0.191    0.191  
+  0.526      0.958  0.996  0.412  0.588  0.034   0.0104   0.212    0.212  
+  0.577      0.958  0.989  0.54   0.461  0.034   0.0192   0.207    0.205  
+  0.629      0.958  0.973  0.608  0.397  0.034   0.0288   0.202    0.196  
+  0.681      0.958  0.965  0.652  0.354  0.034   0.0324   0.189    0.183  
+  0.732      0.958  0.955  0.688  0.321  0.034   0.0401   0.177    0.171  
+  0.784      0.958  0.933  0.748  0.27   0.034   0.0441   0.161    0.151  
+  0.835      0.958  0.898  0.82   0.227  0.034   0.0431   0.147    0.12   
+  0.887      0.958  0.835  0.928  0.206  0.034   0.0456   0.126    0.0879 
+  0.938      0.958  0.687  0.996  0.315  0.034   0.0684   0.0283   0.0672 
+  0.99       0.958  0.187  1      0.813  0.034   0.0566   0        0.0566 
 
 Tuning parameter 'mtry' was held constant at a value of 3
 Dist was used to select the optimal model using  the smallest value.
-The final values used for the model were mtry = 3 and threshold = 0.9. 
+The final values used for the model were mtry = 3 and threshold = 0.887. 
 </pre></div>
 </div></div>
+
 
 <p>
 results
@@ -1321,7 +1324,7 @@ One great thing about this code is that it will automatically apply the optimize
 
 
   <div id="footer">
-  <p>Created on Thu Feb 06 2014 using caret version 6.0-22 and R Under development (unstable) (2014-01-29 r64898).</p>
+  <p>Created on Fri Feb 07 2014 using caret version 6.0-22 and R Under development (unstable) (2014-01-29 r64898).</p>
   </div>
   <!-- end #footer -->
 </body>
