@@ -1,37 +1,5 @@
-<!--begin.rcode results='hide', echo=FALSE, message=FALSE
-library(caret)
-data(BloodBrain)
-theme1 <- caretTheme()
-theme1$superpose.symbol$col = c(rgb(1, 0, 0, .4), rgb(0, 0, 1, .4), 
-  rgb(0.3984375, 0.7578125,0.6445312, .6))
-theme1$superpose.symbol$pch = c(15, 16, 17)
-theme1$superpose.cex = .8
-theme1$superpose.line$col = c(rgb(1, 0, 0, .9), rgb(0, 0, 1, .9), rgb(0.3984375, 0.7578125,0.6445312, .6))
-theme1$superpose.line$lwd <- 2
-theme1$superpose.line$lty = 1:3
-theme1$plot.symbol$col = c(rgb(.2, .2, .2, .4))
-theme1$plot.symbol$pch = 16
-theme1$plot.cex = .8
-theme1$plot.line$col = c(rgb(1, 0, 0, .7))
-theme1$plot.line$lwd <- 2
-theme1$plot.line$lty = 1
 
-object <- 1
 
-    hook_inline = knit_hooks$get('inline')
-    knit_hooks$set(inline = function(x) {
-      if (is.character(x)) highr::hi_html(x) else hook_inline(x)
-      })
-    opts_chunk$set(comment=NA, digits = 3)
-
-library(pROC)
-
-session <- paste(format(Sys.time(), "%a %b %d %Y"),
-                 "using caret version",
-                 packageDescription("caret")$Version,
-                 "and",
-                 R.Version()$version.string)
-    end.rcode-->
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
   <!--
@@ -47,6 +15,68 @@ Released   : 20120902
 -->
   <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+<style type="text/css">
+.knitr.inline {
+  background-color: #f7f7f7;
+  border:solid 1px #B0B0B0;
+}
+.error {
+	font-weight: bold;
+	color: #FF0000;
+},
+.warning {
+	font-weight: bold;
+}
+.message {
+	font-style: italic;
+}
+.source, .output, .warning, .error, .message {
+	padding: 0em 1em;
+  border:solid 1px #F7F7F7;
+}
+.source {
+  background-color: #f5f5f5;
+}
+.rimage.left {
+  text-align: left;
+}
+.rimage.right {
+  text-align: right;
+}
+.rimage.center {
+  text-align: center;
+}
+.hl.num {
+  color: #AF0F91;
+}
+.hl.str {
+  color: #317ECC;
+}
+.hl.com {
+  color: #AD95AF;
+  font-style: italic;
+}
+.hl.opt {
+  color: #000000;
+}
+.hl.std {
+  color: #585858;
+}
+.hl.kwa {
+  color: #295F94;
+  font-weight: bold;
+}
+.hl.kwb {
+  color: #B05A65;
+}
+.hl.kwc {
+  color: #55aa55;
+}
+.hl.kwd {
+  color: #BC5A65;
+  font-weight: bold;
+}
+</style>
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -82,7 +112,7 @@ Released   : 20120902
 Variable importance evaluation functions can be separated into two groups: those that use the model information and those that do not. The advantage of using a model-based approach is that is more closely tied to the model performance and that it <i>may</i> be able to incorporate the correlation structure between the predictors into the importance calculation. Regardless of how the importance is calculated:
 <ul>
 <li> For most classification models, each predictor will have a separate variable importance for each class (the exceptions are classification trees, bagged trees and boosted trees).</li>
-<li> All measures of importance are scaled to have a maximum value of 100, unless the <span class="mx arg">scale</span> argument of <span class="mx funCall">varImp.train</span> is set to  <tt><!--rinline 'FALSE' --></tt>.</li>
+<li> All measures of importance are scaled to have a maximum value of 100, unless the <span class="mx arg">scale</span> argument of <span class="mx funCall">varImp.train</span> is set to  <tt><span class="hl num">FALSE</span></tt>.</li>
 </ul>
 </p>
 
@@ -144,17 +174,17 @@ variable to the model are available:
         never used in any MARS basis function, it has an importance
         value of zero. There are three statistics that can be used to
         estimate variable importance in MARS models. Using
-        <tt><!--rinline 'varImp(object, value = "gcv")' --></tt> tracks the reduction in the
+        <tt><span class="hl kwd">varImp</span><span class="hl std">(object,</span> <span class="hl kwc">value</span> <span class="hl std">=</span> <span class="hl str">&quot;gcv&quot;</span><span class="hl std">)</span></tt> tracks the reduction in the
         generalized cross-validation statistic as terms are added.
         However, there are some cases when terms are retained 
         in the model that result in an increase in GCV. Negative variable 
         importance values for MARS are set to zero. Terms with non-zero importance that were not included
         in the final, pruned model are also listed as zero. 
         Alternatively, using
-        <tt><!--rinline 'varImp(object, value = "rss")' --></tt> monitors the change in the
+        <tt><span class="hl kwd">varImp</span><span class="hl std">(object,</span> <span class="hl kwc">value</span> <span class="hl std">=</span> <span class="hl str">&quot;rss&quot;</span><span class="hl std">)</span></tt> monitors the change in the
         residual sums of squares (RSS) as terms are added, which will
         never be negative. 
-        Also, the option <tt><!--rinline 'varImp(object, value = "nsubsets")' --></tt> 
+        Also, the option <tt><span class="hl kwd">varImp</span><span class="hl std">(object,</span> <span class="hl kwc">value</span> <span class="hl std">=</span> <span class="hl str">&quot;nsubsets&quot;</span><span class="hl std">)</span></tt> 
         returns the number of times that each variable is involved in a subset (in the final, pruned model).  
         Prior to June 2008, <span class="mx funCall">varImp</span> used an internal function to estimate
         importance for MARS models. Currently, it is a wrapper around the 
@@ -178,13 +208,13 @@ variable to the model are available:
 <h1>Model Independent Metrics</h1>
 
 <p>
-If there is no model-specific way to estimate importance (or the argument <span class="mx arg">useModel</span><tt> = <!--rinline 'FALSE' --></tt> is used in <span class="mx funCall">varImp</span>) the importance of each predictor is evaluated individually using a "filter" approach. 
+If there is no model-specific way to estimate importance (or the argument <span class="mx arg">useModel</span><tt> = <span class="hl num">FALSE</span></tt> is used in <span class="mx funCall">varImp</span>) the importance of each predictor is evaluated individually using a "filter" approach. 
 </p>
 <p>
 For classification, ROC curve analysis is conducted on each predictor. For two class problems, a series of cutoffs is applied to the predictor data to predict the class. The sensitivity and specificity are computed for each cutoff and the ROC curve is computed. The trapezoidal rule is used to compute the area under the ROC curve. This area is used as the measure of variable importance. For multi-class outcomes, the problem is decomposed into all pair-wise problems and the area under the curve is calculated for each class pair (i.e. class 1 vs. class 2, class 2 vs. class 3 etc.). For a specific class, the maximum area under the curve across the relevant pair-wise AUC's is used as the variable importance measure.
 </p>
 <p>
-For regression, the relationship between each predictor and the outcome is evaluated. An argument, <span class="mx arg">nonpara</span>, is used to pick the model fitting technique. When <span class="mx arg">nonpara</span><tt> = <!--rinline 'FALSE' --></tt>, a linear model is fit and the absolute value of the <i>t</i>-value for the slope of the predictor is used. Otherwise, a loess smoother is fit between the outcome and the predictor. The R<sup>2</sup> statistic is calculated for this model against the intercept only null model. This number is returned as a relative measure of variable importance.
+For regression, the relationship between each predictor and the outcome is evaluated. An argument, <span class="mx arg">nonpara</span>, is used to pick the model fitting technique. When <span class="mx arg">nonpara</span><tt> = <span class="hl num">FALSE</span></tt>, a linear model is fit and the absolute value of the <i>t</i>-value for the slope of the predictor is used. Otherwise, a loess smoother is fit between the outcome and the predictor. The R<sup>2</sup> statistic is calculated for this model against the intercept only null model. This number is returned as a relative measure of variable importance.
 </p>
 
 <h2>An Example</h2>
@@ -192,33 +222,97 @@ For regression, the relationship between each predictor and the outcome is evalu
 On the model training web, several models were fit to the example data. The boosted tree model has a built-in variable importance score but neither the support vector machine or the regularized discriminant analysis model do. 
 </p>
 
-<!--begin.rcode varImp_gbm
-gbmImp <- varImp(gbmFit3, scale = FALSE)
-gbmImp
-    end.rcode-->
+<div class="chunk" id="varImp_gbm"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">gbmImp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">varImp</span><span class="hl std">(gbmFit3,</span> <span class="hl kwc">scale</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">)</span>
+<span class="hl std">gbmImp</span>
+</pre></div>
+<div class="output"><pre class="knitr r">gbm variable importance
 
-<p> The function automatically scales the importance scores to be between 0 and 100. Using <span class="mx arg">scale</span><tt> = <!--rinline 'FALSE' --></tt> avoids this normalization step. </p>
+  only 20 most important variables shown (out of 60)
+
+    Overall
+V12   21.92
+V51   14.14
+V11   12.49
+V36    9.98
+V45    7.18
+V23    5.96
+V31    5.35
+V48    5.32
+V46    4.67
+V28    4.56
+V16    4.38
+V9     4.10
+V49    4.04
+V55    3.77
+V21    3.77
+V4     3.75
+V17    3.62
+V52    3.48
+V59    3.10
+V15    2.39
+</pre></div>
+</div></div>
+
+
+<p> The function automatically scales the importance scores to be between 0 and 100. Using <span class="mx arg">scale</span><tt> = <span class="hl num">FALSE</span></tt> avoids this normalization step. </p>
 
 <p> To get the area under the ROC curve for each predictor, the <span class="mx funCall">filterVarImp</span> function can be used. The area under the ROC curve is computed for each class. </p>
 
-<!--begin.rcode varImp_roc1
-RocImp <- filterVarImp(x = training[, -ncol(training)], y = training$Class)
-head(RocImp)
-    end.rcode-->
+<div class="chunk" id="varImp_roc1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">RocImp</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">filterVarImp</span><span class="hl std">(</span><span class="hl kwc">x</span> <span class="hl std">= training[,</span> <span class="hl opt">-</span><span class="hl kwd">ncol</span><span class="hl std">(training)],</span> <span class="hl kwc">y</span> <span class="hl std">= training</span><span class="hl opt">$</span><span class="hl std">Class)</span>
+<span class="hl kwd">head</span><span class="hl std">(RocImp)</span>
+</pre></div>
+<div class="output"><pre class="knitr r">        M      R
+V1 0.6274 0.6274
+V2 0.5766 0.5766
+V3 0.6000 0.6000
+V4 0.6614 0.6614
+V5 0.6521 0.6521
+V6 0.5924 0.5924
+</pre></div>
+</div></div>
+
 
 
 <p>Alternatively, for models where no built-in importance score is implemented (or exists), the <span class="mx funCall">varImp</span> can still be used to get scores. For SVM classification models, the default behavior is to compute the area under the ROC curve. </p>
 
-<!--begin.rcode varImp_roc2
-RocImp2 <- varImp(svmFit, scale = FALSE)
-RocImp2
-    end.rcode-->
+<div class="chunk" id="varImp_roc2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">RocImp2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">varImp</span><span class="hl std">(svmFit,</span> <span class="hl kwc">scale</span> <span class="hl std">=</span> <span class="hl num">FALSE</span><span class="hl std">)</span>
+<span class="hl std">RocImp2</span>
+</pre></div>
+<div class="output"><pre class="knitr r">ROC curve variable importance
+
+  only 20 most important variables shown (out of 60)
+
+    Importance
+V11      0.777
+V12      0.756
+V10      0.727
+V9       0.725
+V46      0.709
+V51      0.705
+V49      0.701
+V13      0.698
+V47      0.697
+V36      0.689
+V48      0.682
+V21      0.674
+V52      0.669
+V45      0.667
+V4       0.661
+V5       0.652
+V37      0.651
+V35      0.649
+V20      0.641
+V44      0.636
+</pre></div>
+</div></div>
+
 
 <p>For importance scores generated from <span class="mx funCall">varImp.train</span>, a plot method can be used to visualize the results. In the plot below, the <span class="mx arg">top</span> option is used to make the image more readable.</p>
 
-<!--begin.rcode varImp_gbm_plot,fig.width=4,fig.height=7,tidy=FALSE
-plot(gbmImp, top = 20)
-    end.rcode-->
+<div class="chunk" id="varImp_gbm_plot"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">plot</span><span class="hl std">(gbmImp,</span> <span class="hl kwc">top</span> <span class="hl std">=</span> <span class="hl num">20</span><span class="hl std">)</span>
+</pre></div>
+</div><div class="rimage default"><img src="figure/varImp_gbm_plot.png" title="plot of chunk varImp_gbm_plot" alt="plot of chunk varImp_gbm_plot" class="plot" /></div></div>
+
 
 
 <div style="clear: both;">&nbsp;</div>
@@ -245,7 +339,7 @@ plot(gbmImp, top = 20)
                  <li><a href="similarity.html"><tt>train</tt> Models By Similarity</a></li>
                 <li><a href="custom_models.html">Using Custom Models</a></li>
                 <li><a href="varimp.html">Variable Importance</a></li>
-                <li><a href="featureSelection.html">Feature Selection</a></li>
+                <li><a href="featureselection.html">Feature Selection</a></li>
                 <li><a href="other.html">Other Functions</a></li>
                 <li><a href="parallel.html">Parallel Processing</a></li>
 </ul>
@@ -258,12 +352,11 @@ plot(gbmImp, top = 20)
   <div class="container"><img src="images/img03.png" width="1000" height="40" alt="" /></div>
   <!-- end #page -->
 </div>
-<!--begin.rcode echo = FALSE
-knit_hooks$set(inline = hook_inline)    
-    end.rcode--> 
+
+
   <div id="footer-content"></div>
   <div id="footer">
-  <p>Created on <!--rinline I(session) -->.</p>
+  <p>Created on Wed Feb 26 2014 using caret version 6.0-24 and R Under development (unstable) (2014-02-14 r65008).</p>
   </div>
   <!-- end #footer -->
 </body>
