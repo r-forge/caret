@@ -12,6 +12,7 @@ modelInfo <- list(label = "Penalized Logistic Regression",
                     plr(x, y,
                         lambda = param$lambda,
                         cp = as.character(param$cp),
+                        weights = if(!is.null(wts)) wts else rep(1,length(y)), 
                         ...)
                   },
                   predict = function(modelFit, newdata, submodels = NULL)  {

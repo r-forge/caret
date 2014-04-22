@@ -7,7 +7,7 @@ modelInfo <- list(label = "Single C5.0 Ruleset",
                                           label = c('none')),
                   grid = function(x, y, len = NULL) data.frame(parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    C5.0(x = x, y = y, rules = TRUE, ...),
+                    C5.0(x = x, y = y, weights = wts, rules = TRUE, ...),
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL) 

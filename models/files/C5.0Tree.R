@@ -7,7 +7,7 @@ modelInfo <- list(label = "Single C5.0 Tree",
                                           label = c('none')),
                   grid = function(x, y, len = NULL) data.frame(parameter = "none"),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) 
-                    C5.0(x = x, y = y, ...),
+                    C5.0(x = x, y = y, weights = wts, ...),
                   predict = function(modelFit, newdata, submodels = NULL) 
                     predict(modelFit, newdata),
                   prob = function(modelFit, newdata, submodels = NULL) 
