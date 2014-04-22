@@ -6,7 +6,7 @@ modelInfo <- list(label = "Generalized Additive Model using LOESS",
                                           class = c('numeric', 'numeric'),
                                           label = c('Span', 'Degree')),
                   grid = function(x, y, len = NULL) 
-                    expand.grid(span = .5, degree = 1:2),
+                    expand.grid(span = .5, degree = 1),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
                     dat <- x
                     dat$.outcome <- y
