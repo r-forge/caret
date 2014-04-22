@@ -26,6 +26,8 @@ set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
                              method = "logicBag", 
                              trControl = cctrl1,
+                             tuneGrid = expand.grid(ntrees = 2:3,
+                                                    nleaves = 2^(4:5)),
                              B = 3,
                              seed = 1)
 
@@ -35,6 +37,8 @@ set.seed(849)
 test_class_loo_model <- train(trainX, trainY, 
                               method = "logicBag", 
                               trControl = cctrl2,
+                              tuneGrid = expand.grid(ntrees = 2:3,
+                                                     nleaves = 2^(4:5)),
                               B = 3,
                               seed = 1)
 
@@ -43,7 +47,6 @@ test_class_none_model <- train(trainX, trainY,
                                method = "logicBag", 
                                trControl = cctrl3,
                                tuneGrid = test_class_cv_model$bestTune,
-                               preProc = c("center", "scale"),
                                B = 3,
                                seed = 1)
 
@@ -76,6 +79,8 @@ set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
                            method = "logicBag", 
                            trControl = rctrl1,
+                           tuneGrid = expand.grid(ntrees = 2:3,
+                                                  nleaves = 2^(4:5)),
                            B = 3,
                            seed = 1)
 test_reg_pred <- predict(test_reg_cv_model, testX)
@@ -84,6 +89,8 @@ set.seed(849)
 test_reg_loo_model <- train(trainX, trainY, 
                             method = "logicBag",
                             trControl = rctrl2,
+                            tuneGrid = expand.grid(ntrees = 2:3,
+                                                   nleaves = 2^(4:5)),
                             B = 3,
                             seed = 1)
 
