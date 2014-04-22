@@ -24,7 +24,11 @@ train.default <- function(x, y,
                                    paste(minNames[!nameCheck], collapse = ", ")))
     models <- method
     method <- "custom"
-  } else models <- getModelInfo(method, regex = FALSE)[[1]]
+  } else {
+    models <- getModelInfo(method, regex = FALSE)[[1]]
+    if (length(models) == 0) 
+      stop(paste("Model", method, "is not in caret's built-in library")
+  }
   checkInstall(models$library)
   for(i in seq(along = models$library)) do.call("require", list(package = models$library[i]))
   
@@ -84,7 +88,7 @@ train.default <- function(x, y,
     }   
   }
   
-  if(trControl$method == "oob" & !(method %in% c("rf", "treebag", "cforest", "bagEarth", "bagFDA")))
+  if(trControl$method == "oob" & !(method %in% c("rf", "treebag", "cforest", "bagEarth", "bagFDA", "parRF")))
     stop("for oob error rates, model bust be one of: rf, cforest, bagEarth, bagFDA or treebag")
   
   ## If they don't exist, make the data partitions for the resampling iterations.
