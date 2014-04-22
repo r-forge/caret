@@ -27,7 +27,7 @@ train.default <- function(x, y,
   } else {
     models <- getModelInfo(method, regex = FALSE)[[1]]
     if (length(models) == 0) 
-      stop(paste("Model", method, "is not in caret's built-in library")
+      stop(paste("Model", method, "is not in caret's built-in library"))
   }
   checkInstall(models$library)
   for(i in seq(along = models$library)) do.call("require", list(package = models$library[i]))
