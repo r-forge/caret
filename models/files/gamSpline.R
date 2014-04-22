@@ -8,14 +8,18 @@ modelInfo <- list(label = "Generalized Additive Model using Splines",
                   grid = function(x, y, len = NULL) 
                     expand.grid(df = seq(1, 3, length = len)),
                   fit = function(x, y, wts, param, lev, last, classProbs, ...) {
-                    dat <- x
-                    dat$.outcome <- y
-                    gam:::gam(caret:::smootherFormula(x,
-                                              smoother = "s",
-                                              df = param$df),
-                              data = dat,
-                              family =  if(is.factor(y)) binomial() else  gaussian(),
-                              ...)
+                    args <- list(data = x)
+                    args$data$.outcome <- y
+                    ## if(!is.null(wts))  args$weights <- wts
+                    args$formula <- caret:::smootherFormula(x,
+                                                            smoother = "s",
+                                                            df = param$df)
+                    args$family <- if(is.factor(y)) binomial else gaussian
+
+                    theDots <- list(...)
+                    if(length(theDots) > 0) args <- c(args, theDots)
+                    
+                    do.call(getFromNamespace("gam", "gam"), args)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     if(modelFit$problemType == "Classification")

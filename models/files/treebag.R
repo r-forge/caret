@@ -10,6 +10,7 @@ modelInfo <- list(label = "Bagged CART",
                     theDots <- list(...)
                     if(!any(names(theDots) == "keepX")) theDots$keepX <- FALSE   
                     modelArgs <- c(list(X = x, y = y), theDots)
+                    if(!is.null(wts)) modelArgs$weights <- wts   
                     do.call("ipredbagg", modelArgs)
                   },
                   predict = function(modelFit, newdata, submodels = NULL) 

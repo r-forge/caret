@@ -33,7 +33,7 @@ modelInfo <- list(label = "Cost-Sensitive C5.0",
                       theDots$control$winnow <- param$winnow
                     } else theDots$control <- C5.0Control(winnow = param$winnow)
                     
-                    argList <- list(x = x, y = y, trials = param$trials,
+                    argList <- list(x = x, y = y, weights = wts, trials = param$trials,
                                     rules = param$model == "rules")
                     
                     cmat <-matrix(c(0, param$cost, 1, 0), ncol = 2)

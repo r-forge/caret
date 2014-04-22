@@ -7,17 +7,31 @@ modelInfo <- list(label = "Generalized Additive Model using Splines",
                                           label = c('Feature Selection', 'Method')),
                   grid = function(x, y, len = NULL) 
                     expand.grid(select = c(TRUE, FALSE), method = "GCV.Cp"),
-                  fit = function(x, y, wts, param, lev, last, classProbs, ...) {
+                  fit = function(x, y, wts, param, lev, last, classProbs, ...) { 
                     dat <- x
-                    dat$.outcome <- y
                     modForm <- caret:::smootherFormula(x)
-                    dist <- if(is.factor(y)) binomial() else  gaussian()
-                    mgcv:::gam(modForm,
-                               data = dat,
-                               family = dist,
-                               select = param$select,
-                               method = param$method,
-                               ...)
+                    if(is.factor(y)) {
+                      dat$.outcome <- ifelse(y == lev[1], 1, 0)
+                      dist <- binomial()
+                    } else {
+                      dat$.outcome <- y
+                      dist <- gaussian()
+                    }
+                    out <- mgcv:::gam(modForm, data = dat, family = dist, 
+                                      select = param$select, 
+                                      method = as.character(param$method), 
+                                      ...)
+#                     if(is.null(wts)) {
+# 
+#                     } else {
+#                       out <- mgcv:::gam(modForm, data = dat, family = dist, 
+#                                         select = param$select, 
+#                                         method = as.character(param$method), 
+#                                         weights = wts,
+#                                         ...)
+#                     }
+                    out
+                    
                   },
                   predict = function(modelFit, newdata, submodels = NULL) {
                     if(modelFit$problemType == "Classification")
