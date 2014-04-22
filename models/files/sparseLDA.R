@@ -23,6 +23,7 @@ modelInfo <- list(label = "Sparse Linear Discriminant Analysis",
                                     stop = -param$NumVars, 
                                     ...)
                   ,
+                  predictors = function(x) x$xNames[x$varIndex],
                   predict = function(modelFit, newdata, submodels = NULL)
                     sparseLDA:::predict.sda(modelFit, newdata)$class,
                   prob = function(modelFit, newdata, submodels = NULL)
