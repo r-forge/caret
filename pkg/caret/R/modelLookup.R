@@ -44,6 +44,7 @@ getModelInfo <- function(model = NULL, regex = TRUE, ...) {
     keepers <- if(regex) grepl(model, names(models), ...) else which(model == names(models))[1]
     models <- models[keepers]
   }
+  if(length(models) == 0) stop("That model is not in caret's built-in library")
   models
 }
 
