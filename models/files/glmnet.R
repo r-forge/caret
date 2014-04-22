@@ -99,7 +99,6 @@ modelInfo <- list(label = "glmnet",
                     probs
                   },
                   predictors = function(x, lambda = NULL, ...) {
-                    browser()
                     if(is.null(lambda))
                     {
                       if(length(lambda) > 1) stop("Only one value of lambda is allowed right now")
