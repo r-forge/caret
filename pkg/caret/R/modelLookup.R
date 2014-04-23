@@ -71,3 +71,10 @@ modelLookup <- function(model = NULL){
   out <- out[, c('model', 'parameter', 'label', 'forReg', 'forClass', 'probModel')]
   out[order(out$model),]
 }
+
+
+missing_packages <- function(mods = getModelInfo()) {
+  libs <- unique(unlist(lapply(mods, function(x) x$library)))
+  here <- rownames(installed.packages())
+  libs[!(libs %in% here)]
+}
