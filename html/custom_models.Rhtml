@@ -872,11 +872,11 @@ As a demonstration will use a simulation system <a href="http://appliedpredictiv
 library(caret)
 
 set.seed(442)
-training <- twoClassSim(n = 500, intercept = -16)
-testing  <- twoClassSim(n = 500, intercept = -16)
+trainingSet <- twoClassSim(n = 500, intercept = -16)
+testingSet  <- twoClassSim(n = 500, intercept = -16)
 
 ## Class frequencies
-table(training$Class)
+table(trainingSet$Class)
     end.rcode--> 
     
 <p>
@@ -887,7 +887,7 @@ Let's use a standard random forest model with these data using the default value
 
 <!--begin.rcode custom_thresh_mod0, tidy=FALSE,fig.width=6,fig.height=6
 set.seed(949)
-mod0 <- train(Class ~ ., data = training,
+mod0 <- train(Class ~ ., data = trainingSet,
               method = "rf",
               metric = "ROC",
               tuneGrid = data.frame(mtry = 3),
@@ -899,9 +899,9 @@ mod0 <- train(Class ~ ., data = training,
 getTrainPerf(mod0)
 
 ## Get the ROC curve
-roc0 <- roc(testing$Class, 
-            predict(mod0, testing, type = "prob")[,1], 
-            levels = rev(levels(testing$Class)))
+roc0 <- roc(testingSet$Class, 
+            predict(mod0, testingSet, type = "prob")[,1], 
+            levels = rev(levels(testingSet$Class)))
 roc0
 
 ## Now plot
@@ -1028,7 +1028,7 @@ fourStats <- function (data, lev = levels(data$obs), model = NULL) {
 }
 
 set.seed(949)
-mod1 <- train(Class ~ ., data = training,
+mod1 <- train(Class ~ ., data = trainingSet,
               method = thresh_code,
               ## Minimize the distance to the perfect model
               metric = "Dist",
