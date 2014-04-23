@@ -4,7 +4,7 @@
 
 \section{Changes in version 6.0-XX}{
 \itemize{
-\item  Thoralf Mildenberger found and fixed a big in the variable importance
+\item  Thoralf Mildenberger found and fixed a bug in the variable importance
 calculation for neural network models. 
 
 \item The output of \code{varImp} for \code{pamr} models was updated to clarify the ordering of the importance scores.
@@ -14,6 +14,9 @@ calculation for neural network models.
 \item A bug was fixed related to how seeds were set inside of \code{train}. 
 
 \item The model \code{"parRF"} (parallel random forest) was added back into the library.  
+
+\item When case weights are specified in \code{train}, the hold-out weights are exposed when computing the summary function.  
+
 }
 }
 
