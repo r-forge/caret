@@ -485,12 +485,10 @@ adaptiveWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev,
     }
     
     if(ctrl$adaptive$method == "BT") {
-      library(BradleyTerry2)
       filtered_mods <- try(bt_eval(rs, metric = metric, maximize = maximize,
                                    alpha = ctrl$adaptive$alpha), 
                            silent = TRUE)  
     } else {
-      library(nlme)
       filtered_mods <- try(gls_eval(rs, metric = metric, maximize = maximize,
                                     alpha = ctrl$adaptive$alpha), 
                            silent = TRUE) 
@@ -840,33 +838,7 @@ skunked <- function(scores, verbose = TRUE) {
   scores
 }
 
-dunnett_eval <- function(x, metric, maximize, alpha = 0.05) {
-  means <- ddply(x[, c(metric, "model_id")], 
-                 .(model_id), 
-                 function(x, met) c(mean = mean(x[, met])), 
-                 met = metric)
-  bl <- if(maximize) means$model_id[which.max(means$mean)] else means$model_id[which.min(means$mean)]
-  bldat <- subset(x, model_id == bl)[, c("Resample", metric)]
-  colnames(bldat)[2] <- ".baseline"
-  x2 <- merge(bldat, x[, c("Resample", "model_id", metric)])
-  x2$value <- if(maximize) x2$.baseline - x2[, metric] else x2[, metric] - x2$.baseline
-  x2$model_id <- factor(x2$model_id, levels = c(bl, mods[mods != bl]))
-  av <- aov(value ~ model_id, data = x2)
-  tests <- summary(glht(av,
-                        linfct = mcp(model_id = "Dunnett"),
-                        alternative = "greater"))$test
-  #   print(summary(glht(av,
-  #                      linfct = mcp(model_id = "Dunnett"),
-  #                      alternative = "greater")))
-  keepers <- names(tests$coefficients)[tests$pvalue >= alpha]
-  if(length(keepers) == 0) keepers <- bl else 
-    keepers <- gsub(paste(" - ", bl, sep = ""), "", keepers)
-  unique(c(bl, keepers))
-}
-
-
 gls_eval <- function(x, metric, maximize, alpha = 0.05) {
-  require(nlme)
   means <- ddply(x[, c(metric, "model_id")], 
                  .(model_id), 
                  function(x, met) c(mean = mean(x[, met])), 
@@ -937,30 +909,23 @@ retrospective <- function(x, B = 5, method = "BT", alpha = 0.05) {
   rs <- x$resample
   if(!is.factor(rs$Resample)) rs$Resample <- factor(rs$Resample)
   rs <- subset(rs, as.numeric(Resample) <= B)
-  current_mods <- caret:::get_id(rs, as.character(x$modelInfo$param$parameter))
+  current_mods <- get_id(rs, as.character(x$modelInfo$param$parameter))
   #   current_mods <- merge(current_mods, new_loop)
   rs <- merge(rs, current_mods)
-  
-  if(method == "dunnett") {
-    require(multcomp)
-    filtered_mods <- try(caret:::dunnett_eval(rs, metric = x$metric, maximize = x$maximize,
-                                              alpha = alpha), 
-                         silent = TRUE)
+
+  if(method == "BT") {
+    filtered_mods <- try(bt_eval(rs, metric = x$metric, maximize = x$maximize,
+                                         alpha = alpha), 
+                         silent = TRUE)  
   } else {
-    if(method == "BT") {
-      library(BradleyTerry2)
-      filtered_mods <- try(caret:::bt_eval(rs, metric = x$metric, maximize = x$maximize,
-                                           alpha = alpha), 
-                           silent = TRUE)  
-    } else {
-      filtered_mods <- try(caret:::gls_eval(rs, metric = x$metric, maximize = x$maximize,
-                                            alpha = alpha), 
-                           silent = TRUE) 
-    }
+    filtered_mods <- try(gls_eval(rs, metric = x$metric, maximize = x$maximize,
+                                          alpha = alpha), 
+                         silent = TRUE) 
   }
   
+  
   list(models = filtered_mods, mods = subset(current_mods, model_id %in% filtered_mods),
-       long = rs, wide = caret:::long2wide(rs, x$metric))
+       long = rs, wide = long2wide(rs, x$metric))
 }
 
 cccmat <- function(dat) {
