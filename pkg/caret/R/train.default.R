@@ -275,7 +275,7 @@ train.default <- function(x, y,
     {
       perfNames <- if(modelType == "Regression") c("RMSE", "Rsquared") else  c("Accuracy", "Kappa")    
     } else {
-      testSummary <- evalSummaryFunction(y, trControl, classLevels, metric, method)
+      testSummary <- evalSummaryFunction(y, weights, trControl, classLevels, metric, method)
       perfNames <- names(testSummary)
     }
     
