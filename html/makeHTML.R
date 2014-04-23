@@ -19,6 +19,7 @@ library(class)
 library(e1071)
 library(mda)
 library(plyr)
+library(pls)
 
 
 setwd("~/Code/caret/html/")
@@ -71,7 +72,7 @@ for(fileIndex in seq(along = rnwFiles)) {
   cat("###########################################################################\n",
       "Knitting", rnwFiles[fileIndex], "\n")
   knit(rnwFiles[fileIndex],
-       output = gsub(".Rhtml", ".html", rnwFiles[fileIndex]))
+       output = tolower(gsub(".Rhtml", ".html", rnwFiles[fileIndex])))
   
 }
 
