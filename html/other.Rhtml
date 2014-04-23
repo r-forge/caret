@@ -88,8 +88,10 @@ interest), although this can be changed.
 The function <span class="mx funCall">confusionMatrix</span> can also be used to summarize
 the results of a classification model. This example uses objects from the webpage for <a href="training.html">Model Training and Tuning</a>: 
 </p>
-<!--begin.rcode other_conf0,results='hide'
+<!--begin.rcode other_conf00,eval=FALSE
 testPred <- predict(gbmFit3, testing)
+    end.rcode-->
+<!--begin.rcode other_conf0
 postResample(testPred, testing$Class)
 
 sensitivity(testPred, testing$Class)
@@ -153,28 +155,28 @@ The <span class="mx funCall">lift</span> function can be used to evaluate probab
 </p>
 <!--begin.rcode lift_fits, tidy=FALSE
 set.seed(2)
-training <- twoClassSim(1000)
-eval <- twoClassSim(1000)
-testing <- twoClassSim(1000)
+trainingSim <- twoClassSim(1000)
+evalSim     <- twoClassSim(1000)
+testingSim  <- twoClassSim(1000)
 
 ctrl <- trainControl(method = "cv",
                      classProbs = TRUE, 
                      summaryFunction = twoClassSummary)
 
 set.seed(1045)
-fdaModel <- train(Class ~ ., data = training, 
+fdaModel <- train(Class ~ ., data = trainingSim, 
                   method = "fda",
                   metric = "ROC",
                   tuneLength = 20,
                   trControl = ctrl)
 set.seed(1045)
-ldaModel <- train(Class ~ ., data = training, 
+ldaModel <- train(Class ~ ., data = trainingSim, 
                   method = "lda",
                   metric = "ROC",
                   trControl = ctrl)
 
 set.seed(1045)
-c5Model <- train(Class ~ ., data = training, 
+c5Model <- train(Class ~ ., data = trainingSim, 
                  method = "C5.0",
                  metric = "ROC",
                  tuneLength = 10,
@@ -190,10 +192,10 @@ getTrainPerf(c5Model)
 From these models, we can predict the evaluation set and save the probabilities of being the first class:
 </p>
 <!--begin.rcode lift_preds, tidy=FALSE
-evalResults <- data.frame(Class = eval$Class)
-evalResults$FDA <- predict(fdaModel, eval, type = "prob")[,"Class1"]
-evalResults$LDA <- predict(ldaModel, eval, type = "prob")[,"Class1"]
-evalResults$C5.0 <- predict(c5Model, eval, type = "prob")[,"Class1"]
+evalResults <- data.frame(Class = evalSim$Class)
+evalResults$FDA <- predict(fdaModel, evalSim, type = "prob")[,"Class1"]
+evalResults$LDA <- predict(ldaModel, evalSim, type = "prob")[,"Class1"]
+evalResults$C5.0 <- predict(c5Model, evalSim, type = "prob")[,"Class1"]
 head(evalResults)
     end.rcode--> 
 <p>
