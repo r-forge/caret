@@ -448,8 +448,7 @@ control how models are created, with possible values:
   at that iteration or should be held-out. When these values are not specified,
   <span class="mx funCall">train</span> will generate them.  </li>
  <li> <span class="mx arg">summaryFunction</span>: a function to compute alternate
-  performance summaries. 
-  details. </li> 
+  performance summaries. </li> 
  <li> <span class="mx arg">selectionFunction</span>: a function to choose the optimal
   tuning parameters. 
   and examples.  </li>
@@ -495,7 +494,7 @@ arguments:
   argument of the <span class="mx funCall">trainControl</span> object is set to
   <tt><!--rinline 'TRUE' --></tt>, additional columns in <code>data</code> will be present
   that contains the class probabilities. The names of these columns
-  are the same as the class levels.</li>
+  are the same as the class levels. Also, if  <span class="mx arg">weights</span> were specified in the call to <span class="mx funCall">train</span>, a column called <code>weights</code> will also be in the data set. </li>
  <li> <span class="mx arg">lev</span> is a character string that has the outcome factor
   levels taken from the training data. For regression, a value of
   <tt><!--rinline 'NULL' --></tt> is passed into the function. </li>
