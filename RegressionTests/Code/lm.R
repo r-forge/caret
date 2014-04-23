@@ -17,9 +17,18 @@ trainY <- logBBB[inTrain[[1]]]
 testX <- bbbDescr[-inTrain[[1]], ]
 testY <- logBBB[-inTrain[[1]]]
 
+weight_test <- function (data, lev = NULL, model = NULL)  {
+  mean(data$weights)
+  postResample(data[, "pred"], data[, "obs"])
+}
+
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
 rctrl3 <- trainControl(method = "none")
+rctrl4 <- trainControl(method = "cv", summaryFunction = weight_test)
+rctrl5 <- trainControl(method = "LOOCV", summaryFunction = weight_test)
+
+
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, method = "lm", trControl = rctrl1)
@@ -35,6 +44,13 @@ test_reg_none_model <- train(trainX, trainY,
                              tuneLength = 1,
                              preProc = c("center", "scale"))
 test_reg_none_pred <- predict(test_reg_none_model, testX)
+
+set.seed(849)
+test_reg_cv_weights <- train(trainX, trainY, weights = runif(nrow(trainX)), method = "lm", trControl = rctrl4)
+
+set.seed(849)
+test_reg_loo_weights <- train(trainX, trainY, weights = runif(nrow(trainX)), method = "lm", trControl = rctrl5)
+
 
 #########################################################################
 

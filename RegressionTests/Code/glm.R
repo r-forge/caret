@@ -11,6 +11,11 @@ testing <- twoClassSim(500)
 trainX <- training[, -ncol(training)]
 trainY <- training$Class
 
+weight_test <- function (data, lev = NULL, model = NULL)  {
+  mean(data$weights)
+  postResample(data[, "pred"], data[, "obs"])
+}
+
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        classProbs = TRUE, 
                        summaryFunction = twoClassSummary)
@@ -18,6 +23,10 @@ cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
 cctrl3 <- trainControl(method = "none",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
+
+cctrl4 <- trainControl(method = "cv", number = 3, 
+                       summaryFunction = weight_test)
+cctrl5 <- trainControl(method = "LOOCV", summaryFunction = weight_test)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -47,6 +56,24 @@ test_class_none_model <- train(trainX, trainY,
 test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
 test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
 
+set.seed(849)
+test_class_cv_weight <- train(trainX, trainY, 
+                              weights = runif(nrow(trainX)),
+                               method = "glm", 
+                               trControl = cctrl4,
+                               tuneLength = 1,
+                               metric = "Accuracy", 
+                               preProc = c("center", "scale"))
+
+set.seed(849)
+test_class_loo_weight <- train(trainX, trainY, 
+                              weights = runif(nrow(trainX)),
+                              method = "glm", 
+                              trControl = cctrl5,
+                              tuneLength = 1,
+                              metric = "Accuracy", 
+                              preProc = c("center", "scale"))
+
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
   cat("wrong levels")
@@ -68,6 +95,8 @@ testY <- logBBB[-inTrain[[1]]]
 rctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all")
 rctrl2 <- trainControl(method = "LOOCV")
 rctrl3 <- trainControl(method = "none")
+rctrl1 <- trainControl(method = "cv", number = 3, summaryFunction = weight_test)
+rctrl2 <- trainControl(method = "LOOCV", summaryFunction = weight_test)
 
 set.seed(849)
 test_reg_cv_model <- train(trainX, trainY, 
@@ -90,6 +119,22 @@ test_reg_none_model <- train(trainX, trainY,
                              tuneLength = 1,
                              preProc = c("center", "scale"))
 test_reg_none_pred <- predict(test_reg_none_model, testX)
+
+set.seed(849)
+test_reg_cv_weight <- train(trainX, trainY, 
+                              weights = runif(nrow(trainX)),
+                              method = "glm", 
+                              trControl = cctrl4,
+                              tuneLength = 1,
+                              preProc = c("center", "scale"))
+
+set.seed(849)
+test_reg_loo_weight <- train(trainX, trainY, 
+                               weights = runif(nrow(trainX)),
+                               method = "glm", 
+                               trControl = cctrl5,
+                               tuneLength = 1,
+                               preProc = c("center", "scale"))
 
 #########################################################################
 
