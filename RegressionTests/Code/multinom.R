@@ -11,6 +11,11 @@ testing <- twoClassSim(500)
 trainX <- training[, -ncol(training)]
 trainY <- training$Class
 
+weight_test <- function (data, lev = NULL, model = NULL)  {
+  mean(data$weights)
+  postResample(data[, "pred"], data[, "obs"])
+}
+
 cctrl1 <- trainControl(method = "cv", number = 3, returnResamp = "all",
                        classProbs = TRUE, 
                        summaryFunction = twoClassSummary)
@@ -18,6 +23,10 @@ cctrl2 <- trainControl(method = "LOOCV",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
 cctrl3 <- trainControl(method = "none",
                        classProbs = TRUE, summaryFunction = twoClassSummary)
+
+cctrl4 <- trainControl(method = "cv", number = 3, 
+                       summaryFunction = weight_test)
+cctrl5 <- trainControl(method = "LOOCV", summaryFunction = weight_test)
 
 set.seed(849)
 test_class_cv_model <- train(trainX, trainY, 
@@ -49,6 +58,27 @@ test_class_none_model <- train(trainX, trainY,
 
 test_class_none_pred <- predict(test_class_none_model, testing[, -ncol(testing)])
 test_class_none_prob <- predict(test_class_none_model, testing[, -ncol(testing)], type = "prob")
+
+set.seed(849)
+test_class_cv_weight <- train(trainX, trainY, 
+                              weights = runif(nrow(trainX)),
+                              method = "multinom", 
+                              trControl = cctrl4,
+                              tuneLength = 2,
+                              metric = "Accuracy", 
+                              preProc = c("center", "scale"),
+                              trace = FALSE)
+
+set.seed(849)
+test_class_loo_weight <- train(trainX, trainY, 
+                               weights = runif(nrow(trainX)), 
+                               method = "multinom", 
+                               trControl = cctrl5,
+                               tuneLength = 2,
+                               metric = "Accuracy", 
+                               preProc = c("center", "scale"),
+                               trace = FALSE)
+
 
 test_levels <- levels(test_class_cv_model)
 if(!all(levels(trainY) %in% test_levels))
