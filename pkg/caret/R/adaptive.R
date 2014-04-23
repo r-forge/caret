@@ -157,11 +157,14 @@ adaptiveWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev,
                 
                 ## collate the predicitons across all the sub-models
                 predicted <- lapply(predicted,
-                                    function(x, y, lv) {
+                                    function(x, y, wts, lv) {
                                       if(!is.factor(x) & is.character(x)) x <- factor(as.character(x), levels = lv)
-                                      data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
+                                      out <- data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
+                                      if(!is.null(wts)) out$weights <- wts
+                                      out
                                     },
                                     y = y[holdoutIndex],
+                                    wts = wts[holdoutIndex],
                                     lv = lev)
                 if(testing) print(head(predicted))
                 
@@ -206,6 +209,7 @@ adaptiveWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev,
                 ## Sometimes the code above does not coerce the first
                 ## columnn to be named "pred" so force it
                 names(tmp)[1] <- "pred"
+                if(!is.null(wts)) tmp$weights <- wts[holdoutIndex]
                 if(ctrl$classProbs) tmp <- cbind(tmp, probValues)
                 
                 if(ctrl$savePredictions) {
@@ -384,11 +388,14 @@ adaptiveWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev,
                                    
                                    ## collate the predicitons across all the sub-models
                                    predicted <- lapply(predicted,
-                                                       function(x, y, lv) {
+                                                       function(x, y, wts, lv) {
                                                          if(!is.factor(x) & is.character(x)) x <- factor(as.character(x), levels = lv)
-                                                         data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
+                                                         out <- data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
+                                                         if(!is.null(wts)) out$weights <- wts
+                                                         out
                                                        },
                                                        y = y[holdoutIndex],
+                                                       wts = wts[holdoutIndex],
                                                        lv = lev)
                                    if(testing) print(head(predicted))
                                    
@@ -434,6 +441,7 @@ adaptiveWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev,
                                    ## Sometimes the code above does not coerce the first
                                    ## columnn to be named "pred" so force it
                                    names(tmp)[1] <- "pred"
+                                   if(!is.null(wts)) tmp$weights <- wts[holdoutIndex]
                                    if(ctrl$classProbs) tmp <- cbind(tmp, probValues)
                                    
                                    if(ctrl$savePredictions) {
@@ -666,18 +674,21 @@ adaptiveWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev,
                   
                   ## collate the predicitons across all the sub-models
                   predicted <- lapply(predicted,
-                                      function(x, y, lv) {
+                                      function(x, y, wts, lv) {
                                         if(!is.factor(x) & is.character(x)) x <- factor(as.character(x), levels = lv)
-                                        data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
+                                        out <- data.frame(pred = x, obs = y, stringsAsFactors = FALSE)
+                                        if(!is.null(wts)) out$weights <- wts
+                                        out
                                       },
                                       y = y[holdoutIndex],
+                                      wts = wts[holdoutIndex],
                                       lv = lev)
                   if(testing) print(head(predicted))
                   
                   ## same for the class probabilities
                   if(ctrl$classProbs) {
                     for(k in seq(along = predicted)) predicted[[k]] <- cbind(predicted[[k]], probValues[[k]])
-                  }
+                  }  
                   
                   if(ctrl$savePredictions) {
                     tmpPred <- predicted
@@ -715,6 +726,7 @@ adaptiveWorkflow <- function(x, y, wts, info, method, ppOpts, ctrl, lev,
                   ## Sometimes the code above does not coerce the first
                   ## columnn to be named "pred" so force it
                   names(tmp)[1] <- "pred"
+                  if(!is.null(wts)) tmp$weights <- wts[holdoutIndex]
                   if(ctrl$classProbs) tmp <- cbind(tmp, probValues)
                   
                   if(ctrl$savePredictions) {
@@ -892,7 +904,7 @@ seq_eval <- function(x, metric, maximize, alpha = 0.05) {
   if(length(levs) > 2) {
     fit <- lm(value ~ . - 1, data = x2[, c("model_id", "value")])
     fit <- summary(fit)
-    pvals <- pt(coef(fit)[, 3], fit$df[2], lower = FALSE)
+    pvals <- pt(coef(fit)[, 3], fit$df[2], lower.tail = FALSE)
     names(pvals) <- gsub("model_id", "", names(pvals))
     keepers <- pvals >= alpha
     if(any(is.na(keepers))) keepers[is.na(keepers)] <- TRUE
@@ -912,14 +924,14 @@ retrospective <- function(x, B = 5, method = "BT", alpha = 0.05) {
   current_mods <- get_id(rs, as.character(x$modelInfo$param$parameter))
   #   current_mods <- merge(current_mods, new_loop)
   rs <- merge(rs, current_mods)
-
+  
   if(method == "BT") {
     filtered_mods <- try(bt_eval(rs, metric = x$metric, maximize = x$maximize,
-                                         alpha = alpha), 
+                                 alpha = alpha), 
                          silent = TRUE)  
   } else {
     filtered_mods <- try(gls_eval(rs, metric = x$metric, maximize = x$maximize,
-                                          alpha = alpha), 
+                                  alpha = alpha), 
                          silent = TRUE) 
   }
   
