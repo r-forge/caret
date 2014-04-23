@@ -560,7 +560,9 @@ cat("<pre>\n")
 cat(paste(text3, collapse = "\n"))
 cat("</pre>\n")
     end.rcode-->    
-
+<!--begin.rcode train_pred3,cache=TRUE,echo=FALSE,results='hide'
+testPred <- predict(gbmFit3, testing) ## to be used in 'other'html'
+    end.rcode--> 
 <p>
 In this case, the average area under the ROC curve associated with the
 optimal tuning parameters was
