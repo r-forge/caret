@@ -15,7 +15,9 @@ calculation for neural network models.
 
 \item The model \code{"parRF"} (parallel random forest) was added back into the library.  
 
-\item When case weights are specified in \code{train}, the hold-out weights are exposed when computing the summary function.  
+\item When case weights are specified in \code{train}, the hold-out weights are exposed when computing the summary function. 
+
+\item A check was made to convert a \code{data.table} given to \code{train} to a data frame (see \irl{http://stackoverflow.com/questions/23256177/r-caret-renames-column-in-data-table-after-training}).
 
 }
 }
