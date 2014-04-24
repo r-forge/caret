@@ -38,6 +38,7 @@ train.default <- function(x, y,
   modelType <- if(is.factor(y)) "Classification"  else "Regression"
   if(!(modelType %in% models$type)) stop(paste("wrong model type for", tolower(modelType)))
   
+  if(any(class(x) == "data.table")) x <- as.data.frame(x)
   stopifnot(length(y) > 1)
   stopifnot(nrow(x) > 1)
   stopifnot(nrow(x) == length(y))
@@ -275,7 +276,9 @@ train.default <- function(x, y,
     {
       perfNames <- if(modelType == "Regression") c("RMSE", "Rsquared") else  c("Accuracy", "Kappa")    
     } else {
-      testSummary <- evalSummaryFunction(y, weights, trControl, classLevels, metric, method)
+      testSummary <- evalSummaryFunction(y, wts = weights, ctrl = trControl, 
+                                         lev = classLevels, metric = metric, 
+                                         method = method)
       perfNames <- names(testSummary)
     }
     
@@ -401,7 +404,9 @@ train.default <- function(x, y,
     bestTune <- performance[bestIter, paramNames, drop = FALSE]
   } else {
     bestTune <- tuneGrid
-    performance <- evalSummaryFunction(y, trControl, classLevels, metric, method)
+    performance <- evalSummaryFunction(y, wts = weights, ctrl = trControl, 
+                                       lev = classLevels, metric = metric, 
+                                       method = method)
     perfNames <- names(performance)
     performance <- as.data.frame(t(performance))
     performance <- cbind(performance, tuneGrid)
