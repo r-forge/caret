@@ -2,8 +2,20 @@
 \title{News for Package \pkg{caret}}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
-\section{Changes in version 6.0-XX}{
+\section{Changes in version 6.0-30}{
 \itemize{
+\item A missing piece of documentation in \code{trainControl} for adaptive models was filled in. 
+
+\item A warning was added to \code{plot.train} and \code{ggplot.train} to note that the relationship between the resampled performance measures and the tuning parameters can be deceiving when using adaptive resampling.
+
+\item A check was added to \code{trainControl} to make sure that a value of \code{min} makes sense when using adaptive resampling.  
+
+}
+
+\section{Changes in version 6.0-29}{
+\itemize{
+\item  A man page with the list of models available via \code{train} was added back into the package. See \code{?models}.
+
 \item  Thoralf Mildenberger found and fixed a bug in the variable importance
 calculation for neural network models. 
 
@@ -17,7 +29,7 @@ calculation for neural network models.
 
 \item When case weights are specified in \code{train}, the hold-out weights are exposed when computing the summary function. 
 
-\item A check was made to convert a \code{data.table} given to \code{train} to a data frame (see \irl{http://stackoverflow.com/questions/23256177/r-caret-renames-column-in-data-table-after-training}).
+\item A check was made to convert a \code{data.table} given to \code{train} to a data frame (see \url{http://stackoverflow.com/questions/23256177/r-caret-renames-column-in-data-table-after-training}).
 
 }
 }
