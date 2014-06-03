@@ -2,7 +2,7 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>TableID13503bc6dea0</title>
+<title>TableID154315118c031</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <style type="text/css">
 body {
@@ -17,15 +17,15 @@ body {
 </style>
 </head>
 <body>
- <!-- Table generated in R 3.1.0 by googleVis 0.4.7 package -->
-<!-- Wed Feb 26 13:56:40 2014 -->
+ <!-- Table generated in R 3.0.3 by googleVis 0.4.7 package -->
+<!-- Sat May 31 23:31:10 2014 -->
 
 
 <!-- jsHeader -->
 <script type="text/javascript">
  
 // jsData 
-function gvisDataTableID13503bc6dea0 () {
+function gvisDataTableID154315118c031 () {
 var data = new google.visualization.DataTable();
 var datajson =
 [
@@ -35,13 +35,6 @@ var datajson =
 "Classification",
 "ada",
 "iter, maxdepth, nu" 
-],
-[
- "Neural Network",
-"AMORE",
-"Dual Use",
-"AMORE",
-"layer1, layer2, layer3, learning.rate.global" 
 ],
 [
  "Model Averaged Neural Network",
@@ -189,6 +182,13 @@ var datajson =
 "Regression",
 "Cubist",
 "committees, neighbors" 
+],
+[
+ "Stacked AutoEncoder Deep Neural Network",
+"dnn",
+"Dual Use",
+"deepnet",
+"layer1, layer2, layer3, hidden_dropout, visible_dropout" 
 ],
 [
  "Multivariate Adaptive Regression Spline",
@@ -667,6 +667,13 @@ var datajson =
 "threshold" 
 ],
 [
+ "Parallel Random Forest",
+"parRF",
+"Dual Use",
+"randomForest",
+"mtry" 
+],
+[
  "Rule-Based Classifier",
 "PART",
 "Classification",
@@ -1083,15 +1090,15 @@ return(data);
 }
  
 // jsDrawChart
-function drawChartTableID13503bc6dea0() {
-var data = gvisDataTableID13503bc6dea0();
+function drawChartTableID154315118c031() {
+var data = gvisDataTableID154315118c031();
 var options = {};
 options["allowHtml"] = true;
 options["width"] = "800px";
 
 
     var chart = new google.visualization.Table(
-    document.getElementById('TableID13503bc6dea0')
+    document.getElementById('TableID154315118c031')
     );
     chart.draw(data,options);
     
@@ -1115,9 +1122,9 @@ if (newPackage)
   pkgs.push(chartid);
   
 // Add the drawChart function to the global list of callbacks
-callbacks.push(drawChartTableID13503bc6dea0);
+callbacks.push(drawChartTableID154315118c031);
 })();
-function displayChartTableID13503bc6dea0() {
+function displayChartTableID154315118c031() {
   var pkgs = window.__gvisPackages = window.__gvisPackages || [];
   var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
   window.clearTimeout(window.__gvisLoad);
@@ -1141,17 +1148,17 @@ callbacks.shift()();
 </script>
  
 <!-- jsChart -->  
-<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartTableID13503bc6dea0"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartTableID154315118c031"></script>
  
 <!-- divChart -->
   
-<div id="TableID13503bc6dea0"
+<div id="TableID154315118c031"
   style="width: 800pxpx; height: 500px;">
 </div>
- <div><span>Data: modelTable &#8226; Chart ID: <a href="Chart_TableID13503bc6dea0.html">TableID13503bc6dea0</a></span><br /> 
+ <div><span>Data: modelTable &#8226; Chart ID: <a href="Chart_TableID154315118c031.html">TableID154315118c031</a></span><br /> 
 <!-- htmlFooter -->
 <span> 
-  R Under development (unstable) (2014-02-14 r65008) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.4.7</a>
+  R version 3.0.3 (2014-03-06) &#8226; <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis-0.4.7</a>
   &#8226; <a href="https://developers.google.com/terms/">Google Terms of Use</a> &#8226; <a href="https://google-developers.appspot.com/chart/interactive/docs/gallery/table.html#Data_Policy">Data Policy</a>
 </span></div>
 </body>
