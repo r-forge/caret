@@ -99,6 +99,19 @@ mod <- train(Species ~ ., data = iris,
              method = "knn", 
              tuneLength = 12,
              trControl = ctrl)
+
+
+ctrl2 <- trainControl(method = "adaptive_cv", 
+                      repeats = 5,
+                      verboseIter = TRUE,
+                      seeds = seeds)
+
+set.seed(1)
+mod2 <- train(Species ~ ., data = iris, 
+              method = "knn", 
+              tuneLength = 12,
+              trControl = ctrl2)
+}
 }
 }
 
