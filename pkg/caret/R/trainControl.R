@@ -1,6 +1,6 @@
 trainControl <- function(method = "boot",
-                         number = ifelse(method %in% c("cv", "repeatedcv"), 10, 25),
-                         repeats = ifelse(method %in% c("cv", "repeatedcv"), 1, number),
+                         number = ifelse(method %in% c("cv", "repeatedcv", "adaptive_cv"), 10, 25),
+                         repeats = ifelse(method %in% c("cv", "repeatedcv", "adaptive_cv"), 1, number),
                          p = .75,
                          initialWindow = NULL,
                          horizon = 1,
