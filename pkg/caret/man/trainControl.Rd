@@ -111,7 +111,7 @@ mod2 <- train(Species ~ ., data = iris,
               method = "knn", 
               tuneLength = 12,
               trControl = ctrl2)
-}
+
 }
 }
 
