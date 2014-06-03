@@ -23,13 +23,14 @@ trainControl(method = "boot",
              timingSamps = 0,
              predictionBounds = rep(FALSE, 2),
              seeds = NA,
-             adaptive = list(min = 5, alpha = 0.05, method = "gls"),
+             adaptive = list(min = 5, alpha = 0.05, 
+             	             method = "gls", complete = TRUE),
              allowParallel = TRUE)
 }
 \arguments{
   \item{method}{The resampling method: \code{boot}, \code{boot632}, \code{cv}, \code{repeatedcv},
-    \code{LOOCV},  \code{LGOCV} (for repeated training/test splits), \code{none} (only fits one model to the entire training set) or
-    \code{oob} (only for random forest, bagged trees, bagged earth, bagged flexible discriminant analysis, or conditional tree forest models)}
+    \code{LOOCV},  \code{LGOCV} (for repeated training/test splits), \code{none} (only fits one model to the entire training set), 
+    \code{oob} (only for random forest, bagged trees, bagged earth, bagged flexible discriminant analysis, or conditional tree forest models), \code{"adaptive_cv"}, \code{"adaptive_boot"} or \code{"adaptive_LGOCV"}}
   \item{number}{Either the number of folds or number of resampling iterations}
   \item{repeats}{For repeated k-fold cross-validation only: the number of complete sets of folds to compute}
   \item{verboseIter}{A logical for printing a training log.}
@@ -61,16 +62,19 @@ When setting the seeds manually, the number of models being evaluated is require
 
 Using \code{method = "none"} and specifying model than one model in \code{\link{train}}'s \code{tuneGrid} or \code{tuneLength} arguments will result in an error. 
 
-Using adaptive resampling when \code{method} is either \code{"adaptive_cv"}, \code{"adaptive_boot"} or \code{"adaptive_LGOCV"}, the full set of resamples is not run for each model. As resampling continues, a futility analysis is conducted and models with a low probability of being optimal are removed. See XXXX for more details. The options for this procedure are:
+Using adaptive resampling when \code{method} is either \code{"adaptive_cv"}, \code{"adaptive_boot"} or \code{"adaptive_LGOCV"}, the full set of resamples is not run for each model. As resampling continues, a futility analysis is conducted and models with a low probability of being optimal are removed. These features are experimental. See Kuhn (2014) for more details. The options for this procedure are:
 
 \itemize{
- \item min: the minimum number of resamples used before models are removed
- \item alpha: the confidence level of the one-sided intervals used to measure futility
- \item method: either generalized least squares (\code{method = "gls"}) or a Bradley-Terry model (\code{method = "BT"})
+ \item \code{min}: the minimum number of resamples used before models are removed
+ \item \code{alpha}: the confidence level of the one-sided intervals used to measure futility
+ \item \code{method}: either generalized least squares (\code{method = "gls"}) or a Bradley-Terry model (\code{method = "BT"})
+  \item \code{complete}: if a single parameter value is found before the end of resampling, should the full set of resamples be computed for that parameter. )
 }
 }
 
 \author{Max Kuhn}
+
+\references{Kuhn (2014), ``Futility Analysis in the Cross-Validation of Machine Learning Models'' \url{http://arxiv.org/abs/1405.6974}}
 
 \examples{
 \dontrun{
