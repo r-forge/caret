@@ -90,7 +90,7 @@ A variety of models are currently available and are enumerated by tag (i.e. thei
 
 Kuhn (2008), ``Building Predictive Models in R Using the caret'' (\url{http://www.jstatsoft.org/v28/i05/})}
 
-\seealso{\code{\link{trainControl}}, \code{\link{update.train}},
+\seealso{\code{\link{models}}, \code{\link{trainControl}}, \code{\link{update.train}},
 \code{\link{modelLookup}},
 \code{\link{createFolds}}}
 
