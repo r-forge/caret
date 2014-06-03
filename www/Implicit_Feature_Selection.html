@@ -276,6 +276,11 @@ Released   : 20120902
 <p><b>Type</b>: Classification</p>
 <p><b>Tuning Parameters</b>: <code><span class="mx arg">oblique.splits</span></code> (Oblique Splits), <code><span class="mx arg">variable.selection</span></code> (Variable Selection Method)</p>
 
+<h1>Parallel Random Forest</h1>
+<p><tt><span class="mx arg">method</span> = <span class="mx str">'parRF'</span></tt></p>
+<p><b>Type</b>: Classification, Regression</p>
+<p><b>Tuning Parameters</b>: <code><span class="mx arg">mtry</span></code> (#Randomly Selected Predictors)</p>
+
 <h1>Penalized Linear Discriminant Analysis</h1>
 <p><tt><span class="mx arg">method</span> = <span class="mx str">'PenalizedLDA'</span></tt></p>
 <p><b>Type</b>: Classification</p>
@@ -355,6 +360,11 @@ Released   : 20120902
 <p><tt><span class="mx arg">method</span> = <span class="mx str">'smda'</span></tt></p>
 <p><b>Type</b>: Classification</p>
 <p><b>Tuning Parameters</b>: <code><span class="mx arg">NumVars</span></code> (# Predictors), <code><span class="mx arg">lambda</span></code> (Lambda), <code><span class="mx arg">R</span></code> (# Subclasses)</p>
+
+<h1>Stacked AutoEncoder Deep Neural Network</h1>
+<p><tt><span class="mx arg">method</span> = <span class="mx str">'dnn'</span></tt></p>
+<p><b>Type</b>: Classification, Regression</p>
+<p><b>Tuning Parameters</b>: <code><span class="mx arg">layer1</span></code> (Hidden Layer 1), <code><span class="mx arg">layer2</span></code> (Hidden Layer 2), <code><span class="mx arg">layer3</span></code> (Hidden Layer 3), <code><span class="mx arg">hidden_dropout</span></code> (Hidden Dropouts), <code><span class="mx arg">visible_dropout</span></code> (Visible Dropout)</p>
 
 <h1>Stochastic Gradient Boosting</h1>
 <p><tt><span class="mx arg">method</span> = <span class="mx str">'gbm'</span></tt></p>

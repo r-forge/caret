@@ -15,8 +15,7 @@ Released   : 20120902
 -->
   <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-<style type="text/css">
-.knitr.inline {
+<style type="text/css">.knitr.inline {
   background-color: #f7f7f7;
   border:solid 1px #B0B0B0;
 }
@@ -75,8 +74,7 @@ Released   : 20120902
 .hl.kwd {
   color: #BC5A65;
   font-weight: bold;
-}
-</style>
+}</style>
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -152,7 +150,7 @@ The <span class="mx funCall">train</span> function can be used to
 
 <p>
 First, a specific model must be chosen. Currently,
-149 are available using
+150 are available using
 <a href="http://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>; see <a href="modelList.html"><tt>train</tt> Model List</a> 
 or <a href="bytag.html"><tt>train</tt> Models By Tag</a> for details. 
 On these pages, there are lists of tuning parameters that can
@@ -276,14 +274,14 @@ Resampling results across tuning parameters:
 
   interaction.depth  n.trees  Accuracy  Kappa  Accuracy SD  Kappa SD
   1                  50       0.8       0.5    0.1          0.2     
-  1                  100      0.8       0.6    0.09         0.2     
+  1                  100      0.8       0.6    0.1          0.2     
   1                  200      0.8       0.6    0.09         0.2     
   2                  50       0.8       0.6    0.1          0.2     
   2                  100      0.8       0.6    0.09         0.2     
-  2                  200      0.8       0.6    0.09         0.2     
-  3                  50       0.8       0.6    0.1          0.2     
+  2                  200      0.8       0.6    0.1          0.2     
+  3                  50       0.8       0.6    0.09         0.2     
   3                  100      0.8       0.6    0.09         0.2     
-  3                  200      0.8       0.6    0.09         0.2     
+  3                  200      0.8       0.6    0.08         0.2     
 
 Tuning parameter 'shrinkage' was held constant at a value of 0.1
 Accuracy was used to select the optimal model using  the largest value.
@@ -400,9 +398,7 @@ For the boosted tree model, we can fix the learning rate and evaluate more than 
 <div class="chunk" id="train_gbm2"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">gbmGrid</span> <span class="hl kwb">&lt;-</span>  <span class="hl kwd">expand.grid</span><span class="hl std">(</span><span class="hl kwc">interaction.depth</span> <span class="hl std">=</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl num">1</span><span class="hl std">,</span> <span class="hl num">5</span><span class="hl std">,</span> <span class="hl num">9</span><span class="hl std">),</span>
                         <span class="hl kwc">n.trees</span> <span class="hl std">= (</span><span class="hl num">1</span><span class="hl opt">:</span><span class="hl num">30</span><span class="hl std">)</span><span class="hl opt">*</span><span class="hl num">50</span><span class="hl std">,</span>
                         <span class="hl kwc">shrinkage</span> <span class="hl std">=</span> <span class="hl num">0.1</span><span class="hl std">)</span>
-
 <span class="hl kwd">nrow</span><span class="hl std">(gbmGrid)</span>
-
 <span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">825</span><span class="hl std">)</span>
 <span class="hl std">gbmFit2</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(Class</span> <span class="hl opt">~</span> <span class="hl std">.,</span> <span class="hl kwc">data</span> <span class="hl std">= training,</span>
                  <span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;gbm&quot;</span><span class="hl std">,</span>
@@ -431,18 +427,18 @@ Summary of sample sizes: 142, 142, 140, 142, 142, 141, ...
 Resampling results across tuning parameters:
 
   interaction.depth  n.trees  Accuracy  Kappa  Accuracy SD  Kappa SD
-  1                  50       0.77      0.53   0.092        0.19    
-  1                  100      0.79      0.57   0.094        0.19    
-  1                  150      0.8       0.59   0.097        0.2     
-  1                  200      0.81      0.61   0.099        0.21    
+  1                  50       0.77      0.53   0.1          0.2     
+  1                  100      0.78      0.56   0.095        0.19    
+  1                  150      0.79      0.58   0.094        0.19    
+  1                  200      0.79      0.58   0.094        0.19    
   :                   :        :         :      :            :
-  9                  1200     0.83      0.66   0.089        0.18    
-  9                  1200     0.84      0.67   0.089        0.18    
-  9                  1300     0.83      0.66   0.09         0.18    
-  9                  1400     0.83      0.66   0.09         0.18    
-  9                  1400     0.83      0.65   0.096        0.2     
-  9                  1400     0.83      0.65   0.094        0.19    
-  9                  1500     0.83      0.65   0.09         0.18    
+  9                  1200     0.82      0.64   0.092        0.19    
+  9                  1200     0.82      0.64   0.09         0.18    
+  9                  1300     0.83      0.65   0.088        0.18    
+  9                  1400     0.82      0.64   0.092        0.19    
+  9                  1400     0.82      0.63   0.095        0.19    
+  9                  1400     0.82      0.63   0.092        0.19    
+  9                  1500     0.82      0.63   0.093        0.19    
 
 Tuning parameter 'shrinkage' was held constant at a value of 0.1
 Accuracy was used to select the optimal model using  the largest value.
@@ -548,8 +544,7 @@ control how models are created, with possible values:
   at that iteration or should be held-out. When these values are not specified,
   <span class="mx funCall">train</span> will generate them.  </li>
  <li> <span class="mx arg">summaryFunction</span>: a function to compute alternate
-  performance summaries. 
-  details. </li> 
+  performance summaries. </li> 
  <li> <span class="mx arg">selectionFunction</span>: a function to choose the optimal
   tuning parameters. 
   and examples.  </li>
@@ -595,7 +590,7 @@ arguments:
   argument of the <span class="mx funCall">trainControl</span> object is set to
   <tt><span class="hl num">TRUE</span></tt>, additional columns in <code>data</code> will be present
   that contains the class probabilities. The names of these columns
-  are the same as the class levels.</li>
+  are the same as the class levels. Also, if  <span class="mx arg">weights</span> were specified in the call to <span class="mx funCall">train</span>, a column called <code>weights</code> will also be in the data set. </li>
  <li> <span class="mx arg">lev</span> is a character string that has the outcome factor
   levels taken from the training data. For regression, a value of
   <tt><span class="hl kwa">NULL</span></tt> is passed into the function. </li>
@@ -648,7 +643,6 @@ the area under the ROC curve using the following code:
                            <span class="hl com">## Evaluate performance using </span>
                            <span class="hl com">## the following function</span>
                            <span class="hl kwc">summaryFunction</span> <span class="hl std">= twoClassSummary)</span>
-
 <span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">825</span><span class="hl std">)</span>
 <span class="hl std">gbmFit3</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(Class</span> <span class="hl opt">~</span> <span class="hl std">.,</span> <span class="hl kwc">data</span> <span class="hl std">= training,</span>
                  <span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;gbm&quot;</span><span class="hl std">,</span>
@@ -677,22 +671,22 @@ Summary of sample sizes: 142, 142, 140, 142, 142, 141, ...
 Resampling results across tuning parameters:
 
   interaction.depth  n.trees  ROC   Sens  Spec  ROC SD  Sens SD  Spec SD
-  1                  50       0.87  0.81  0.72  0.084   0.14     0.15   
-  1                  100      0.88  0.84  0.73  0.083   0.12     0.16   
-  1                  150      0.89  0.86  0.75  0.082   0.11     0.16   
-  1                  200      0.89  0.85  0.76  0.082   0.12     0.15   
+  1                  50       0.86  0.83  0.69  0.1     0.15     0.17   
+  1                  100      0.87  0.84  0.73  0.093   0.14     0.16   
+  1                  150      0.88  0.85  0.74  0.088   0.13     0.17   
+  1                  200      0.88  0.86  0.75  0.084   0.14     0.17   
   :                   :        :     :      :     :       :        :
-  9                  1200     0.91  0.88  0.76  0.07    0.11     0.16   
-  9                  1200     0.91  0.88  0.76  0.07    0.1      0.16   
-  9                  1300     0.91  0.88  0.76  0.072   0.1      0.16   
-  9                  1400     0.91  0.88  0.76  0.072   0.11     0.16   
-  9                  1400     0.91  0.88  0.77  0.073   0.11     0.16   
-  9                  1400     0.91  0.88  0.77  0.085   0.12     0.16   
-  9                  1500     0.91  0.87  0.78  0.085   0.12     0.15   
+  9                  1200     0.91  0.89  0.76  0.075   0.12     0.16   
+  9                  1200     0.91  0.89  0.75  0.074   0.12     0.15   
+  9                  1300     0.91  0.89  0.75  0.075   0.11     0.15   
+  9                  1400     0.91  0.89  0.76  0.073   0.11     0.15   
+  9                  1400     0.91  0.88  0.76  0.073   0.12     0.15   
+  9                  1400     0.91  0.87  0.77  0.072   0.13     0.15   
+  9                  1500     0.92  0.87  0.78  0.072   0.13     0.15   
 
 Tuning parameter 'shrinkage' was held constant at a value of 0.1
 ROC was used to select the optimal model using  the largest value.
-The final values used for the model were n.trees = 600, interaction.depth = 9 and shrinkage = 0.1. 
+The final values used for the model were n.trees = 1500, interaction.depth = 9 and shrinkage = 0.1. 
 </pre></div>
 <div class="output"><pre class="knitr r"></pre>
 </pre></div>
@@ -703,7 +697,7 @@ The final values used for the model were n.trees = 600, interaction.depth = 9 an
 <p>
 In this case, the average area under the ROC curve associated with the
 optimal tuning parameters was
-0.914 across
+0.916 across
 the 100 resamples.
 </p>
 
@@ -760,10 +754,10 @@ following arguments:
 <p>  
 As an example, if we chose the previous boosted tree model on the basis of
 overall accuracy, we would choose:
-n.trees = 600, interaction.depth = 9, shrinkage = 0.1. However, the scale in this plots is
+n.trees = 1500, interaction.depth = 9, shrinkage = 0.1. However, the scale in this plots is
 fairly tight, with accuracy values ranging from
-0.87 to
-0.914. A less complex model
+0.863 to
+0.916. A less complex model
 (e.g. fewer, more shallow trees) might also yield acceptable
 accuracy. 
 </p>
@@ -779,8 +773,8 @@ difference. For example, to select parameter values based on a 2% loss of perfor
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl std">gbmFit3</span><span class="hl opt">$</span><span class="hl std">results[whichTwoPct,</span> <span class="hl num">1</span><span class="hl opt">:</span><span class="hl num">6</span><span class="hl std">]</span>
 </pre></div>
-<div class="output"><pre class="knitr r">   shrinkage interaction.depth n.trees    ROC   Sens   Spec
-61       0.1                 9      50 0.8992 0.8435 0.7491
+<div class="output"><pre class="knitr r">   shrinkage interaction.depth n.trees    ROC  Sens  Spec
+32       0.1                 5     100 0.8988 0.864 0.765
 </pre></div>
 </div></div>
 
@@ -789,7 +783,7 @@ difference. For example, to select parameter values based on a 2% loss of perfor
 This indicates that we can get a less complex model with an area under the ROC curve 
 of 0.899 (compared
 to the "pick the best" value of 
- 0.914). 
+ 0.916). 
 </p>
 <p>
 The main issue with these functions is related to ordering the models
@@ -839,13 +833,13 @@ Levels: M R
 </pre></div>
 <div class="source"><pre class="knitr r"><span class="hl kwd">predict</span><span class="hl std">(gbmFit3,</span> <span class="hl kwc">newdata</span> <span class="hl std">=</span> <span class="hl kwd">head</span><span class="hl std">(testing),</span> <span class="hl kwc">type</span> <span class="hl std">=</span> <span class="hl str">&quot;prob&quot;</span><span class="hl std">)</span>
 </pre></div>
-<div class="output"><pre class="knitr r">          M        R
-1 5.297e-03 0.994703
-2 5.803e-07 0.999999
-3 2.942e-15 1.000000
-4 9.767e-04 0.999023
-5 9.969e-01 0.003102
-6 9.737e-01 0.026260
+<div class="output"><pre class="knitr r">          M         R
+1 1.957e-06 0.9999980
+2 4.824e-14 1.0000000
+3 1.118e-32 1.0000000
+4 1.528e-10 1.0000000
+5 9.997e-01 0.0003027
+6 9.995e-01 0.0004851
 </pre></div>
 </div></div>
 
@@ -917,7 +911,7 @@ Resampling results across tuning parameters:
   2    0.9  0.9   0.8   0.05    0.1      0.2    
   4    0.9  0.9   0.8   0.05    0.1      0.2    
   8    0.9  0.9   0.8   0.05    0.1      0.2    
-  20   0.9  0.9   0.8   0.06    0.1      0.2    
+  20   0.9  0.9   0.8   0.06    0.09     0.2    
   30   0.9  0.9   0.8   0.06    0.1      0.2    
 
 Tuning parameter 'sigma' was held constant at a value of 0.01234
@@ -953,23 +947,23 @@ Resampling results across tuning parameters:
   gamma  lambda  ROC  Sens  Spec  ROC SD  Sens SD  Spec SD
   0      0       0.8  0.8   0.8   0.1     0.1      0.2    
   0      0.3     0.8  0.8   0.8   0.1     0.1      0.2    
-  0      0.7     0.9  0.8   0.8   0.1     0.2      0.2    
-  0      1       0.8  0.8   0.8   0.1     0.2      0.2    
-  0.3    0       0.9  0.9   0.8   0.09    0.1      0.1    
-  0.3    0.3     0.9  0.9   0.8   0.07    0.1      0.1    
-  0.3    0.7     0.9  0.9   0.8   0.07    0.1      0.1    
-  0.3    1       0.9  0.9   0.8   0.09    0.1      0.2    
-  0.7    0       0.9  0.9   0.7   0.09    0.1      0.2    
+  0      0.7     0.8  0.8   0.8   0.1     0.1      0.2    
+  0      1       0.9  0.8   0.8   0.1     0.1      0.2    
+  0.3    0       0.9  0.9   0.8   0.07    0.1      0.2    
+  0.3    0.3     0.9  0.9   0.8   0.08    0.1      0.1    
+  0.3    0.7     0.9  0.9   0.8   0.07    0.1      0.2    
+  0.3    1       0.9  0.9   0.8   0.08    0.1      0.2    
+  0.7    0       0.9  0.9   0.7   0.08    0.1      0.2    
   0.7    0.3     0.9  0.9   0.7   0.09    0.1      0.2    
   0.7    0.7     0.9  0.9   0.7   0.09    0.1      0.2    
   0.7    1       0.9  0.9   0.7   0.09    0.1      0.2    
-  1      0       0.7  0.7   0.7   0.1     0.2      0.2    
-  1      0.3     0.7  0.7   0.7   0.1     0.2      0.2    
+  1      0       0.7  0.7   0.6   0.1     0.2      0.2    
+  1      0.3     0.7  0.7   0.6   0.1     0.2      0.2    
   1      0.7     0.7  0.7   0.6   0.1     0.2      0.2    
   1      1       0.7  0.7   0.7   0.1     0.2      0.2    
 
 ROC was used to select the optimal model using  the largest value.
-The final values used for the model were gamma = 0.3 and lambda = 0.3. 
+The final values used for the model were gamma = 0.3 and lambda = 0. 
 </pre></div>
 </div></div>
 
@@ -1003,21 +997,21 @@ Number of resamples: 100
 
 ROC 
      Min. 1st Qu. Median  Mean 3rd Qu. Max. NA's
-GBM 0.679   0.889  0.930 0.914   0.964    1    0
+GBM 0.625   0.889  0.933 0.916   0.968    1    0
 SVM 0.696   0.918  0.961 0.946   0.984    1    0
-RDA 0.651   0.857  0.921 0.904   0.954    1    0
+RDA 0.635   0.857  0.929 0.907   0.954    1    0
 
 Sens 
-     Min. 1st Qu. Median  Mean 3rd Qu. Max. NA's
-GBM 0.556   0.771  0.875 0.870       1    1    0
-SVM 0.500   0.875  0.889 0.916       1    1    0
-RDA 0.625   0.778  0.889 0.889       1    1    0
+    Min. 1st Qu. Median  Mean 3rd Qu. Max. NA's
+GBM  0.5   0.778  0.875 0.867       1    1    0
+SVM  0.5   0.875  0.889 0.910       1    1    0
+RDA  0.5   0.851  0.944 0.903       1    1    0
 
 Spec 
      Min. 1st Qu. Median  Mean 3rd Qu. Max. NA's
-GBM 0.429   0.714  0.804 0.764   0.862    1    0
-SVM 0.286   0.714  0.857 0.816   0.906    1    0
-RDA 0.286   0.714  0.750 0.764   0.857    1    0
+GBM 0.375   0.714  0.857 0.782   0.875    1    0
+SVM 0.286   0.714  0.857 0.815   0.906    1    0
+RDA 0.286   0.714  0.750 0.761   0.857    1    0
 </pre></div>
 </div></div>
 
@@ -1088,21 +1082,21 @@ Lower diagonal: p-value for H0: difference = 0
 
 ROC 
     GBM      SVM      RDA     
-GBM          -0.03172  0.00988
-SVM 1.73e-07           0.04159
-RDA 0.515    1.17e-09         
+GBM          -0.03050  0.00885
+SVM 1.81e-06           0.03935
+RDA 0.824    5.02e-08         
 
 Sens 
-    GBM     SVM     RDA    
-GBM         -0.0458 -0.0189
-SVM 0.00261          0.0269
-RDA 0.50386 0.11203        
+    GBM      SVM      RDA     
+GBM          -0.04333 -0.03611
+SVM 0.000983           0.00722
+RDA 0.042556 1.000000         
 
 Spec 
-    GBM     SVM       RDA      
-GBM         -0.051786 -0.000536
-SVM 0.00145            0.051250
-RDA 1.00000 0.00563            
+    GBM     SVM     RDA    
+GBM         -0.0334  0.0211
+SVM 0.05664          0.0545
+RDA 0.71443 0.00414        
 </pre></div>
 </div></div>
 
@@ -1127,7 +1121,6 @@ RDA 1.00000 0.00563
 <p>In cases where the model tuning values are known, <span class="mx funCall">train</span> can be used to fit the model to the entire training set without any resampling or parameter tuning. Using the <tt><span class="hl std">method</span> <span class="hl kwb">=</span> <span class="hl str">&quot;none&quot;</span></tt> option in <span class="mx funCall">trainControl</span> can be used. For example:
 </p>
 <div class="chunk" id="train_noresamp"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl std">fitControl</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">trainControl</span><span class="hl std">(</span><span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;none&quot;</span><span class="hl std">,</span> <span class="hl kwc">classProbs</span> <span class="hl std">=</span> <span class="hl num">TRUE</span><span class="hl std">)</span>
-
 <span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">825</span><span class="hl std">)</span>
 <span class="hl std">gbmFit4</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">train</span><span class="hl std">(Class</span> <span class="hl opt">~</span> <span class="hl std">.,</span> <span class="hl kwc">data</span> <span class="hl std">= training,</span>
                  <span class="hl kwc">method</span> <span class="hl std">=</span> <span class="hl str">&quot;gbm&quot;</span><span class="hl std">,</span>
@@ -1201,6 +1194,7 @@ Levels: M R
                 <li><a href="featureselection.html">Feature Selection</a></li>
                 <li><a href="other.html">Other Functions</a></li>
                 <li><a href="parallel.html">Parallel Processing</a></li>
+                <li><a href="adaptive.html">Adaptive Resampling</a></li> 
 </ul>
   </li>
   </ul>
@@ -1215,7 +1209,7 @@ Levels: M R
 
   <div id="footer-content"></div>
   <div id="footer">
-  <p>Created on Wed Feb 26 2014 using caret version 6.0-24 and R Under development (unstable) (2014-02-14 r65008).</p>
+  <p>Created on Sat May 31 2014 using caret version 6.0-29 and R version 3.0.3 (2014-03-06).</p>
   </div>
   <!-- end #footer -->
 </body>

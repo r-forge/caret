@@ -15,8 +15,7 @@ Released   : 20120902
 -->
   <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-<style type="text/css">
-.knitr.inline {
+<style type="text/css">.knitr.inline {
   background-color: #f7f7f7;
   border:solid 1px #B0B0B0;
 }
@@ -75,8 +74,7 @@ Released   : 20120902
 .hl.kwd {
   color: #BC5A65;
   font-weight: bold;
-}
-</style>
+}</style>
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -153,7 +151,6 @@ Released   : 20120902
 
 <div class="chunk" id="SplitMaxDiss1"><div class="rcode"><div class="source"><pre class="knitr r"><span class="hl kwd">library</span><span class="hl std">(mlbench)</span>
 <span class="hl kwd">data</span><span class="hl std">(BostonHousing)</span>
-
 <span class="hl std">testing</span> <span class="hl kwb">&lt;-</span> <span class="hl kwd">scale</span><span class="hl std">(BostonHousing[,</span> <span class="hl kwd">c</span><span class="hl std">(</span><span class="hl str">&quot;age&quot;</span><span class="hl std">,</span> <span class="hl str">&quot;nox&quot;</span><span class="hl std">)])</span>
 <span class="hl kwd">set.seed</span><span class="hl std">(</span><span class="hl num">11</span><span class="hl std">)</span>
 <span class="hl com">## A random sample of 5 data points</span>
@@ -224,6 +221,7 @@ As an example, suppose we have a time series with 20 data points. We can fix <tt
                 <li><a href="featureselection.html">Feature Selection</a></li>
                 <li><a href="other.html">Other Functions</a></li>
                 <li><a href="parallel.html">Parallel Processing</a></li>
+                <li><a href="adaptive.html">Adaptive Resampling</a></li> 
 </ul>
   </li>
   </ul>
@@ -235,10 +233,10 @@ As an example, suppose we have a time series with 20 data points. We can fix <tt
   <!-- end #page -->
 </div>
   <div id="footer-content"></div>
-
-
   <div id="footer">
-  <p>Created on <Sexpr session>.</p>
+
+
+  <p>Created on Sat May 31 2014 using caret version 6.0-29 and R version 3.0.3 (2014-03-06).</p>
   </div>
   <!-- end #footer -->
 </body>
