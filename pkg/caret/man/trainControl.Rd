@@ -4,8 +4,8 @@
 \description{Control the computational nuances of the \code{\link{train}} function}
 \usage{
 trainControl(method = "boot", 
-             number = ifelse(method \%in\% c("cv", "repeatedcv"), 10, 25),
-             repeats = ifelse(method \%in\% c("cv", "repeatedcv"), 1, number),
+             number = ifelse(grepl("cv", method), 10, 25),
+             repeats = ifelse(grepl("cv", method), 1, number),
              p = 0.75, 
              initialWindow = NULL,
              horizon = 1,
@@ -24,7 +24,7 @@ trainControl(method = "boot",
              predictionBounds = rep(FALSE, 2),
              seeds = NA,
              adaptive = list(min = 5, alpha = 0.05, 
-             	             method = "gls", complete = TRUE),
+             	               method = "gls", complete = TRUE),
              allowParallel = TRUE)
 }
 \arguments{
