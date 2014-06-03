@@ -11,6 +11,7 @@
 \item A check was added to \code{trainControl} to make sure that a value of \code{min} makes sense when using adaptive resampling.  
 
 }
+}
 
 \section{Changes in version 6.0-29}{
 \itemize{
